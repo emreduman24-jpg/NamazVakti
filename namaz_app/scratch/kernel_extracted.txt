@@ -1,0 +1,1101 @@
+tter/material.dart';
+import 'data/prayer_repository.dart';
+import 'services/notification_service.dart';
+import 'screens/main_screen.dart';
+import 'screens/tools_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/tool_detail_screen.dart';
+import 'screens/splash_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Notification Service
+  final notificationService = NotificationService();
+  await notificationService.init();
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final PrayerRepository _repository = PrayerRepository();
+  ThemeMode _themeMode = ThemeMode.light;
+  bool _loading = true;
+  bool _locationSelected = false;
+  bool _isBlocked = false;
+  Timer? _blockTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+    _startBlockCheckTimer();
+  }
+
+  @override
+  void dispose() {
+    _blockTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startBlockCheckTimer() {
+    _blockTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+      _checkBlockStatus();
+    });
+  }
+
+  Future<void> _checkBlockStatus() async {
+    try {
+      final blocked = await _repository.getGlobalBlockStatus();
+      if (blocked != _isBlocked) {
+        setState(() {
+          _isBlocked = blocked;
+        });
+      }
+    } catch (e) {
+      print("Block check error: $e");
+    }
+  }
+
+  Future<void> _initializeApp() async {
+    final themeStr = await _repository.getThemeMode();
+    final isLocSet = await _repository.isLocationSelected();
+    await _checkBlockStatus();
+
+    setState(() {
+      _themeMode = _parseThemeMode(themeStr);
+      _locationSelected = isLocSet;
+      _loading = false;
+    });
+  }
+
+  ThemeMode _parseThemeMode(String mode) {
+    switch (mode) {
+      case 'dark':
+        return ThemeMode.dark;
+      case 'system':
+        return ThemeMode.system;
+      case 'light':
+      default:
+        return ThemeMode.light;
+    }
+  }
+
+  void _onThemeChanged() async {
+    final themeStr = await _repository.getThemeMode();
+    setState(() {
+      _themeMode = _parseThemeMode(themeStr);
+    });
+  }
+
+  void _onLocationReset() {
+    setState(() {
+      _locationSelected = false;
+    });
+  }
+
+  void _onOnboardingComplete() {
+    setState(() {
+      _locationSelected = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: _lightTheme,
+        darkTheme: _darkTheme,
+        themeMode: ThemeMode.light,
+        builder: (context, child) {
+          return _isBlocked 
+              ? const BlockedScreen()
+              : child ?? const SizedBox();
+        },
+        home: const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(color: Color(0xFF27A770)),
+          ),
+        ),
+      );
+    }
+
+    return MaterialApp(
+      title: 'Namaz Vakitleri',
+      debugShowCheckedModeBanner: false,
+      theme: _lightTheme,
+      darkTheme: _darkTheme,
+      themeMode: _themeMode,
+      builder: (context, child) {
+        return _isBlocked 
+            ? const BlockedScreen()
+            : child ?? const SizedBox();
+      },
+      home: SplashScreen(
+        onThemeChanged: _onThemeChanged,
+        onLocationReset: _onLocationReset,
+        onOnboardingComplete: _onOnboardingComplete,
+      ),
+    );
+  }
+
+  // Light Theme Definition
+  ThemeData get _lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      primaryColor: const Color(0xFF27A770),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF27A770),
+        primary: const Color(0xFF27A770),
+        secondary: const Color(0xFF1E5E43),
+        background: const Color(0xFFF3F8F5),
+        surface: Colors.white,
+        brightness: Brightness.light,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1E5E43),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      scaffoldBackgroundColor: const Color(0xFFF3F8F5),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        selectedItemColor: Color(0xFF27A770),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
+        elevation: 8,
+      ),
+      cardTheme: CardThemeData(
+        color: Colors.white,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  // Dark Theme Definition
+  ThemeData get _darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      primaryColor: const Color(0xFF27A770),
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF27A770),
+        primary: const Color(0xFF27A770),
+        secondary: const Color(0xFF4CAF50),
+        background: const Color(0xFF121212),
+        surface: const Color(0xFF1E1E1E),
+        brightness: Brightness.dark,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1E1E1E),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        selectedItemColor: Color(0xFF27A770),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Color(0xFF1E1E1E),
+        elevation: 8,
+      ),
+      cardTheme: CardThemeData(
+        color: const Color(0xFF1E1E1E),
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+}
+
+class MainAppContainer extends StatefulWidget {
+  final VoidCallback onThemeChanged;
+  final VoidCallback onLocationReset;
+
+  const MainAppContainer({
+    super.key,
+    required this.onThemeChanged,
+    required this.onLocationReset,
+  });
+
+  @override
+  _MainAppContainerState createState() => _MainAppContainerState();
+}
+
+class _MainAppContainerState extends State<MainAppContainer> {
+  int _currentIndex = 0;
+  late List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      MainScreen(
+        onTabChange: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        onOpenTool: _openToolDetail,
+      ),
+      ToolsScreen(
+        onOpenTool: _openToolDetail,
+        onClose: () {
+          setState(() {
+            _currentIndex = 0;
+          });
+        },
+      ),
+      SettingsScreen(
+        onThemeChanged: widget.onThemeChanged,
+        onLocationReset: widget.onLocationReset,
+      ),
+    ];
+  }
+
+  void _openToolDetail(String toolId, String toolTitle) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            ToolDetailScreen(toolId: toolId, toolTitle: toolTitle),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(index: _currentIndex, children: _screens),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Ana Sayfa',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_view_outlined),
+            activeIcon: Icon(Icons.grid_view),
+            label: 'Araçlar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            activeIcon: Icon(Icons.settings),
+            label: 'Ayarlar',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BlockedScreen extends StatelessWidget {
+  const BlockedScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "🚫",
+                style: TextStyle(fontSize: 80),
+              ),
+              SizedBox(height: 24),
+              Text(
+                "Erişiminiz Engellendi",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFD32F2F),
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                "Kullanım şartlarını ihlal ettiğiniz için İslami Rehber uygulamasına erişiminiz yönetici tarafından engellenmiştir.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black87,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+�` (&-#$'*%-%5$%/);*"!M+
+@# &(7=.$+! !7.!! '+$$&+H	 )"$)	)+5	$-),*,-&	&,'	8D.*'	 P	#-),*,-*%	&,'	8D.*,	 (P	0%&"#D?#%	%	/1	:D	'D0%##-* #2/#1.	.$'%)90$)" /,$��-" )	package:namaz_app/main.dart(�����|����������x�ņǆz�Ɇʆ̆σ��H����цԆ؆ۆކ���o���ꄫ�턆�K����~kOfile:///C:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/main_screen.dart� �import 'dart:async';
+import 'dart:math' as math;
+import 'package:flutter/material.dart';
+import '../data/prayer_repository.dart';
+import '../data/prayer_data.dart';
+import '../services/notification_service.dart';
+import 'notification_settings_screen.dart';
+import 'premium_screen.dart';
+
+class MainScreen extends StatefulWidget {
+  final Function(int) onTabChange;
+  final Function(String, String) onOpenTool;
+
+  const MainScreen({
+    super.key,
+    required this.onTabChange,
+    required this.onOpenTool,
+  });
+
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  final PrayerRepository _repository = PrayerRepository();
+  final NotificationService _notificationService = NotificationService();
+
+  Map<String, String?> _location = {};
+  List<Map<String, dynamic>> _prayerTimes = [];
+  Map<String, dynamic>? _todayTimes;
+  Map<String, dynamic>? _tomorrowTimes;
+
+  bool _loading = true;
+  Timer? _timer;
+
+  // Live countdown state variables
+  String _nextPrayerName = "";
+  String _countdownText = "";
+  double _progressValue = 0.0;
+  String _activePrayerName = "";
+
+  // Daily random index variables (based on day of the month)
+  int _dayIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+    _dayIndex = DateTime.now().day % 5; // To rotate daily cards
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted && _todayTimes != null) {
+        _updateCountdown();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    setState(() {
+      _loading = true;
+    });
+
+    final loc = await _repository.getSavedLocation();
+    final districtId = loc['districtId'];
+    if (districtId != null) {
+      final times = await _repository.getPrayerTimes(districtId);
+      setState(() {
+        _location = loc;
+        _prayerTimes = times;
+
+        // Find today's and tomorrow's times
+        final nowStr = _formatDate(DateTime.now());
+        final tomStr = _formatDate(DateTime.now().add(const Duration(days: 1)));
+
+        _todayTimes = _findTimesForDate(nowStr);
+        _tomorrowTimes = _findTimesForDate(tomStr);
+
+        // If today's times not found in list, default to first item
+        if (_todayTimes == null && _prayerTimes.isNotEmpty) {
+          _todayTimes = _prayerTimes.first;
+        }
+        if (_tomorrowTimes == null && _prayerTimes.length > 1) {
+          _tomorrowTimes = _prayerTimes[1];
+        }
+
+        _loading = false;
+      });
+      _updateCountdown();
+    } else {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  String _formatDate(DateTime dt) {
+    String day = dt.day.toString().padLeft(2, '0');
+    String month = dt.month.toString().padLeft(2, '0');
+    return "$day.$month.${dt.year}";
+  }
+
+  Map<String, dynamic>? _findTimesForDate(String dateStr) {
+    for (var item in _prayerTimes) {
+      if (item['MiladiTarihKisa'] == dateStr) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  // Parse time string e.g. "03:34" to DateTime on a specific base Date
+  DateTime _parseTime(String timeStr, DateTime baseDate) {
+    final parts = timeStr.split(':');
+    final hour = int.parse(parts[0]);
+    final minute = int.parse(parts[1]);
+    return DateTime(baseDate.year, baseDate.month, baseDate.day, hour, minute);
+  }
+
+  void _updateCountdown() {
+    if (_todayTimes == null) return;
+
+    final now = DateTime.now();
+
+    // Parse all today times
+    final DateTime imsak = _parseTime(_todayTimes!['Imsak'] ?? '03:30', now);
+    final DateTime gunes = _parseTime(_todayTimes!['Gunes'] ?? '05:30', now);
+    final DateTime ogle = _parseTime(_todayTimes!['Ogle'] ?? '13:00', now);
+    final DateTime ikindi = _parseTime(_todayTimes!['Ikindi'] ?? '17:00', now);
+    final DateTime aksam = _parseTime(_todayTimes!['Aksam'] ?? '20:30', now);
+    final DateTime yatsi = _parseTime(_todayTimes!['Yatsi'] ?? '22:00', now);
+
+    // Tomorrow's imsak
+    DateTime tomImsak = now.add(const Duration(days: 1));
+    if (_tomorrowTimes != null) {
+      tomImsak = _parseTime(
+        _tomorrowTimes!['Imsak'] ?? '03:30',
+        now.add(const Duration(days: 1)),
+      );
+    } else {
+      tomImsak = imsak.add(const Duration(days: 1));
+    }
+
+    // Yesterday's yatsi
+    DateTime yesYatsi = now.subtract(const Duration(days: 1));
+    yesYatsi = DateTime(
+      yesYatsi.year,
+      yesYatsi.month,
+      yesYatsi.day,
+      yatsi.hour,
+      yatsi.minute,
+    );
+
+    // List of slots: [Name, Start, End, NextName]
+    final slots = [
+      ['Yatsı', yesYatsi, imsak, 'İmsak'],
+      ['İmsak', imsak, gunes, 'Güneş'],
+      ['Güneş', gunes, ogle, 'Öğle'],
+      ['Öğle', ogle, ikindi, 'İkindi'],
+      ['İkindi', ikindi, aksam, 'Akşam'],
+      ['Akşam', aksam, yatsi, 'Yatsı'],
+      ['Yatsı', yatsi, tomImsak, 'İmsak'],
+    ];
+
+    String active = "Yatsı";
+    String next = "İmsak";
+    DateTime start = yatsi;
+    DateTime end = tomImsak;
+
+    for (var slot in slots) {
+      final DateTime sStart = slot[1] as DateTime;
+      final DateTime sEnd = slot[2] as DateTime;
+      if (now.isAfter(sStart) && now.isBefore(sEnd)) {
+        active = slot[0] as String;
+        start = sStart;
+        end = sEnd;
+        next = slot[3] as String;
+        break;
+      }
+    }
+
+    final durationLeft = end.difference(now);
+    final totalDuration = end.difference(start);
+
+    final hours = durationLeft.inHours;
+    final mins = durationLeft.inMinutes.remainder(60);
+    final secs = durationLeft.inSeconds.remainder(60);
+
+    setState(() {
+      _activePrayerName = active;
+      _nextPrayerName = next;
+      _countdownText =
+          "${hours.toString().padLeft(2, '0')}:${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}";
+      _progressValue = 1.0 - (durationLeft.inSeconds / totalDuration.inSeconds);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(color: Color(0xFF27A770)),
+        ),
+      );
+    }
+
+    if (_todayTimes == null) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Seçili konum bulunamadı."),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => widget.onTabChange(2), // Redirect to settings
+                child: const Text("Konum Seç"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final theme = Theme.of(context);
+    final String city = _location['cityName'] ?? '';
+    final String district = _location['districtName'] ?? '';
+    final String dateUzun = _todayTimes!['MiladiTarihUzun'] ?? '';
+    final String hicriUzun = _todayTimes!['HicriTarihUzun'] ?? '';
+
+    // Daily contents
+    final verse = VAKTIN_AYETLERI[_dayIndex];
+    final hadith = VAKTIN_HADISLERI[_dayIndex];
+    final names = GUNUN_ISIMLERI[_dayIndex];
+
+    return Scaffold(
+      backgroundColor: const Color(
+        0xFFF8FBF9,
+      ), // Extremely clean, premium light grey-green background
+      body: CustomScrollView(
+        slivers: [
+          // 1. Sleek Light Header with Subtle Motif Background
+          SliverToBoxAdapter(
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFDFBF7), // Warm light background
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(28),
+                  bottomRight: Radius.circular(28),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Subtle mandala ornament in the top-right
+                  Positioned(
+                    right: -40,
+                    top: -40,
+                    child: SizedBox(
+                      width: 180,
+                      height: 180,
+                      child: CustomPaint(painter: SubtleMandalaPainter()),
+                    ),
+                  ),
+
+                  // Content padding
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Location and Dates Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Left side: Location & change link
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      color: Color(0xFF27A770),
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      "$city / $district",
+                                      style: const TextStyle(
+                                        color: Color(0xFF1E5E43),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                GestureDetector(
+                                  onTap: () => widget.onTabChange(
+                                    2,
+                                  ), // Go to Settings Screen
+                                  child: const Padding(
+                                    padding: EdgeInsets.only(left: 4.0),
+                                    child: Text(
+                                      "Lokasyonu Değiştir",
+                                      style: TextStyle(
+                                        color: Color(0xFF27A770),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            // Right side: Dates (Miladi & Hicri)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  dateUzun,
+                                  style: const TextStyle(
+                                    color: Color(0xFF1E5E43),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  hicriUzun,
+                                  style: const TextStyle(
+                                    color: Color(
+                                      0xFFD4AF37,
+                                    ), // Golden center glow color
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        // 2. Large Digital Green Countdown and Linear Progress Bar
+                        Center(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 24),
+                              Text(
+                                "$_nextPrayerName Vaktine Kalan Süre",
+                                style: const TextStyle(
+                                  color: Color(0xFF1E5E43),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                _countdownText,
+                                style: const TextStyle(
+                                  color: Color(0xFF27A770),
+                                  fontSize: 48,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.5,
+                                  fontFamily: 'monospace',
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+
+                              // Thin green linear loading bar
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: SizedBox(
+                                  height: 3.5,
+                                  width: 200,
+                                  child: LinearProgressIndicator(
+                                    value: _progressValue.clamp(0.0, 1.0),
+                                    backgroundColor: const Color(0xFFE5ECE8),
+                                    color: const Color(0xFF27A770),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+
+                              // Main screen mini action buttons
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFEAF7F1),
+                                      foregroundColor: const Color(0xFF1E5E43),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 10,
+                                      ),
+                                    ),
+                                    onPressed: () => widget.onOpenTool(
+                                      'namaz-vakitleri-aylik',
+                                      'Aylık Namaz Vakitleri',
+                                    ),
+                                    icon: const Icon(
+                                      Icons.calendar_month,
+                                      size: 16,
+                                      color: Color(0xFF27A770),
+                                    ),
+                                    label: const Text(
+                                      "Aylık Namaz Vakitleri",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFEAF7F1),
+                                      foregroundColor: const Color(0xFF1E5E43),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 10,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const NotificationSettingsScreen(),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.notifications_active,
+                                      size: 16,
+                                      color: Color(0xFF27A770),
+                                    ),
+                                    label: const Text(
+                                      "Ezan Bildirimleri",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 3. Horizontal 6 Vakit prayer times bar (no cards, capsule active vakit highlighting)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
+              ),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.02),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildPrayerCard('İmsak', _todayTimes!['Imsak'] ?? '--:--'),
+                    _buildPrayerCard('Güneş', _todayTimes!['Gunes'] ?? '--:--'),
+                    _buildPrayerCard('Öğle', _todayTimes!['Ogle'] ?? '--:--'),
+                    _buildPrayerCard(
+                      'İkindi',
+                      _todayTimes!['Ikindi'] ?? '--:--',
+                    ),
+                    _buildPrayerCard('Akşam', _todayTimes!['Aksam'] ?? '--:--'),
+                    _buildPrayerCard('Yatsı', _todayTimes!['Yatsi'] ?? '--:--'),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // 4. Quick Links Navigation circles
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildCircularQuickAction(
+                    title: 'Dini Danışman',
+                    imagePath: 'assets/dini_danisman.png',
+                    onTap: () =>
+                        widget.onOpenTool('soru-cevap', 'Dini Danışman'),
+                  ),
+                  _buildCircularQuickAction(
+                    title: 'Mekke Canlı',
+                    imagePath: 'assets/mekke.png',
+                    onTap: () =>
+                        widget.onOpenTool('kabe-izle', 'Mekke Canlı Kabe'),
+                  ),
+                  _buildCircularQuickAction(
+                    title: 'Ramazan',
+                    imagePath: 'assets/ramazan.png',
+                    onTap: () =>
+                        widget.onOpenTool('ramazan-hakkinda', 'Ramazan'),
+                  ),
+                  _buildCircularQuickAction(
+                    title: 'Tebrik Kartı',
+                    imagePath: 'assets/tebrik.png',
+                    onTap: () =>
+                        widget.onOpenTool('dua-iste', 'Tebrik Kartları'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // 5. Daily Inspirations Cards (Ayet, Hadis, İsimler ve Geliştirici Mesajı)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // Ayet Card
+                  _buildDailyTextCard(
+                    title: "Günün Ayeti",
+                    ref: verse['ref'] ?? '',
+                    text: verse['text'] ?? '',
+                    bannerText: verse['title'] ?? '',
+                    icon: "📖",
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Hadis Card
+                  _buildDailyTextCard(
+                    title: "Günün Hadis-i Şerifi",
+                    ref: hadith['ref'] ?? '',
+                    text: hadith['text'] ?? '',
+                    bannerText: hadith['title'] ?? '',
+                    icon: "📜",
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Gunun Isimleri Card with background image bebekler.png
+                  Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/bebekler.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        color: Colors.white.withOpacity(
+                          0.88,
+                        ), // Soft overlay to ensure readability
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  "👶",
+                                  style: TextStyle(fontSize: 22),
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  "Günün İsim Önerileri",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Color(0xFF1E5E43),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  children: [
+                                    const Text(
+                                      "Kız Bebek",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      names['kiz'] ?? '',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.pink,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  height: 30,
+                                  width: 1,
+                                  color: Colors.grey[300],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text(
+                                      "Erkek Bebek",
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      names['erkek'] ?? '',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Geliştirici Mesajı Banner - navigates to Premium screen
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PremiumScreen(),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 3,
+                      color: const Color(0xFFEAF7F1), // Soft green banner bg
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Geliştiricinin size mesajı var",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Color(0xFF1E5E43),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Namaz Vakitleri mobil uygulamamızı tercih ettiğiniz için teşekkür ederiz. Dualarınızda bizleri de eksik etmeyin.",
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      color: Colors.grey[800],
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Image.asset(
+                              'assets/gelistirici.png',
+                              width: 70,
+                              height: 70,
+                              fit: BoxFit.contain,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+          ),
+        ],
+    

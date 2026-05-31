@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.gemini/
+*.zip
+*.apk
+*.png
+*.xml
+apk_extracted/
+build/
+.dart_tool/
+.pub-cache/
+.pub/

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Namaz Vakitleri & Dini Bilgiler</title>
+  <meta name="description" content="Diyanet İşleri Başkanlığı uyumlu ezan vakitleri, zikirmatik, kible bulucu ve dini rehber mobil uygulaması.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Progressive Web App Simulator -->
+  <div class="app-container">
+    
+    <!-- Mobile Status Bar Mockup -->
+    <div class="status-bar">
+      <div id="status-bar-time">22:28</div>
+      <div class="status-bar-icons">
+        <span>📶</span>
+        <span>🌐</span>
+        <span>🔋</span>
+      </div>
+    </div>
+
+    <!-- App Loader overlay -->
+    <div class="app-loader-overlay" id="app-loader">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- SCREEN 1: VAKITLER (MAIN SCREEN) -->
+    <div id="tab-vakitler" class="app-content" style="display: block;">
+      
+      <!-- Top header layout -->
+      <div class="app-header">
+        <div class="location-box">
+          <div class="location-icon">📍</div>
+          <div>
+            <div class="location-title" id="vakitler-location">İstanbul/Fatih</div>
+            <div class="location-subtitle" id="vakitler-change-location">Lokasyonu Değiştir</div>
+          </div>
+        </div>
+        <div class="date-box">
+          <div class="gregorian-date" id="vakitler-gregorian-date">21 Mayıs 2026</div>
+          <div class="hijri-date" id="vakitler-hijri-date">4 Zilhicce 1447</div>
+        </div>
+      </div>
+
+      <!-- Main countdown display -->
+      <div class="countdown-section">
+        <div class="vakit-label" id="timer-vakit-name">İmsak Vaktine</div>
+        <div class="vakit-timer" id="timer-countdown">05:05:28</div>
+        <div class="progress-container">
+          <div class="progress-bar" id="timer-progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- Header actions row -->
+      <div class="header-actions-row">
+        <button class="header-action-btn ripple" id="btn-monthly-calendar">
+          <span>📅</span> Aylık Namaz Vakitleri
+        </button>
+        <button class="header-action-btn ripple" id="btn-adhan-notifications">
+          <span>🔔</span> Ezan Bildirimleri
+        </button>
+      </div>
+
+      <!-- Prayer times horizontal grid -->
+      <div class="prayer-times-container">
+        <div class="prayer-grid" id="vakitler-times-grid">
+          <!-- Populated dynamically via app.js -->
+        </div>
+      </div>
+
+      <!-- Circular action links row -->
+      <div class="circular-actions-row">
+        <div class="circle-action-item" id="action-dini-danisman">
+          <div class="circle-action-img">
+            <img src="assets/dini_danisman.png" alt="Dini Danışman">
+          </div>
+          <div class="circle-action-text">Dini Danışman</div>
+        </div>
+        <div class="circle-action-item" id="action-mekke">
+          <div class="circle-action-img">
+            <img src="assets/mekke.png" alt="Mekke">
+          </div>
+          <div class="circle-action-text">Mekke</div>
+        </div>
+        <div class="circle-action-item" id="action-ramazan">
+          <div class="circle-action-img">
+            <img src="assets/ramazan.png" alt="Ramazan">
+          </div>
+          <div class="circle-action-text">Ramazan</div>
+        </div>
+        <div class="circle-action-item" id="action-tebrik">
+          <div class="circle-action-img">
+            <img src="assets/tebrik.png" alt="Tebrik">
+          </div>
+          <div class="circle-action-text">Tebrik</div>
+        </div>
+      </div>
+
+      <!-- Card: Vaktin Ayeti -->
+      <div class="info-card ornamental">
+        <div class="info-card-header">
+          <span class="info-card-icon">📖</span>
+          <span class="info-card-title">Vaktin Ayeti</span>
+        </div>
+        <div class="info-card-subtitle" id="ayet-title">Talak - 3. Ayet</div>
+        <div class="info-card-body" id="ayet-text">
+          Şüphesiz Allah, muttakilerin dostu, yardımcısı ve koruyucusudur. (Casiye - 19)
+        </div>
+      </div>
+
+      <!-- Banner: Waving Developer Message -->
+      <div class="dev-banner" id="dev-message-banner" style="cursor: pointer;">
+        <img src="assets/gelistirici.png" alt="Geliştirici">
+        <div class="dev-banner-content">
+          <div class="dev-banner-title">SELAMÜN ALEYKÜM</div>
+          <div class="dev-banner-desc">Geliştiricinin size bir mesajı var!</div>
+        </div>
+      </div>
+
+      <!-- Card: Vaktin Hadisi -->
+      <div class="info-card hadith-card">
+        <div class="info-card-header">
+          <span class="info-card-icon">🌙</span>
+          <span class="info-card-title">Vaktin Hadisi</span>
+        </div>
+        <div class="info-card-subtitle" id="hadis-title">Hadis-i Şerif Ebû Hüreyre</div>
+        <div class="info-card-body" id="hadis-text">
+          Kim Kadir gecesini imanla ihya ederse, geçmiş günahları bağışlanır. (Buhari)
+        </div>
+      </div>
+
+      <!-- Card: Günün İsimleri -->
+      <div class="info-card baby-card">
+        <div class="baby-card-content">
+          <div class="info-card-header">
+            <span class="info-card-icon">👶</span>
+            <span class="info-card-title">Günün İsimleri</span>
+          </div>
+          <div style="font-size:12px; margin-top:5px; font-weight:600; display:flex; gap:15px;">
+            <div>
+              <div style="color:var(--text-secondary);">Kız İsmi</div>
+              <div style="font-size:15px; font-weight:800; color:var(--text-primary);" id="isimler-kiz">Melisa</div>
+            </div>
+            <div>
+              <div style="color:var(--text-secondary);">Erkek İsmi</div>
+              <div style="font-size:15px; font-weight:800; color:var(--text-primary);" id="isimler-erkek">Eymen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SCREEN 2,3,4: ARACLAR (TOOLS SCREEN) -->
+    <div id="tab-araclar" class="app-content" style="display: none; padding-top: 20px;">
+      <!-- Populated dynamically via tools.js -->
+    </div>
+
+    <!-- SCREEN 5: AYARLAR (SETTINGS SCREEN) -->
+    <div id="tab-ayarlar" class="app-content" style="display: none; padding-top: 20px;">
+      <!-- Populated dynamically via app.js -->
+    </div>
+
+    <!-- BOTTOM TAB NAVIGATION BAR -->
+    <div class="bottom-nav">
+      <div class="nav-item active" id="nav-vakitler">
+        <div class="nav-icon">⏰</div>
+        <div>Vakitler</div>
+      </div>
+      <div class="nav-item" id="nav-araclar">
+        <div class="nav-icon">📖</div>
+        <div>Araçlar</div>
+      </div>
+      <div class="nav-item" id="nav-ayarlar">
+        <div class="nav-icon">⚙️</div>
+        <div>Ayarlar</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Keep status bar time updated
+    const updateStatusTime = () => {
+      const now = new Date();
+      document.getElementById('status-bar-time').textContent = 
+        `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    };
+    setInterval(updateStatusTime, 60000);
+    updateStatusTime();
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
