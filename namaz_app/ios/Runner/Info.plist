@@ -66,5 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Namaz vakitlerini ve yakındaki camileri doğru hesaplayabilmek için konumunuza ihtiyaç duyuyoruz.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Namaz vakitlerini ve yakındaki camileri doğru hesaplayabilmek için konumunuza ihtiyaç duyuyoruz.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Namaz vakitlerini ve yakındaki camileri doğru hesaplayabilmek için konumunuza ihtiyaç duyuyoruz.</string>
 </dict>
 </plist>
