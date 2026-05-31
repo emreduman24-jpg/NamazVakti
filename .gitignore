@@ -3,7 +3,10 @@ dist/
 .gemini/
 *.zip
 *.apk
-*.png
+desktop_screenshot*.png
+screencap.png
+emulator_screencap.png
+current_screen.png
 *.xml
 apk_extracted/
 build/
