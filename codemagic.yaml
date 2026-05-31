@@ -1,0 +1,23 @@
+workflows:
+  ios-build:
+    name: iOS Flutter Build
+    instance_type: mac_mini_m1
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+    scripts:
+      - name: Build Flutter iOS app
+        script: |
+          cd namaz_app
+          flutter pub get
+          flutter build ios --debug --no-codesign
+          cd build/ios/iphoneos
+          zip -r Runner.zip Runner.app
+    artifacts:
+      - namaz_app/build/ios/iphoneos/*.zip
