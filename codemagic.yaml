@@ -16,7 +16,7 @@ workflows:
         script: |
           cd namaz_app
           flutter pub get
-          flutter build ios --debug --no-codesign
+          flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           zip -r Runner.zip Runner.app
     artifacts:
