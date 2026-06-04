@@ -112,6 +112,51 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _showLoadingDialog(String message) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => PopScope(
+        canPop: false,
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            margin: const EdgeInsets.symmetric(horizontal: 40),
+            decoration: BoxDecoration(
+              color: dark ? const Color(0xFF121B2C).withOpacity(0.95) : Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(color: Color(0xFF27A770)),
+                const SizedBox(height: 20),
+                Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: dark ? Colors.white : const Color(0xFF1E5E43),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   String normalizeString(String str) {
     return str
         .replaceAll('İ', 'i')
@@ -128,14 +173,12 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _autoDetectAndSaveLocation() async {
-    setState(() {
-      _loading = true;
-    });
+    _showLoadingDialog("Konumunuz GPS ile tespit ediliyor...");
 
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        setState(() => _loading = false);
+        if (mounted) Navigator.pop(context);
         _showSnackBar("Lütfen telefonunuzun konum servisini (GPS) açın.");
         return;
       }
@@ -144,14 +187,14 @@ class SettingsScreenState extends State<SettingsScreen> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          setState(() => _loading = false);
+          if (mounted) Navigator.pop(context);
           _showSnackBar("Konum izni verilmedi.");
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        setState(() => _loading = false);
+        if (mounted) Navigator.pop(context);
         _showSnackBar("Konum izni reddedildi. Lütfen ayarlardan izin verin.");
         return;
       }
@@ -261,6 +304,7 @@ class SettingsScreenState extends State<SettingsScreen> {
             await _repository.saveLocation(cityName, cityId, districtName, districtId);
             await _notificationService.schedulePrayerAlarms(times);
 
+            if (mounted) Navigator.pop(context);
             _showSnackBar("Konum GPS ile güncellendi: $cityName/$districtName", success: true);
             await loadSettings();
             widget.onLocationChanged?.call();
@@ -269,11 +313,11 @@ class SettingsScreenState extends State<SettingsScreen> {
         }
       }
       
-      setState(() => _loading = false);
+      if (mounted) Navigator.pop(context);
       _showSnackBar("Konum otomatik eşleşmedi. Lütfen listeden manuel seçin.");
     } catch (e) {
       debugPrint("GPS auto-detect error: $e");
-      setState(() => _loading = false);
+      if (mounted) Navigator.pop(context);
       _showSnackBar("Konum alınırken hata oluştu. Lütfen listeden manuel seçin.");
     }
   }
