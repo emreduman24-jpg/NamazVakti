@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import '../data/prayer_repository.dart';
 import '../data/prayer_data.dart';
+import '../data/prayer_tracker_state.dart';
 import '../services/notification_service.dart';
 import 'notification_settings_screen.dart';
 import 'premium_screen.dart';
@@ -25,12 +26,13 @@ class MainScreen extends StatefulWidget {
   });
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> {
   final PrayerRepository _repository = PrayerRepository();
   final NotificationService _notificationService = NotificationService();
+  final PrayerTrackerState _trackerState = PrayerTrackerState();
 
   String normalizeString(String str) {
     return str
@@ -187,11 +189,37 @@ class _MainScreenState extends State<MainScreen> {
           
           final districts = await _repository.getDistricts(cityId);
           
-          Map<String, dynamic> matchedDistrict = districts.firstWhere(
-            (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')),
-            orElse: () => <String, dynamic>{},
-          );
+          // Robust Tuzla / Merkez matching logic to avoid "İSTANBUL" district overtaking specific sub-localities
+          Map<String, dynamic> matchedDistrict = <String, dynamic>{};
+          final String normalizedCityName = normalizeString(cityName);
+          
+          // 1. Try exact match for geoData's specific locality (e.g., "tuzla") ONLY if it's not the same as the city name
+          final String? locality = geoData['locality'] != null ? normalizeString(geoData['locality']) : null;
+          if (locality != null && locality != normalizedCityName) {
+            matchedDistrict = districts.firstWhere(
+              (dist) => normalizeString(dist['IlceAdi'] ?? '') == locality,
+              orElse: () => <String, dynamic>{},
+            );
+          }
+          
+          // 2. Prioritize sub-locality names in geoNames that are NOT equal to the city-level name matching
+          if (matchedDistrict.isEmpty) {
+            matchedDistrict = districts.firstWhere(
+              (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')) &&
+                        normalizeString(dist['IlceAdi'] ?? '') != normalizedCityName,
+              orElse: () => <String, dynamic>{},
+            );
+          }
+          
+          // 3. Fallback to any geoNames match
+          if (matchedDistrict.isEmpty) {
+            matchedDistrict = districts.firstWhere(
+              (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')),
+              orElse: () => <String, dynamic>{},
+            );
+          }
 
+          // 4. Default fallback to districts[0]
           if (matchedDistrict.isEmpty) {
             matchedDistrict = districts.isNotEmpty ? districts[0] : <String, dynamic>{};
           }
@@ -209,7 +237,7 @@ class _MainScreenState extends State<MainScreen> {
             await _notificationService.schedulePrayerAlarms(times);
 
             Navigator.pop(context); // Dismiss loading dialog
-            _showSnackBar("Konum GPS ile güncellendi: $cityName/$districtName", success: true);
+            _showSnackBar("Konum GPS ile güncellendi: ${_formatTurkishCity(cityName)} / ${_formatTurkishDistrict(districtName)}", success: true);
             
             // Reload home screen in-place immediately
             widget.onLocationChanged?.call();
@@ -227,185 +255,396 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  String _formatTurkishCity(String city) {
+    if (city.isEmpty) return '';
+    return city
+        .replaceAll('i', 'İ')
+        .replaceAll('ı', 'I')
+        .replaceAll('ş', 'Ş')
+        .replaceAll('ç', 'Ç')
+        .replaceAll('ğ', 'Ğ')
+        .replaceAll('ü', 'Ü')
+        .replaceAll('ö', 'Ö')
+        .toUpperCase();
+  }
+
+  String _formatTurkishDistrict(String district) {
+    if (district.isEmpty) return '';
+    
+    String lower = district
+        .replaceAll('İ', 'i')
+        .replaceAll('I', 'ı')
+        .replaceAll('Ş', 'ş')
+        .replaceAll('Ç', 'ç')
+        .replaceAll('Ğ', 'ğ')
+        .replaceAll('Ü', 'ü')
+        .replaceAll('Ö', 'ö')
+        .toLowerCase();
+        
+    List<String> words = lower.split(' ');
+    List<String> formattedWords = [];
+    
+    for (var word in words) {
+      if (word.isEmpty) continue;
+      
+      String firstChar = word.substring(0, 1);
+      String rest = word.substring(1);
+      
+      String upperFirst = firstChar
+          .replaceAll('i', 'İ')
+          .replaceAll('ı', 'I')
+          .replaceAll('ş', 'Ş')
+          .replaceAll('ç', 'Ç')
+          .replaceAll('ğ', 'Ğ')
+          .replaceAll('ü', 'Ü')
+          .replaceAll('ö', 'Ö')
+          .toUpperCase();
+          
+      formattedWords.add(upperFirst + rest);
+    }
+    
+    return formattedWords.join(' ');
+  }
+
   void _showLocationChangeSheet(BuildContext context) {
-    final String city = _location['cityName'] ?? 'Bilinmiyor';
-    final String district = _location['districtName'] ?? 'Bilinmiyor';
+    final String rawCity = _location['cityName'] ?? 'Bilinmiyor';
+    final String rawDistrict = _location['districtName'] ?? 'Bilinmiyor';
+
+    final String city = _formatTurkishCity(rawCity);
+    String district = _formatTurkishDistrict(rawDistrict);
+
+    if (rawCity.trim().toLowerCase() == rawDistrict.trim().toLowerCase()) {
+      district = 'Merkez';
+    }
+
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    List<Map<String, dynamic>> citiesList = [];
+    List<Map<String, dynamic>> districtsList = [];
+    Map<String, dynamic>? selectedCity;
+    Map<String, dynamic>? selectedDistrict;
+    bool loadingCities = true;
+    bool loadingDistricts = false;
+    bool savingLocation = false;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (BuildContext context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Pull handle
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[350],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setSheetState) {
+            if (citiesList.isEmpty && loadingCities) {
+              _repository.getCities().then((cities) {
+                if (context.mounted) {
+                  setSheetState(() {
+                    citiesList = cities;
+                    loadingCities = false;
+                  });
+                }
+              }).catchError((e) {
+                if (context.mounted) {
+                  setSheetState(() {
+                    loadingCities = false;
+                  });
+                }
+              });
+            }
 
-                // Title and Icon
-                Row(
+            print("Builder State - selectedCity: $selectedCity, selectedDistrict: $selectedDistrict, savingLocation: $savingLocation");
+            return SafeArea(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF27A770).withOpacity(0.12),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.location_on,
-                        color: Color(0xFF27A770),
-                        size: 26,
+                    // Pull handle
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: dark ? Colors.white24 : Colors.grey[350],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 14),
-                    const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 24),
+
+                    // Title and Icon
+                    Row(
                       children: [
-                        Text(
-                          "Lokasyon Değiştir",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1E5E43),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF27A770).withOpacity(0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.location_on,
+                            color: Color(0xFF27A770),
+                            size: 26,
                           ),
                         ),
-                        SizedBox(height: 2),
-                        Text(
-                          "Namaz vakitleri için yeni konum seçin",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Lokasyon Değiştir",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: dark ? Colors.white : const Color(0xFF1E5E43),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                "Namaz vakitleri için yeni konum seçin",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: dark ? Colors.white60 : Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
-                const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                // Current Location Info Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF3F8F5),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFF27A770).withOpacity(0.2)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Text(
-                        "📍",
-                        style: TextStyle(fontSize: 18),
+                    // Current Location Info Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFF3F8F5),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFF27A770).withOpacity(0.2)),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Mevcut Konumunuz",
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w600,
-                              ),
+                      child: Row(
+                        children: [
+                          const Text(
+                            "📍",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Mevcut Konumunuz",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: dark ? Colors.white60 : Colors.grey,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "$city / $district",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: dark ? Colors.white : Colors.black87,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 2),
-                            Text(
-                              "$city / $district",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    if (savingLocation)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: CircularProgressIndicator(color: Color(0xFF27A770)),
+                        ),
+                      )
+                    else ...[
+                      // Auto GPS Option
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF1E5E43),
+                            foregroundColor: Colors.white,
+                            elevation: 1,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                          ],
+                          ),
+                          icon: const Icon(Icons.gps_fixed, size: 20, color: Color(0xFFD4AF37)),
+                          label: const Text(
+                            "Cihaz Konumunu Kullan (Otomatik)",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          onPressed: () async {
+                            Navigator.pop(context); // Close bottom sheet
+                            await _autoDetectAndSaveLocation();
+                          },
                         ),
                       ),
+                      const SizedBox(height: 16),
+
+                      const Divider(height: 20, color: Colors.white12),
+                      const SizedBox(height: 8),
+
+                      // City Dropdown
+                      if (loadingCities)
+                        const Center(child: CircularProgressIndicator(color: Color(0xFF27A770)))
+                      else
+                        DropdownButtonFormField<Map<String, dynamic>>(
+                          dropdownColor: dark ? const Color(0xFF131D31) : Colors.white,
+                          style: TextStyle(color: dark ? Colors.white : Colors.black87),
+                          decoration: InputDecoration(
+                            labelText: "Şehir Seçin",
+                            labelStyle: TextStyle(color: dark ? Colors.white70 : Colors.grey[700]),
+                            filled: true,
+                            fillColor: dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: const Icon(Icons.location_city, color: Color(0xFF27A770)),
+                          ),
+                          value: selectedCity,
+                          items: citiesList.map((c) {
+                            return DropdownMenuItem<Map<String, dynamic>>(
+                              value: c,
+                              child: Text(c['SehirAdi'] ?? ''),
+                            );
+                          }).toList(),
+                          onChanged: (val) async {
+                            print("Dropdown City changed: $val");
+                            setSheetState(() {
+                              selectedCity = val;
+                              selectedDistrict = null;
+                              loadingDistricts = true;
+                            });
+                            if (val != null) {
+                              final dists = await _repository.getDistricts(val['SehirID'].toString());
+                              print("Fetched districts for city ${val['SehirID']}: $dists");
+                              setSheetState(() {
+                                districtsList = dists;
+                                loadingDistricts = false;
+                              });
+                            }
+                          },
+                        ),
+                      const SizedBox(height: 16),
+
+                      // District Dropdown
+                      if (selectedCity != null) ...[
+                        if (loadingDistricts)
+                          const Center(child: CircularProgressIndicator(color: Color(0xFF27A770)))
+                        else
+                          DropdownButtonFormField<Map<String, dynamic>>(
+                            dropdownColor: dark ? const Color(0xFF131D31) : Colors.white,
+                            style: TextStyle(color: dark ? Colors.white : Colors.black87),
+                            decoration: InputDecoration(
+                              labelText: "İlçe Seçin",
+                              labelStyle: TextStyle(color: dark ? Colors.white70 : Colors.grey[700]),
+                              filled: true,
+                              fillColor: dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide.none,
+                              ),
+                              prefixIcon: const Icon(Icons.map, color: Color(0xFF27A770)),
+                            ),
+                            value: selectedDistrict,
+                            items: districtsList.map((d) {
+                              return DropdownMenuItem<Map<String, dynamic>>(
+                                value: d,
+                                child: Text(d['IlceAdi'] ?? ''),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              print("Dropdown District changed: $val");
+                              setSheetState(() {
+                                selectedDistrict = val;
+                              });
+                            },
+                          ),
+                        const SizedBox(height: 24),
+                      ],
+
+                      // Action Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(
+                              "İptal",
+                              style: TextStyle(
+                                color: dark ? Colors.white70 : Colors.grey[700],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF27A770),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            ),
+                            onPressed: (selectedCity == null || selectedDistrict == null)
+                                ? null
+                                : () async {
+                                    setSheetState(() => savingLocation = true);
+                                    try {
+                                      final String cityName = selectedCity!['SehirAdi'];
+                                      final String cityId = selectedCity!['SehirID'].toString();
+                                      final String districtName = selectedDistrict!['IlceAdi'];
+                                      final String districtId = selectedDistrict!['IlceID'].toString();
+
+                                      final times = await _repository.getPrayerTimes(districtId, forceRefresh: true);
+                                      await _repository.saveLocation(cityName, cityId, districtName, districtId);
+                                      await _notificationService.schedulePrayerAlarms(times);
+
+                                      // Refresh state of main screen in-place
+                                      await loadData();
+
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        _showSnackBar("Konum başarıyla güncellendi: $cityName / $districtName", success: true);
+                                      }
+                                      widget.onLocationChanged?.call();
+                                    } catch (e) {
+                                      setSheetState(() => savingLocation = false);
+                                      _showSnackBar("Konum güncellenirken hata oluştu.");
+                                    }
+                                  },
+                            child: const Text(
+                              "Konumu Güncelle",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
-                  ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-
-                // Auto GPS Option
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E5E43),
-                      foregroundColor: Colors.white,
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    icon: const Icon(Icons.gps_fixed, size: 20, color: Color(0xFFD4AF37)),
-                    label: const Text(
-                      "Cihaz Konumunu Kullan (Otomatik)",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () async {
-                      Navigator.pop(context); // Close bottom sheet
-                      await _autoDetectAndSaveLocation();
-                    },
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Manual Selection Option
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF27A770),
-                      side: const BorderSide(color: Color(0xFF27A770), width: 1.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    icon: const Icon(Icons.map, size: 20),
-                    label: const Text(
-                      "Listeden Manuel Seç",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () async {
-                      Navigator.pop(context); // Close bottom sheet
-                      // Clear location and go to onboarding step 3
-                      await _repository.clearLocation();
-                      await _notificationService.cancelAllAlarms();
-                      widget.onLocationReset();
-                    },
-                  ),
-                ),
-                const SizedBox(height: 12),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -431,22 +670,30 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
-    _dayIndex = DateTime.now().day % 5; // To rotate daily cards
+    loadData();
+    _dayIndex = (DateTime.now().day + DateTime.now().month * 30) % VAKTIN_AYETLERI.length; // To rotate daily cards across 60 items
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted && _todayTimes != null) {
         _updateCountdown();
       }
     });
+    _trackerState.addListener(_onTrackerStateChanged);
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _trackerState.removeListener(_onTrackerStateChanged);
     super.dispose();
   }
 
-  Future<void> _loadData() async {
+  void _onTrackerStateChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> loadData() async {
     setState(() {
       _loading = true;
     });
@@ -604,7 +851,7 @@ class _MainScreenState extends State<MainScreen> {
               const Text("Seçili konum bulunamadı."),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => widget.onTabChange(2), // Redirect to settings
+                onPressed: () => widget.onTabChange(4), // Redirect to settings
                 child: const Text("Konum Seç"),
               ),
             ],
@@ -614,8 +861,17 @@ class _MainScreenState extends State<MainScreen> {
     }
 
     final theme = Theme.of(context);
-    final String city = _location['cityName'] ?? '';
-    final String district = _location['districtName'] ?? '';
+    final String rawCity = _location['cityName'] ?? '';
+    final String rawDistrict = _location['districtName'] ?? '';
+
+    final String city = _formatTurkishCity(rawCity);
+    String district = _formatTurkishDistrict(rawDistrict);
+
+    if (rawCity.trim().toLowerCase() == rawDistrict.trim().toLowerCase()) {
+      district = 'Merkez';
+    }
+
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     final String dateUzun = _todayTimes!['MiladiTarihUzun'] ?? '';
     final String hicriUzun = _todayTimes!['HicriTarihUzun'] ?? '';
 
@@ -625,9 +881,7 @@ class _MainScreenState extends State<MainScreen> {
     final names = GUNUN_ISIMLERI[_dayIndex];
 
     return Scaffold(
-      backgroundColor: const Color(
-        0xFFF8FBF9,
-      ), // Extremely clean, premium light grey-green background
+      backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF8FBF9),
       body: CustomScrollView(
         slivers: [
           // 1. Sleek Light Header with Subtle Motif Background
@@ -635,13 +889,18 @@ class _MainScreenState extends State<MainScreen> {
             child: Container(
               margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF1E5E43),
-                    Color(0xFF27A770),
-                  ],
+                  colors: dark
+                      ? [
+                          const Color(0xFF16251C), // Koyu yeşil (geliştirici mesaj kutusu rengi)
+                          const Color(0xFF0E1A13), // Daha derin orman yeşili
+                        ]
+                      : [
+                          const Color(0xFF1E5E43),
+                          const Color(0xFF27A770),
+                        ],
                 ),
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(28),
@@ -670,7 +929,12 @@ class _MainScreenState extends State<MainScreen> {
 
                   // Content padding
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                    padding: EdgeInsets.fromLTRB(
+                      20,
+                      MediaQuery.of(context).padding.top + 12,
+                      20,
+                      20,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -936,25 +1200,30 @@ class _MainScreenState extends State<MainScreen> {
                     title: 'Dini Danışman',
                     imagePath: 'assets/dini_danisman.png',
                     onTap: () =>
-                        widget.onOpenTool('soru-cevap', 'Dini Danışman'),
+                        widget.onOpenTool('dini-hoca', 'Dini Hoca'),
                   ),
                   _buildCircularQuickAction(
-                    title: 'Mekke Canlı',
-                    imagePath: 'assets/mekke.png',
+                    title: 'Kuran-ı Kerim',
+                    imagePath: 'assets/dini_bilgiler.png',
                     onTap: () =>
-                        widget.onOpenTool('kabe-izle', 'Mekke Canlı Kabe'),
+                        widget.onOpenTool('kuran-kerim', 'Kuran-ı Kerim'),
                   ),
                   _buildCircularQuickAction(
-                    title: 'Ramazan',
-                    imagePath: 'assets/ramazan.png',
+                    title: 'Zikir',
+                    imagePath: 'assets/zikir.png',
                     onTap: () =>
-                        widget.onOpenTool('ramazan-hakkinda', 'Ramazan'),
+                        widget.onOpenTool('zikirmatik', 'Zikirmatik'),
                   ),
                   _buildCircularQuickAction(
-                    title: 'Tebrik Kartı',
-                    imagePath: 'assets/tebrik.png',
+                    title: 'Dualar',
+                    imagePath: 'assets/dualar.png',
                     onTap: () =>
-                        widget.onOpenTool('dua-iste', 'Tebrik Kartları'),
+                        widget.onOpenTool('gunluk-dualar', 'Dualar'),
+                  ),
+                  _buildCircularQuickAction(
+                    title: 'Dini Bilgiler',
+                    imagePath: 'assets/kuran_kerim.png',
+                    onTap: () => widget.onTabChange(3),
                   ),
                 ],
               ),
@@ -967,126 +1236,11 @@ class _MainScreenState extends State<MainScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  // Ayet Card
-                  _buildDailyTextCard(
-                    title: "Günün Ayeti",
-                    ref: verse['ref'] ?? '',
-                    text: verse['text'] ?? '',
-                    bannerText: verse['title'] ?? '',
-                    icon: "📖",
-                  ),
+                  // 1. Namaz Takibi Card (formerly 2nd)
+                  _buildHomePrayerTrackerCard(),
                   const SizedBox(height: 16),
 
-                  // Hadis Card
-                  _buildDailyTextCard(
-                    title: "Günün Hadis-i Şerifi",
-                    ref: hadith['ref'] ?? '',
-                    text: hadith['text'] ?? '',
-                    bannerText: hadith['title'] ?? '',
-                    icon: "📜",
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Gunun Isimleri Card with background image bebekler.png
-                  Card(
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/bebekler.png'),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Container(
-                        color: Colors.white.withOpacity(
-                          0.88,
-                        ), // Soft overlay to ensure readability
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Text(
-                                  "👶",
-                                  style: TextStyle(fontSize: 22),
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  "Günün İsim Önerileri",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                    color: Color(0xFF1E5E43),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Divider(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Column(
-                                  children: [
-                                    const Text(
-                                      "Kız Bebek",
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      names['kiz'] ?? '',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.pink,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Container(
-                                  height: 30,
-                                  width: 1,
-                                  color: Colors.grey[300],
-                                ),
-                                Column(
-                                  children: [
-                                    const Text(
-                                      "Erkek Bebek",
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      names['erkek'] ?? '',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Geliştirici Mesajı Banner - navigates to Premium screen
+                  // 2. Geliştirici Mesajı Banner (formerly 5th, now in the middle of Namaz Takibi and Günün Ayeti)
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -1098,7 +1252,7 @@ class _MainScreenState extends State<MainScreen> {
                     },
                     child: Card(
                       elevation: 3,
-                      color: const Color(0xFFEAF7F1), // Soft green banner bg
+                      color: dark ? const Color(0xFF16251C) : const Color(0xFFEAF7F1), // Soft green banner bg
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -1113,12 +1267,12 @@ class _MainScreenState extends State<MainScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     "Geliştiricinin size mesajı var",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
-                                      color: Color(0xFF1E5E43),
+                                      color: dark ? const Color(0xFF27A770) : const Color(0xFF1E5E43),
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -1126,7 +1280,7 @@ class _MainScreenState extends State<MainScreen> {
                                     "Namaz Vakitleri mobil uygulamamızı tercih ettiğiniz için teşekkür ederiz. Dualarınızda bizleri de eksik etmeyin.",
                                     style: TextStyle(
                                       fontSize: 12.5,
-                                      color: Colors.grey[800],
+                                      color: dark ? Colors.white70 : Colors.grey[800],
                                       height: 1.4,
                                     ),
                                   ),
@@ -1145,7 +1299,126 @@ class _MainScreenState extends State<MainScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 16),
+
+                  // 3. Ayet Card (formerly 1st)
+                  _buildDailyTextCard(
+                    title: "Günün Ayeti",
+                    ref: verse['ref'] ?? '',
+                    text: verse['text'] ?? '',
+                    bannerText: verse['title'] ?? '',
+                    icon: "📖",
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 4. Hadis Card
+                  _buildDailyTextCard(
+                    title: "Günün Hadis-i Şerifi",
+                    ref: hadith['ref'] ?? '',
+                    text: hadith['text'] ?? '',
+                    bannerText: hadith['title'] ?? '',
+                    icon: "📜",
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 5. Gunun Isimleri Card with background image bebekler.png
+                  Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/bebekler.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      child: Container(
+                        color: dark
+                            ? const Color(0xFF131D31).withOpacity(0.88)
+                            : Colors.white.withOpacity(0.88), // Soft overlay to ensure readability
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text(
+                                  "👶",
+                                  style: TextStyle(fontSize: 22),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  "Günün İsim Önerileri",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: dark ? const Color(0xFF27A770) : const Color(0xFF1E5E43),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Divider(height: 20, color: dark ? Colors.white24 : Colors.grey[300]),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Kız Bebek",
+                                      style: TextStyle(
+                                        color: dark ? Colors.white70 : Colors.black54,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      names['kiz'] ?? '',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: dark ? Colors.pinkAccent : Colors.pink,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  height: 30,
+                                  width: 1,
+                                  color: dark ? Colors.white24 : Colors.grey[300],
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "Erkek Bebek",
+                                      style: TextStyle(
+                                        color: dark ? Colors.white70 : Colors.black54,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      names['erkek'] ?? '',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: dark ? Colors.blueAccent : Colors.blue,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -1195,14 +1468,15 @@ class _MainScreenState extends State<MainScreen> {
     required String imagePath,
     required VoidCallback onTap,
   }) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
         child: Column(
           children: [
             Container(
-              width: 58,
-              height: 58,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -1218,8 +1492,8 @@ class _MainScreenState extends State<MainScreen> {
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.cover,
-                  width: 58,
-                  height: 58,
+                  width: 52,
+                  height: 52,
                   errorBuilder: (context, error, stackTrace) {
                     return const Center(
                       child: Icon(Icons.image, color: Colors.grey),
@@ -1232,10 +1506,10 @@ class _MainScreenState extends State<MainScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 11.5,
+              style: TextStyle(
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF1E5E43),
+                color: dark ? Colors.white : const Color(0xFF1E5E43),
               ),
             ),
           ],
@@ -1251,10 +1525,11 @@ class _MainScreenState extends State<MainScreen> {
     required String bannerText,
     required String icon,
   }) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.white,
+      color: dark ? const Color(0xFF131D31) : Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -1269,10 +1544,10 @@ class _MainScreenState extends State<MainScreen> {
                     const SizedBox(width: 8),
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Color(0xFF1E5E43),
+                        color: dark ? const Color(0xFF27A770) : const Color(0xFF1E5E43),
                       ),
                     ),
                   ],
@@ -1283,15 +1558,15 @@ class _MainScreenState extends State<MainScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF27A770).withOpacity(0.15),
+                    color: const Color(0xFF27A770).withOpacity(dark ? 0.25 : 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     bannerText,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E5E43),
+                      color: dark ? const Color(0xFF27A770) : const Color(0xFF1E5E43),
                     ),
                   ),
                 ),
@@ -1300,11 +1575,11 @@ class _MainScreenState extends State<MainScreen> {
             const Divider(height: 20),
             Text(
               "“$text”",
-              style: const TextStyle(
+              style: TextStyle(
                 fontStyle: FontStyle.italic,
                 fontSize: 13.5,
                 height: 1.4,
-                color: Colors.black87,
+                color: dark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(height: 8),
@@ -1318,6 +1593,195 @@ class _MainScreenState extends State<MainScreen> {
                   color: Color(0xFF27A770),
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatTrackerDate(DateTime dt) {
+    String y = dt.year.toString();
+    String m = dt.month.toString().padLeft(2, '0');
+    String d = dt.day.toString().padLeft(2, '0');
+    return "$y-$m-$d";
+  }
+
+  int _calculateCurrentStreak() {
+    int curStreak = 0;
+    DateTime checkDate = DateTime.now();
+    
+    String todayStr = _formatTrackerDate(checkDate);
+    final todayList = _trackerState.history[todayStr] ?? [false, false, false, false, false];
+    bool todayAll = todayList.length == 5 && todayList.where((e) => e).length >= 4;
+
+    if (!todayAll) {
+      checkDate = checkDate.subtract(const Duration(days: 1));
+    }
+
+    while (true) {
+      String dateStr = _formatTrackerDate(checkDate);
+      final list = _trackerState.history[dateStr];
+      if (list != null && list.length == 5 && list.where((e) => e).length >= 4) {
+        curStreak++;
+        checkDate = checkDate.subtract(const Duration(days: 1));
+      } else {
+        break;
+      }
+    }
+    return curStreak;
+  }
+
+  Widget _buildHomePrayerButton(
+    String label,
+    bool isChecked,
+    int index,
+    String dateStr,
+    bool dark,
+  ) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: () {
+            _trackerState.togglePrayer(dateStr, index);
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isChecked
+                  ? const Color(0xFFD4AF37).withOpacity(0.15)
+                  : (dark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.02)),
+              border: Border.all(
+                color: isChecked
+                    ? const Color(0xFFD4AF37)
+                    : (dark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.08)),
+                width: isChecked ? 2.0 : 1.2,
+              ),
+              boxShadow: isChecked
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xFFD4AF37).withOpacity(0.2),
+                        blurRadius: 6,
+                        spreadRadius: 1,
+                      )
+                    ]
+                  : null,
+            ),
+            child: Center(
+              child: AnimatedScale(
+                duration: const Duration(milliseconds: 200),
+                scale: isChecked ? 1.0 : 0.0,
+                child: const Icon(
+                  Icons.check,
+                  color: Color(0xFFD4AF37),
+                  size: 22,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11.5,
+            fontWeight: isChecked ? FontWeight.bold : FontWeight.w500,
+            color: isChecked
+                ? (dark ? Colors.white : Colors.black87)
+                : (dark ? Colors.white38 : Colors.black45),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHomePrayerTrackerCard() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    final String todayStr = _formatTrackerDate(DateTime.now());
+    final todayList = _trackerState.history[todayStr] ?? [false, false, false, false, false];
+    final int currentStreak = _calculateCurrentStreak();
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: dark ? const Color(0xFF131D31) : Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Streak Row and Title
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Text("🕌", style: TextStyle(fontSize: 18)),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Namaz Takibi",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: dark ? Colors.white : const Color(0xFF1E5E43),
+                      ),
+                    ),
+                  ],
+                ),
+                // Dynamic Streak Badge (NAMAZ SERİSİ veya BAŞLANGIÇ)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: currentStreak >= 1 
+                        ? const Color(0xFFD4AF37).withOpacity(0.12)
+                        : (dark ? Colors.white10 : Colors.black.withOpacity(0.04)),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: currentStreak >= 1 
+                          ? const Color(0xFFD4AF37).withOpacity(0.4)
+                          : Colors.transparent,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        currentStreak >= 1 ? "🔥 " : "🌱 ",
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                      Text(
+                        currentStreak >= 1 ? "SERİ: $currentStreak GÜN" : "BAŞLANGIÇ",
+                        style: TextStyle(
+                          color: currentStreak >= 1 
+                              ? const Color(0xFFD4AF37)
+                              : (dark ? Colors.white60 : Colors.black54),
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            // Checkboxes Row (animated buttons)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildHomePrayerButton("Sabah", todayList[0], 0, todayStr, dark),
+                _buildHomePrayerButton("Öğle", todayList[1], 1, todayStr, dark),
+                _buildHomePrayerButton("İkindi", todayList[2], 2, todayStr, dark),
+                _buildHomePrayerButton("Akşam", todayList[3], 3, todayStr, dark),
+                _buildHomePrayerButton("Yatsı", todayList[4], 4, todayStr, dark),
+              ],
             ),
           ],
         ),

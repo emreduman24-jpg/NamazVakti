@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'data/prayer_repository.dart';
 import 'services/notification_service.dart';
 import 'screens/main_screen.dart';
+import 'screens/prayer_tracker_screen.dart';
 import 'screens/tools_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/tool_detail_screen.dart';
@@ -97,7 +99,8 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _onLocationReset() {
+  void _onLocationReset() async {
+    await _repository.clearLocation();
     setState(() {
       _locationSelected = false;
     });
@@ -120,11 +123,10 @@ class _MyAppState extends State<MyApp> {
     });
     _navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
-        builder: (context) => SplashScreen(
+        builder: (context) => MainAppContainerWrapper(
           onThemeChanged: _onThemeChanged,
           onLocationReset: _onLocationReset,
           onLocationChanged: _onLocationChanged,
-          onOnboardingComplete: _onOnboardingComplete,
         ),
       ),
       (route) => false,
@@ -223,24 +225,24 @@ class _MyAppState extends State<MyApp> {
         seedColor: const Color(0xFF27A770),
         primary: const Color(0xFF27A770),
         secondary: const Color(0xFF4CAF50),
-        background: const Color(0xFF121212),
-        surface: const Color(0xFF1E1E1E),
+        background: const Color(0xFF0A1220),
+        surface: const Color(0xFF131D31),
         brightness: Brightness.dark,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF1E1E1E),
+        backgroundColor: Color(0xFF131D31),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      scaffoldBackgroundColor: const Color(0xFF121212),
+      scaffoldBackgroundColor: const Color(0xFF0A1220),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         selectedItemColor: Color(0xFF27A770),
         unselectedItemColor: Colors.grey,
-        backgroundColor: Color(0xFF1E1E1E),
+        backgroundColor: Color(0xFF131D31),
         elevation: 8,
       ),
       cardTheme: CardThemeData(
-        color: const Color(0xFF1E1E1E),
+        color: const Color(0xFF131D31),
         elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
@@ -267,12 +269,20 @@ class MainAppContainer extends StatefulWidget {
 class _MainAppContainerState extends State<MainAppContainer> {
   int _currentIndex = 0;
   late List<Widget> _screens;
+  final GlobalKey<MainScreenState> _mainScreenKey = GlobalKey<MainScreenState>();
+  final GlobalKey<SettingsScreenState> _settingsScreenKey = GlobalKey<SettingsScreenState>();
+
+  void _handleLocationChanged() {
+    _mainScreenKey.currentState?.loadData();
+    _settingsScreenKey.currentState?.loadSettings();
+  }
 
   @override
   void initState() {
     super.initState();
     _screens = [
       MainScreen(
+        key: _mainScreenKey,
         onTabChange: (index) {
           setState(() {
             _currentIndex = index;
@@ -280,7 +290,13 @@ class _MainAppContainerState extends State<MainAppContainer> {
         },
         onOpenTool: _openToolDetail,
         onLocationReset: widget.onLocationReset,
-        onLocationChanged: widget.onLocationChanged,
+        onLocationChanged: _handleLocationChanged,
+      ),
+      const PrayerTrackerScreen(),
+      const ToolDetailScreen(
+        toolId: 'kible-bulucu',
+        toolTitle: 'Kıble Bulucu',
+        isTab: true,
       ),
       ToolsScreen(
         onOpenTool: _openToolDetail,
@@ -291,14 +307,21 @@ class _MainAppContainerState extends State<MainAppContainer> {
         },
       ),
       SettingsScreen(
+        key: _settingsScreenKey,
         onThemeChanged: widget.onThemeChanged,
         onLocationReset: widget.onLocationReset,
-        onLocationChanged: widget.onLocationChanged,
+        onLocationChanged: _handleLocationChanged,
       ),
     ];
   }
 
   void _openToolDetail(String toolId, String toolTitle) {
+    if (toolId == 'kible-bulucu') {
+      setState(() {
+        _currentIndex = 2; // Jump to Qibla Finder tab
+      });
+      return;
+    }
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -311,31 +334,218 @@ class _MainAppContainerState extends State<MainAppContainer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: CustomGlassNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Ana Sayfa',
+      ),
+    );
+  }
+}
+
+class CustomGlassNavigationBar extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  const CustomGlassNavigationBar({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+        child: SizedBox(
+          height: 64,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Layer 1: Frosted Glass Background
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(32),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: dark 
+                            ? const Color(0xFF0F172A).withOpacity(0.18)
+                            : Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(
+                          color: dark 
+                              ? Colors.white.withOpacity(0.1) 
+                              : Colors.white.withOpacity(0.4),
+                          width: 1.2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(dark ? 0.25 : 0.08),
+                            blurRadius: 20,
+                            spreadRadius: 2,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // Layer 2: Interactive Tabs Row (with overflowing Qibla Compass)
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildTab(0, Icons.home_outlined, Icons.home, 'Ana Sayfa', dark),
+                      _buildTab(1, null, null, 'Namaz', dark, isSajdah: true),
+                      _buildTab(2, null, null, 'Kıble', dark, isQibla: true),
+                      _buildTab(3, Icons.grid_view_outlined, Icons.grid_view, 'Araçlar', dark),
+                      _buildTab(4, Icons.settings_outlined, Icons.settings, 'Ayarlar', dark),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.grid_view_outlined),
-            activeIcon: Icon(Icons.grid_view),
-            label: 'Araçlar',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTab(int index, IconData? inactiveIcon, IconData? activeIcon, String label, bool dark, {bool isSajdah = false, bool isQibla = false}) {
+    final bool active = currentIndex == index;
+    final activeColor = dark ? const Color(0xFF27A770) : const Color(0xFF1E5E43);
+    final inactiveColor = dark ? Colors.white38 : Colors.black45;
+
+    Widget iconWidget;
+    if (isQibla) {
+      iconWidget = QiblaBottomTabIcon(active: active);
+    } else if (isSajdah) {
+      iconWidget = SajdahIcon(
+        size: 22, 
+        filled: active,
+      );
+      iconWidget = IconTheme(
+        data: IconThemeData(color: active ? activeColor : inactiveColor),
+        child: iconWidget,
+      );
+    } else {
+      iconWidget = Icon(
+        active ? activeIcon : inactiveIcon,
+        color: active ? activeColor : inactiveColor,
+        size: 22,
+      );
+    }
+
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => onTap(index),
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: active && !isQibla
+                  ? (dark ? Colors.white.withOpacity(0.06) : Colors.black.withOpacity(0.04))
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 28,
+                  child: OverflowBox(
+                    maxHeight: 60,
+                    maxWidth: 60,
+                    child: isQibla
+                        ? Transform.translate(
+                            offset: const Offset(0, -16),
+                            child: iconWidget,
+                          )
+                        : iconWidget,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 9.0,
+                    fontWeight: active ? FontWeight.bold : FontWeight.w500,
+                    color: active ? activeColor : inactiveColor,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
-            label: 'Ayarlar',
+        ),
+      ),
+    );
+  }
+}
+
+class QiblaBottomTabIcon extends StatelessWidget {
+  final bool active;
+  const QiblaBottomTabIcon({super.key, required this.active});
+
+  @override
+  Widget build(BuildContext context) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: active
+            ? const LinearGradient(
+                colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : LinearGradient(
+                colors: dark
+                    ? [const Color(0xFF1C2C42), const Color(0xFF131D31)]
+                    : [const Color(0xFFFFF9EE), const Color(0xFFFFF0D4)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+        boxShadow: [
+          BoxShadow(
+            color: active
+                ? const Color(0xFF27A770).withOpacity(0.3)
+                : Colors.black.withOpacity(0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
+        border: Border.all(
+          color: active ? const Color(0xFFD4AF37) : const Color(0xFFD4AF37).withOpacity(0.5),
+          width: 1.5,
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.explore,
+          size: 26,
+          color: active ? Colors.white : const Color(0xFFD4AF37),
+        ),
       ),
     );
   }
@@ -383,4 +593,160 @@ class BlockedScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class SajdahIcon extends StatelessWidget {
+  final double size;
+  final bool filled;
+
+  const SajdahIcon({
+    super.key,
+    this.size = 24.0,
+    this.filled = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final iconColor = IconTheme.of(context).color ?? const Color(0xFFD4AF37);
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(
+        painter: _SajdahIconPainter(color: iconColor, filled: filled),
+      ),
+    );
+  }
+}
+
+class _SajdahIconPainter extends CustomPainter {
+  final Color color;
+  final bool filled;
+
+  _SajdahIconPainter({required this.color, required this.filled});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Standard icon grid: 24x24
+    final double scaleX = size.width / 24.0;
+    final double scaleY = size.height / 24.0;
+    canvas.scale(scaleX, scaleY);
+
+    // Fringe paint
+    final fringePaint = Paint()
+      ..color = color.withOpacity(0.6)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round;
+
+    // Outer rug boundary: X = 5.0 to 19.0, Y = 3.5 to 20.5 (height 17)
+    final rugRect = Rect.fromLTRB(5.0, 3.5, 19.0, 20.5);
+    final rugRRect = RRect.fromRectAndRadius(rugRect, const Radius.circular(1.5));
+
+    // Inner border boundary: X = 6.5 to 17.5, Y = 5.0 to 19.0
+    final innerRect = Rect.fromLTRB(6.5, 5.0, 17.5, 19.0);
+    final innerRRect = RRect.fromRectAndRadius(innerRect, const Radius.circular(1.0));
+
+    // Mihrab arch path
+    final mihrabPath = Path();
+    mihrabPath.moveTo(8.5, 19.0);
+    mihrabPath.lineTo(8.5, 12.0);
+    mihrabPath.cubicTo(8.5, 9.5, 10.0, 8.5, 12.0, 8.5);
+    mihrabPath.cubicTo(14.0, 8.5, 15.5, 9.5, 15.5, 12.0);
+    mihrabPath.lineTo(15.5, 19.0);
+
+    // Hanging lamp path
+    final lampPath = Path();
+    lampPath.moveTo(12.0, 11.5);
+    lampPath.lineTo(13.0, 12.5);
+    lampPath.lineTo(12.0, 13.5);
+    lampPath.lineTo(11.0, 12.5);
+    lampPath.close();
+
+    // 1. Draw top & bottom fringes (in both modes)
+    for (double x = 5.0; x <= 19.1; x += 2.33) {
+      canvas.drawLine(Offset(x, 1.5), Offset(x, 3.5), fringePaint);
+      canvas.drawLine(Offset(x, 20.5), Offset(x, 22.5), fringePaint);
+    }
+
+    if (filled) {
+      // FILLED SECCADE DESIGN
+      canvas.saveLayer(Rect.fromLTWH(0, 0, 24, 24), Paint());
+
+      // Draw the solid rug base
+      final fillPaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.fill;
+      canvas.drawRRect(rugRRect, fillPaint);
+
+      // Cut out the inner border, mihrab, and lamp using BlendMode.dstOut
+      final cutPaint = Paint()
+        ..color = const Color(0xFF000000)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round
+        ..blendMode = BlendMode.dstOut;
+
+      canvas.drawRRect(innerRRect, cutPaint);
+      canvas.drawPath(mihrabPath, cutPaint);
+
+      final lampCutPaint = Paint()
+        ..color = const Color(0xFF000000)
+        ..style = PaintingStyle.fill
+        ..blendMode = BlendMode.dstOut;
+      canvas.drawPath(lampPath, lampCutPaint);
+
+      // Draw the hanging line as a stroke cutout
+      final lampLinePaint = Paint()
+        ..color = const Color(0xFF000000)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0
+        ..blendMode = BlendMode.dstOut;
+      canvas.drawLine(const Offset(12.0, 8.5), const Offset(12.0, 11.5), lampLinePaint);
+
+      canvas.restore();
+    } else {
+      // OUTLINE SECCADE DESIGN
+      final borderPaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..strokeCap = StrokeCap.round;
+
+      // Draw outer rug frame
+      canvas.drawRRect(rugRRect, borderPaint);
+
+      // Draw inner border frame (lighter/semi-transparent)
+      final innerBorderPaint = Paint()
+        ..color = color.withOpacity(0.5)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8
+        ..strokeCap = StrokeCap.round;
+      canvas.drawRRect(innerRRect, innerBorderPaint);
+
+      // Draw mihrab arch
+      final mihrabPaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round;
+      canvas.drawPath(mihrabPath, mihrabPaint);
+
+      // Draw hanging lamp
+      final lampPaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.fill;
+      canvas.drawPath(lampPath, lampPaint);
+
+      final lampLinePaint = Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0;
+      canvas.drawLine(const Offset(12.0, 8.5), const Offset(12.0, 11.5), lampLinePaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

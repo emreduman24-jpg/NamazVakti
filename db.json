@@ -7,7 +7,7 @@
       "id": 1,
       "yazar": "Ahmet Y.",
       "dua": "Hastalarımız için şifa, dertlerimiz için deva istiyoruz...",
-      "amin": 45,
+      "amin": 46,
       "durum": "yayinda",
       "tarih": "17.05.2026 01:10"
     },
@@ -15,7 +15,7 @@
       "id": 2,
       "yazar": "Fatma K.",
       "dua": "Evlatlarımızın sınavlarında başarılar dileriz, dualarınızı bekliyoruz.",
-      "amin": 12,
+      "amin": 13,
       "durum": "yayinda",
       "tarih": "17.05.2026 01:10"
     },
@@ -23,7 +23,7 @@
       "id": 3,
       "yazar": "Mehmet A.",
       "dua": "Tüm Müslümanlar için hayırlı işler diliyoruz.",
-      "amin": 28,
+      "amin": 29,
       "durum": "yayinda",
       "tarih": "17.05.2026 01:10"
     },
@@ -32,7 +32,7 @@
       "yazar": "Ayşe Y.",
       "dua": "Ülkemizin huzuru ve refahı için dualarınızı bekliyorum.",
       "amin": 0,
-      "durum": "bekliyor",
+      "durum": "yayinda",
       "tarih": "24.05.2026 12:00"
     }
   ],

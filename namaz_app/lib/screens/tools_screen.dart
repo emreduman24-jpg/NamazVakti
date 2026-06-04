@@ -80,41 +80,33 @@ class _ToolsScreenState extends State<ToolsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F8F5),
+      backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
+      appBar: AppBar(
+        title: const Text(
+          "Araçlar",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43),
+        iconTheme: const IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: false,
+        leading: widget.onClose != null
+            ? IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: widget.onClose,
+              )
+            : null,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // Header Section - Centered Green Title and Close Button
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              color: const Color(0xFFF3F8F5),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  if (widget.onClose != null)
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.close,
-                          color: Color(0xFF1E5E43),
-                          size: 28,
-                        ),
-                        onPressed: widget.onClose,
-                      ),
-                    ),
-                  const Text(
-                    "Araçlar",
-                    style: TextStyle(
-                      color: Color(0xFF1E5E43),
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
             // Search Bar
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -123,7 +115,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: dark ? const Color(0xFF131D31) : Colors.white,
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
@@ -135,6 +127,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
                 ),
                 child: TextField(
                   controller: _searchController,
+                  style: TextStyle(color: dark ? Colors.white : Colors.black87),
                   decoration: const InputDecoration(
                     hintText: "Araç ara...",
                     hintStyle: TextStyle(color: Colors.grey),
@@ -172,10 +165,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
                           )
                         : GridView.builder(
                             physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
+                            padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 100.0),
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
@@ -205,13 +195,19 @@ class _ToolsScreenState extends State<ToolsScreen> {
                                 } catch (_) {}
                               }
 
+                              Color cardBg = dark ? const Color(0xFF131D31) : bgColor;
+                              BorderSide borderSide = dark 
+                                  ? BorderSide(color: bgColor.withOpacity(0.35), width: 1.5)
+                                  : BorderSide.none;
+
                               return Card(
-                                elevation: 1,
+                                elevation: dark ? 0 : 1,
                                 shadowColor: Colors.black.withOpacity(0.1),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(18),
+                                  side: borderSide,
                                 ),
-                                color: bgColor,
+                                color: cardBg,
                                 child: InkWell(
                                   onTap: () => widget.onOpenTool(id, title),
                                   borderRadius: BorderRadius.circular(18),
@@ -224,7 +220,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
                                         Container(
                                           padding: const EdgeInsets.all(8),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(0.6),
+                                            color: dark ? Colors.white.withOpacity(0.08) : Colors.white.withOpacity(0.6),
                                             shape: BoxShape.circle,
                                           ),
                                           child: Text(
@@ -237,8 +233,8 @@ class _ToolsScreenState extends State<ToolsScreen> {
                                           title,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            color: Color(0xFF1E5E43),
+                                          style: TextStyle(
+                                            color: dark ? Colors.white : const Color(0xFF1E5E43),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 13,
                                           ),
@@ -249,7 +245,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color: Colors.grey[750],
+                                            color: dark ? Colors.white60 : Colors.grey[750],
                                             fontSize: 10,
                                             height: 1.2,
                                           ),

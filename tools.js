@@ -4,7 +4,7 @@ import {
   ESMAUL_HUSNA, DINI_GUNLER, DUALAR, HADISLER_40, KURAN_CUZLER,
   PEYGAMBER_HAYATI, RAMAZAN_HAKKINDA, ORUC_REHBERI, MOCK_CAMILER,
   TESBIHAT_STEPS, SAHABE_HAYATLARI, ISLAM_TARIHI, NAMAZ_KILMA_REHBERI,
-  VITIR_NAMAZI 
+  VITIR_NAMAZI, PEYGAMBER_REHBERI
 } from './data.js';
 import { ADDON_DATA } from './data_addon.js';
 
@@ -1045,37 +1045,979 @@ function renderCanliSohbet(container, showNotification) {
 
 // 11. PEYGAMBER HAYATI
 function renderPeygamberHayati(container) {
-  let tabsHtml = PEYGAMBER_HAYATI.map((item, index) => `
-    <button class="tab-btn ${index === 0 ? 'active' : ''}" data-index="${index}">${item.baslik.split(' ')[0]}</button>
-  `).join('');
+  // Inject custom styles once
+  let styles = document.getElementById('peygamber-styles');
+  if (!styles) {
+    styles = document.createElement('style');
+    styles.id = 'peygamber-styles';
+    styles.innerHTML = `
+      .peygamber-v2-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        animation: fadeInUp 0.4s ease;
+        color: var(--text-primary);
+        font-family: 'Outfit', 'Inter', sans-serif;
+      }
+      .peygamber-hero-v2 {
+        background: linear-gradient(135deg, #1b4d3e 0%, #2e7d32 50%, #4caf50 100%);
+        color: white;
+        padding: 24px 20px;
+        border-radius: 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(46, 125, 50, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .peygamber-hero-v2::before {
+        content: "";
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        pointer-events: none;
+      }
+      .peygamber-hero-v2::after {
+        content: "";
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        pointer-events: none;
+      }
+      .peygamber-search-box-v2 {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 4px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+      }
+      .peygamber-search-box-v2:focus-within {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(39, 167, 112, 0.15);
+      }
+      .peygamber-search-input-v2 {
+        border: none;
+        background: transparent;
+        color: var(--text-primary);
+        width: 100%;
+        padding: 10px 0;
+        font-size: 14px;
+        outline: none;
+      }
+      .peygamber-search-input-v2::placeholder {
+        color: var(--text-secondary);
+        opacity: 0.7;
+      }
+      .peygamber-grid-v2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .peygamber-card-v2 {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 18px;
+        padding: 16px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+      }
+      .peygamber-card-v2:hover {
+        transform: translateY(-4px);
+        border-color: var(--primary-color);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+      }
+      .peygamber-card-v2::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 35px;
+        height: 35px;
+        background: linear-gradient(135deg, transparent 50%, rgba(39, 167, 112, 0.05) 50%);
+        border-radius: 0 18px 0 0;
+      }
+      .peygamber-card-icon-v2 {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+      .peygamber-card-title-v2 {
+        font-size: 13.5px;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin: 0;
+      }
+      .peygamber-card-desc-v2 {
+        font-size: 11px;
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.3;
+      }
+      .peygamber-btn-back {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s;
+        font-size: 16px;
+      }
+      .peygamber-btn-back:hover {
+        background: var(--border-color);
+        transform: scale(1.05);
+      }
+      .peygamber-sub-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+      }
+      .peygamber-sub-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--primary-color);
+      }
+      .peygamber-timeline-v2 {
+        position: relative;
+        padding-left: 24px;
+        border-left: 2.5px solid var(--primary-light);
+        margin-left: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .peygamber-timeline-item-v2 {
+        position: relative;
+      }
+      .peygamber-timeline-bullet-v2 {
+        position: absolute;
+        left: -33.5px;
+        top: 2px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--card-bg);
+        border: 3px solid var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        box-shadow: var(--shadow-sm);
+      }
+      .peygamber-timeline-year-v2 {
+        font-size: 13px;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 2px;
+      }
+      .peygamber-timeline-content-v2 {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 12px 14px;
+        box-shadow: var(--shadow-xs);
+      }
+      .peygamber-family-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 15px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .peygamber-family-tab {
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .peygamber-family-tab.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 10px rgba(39,167,112,0.2);
+      }
+      .peygamber-sunnah-progress-container {
+        background: var(--primary-light);
+        border: 1px solid rgba(39, 167, 112, 0.1);
+        border-radius: 16px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .peygamber-sunnah-progress-bar-outer {
+        height: 8px;
+        background: var(--border-color);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .peygamber-sunnah-progress-bar-inner {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-color) 0%, #4caf50 100%);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+      .peygamber-sunnah-item {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 12px 14px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s;
+      }
+      .peygamber-sunnah-item.checked {
+        border-color: var(--primary-color);
+        background: rgba(39, 167, 112, 0.02);
+      }
+      .peygamber-sunnah-checkbox {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+        transition: all 0.2s;
+      }
+      .peygamber-sunnah-item.checked .peygamber-sunnah-checkbox {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        color: white;
+      }
+      .peygamber-sunnah-checkbox::after {
+        content: "✓";
+        font-size: 11px;
+        font-weight: bold;
+        visibility: hidden;
+      }
+      .peygamber-sunnah-item.checked .peygamber-sunnah-checkbox::after {
+        visibility: visible;
+      }
+      .peygamber-hadith-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 24px;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        position: relative;
+        margin-bottom: 15px;
+      }
+      .peygamber-hadith-quote {
+        font-size: 40px;
+        color: var(--primary-light);
+        line-height: 1;
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        font-family: Georgia, serif;
+      }
+      .peygamber-hadith-text {
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--text-primary);
+        font-style: italic;
+        margin-bottom: 12px;
+        z-index: 2;
+      }
+      .peygamber-hadith-source {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--primary-color);
+        z-index: 2;
+      }
+    `;
+    document.head.appendChild(styles);
+  }
 
+  // Dashboard state variables
+  let currentView = 'dashboard'; 
+  let activePeriodIndex = 0;
+  let activeHadithIndex = 0;
+  let activeFamilyTab = 'anne_baba'; 
+  let searchQuery = '';
+
+  const categories = [
+    { id: 'donemler', title: 'Hayatının Dönemleri', desc: 'Altı farklı dönemde hayat hikayesi', icon: '📖', gradient: 'linear-gradient(135deg, #2E7D32, #4CAF50)' },
+    { id: 'kronoloji', title: 'Zaman Tüneli', desc: 'Önemli olayların dikey kronolojisi', icon: '⏳', gradient: 'linear-gradient(135deg, #E65100, #FF9800)' },
+    { id: 'semail', title: 'Şemail-i Şerif', desc: 'Mübarek şahsiyeti ve fiziki özellikleri', icon: '✨', gradient: 'linear-gradient(135deg, #006064, #00ACC1)' },
+    { id: 'ahlak', title: 'Ahlak & Hatıralar', desc: 'Hayatından yaşanmış ibretli kıssalar', icon: '💚', gradient: 'linear-gradient(135deg, #1565C0, #2196F3)' },
+    { id: 'aile', title: 'Mübarek Ailesi', desc: 'Eşleri, çocukları ve soy ağacı', icon: '🏡', gradient: 'linear-gradient(135deg, #AD1457, #EC407A)' },
+    { id: 'gazveler', title: 'Gazveler & Seferler', desc: 'Bedir, Uhud, Hendek ve fetih dersleri', icon: '⚔️', gradient: 'linear-gradient(135deg, #37474F, #78909C)' },
+    { id: 'sunnetler', title: 'Günlük Sünnetler', desc: 'Checklist ve günlük ilerleme takibi', icon: '📿', gradient: 'linear-gradient(135deg, #6A1B9A, #AB47BC)' },
+    { id: 'hadisler', title: 'Hadis-i Şerifler', desc: 'Günlük yaşama yön veren seçme hadisler', icon: '📜', gradient: 'linear-gradient(135deg, #004D40, #00897B)' }
+  ];
+
+  // Initialize main shell
   container.innerHTML = `
-    <div class="peygamber-hayati-wrapper">
-      <div class="tab-bar">
-        ${tabsHtml}
+    <div class="peygamber-v2-container">
+      <div id="peygamber-hero" class="peygamber-hero-v2">
+        <div style="font-size: 32px; margin-bottom: 5px;">📖</div>
+        <h4 style="margin: 0 0 6px 0; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Hz. Muhammed'in Hayatı</h4>
+        <p style="margin: 0; font-size: 11.5px; opacity: 0.9; font-style: italic; line-height: 1.4;">
+          "Şüphesiz sen yüce bir ahlâk üzeresin." <br>
+          <span style="font-size: 10px; font-weight: bold; opacity: 0.8;">(Kalem Suresi, 4. Ayet)</span>
+        </p>
       </div>
-      <div class="peygamber-content info-card" style="min-height: 200px; padding: 20px;">
-        <h4 style="color: var(--primary-color); margin-bottom: 10px;" id="peygamber-title">${PEYGAMBER_HAYATI[0].baslik}</h4>
-        <p style="font-size: 13px; line-height: 1.6; color: var(--text-primary);" id="peygamber-text">${PEYGAMBER_HAYATI[0].icerik}</p>
+
+      <div id="peygamber-search-wrapper" class="peygamber-search-box-v2">
+        <span style="font-size: 16px;">🔍</span>
+        <input type="text" id="peygamber-search-input" class="peygamber-search-input-v2" placeholder="Konu, ahlak, sünnet veya hadis ara..." />
       </div>
+
+      <div id="peygamber-main-content"></div>
     </div>
   `;
 
-  const tabs = container.querySelectorAll('.tab-btn');
-  const titleEl = container.querySelector('#peygamber-title');
-  const textEl = container.querySelector('#peygamber-text');
+  const hero = container.querySelector('#peygamber-hero');
+  const searchWrapper = container.querySelector('#peygamber-search-wrapper');
+  const searchInput = container.querySelector('#peygamber-search-input');
+  const mainContent = container.querySelector('#peygamber-main-content');
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
+  // Search function covering all data inside PEYGAMBER_REHBERI
+  const getSearchResults = (query) => {
+    if (!query) return [];
+    const q = query.toLowerCase();
+    const results = [];
 
-      const index = parseInt(tab.getAttribute('data-index'));
-      titleEl.textContent = PEYGAMBER_HAYATI[index].baslik;
-      textEl.textContent = PEYGAMBER_HAYATI[index].icerik;
+    // 1. Donemler
+    PEYGAMBER_REHBERI.donemler.forEach((item, idx) => {
+      if (item.baslik.toLowerCase().includes(q) || item.icerik.toLowerCase().includes(q) || (item.ayet && item.ayet.toLowerCase().includes(q))) {
+        results.push({
+          view: 'donemler',
+          title: item.baslik,
+          snippet: item.icerik.substring(0, 100) + '...',
+          category: 'Hayatının Dönemleri',
+          action: () => { activePeriodIndex = idx; currentView = 'donemler'; }
+        });
+      }
     });
+
+    // 2. Zaman cizelgesi
+    PEYGAMBER_REHBERI.zaman_cizelgesi.forEach((item) => {
+      if (item.olay.toLowerCase().includes(q) || item.yil.toLowerCase().includes(q)) {
+        results.push({
+          view: 'kronoloji',
+          title: `${item.yil} - ${item.olay}`,
+          snippet: 'Tarihsel kronoloji maddesi.',
+          category: 'Zaman Tüneli',
+          action: () => { currentView = 'kronoloji'; }
+        });
+      }
+    });
+
+    // 3. Semai
+    PEYGAMBER_REHBERI.semail.forEach((item) => {
+      if (item.baslik.toLowerCase().includes(q) || item.detay.toLowerCase().includes(q)) {
+        results.push({
+          view: 'semail',
+          title: item.baslik,
+          snippet: item.detay.substring(0, 100) + '...',
+          category: 'Şemail-i Şerif',
+          action: () => { currentView = 'semail'; }
+        });
+      }
+    });
+
+    // 4. Ahlak
+    PEYGAMBER_REHBERI.ahlak.forEach((item) => {
+      if (item.baslik.toLowerCase().includes(q) || item.detay.toLowerCase().includes(q)) {
+        results.push({
+          view: 'ahlak',
+          title: item.baslik,
+          snippet: item.detay.substring(0, 100) + '...',
+          category: 'Ahlak & Hatıralar',
+          action: () => { currentView = 'ahlak'; }
+        });
+      }
+    });
+
+    // 5. Aile
+    ['anne_baba', 'esleri', 'cocuklari'].forEach((subKey) => {
+      const list = PEYGAMBER_REHBERI.aile[subKey];
+      list.forEach((item) => {
+        if (item.ad.toLowerCase().includes(q) || (item.bilgi && item.bilgi.toLowerCase().includes(q))) {
+          results.push({
+            view: 'aile',
+            title: item.ad,
+            snippet: item.bilgi || item.rol,
+            category: `Mübarek Ailesi - ${subKey === 'anne_baba' ? 'Anne & Baba' : subKey === 'esleri' ? 'Eşleri' : 'Çocukları'}`,
+            action: () => { activeFamilyTab = subKey; currentView = 'aile'; }
+          });
+        }
+      });
+    });
+
+    // 6. Gazveler
+    PEYGAMBER_REHBERI.gazveler.forEach((item) => {
+      if (item.ad.toLowerCase().includes(q) || item.detay.toLowerCase().includes(q) || item.sonuc.toLowerCase().includes(q) || item.ders.toLowerCase().includes(q)) {
+        results.push({
+          view: 'gazveler',
+          title: item.ad,
+          snippet: item.detay.substring(0, 100) + '...',
+          category: 'Gazveler & Seferler',
+          action: () => { currentView = 'gazveler'; }
+        });
+      }
+    });
+
+    // 7. Sunnetler
+    PEYGAMBER_REHBERI.hadis_sunnet.forEach((cat) => {
+      cat.detaylar.forEach((item) => {
+        if (item.toLowerCase().includes(q) || cat.kategori.toLowerCase().includes(q)) {
+          results.push({
+            view: 'sunnetler',
+            title: cat.kategori,
+            snippet: item,
+            category: 'Günlük Sünnetler',
+            action: () => { currentView = 'sunnetler'; }
+          });
+        }
+      });
+    });
+
+    // 8. Hadisler
+    PEYGAMBER_REHBERI.hadisler_secme.forEach((item, idx) => {
+      if (item.metin.toLowerCase().includes(q) || item.kaynak.toLowerCase().includes(q)) {
+        results.push({
+          view: 'hadisler',
+          title: `Hadis ${item.no}`,
+          snippet: item.metin.substring(0, 100) + '...',
+          category: 'Seçme Hadis-i Şerifler',
+          action: () => { activeHadithIndex = idx; currentView = 'hadisler'; }
+        });
+      }
+    });
+
+    return results;
+  };
+
+  const renderContent = () => {
+    // Show/hide outer hero and search box depending on active view
+    if (currentView === 'dashboard') {
+      hero.style.display = 'block';
+      searchWrapper.style.display = 'flex';
+    } else {
+      hero.style.display = 'none';
+      searchWrapper.style.display = 'none';
+    }
+
+    if (currentView === 'dashboard') {
+      const q = searchQuery.trim().toLowerCase();
+      
+      if (q !== '') {
+        // Render Search Results
+        const results = getSearchResults(q);
+        const resultsHtml = results.length > 0
+          ? results.map((res, idx) => `
+              <div class="search-result-item" data-idx="${idx}" style="
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 14px;
+                padding: 14px;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                box-shadow: var(--shadow-sm);
+                animation: fadeInUp 0.25s ease;
+              ">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; margin-bottom: 2px;">
+                  <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--accent-orange); letter-spacing: 0.5px;">${res.category}</span>
+                  <span style="font-size: 12px; font-weight: 700; color: var(--primary-color);">${res.title}</span>
+                </div>
+                <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4;">${res.snippet}</div>
+              </div>
+            `).join('')
+          : `<div style="text-align: center; padding: 30px; color: var(--text-secondary); font-size: 13.5px;">Eşleşen arama sonucu bulunamadı.</div>`;
+
+        mainContent.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: 15px; animation: fadeInUp 0.3s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 13px; font-weight: 800; color: var(--primary-color);">Arama Sonuçları (${results.length})</span>
+              <button id="search-clear-btn" style="background: transparent; border: none; font-size: 12px; font-weight: 700; color: var(--accent-orange); cursor: pointer; text-decoration: underline;">Temizle</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              ${resultsHtml}
+            </div>
+          </div>
+        `;
+
+        // Bind search result clicks
+        mainContent.querySelectorAll('.search-result-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const idx = parseInt(el.getAttribute('data-idx'));
+            if (results[idx]) {
+              results[idx].action();
+              renderContent();
+            }
+          });
+        });
+
+        // Bind clear search button
+        const clearBtn = mainContent.querySelector('#search-clear-btn');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            searchQuery = '';
+            searchInput.value = '';
+            renderContent();
+          });
+        }
+
+      } else {
+        // Render 8 Category Grid
+        const gridHtml = categories.map(cat => `
+          <div class="peygamber-card-v2" data-target="${cat.id}">
+            <div class="peygamber-card-icon-v2" style="background: ${cat.gradient};">
+              ${cat.icon}
+            </div>
+            <h5 class="peygamber-card-title-v2">${cat.title}</h5>
+            <p class="peygamber-card-desc-v2">${cat.desc}</p>
+          </div>
+        `).join('');
+
+        mainContent.innerHTML = `
+          <div class="peygamber-grid-v2" style="animation: fadeInUp 0.3s ease;">
+            ${gridHtml}
+          </div>
+        `;
+
+        // Bind category cards clicks
+        mainContent.querySelectorAll('.peygamber-card-v2').forEach(card => {
+          card.addEventListener('click', () => {
+            currentView = card.getAttribute('data-target');
+            renderContent();
+          });
+        });
+      }
+
+    } else if (currentView === 'donemler') {
+      const period = PEYGAMBER_REHBERI.donemler[activePeriodIndex];
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Hayatının Dönemleri</h4>
+        </div>
+        <div style="animation: fadeInUp 0.3s ease;">
+          <div class="info-card" style="padding: 20px; display: flex; flex-direction: column; gap: 15px; border: 1px solid var(--border-color); border-radius: 18px; background: var(--card-bg); box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 12px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--accent-orange); letter-spacing: 0.5px;">Dönem ${activePeriodIndex + 1} / ${PEYGAMBER_REHBERI.donemler.length}</span>
+                <h4 style="margin: 0; color: var(--primary-color); font-size: 15px; font-weight: 800;">${period.baslik}</h4>
+              </div>
+              <span style="background: var(--primary-light); color: var(--primary-color); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(39, 167, 112, 0.1);">
+                ${period.yil}
+              </span>
+            </div>
+            <p style="font-size: 13px; line-height: 1.6; color: var(--text-primary); margin: 0; text-align: justify; white-space: pre-line;">
+              ${period.icerik}
+            </p>
+            ${period.ayet ? `
+              <div style="background: var(--bg-color); border-left: 4px solid var(--primary-color); padding: 12px 14px; border-radius: 4px 12px 12px 4px; margin-top: 5px;">
+                <div style="font-size: 12px; font-style: italic; color: var(--text-secondary); line-height: 1.5; position: relative;">
+                  <span style="font-size: 24px; color: var(--primary-light); position: absolute; top: -10px; left: -5px; font-family: Georgia, serif; line-height: 1; pointer-events: none;">“</span>
+                  <span style="padding-left: 10px; display: inline-block;">${period.ayet}</span>
+                </div>
+              </div>
+            ` : ''}
+            <div style="background: var(--primary-light); color: var(--primary-color); font-size: 11px; font-weight: 600; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(39, 167, 112, 0.05); line-height: 1.4; display: flex; align-items: center; gap: 8px;">
+              <span>ℹ️</span>
+              <span>${period.ek_bilgi}</span>
+            </div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; gap: 10px;">
+            <button class="btn btn-secondary ripple" id="period-prev" ${activePeriodIndex === 0 ? 'disabled' : ''} style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; border-radius: 12px; opacity: ${activePeriodIndex === 0 ? 0.5 : 1}; cursor: ${activePeriodIndex === 0 ? 'default' : 'pointer'};">
+              ◀ Önceki
+            </button>
+            <div style="display: flex; gap: 6px; justify-content: center; align-items: center; flex-shrink: 0;">
+              ${PEYGAMBER_REHBERI.donemler.map((_, idx) => `
+                <div style="width: ${idx === activePeriodIndex ? '16px' : '6px'}; height: 6px; border-radius: 3px; background: ${idx === activePeriodIndex ? 'var(--primary-color)' : 'var(--border-color)'}; transition: all 0.2s ease;"></div>
+              `).join('')}
+            </div>
+            <button class="btn btn-primary ripple" id="period-next" ${activePeriodIndex === PEYGAMBER_REHBERI.donemler.length - 1 ? 'disabled' : ''} style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; border-radius: 12px; opacity: ${activePeriodIndex === PEYGAMBER_REHBERI.donemler.length - 1 ? 0.5 : 1}; cursor: ${activePeriodIndex === PEYGAMBER_REHBERI.donemler.length - 1 ? 'default' : 'pointer'};">
+              Sonraki ▶
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Bind nav listeners
+      const prevBtn = mainContent.querySelector('#period-prev');
+      const nextBtn = mainContent.querySelector('#period-next');
+      if (prevBtn && activePeriodIndex > 0) {
+        prevBtn.addEventListener('click', () => {
+          activePeriodIndex--;
+          renderContent();
+        });
+      }
+      if (nextBtn && activePeriodIndex < PEYGAMBER_REHBERI.donemler.length - 1) {
+        nextBtn.addEventListener('click', () => {
+          activePeriodIndex++;
+          renderContent();
+        });
+      }
+      bindBackButton();
+
+    } else if (currentView === 'kronoloji') {
+      const timelineHtml = PEYGAMBER_REHBERI.zaman_cizelgesi.map((item, idx) => `
+        <div class="peygamber-timeline-item-v2" style="animation: fadeInUp 0.3s ease; animation-delay: ${idx * 0.05}s;">
+          <div class="peygamber-timeline-bullet-v2">${item.ikon || '📌'}</div>
+          <div class="peygamber-timeline-year-v2">${item.yil}</div>
+          <div class="peygamber-timeline-content-v2">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">${item.olay}</div>
+          </div>
+        </div>
+      `).join('');
+
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Zaman Tüneli</h4>
+        </div>
+        <div class="info-card" style="padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); background: var(--card-bg); animation: fadeInUp 0.3s ease;">
+          <div class="peygamber-timeline-v2">
+            ${timelineHtml}
+          </div>
+        </div>
+      `;
+      bindBackButton();
+
+    } else if (currentView === 'semail') {
+      const traitsHtml = PEYGAMBER_REHBERI.semail.map((trait, idx) => `
+        <div class="info-card" style="padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; display: flex; flex-direction: column; gap: 8px; background: var(--card-bg); animation: fadeInUp 0.3s ease; animation-delay: ${idx * 0.05}s; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 4px;">
+            <span style="font-size: 18px;">✨</span>
+            <h4 style="margin: 0; color: var(--primary-color); font-size: 13.5px; font-weight: 800;">${trait.baslik}</h4>
+          </div>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); text-align: justify; white-space: pre-line;">
+            ${trait.detay}
+          </p>
+        </div>
+      `).join('');
+
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Şemail-i Şerif</h4>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; animation: fadeInUp 0.3s ease;">
+          ${traitsHtml}
+        </div>
+      `;
+      bindBackButton();
+
+    } else if (currentView === 'ahlak') {
+      const ahlakHtml = PEYGAMBER_REHBERI.ahlak.map((item, idx) => `
+        <div class="info-card" style="padding: 18px; border: 1px solid var(--border-color); border-radius: 16px; display: flex; flex-direction: column; gap: 8px; background: var(--card-bg); animation: fadeInUp 0.3s ease; animation-delay: ${idx * 0.05}s; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; align-items: center; gap: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 4px;">
+            <span style="font-size: 18px;">💚</span>
+            <h4 style="margin: 0; color: var(--primary-color); font-size: 13.5px; font-weight: 800;">${item.baslik}</h4>
+          </div>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--text-secondary); text-align: justify; white-space: pre-line;">
+            ${item.detay}
+          </p>
+        </div>
+      `).join('');
+
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Ahlak & Hatıralar</h4>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; animation: fadeInUp 0.3s ease;">
+          ${ahlakHtml}
+        </div>
+      `;
+      bindBackButton();
+
+    } else if (currentView === 'aile') {
+      let familyContentHtml = '';
+      if (activeFamilyTab === 'anne_baba') {
+        familyContentHtml = PEYGAMBER_REHBERI.aile.anne_baba.map(item => `
+          <div class="info-card" style="padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--card-bg); display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 2px;">
+              <h5 style="margin: 0; font-size: 13.5px; font-weight: 800; color: var(--primary-color);">${item.ad}</h5>
+              <span style="background: var(--primary-light); color: var(--primary-color); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">${item.rol}</span>
+            </div>
+            <p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-secondary); text-align: justify;">${item.bilgi}</p>
+          </div>
+        `).join('');
+      } else if (activeFamilyTab === 'esleri') {
+        familyContentHtml = PEYGAMBER_REHBERI.aile.esleri.map(item => `
+          <div class="info-card" style="padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--card-bg); display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 2px;">
+              <span style="font-size: 16px;">🌸</span>
+              <h5 style="margin: 0; font-size: 13.5px; font-weight: 800; color: var(--primary-color);">${item.ad}</h5>
+            </div>
+            <p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-secondary); text-align: justify;">${item.bilgi}</p>
+          </div>
+        `).join('');
+      } else if (activeFamilyTab === 'cocuklari') {
+        familyContentHtml = PEYGAMBER_REHBERI.aile.cocuklari.map(item => `
+          <div class="info-card" style="padding: 16px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--card-bg); display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 2px;">
+              <span style="font-size: 16px;">👶</span>
+              <h5 style="margin: 0; font-size: 13.5px; font-weight: 800; color: var(--primary-color);">${item.ad}</h5>
+            </div>
+            <p style="margin: 0; font-size: 12px; line-height: 1.5; color: var(--text-secondary); text-align: justify;">${item.bilgi}</p>
+          </div>
+        `).join('');
+      }
+
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Mübarek Ailesi</h4>
+        </div>
+        <div class="peygamber-family-tabs">
+          <button class="peygamber-family-tab ${activeFamilyTab === 'anne_baba' ? 'active' : ''}" data-tab="anne_baba">Anne, Baba & Himaye</button>
+          <button class="peygamber-family-tab ${activeFamilyTab === 'esleri' ? 'active' : ''}" data-tab="esleri">Eşleri (Ezvac-ı Tahirat)</button>
+          <button class="peygamber-family-tab ${activeFamilyTab === 'cocuklari' ? 'active' : ''}" data-tab="cocuklari">Çocukları</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; animation: fadeInUp 0.3s ease;">
+          ${familyContentHtml}
+        </div>
+      `;
+
+      // Bind family tab clicks
+      mainContent.querySelectorAll('.peygamber-family-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          activeFamilyTab = tab.getAttribute('data-tab');
+          renderContent();
+        });
+      });
+      bindBackButton();
+
+    } else if (currentView === 'gazveler') {
+      const gazvelerHtml = PEYGAMBER_REHBERI.gazveler.map((item, idx) => `
+        <div class="info-card" style="padding: 18px; border: 1px solid var(--border-color); border-radius: 16px; background: var(--card-bg); display: flex; flex-direction: column; gap: 10px; animation: fadeInUp 0.3s ease; animation-delay: ${idx * 0.05}s; box-shadow: var(--shadow-sm);">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+            <h5 style="margin: 0; font-size: 14px; font-weight: 800; color: var(--primary-color);">${item.ad}</h5>
+            <span style="background: var(--primary-light); color: var(--primary-color); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 8px;">${item.sonuc}</span>
+          </div>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); text-align: justify;">${item.detay}</p>
+          <div style="background: var(--bg-color); padding: 10px 12px; border-radius: 8px; font-size: 11.5px; border-left: 3px solid var(--accent-orange);">
+            <span style="font-weight: 800; color: var(--accent-orange);">Çıkarılan Ders:</span>
+            <span style="color: var(--text-primary); font-style: italic;">${item.ders}</span>
+          </div>
+        </div>
+      `).join('');
+
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Gazveler ve Seferler</h4>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px; animation: fadeInUp 0.3s ease;">
+          ${gazvelerHtml}
+        </div>
+      `;
+      bindBackButton();
+
+    } else if (currentView === 'sunnetler') {
+      let totalSunnahs = 0;
+      let checkedCount = 0;
+
+      const sectionsHtml = PEYGAMBER_REHBERI.hadis_sunnet.map((cat, catIdx) => {
+        const itemsHtml = cat.detaylar.map((item, itemIdx) => {
+          totalSunnahs++;
+          const key = `peygamber_sunnet_${catIdx}_${itemIdx}`;
+          const isChecked = localStorage.getItem(key) === 'true';
+          if (isChecked) checkedCount++;
+
+          return `
+            <div class="peygamber-sunnah-item ${isChecked ? 'checked' : ''}" data-cat="${catIdx}" data-item="${itemIdx}">
+              <div class="peygamber-sunnah-checkbox"></div>
+              <div style="font-size: 12.5px; color: var(--text-primary); line-height: 1.4; flex: 1;">${item}</div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div style="margin-bottom: 18px;">
+            <h5 style="margin: 0 0 10px 0; font-size: 13.5px; font-weight: 800; color: var(--primary-color); display: flex; align-items: center; gap: 6px;">
+              <span>📿</span>
+              <span>${cat.kategori}</span>
+            </h5>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              ${itemsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const percentage = totalSunnahs > 0 ? Math.round((checkedCount / totalSunnahs) * 100) : 0;
+
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Günlük Sünnetler</h4>
+        </div>
+        <div class="peygamber-sunnah-progress-container" style="animation: fadeInUp 0.3s ease;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12.5px; font-weight: 700; color: var(--primary-color);">
+            <span>Bugünkü Sünnet İlerlemesi</span>
+            <span>${checkedCount}/${totalSunnahs} (${percentage}%)</span>
+          </div>
+          <div class="peygamber-sunnah-progress-bar-outer">
+            <div class="peygamber-sunnah-progress-bar-inner" style="width: ${percentage}%;"></div>
+          </div>
+          <div style="display: flex; justify-content: flex-end;">
+            <button id="sunnah-reset-btn" style="background: transparent; border: none; font-size: 11px; font-weight: 700; color: var(--accent-orange); cursor: pointer; text-decoration: underline; padding: 0;">İlerlemeyi Sıfırla</button>
+          </div>
+        </div>
+        <div style="animation: fadeInUp 0.3s ease;">
+          ${sectionsHtml}
+        </div>
+      `;
+
+      // Bind sunnah item checkbox toggle clicks
+      mainContent.querySelectorAll('.peygamber-sunnah-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const catIdx = el.getAttribute('data-cat');
+          const itemIdx = el.getAttribute('data-item');
+          const key = `peygamber_sunnet_${catIdx}_${itemIdx}`;
+          const currentVal = localStorage.getItem(key) === 'true';
+          localStorage.setItem(key, currentVal ? 'false' : 'true');
+          renderContent();
+        });
+      });
+
+      // Bind reset button click
+      const resetBtn = mainContent.querySelector('#sunnah-reset-btn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          if (confirm('Bugünkü sünnet ilerlemenizi sıfırlamak istiyor musunuz?')) {
+            for (let c = 0; c < PEYGAMBER_REHBERI.hadis_sunnet.length; c++) {
+              for (let i = 0; i < PEYGAMBER_REHBERI.hadis_sunnet[c].detaylar.length; i++) {
+                localStorage.removeItem(`peygamber_sunnet_${c}_${i}`);
+              }
+            }
+            renderContent();
+          }
+        });
+      }
+      bindBackButton();
+
+    } else if (currentView === 'hadisler') {
+      const hadith = PEYGAMBER_REHBERI.hadisler_secme[activeHadithIndex];
+      mainContent.innerHTML = `
+        <div class="peygamber-sub-header">
+          <button class="peygamber-btn-back" id="peygamber-back-btn">←</button>
+          <h4 class="peygamber-sub-title">Seçme Hadisler</h4>
+        </div>
+        <div style="animation: fadeInUp 0.3s ease;">
+          <div class="peygamber-hadith-card">
+            <span class="peygamber-hadith-quote">“</span>
+            <p class="peygamber-hadith-text">${hadith.metin}</p>
+            <span class="peygamber-hadith-source">— ${hadith.kaynak}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 15px;">
+            <button class="btn btn-secondary ripple" id="hadith-prev" ${activeHadithIndex === 0 ? 'disabled' : ''} style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; border-radius: 12px; opacity: ${activeHadithIndex === 0 ? 0.5 : 1}; cursor: ${activeHadithIndex === 0 ? 'default' : 'pointer'};">
+              ◀ Önceki
+            </button>
+            <div style="display: flex; gap: 6px; justify-content: center; align-items: center; flex-shrink: 0;">
+              ${PEYGAMBER_REHBERI.hadisler_secme.map((_, idx) => `
+                <div style="width: ${idx === activeHadithIndex ? '16px' : '6px'}; height: 6px; border-radius: 3px; background: ${idx === activeHadithIndex ? 'var(--primary-color)' : 'var(--border-color)'}; transition: all 0.2s ease;"></div>
+              `).join('')}
+            </div>
+            <button class="btn btn-primary ripple" id="hadith-next" ${activeHadithIndex === PEYGAMBER_REHBERI.hadisler_secme.length - 1 ? 'disabled' : ''} style="flex: 1; padding: 10px; font-size: 12.5px; font-weight: 700; border-radius: 12px; opacity: ${activeHadithIndex === PEYGAMBER_REHBERI.hadisler_secme.length - 1 ? 0.5 : 1}; cursor: ${activeHadithIndex === PEYGAMBER_REHBERI.hadisler_secme.length - 1 ? 'default' : 'pointer'};">
+              Sonraki ▶
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Bind carousel navigation buttons
+      const prevBtn = mainContent.querySelector('#hadith-prev');
+      const nextBtn = mainContent.querySelector('#hadith-next');
+      if (prevBtn && activeHadithIndex > 0) {
+        prevBtn.addEventListener('click', () => {
+          activeHadithIndex--;
+          renderContent();
+        });
+      }
+      if (nextBtn && activeHadithIndex < PEYGAMBER_REHBERI.hadisler_secme.length - 1) {
+        nextBtn.addEventListener('click', () => {
+          activeHadithIndex++;
+          renderContent();
+        });
+      }
+      bindBackButton();
+    }
+  };
+
+  const bindBackButton = () => {
+    const backBtn = mainContent.querySelector('#peygamber-back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        currentView = 'dashboard';
+        renderContent();
+      });
+    }
+  };
+
+  // Bind live search box events (keyup & input)
+  searchInput.addEventListener('input', (e) => {
+    searchQuery = e.target.value;
+    renderContent();
   });
+
+  // Render initial dashboard content
+  renderContent();
 }
+
 
 // 12. RAMAZAN HAKKINDA
 function renderRamazanHakkinda(container) {

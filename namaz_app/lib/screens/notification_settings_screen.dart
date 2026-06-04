@@ -66,15 +66,18 @@ class _NotificationSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    final Color bgColor = dark ? const Color(0xFF0A1220) : _background;
+
     if (_isLoading) {
-      return const Scaffold(
-        backgroundColor: _background,
-        body: Center(child: CircularProgressIndicator(color: _primaryGreen)),
+      return Scaffold(
+        backgroundColor: bgColor,
+        body: const Center(child: CircularProgressIndicator(color: _primaryGreen)),
       );
     }
 
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: bgColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -111,12 +114,13 @@ class _NotificationSettingsScreenState
   }
 
   Widget _buildTopBar() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, color: dark ? Colors.white : Colors.black87),
             onPressed: () => Navigator.of(context).pop(),
           ),
           const Expanded(
@@ -137,8 +141,9 @@ class _NotificationSettingsScreenState
   }
 
   Widget _buildTimingSection() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Card(
-      color: Colors.white,
+      color: dark ? const Color(0xFF131D31) : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
       child: Padding(
@@ -171,8 +176,9 @@ class _NotificationSettingsScreenState
   }
 
   Widget _buildRadioOption(String label, int value) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return RadioListTile<int>(
-      title: Text(label, style: const TextStyle(fontSize: 14)),
+      title: Text(label, style: TextStyle(fontSize: 14, color: dark ? Colors.white : Colors.black87)),
       value: value,
       groupValue: _timingOffset,
       activeColor: _primaryGreen,
@@ -188,8 +194,9 @@ class _NotificationSettingsScreenState
   }
 
   Widget _buildPrayerTimesSection() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Card(
-      color: Colors.white,
+      color: dark ? const Color(0xFF131D31) : Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
       child: Padding(
@@ -232,8 +239,9 @@ class _NotificationSettingsScreenState
     bool value,
     ValueChanged<bool?> onChanged,
   ) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return CheckboxListTile(
-      title: Text(label, style: const TextStyle(fontSize: 14)),
+      title: Text(label, style: TextStyle(fontSize: 14, color: dark ? Colors.white : Colors.black87)),
       value: value,
       activeColor: _primaryGreen,
       contentPadding: EdgeInsets.zero,
@@ -245,8 +253,9 @@ class _NotificationSettingsScreenState
   }
 
   Widget _buildSoundSection() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Card(
-      color: const Color(0xFFE8F5E9),
+      color: dark ? const Color(0xFF16251C) : const Color(0xFFE8F5E9),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 0,
       child: Padding(
@@ -258,19 +267,19 @@ class _NotificationSettingsScreenState
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Text(
                         'Ezan Sesi',
                         style: TextStyle(
-                          color: _primaryGreen,
+                          color: dark ? const Color(0xFF27A770) : _primaryGreen,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'Bildirimle birlikte ezan sesi çalınır',
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        style: TextStyle(color: dark ? Colors.white70 : Colors.grey, fontSize: 13),
                       ),
                     ],
                   ),
@@ -292,8 +301,8 @@ class _NotificationSettingsScreenState
                   NotificationService().playTestNotification();
                 },
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: _primaryGreen,
-                  side: const BorderSide(color: _primaryGreen),
+                  foregroundColor: dark ? const Color(0xFF27A770) : _primaryGreen,
+                  side: BorderSide(color: dark ? const Color(0xFF27A770) : _primaryGreen),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -355,12 +364,13 @@ class _NotificationSettingsScreenState
   }
 
   Widget _buildSaveButton() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _saveSettings,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _darkGreen,
+          backgroundColor: dark ? _primaryGreen : _darkGreen,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.all(16),
           shape: RoundedRectangleBorder(

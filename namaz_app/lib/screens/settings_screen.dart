@@ -21,10 +21,10 @@ class SettingsScreen extends StatefulWidget {
   });
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class SettingsScreenState extends State<SettingsScreen> {
   final PrayerRepository _repository = PrayerRepository();
   final NotificationService _notificationService = NotificationService();
 
@@ -35,10 +35,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSettings();
+    loadSettings();
   }
 
-  Future<void> _loadSettings() async {
+  Future<void> loadSettings() async {
     setState(() => _loading = true);
     final theme = await _repository.getThemeMode();
     final loc = await _repository.getSavedLocation();
@@ -214,11 +214,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
           
           final districts = await _repository.getDistricts(cityId);
           
-          Map<String, dynamic> matchedDistrict = districts.firstWhere(
-            (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')),
-            orElse: () => <String, dynamic>{},
-          );
+          // Robust Tuzla / Merkez matching logic to avoid "İSTANBUL" district overtaking specific sub-localities
+          Map<String, dynamic> matchedDistrict = <String, dynamic>{};
+          final String normalizedCityName = normalizeString(cityName);
+          
+          // 1. Try exact match for geoData's specific locality (e.g., "tuzla") ONLY if it's not the same as the city name
+          final String? locality = geoData['locality'] != null ? normalizeString(geoData['locality']) : null;
+          if (locality != null && locality != normalizedCityName) {
+            matchedDistrict = districts.firstWhere(
+              (dist) => normalizeString(dist['IlceAdi'] ?? '') == locality,
+              orElse: () => <String, dynamic>{},
+            );
+          }
+          
+          // 2. Prioritize sub-locality names in geoNames that are NOT equal to the city-level name matching
+          if (matchedDistrict.isEmpty) {
+            matchedDistrict = districts.firstWhere(
+              (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')) &&
+                        normalizeString(dist['IlceAdi'] ?? '') != normalizedCityName,
+              orElse: () => <String, dynamic>{},
+            );
+          }
+          
+          // 3. Fallback to any geoNames match
+          if (matchedDistrict.isEmpty) {
+            matchedDistrict = districts.firstWhere(
+              (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')),
+              orElse: () => <String, dynamic>{},
+            );
+          }
 
+          // 4. Default fallback to districts[0]
           if (matchedDistrict.isEmpty) {
             matchedDistrict = districts.isNotEmpty ? districts[0] : <String, dynamic>{};
           }
@@ -236,7 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             await _notificationService.schedulePrayerAlarms(times);
 
             _showSnackBar("Konum GPS ile güncellendi: $cityName/$districtName", success: true);
-            await _loadSettings();
+            await loadSettings();
             widget.onLocationChanged?.call();
             return;
           }
@@ -252,137 +278,348 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  String _formatTurkishCity(String city) {
+    if (city.isEmpty) return '';
+    return city
+        .replaceAll('i', 'İ')
+        .replaceAll('ı', 'I')
+        .replaceAll('ş', 'Ş')
+        .replaceAll('ç', 'Ç')
+        .replaceAll('ğ', 'Ğ')
+        .replaceAll('ü', 'Ü')
+        .replaceAll('ö', 'Ö')
+        .toUpperCase();
+  }
+
+  String _formatTurkishDistrict(String district) {
+    if (district.isEmpty) return '';
+    
+    String lower = district
+        .replaceAll('İ', 'i')
+        .replaceAll('I', 'ı')
+        .replaceAll('Ş', 'ş')
+        .replaceAll('Ç', 'ç')
+        .replaceAll('Ğ', 'ğ')
+        .replaceAll('Ü', 'ü')
+        .replaceAll('Ö', 'ö')
+        .toLowerCase();
+        
+    List<String> words = lower.split(' ');
+    List<String> formattedWords = [];
+    
+    for (var word in words) {
+      if (word.isEmpty) continue;
+      
+      String firstChar = word.substring(0, 1);
+      String rest = word.substring(1);
+      
+      String upperFirst = firstChar
+          .replaceAll('i', 'İ')
+          .replaceAll('ı', 'I')
+          .replaceAll('ş', 'Ş')
+          .replaceAll('ç', 'Ç')
+          .replaceAll('ğ', 'Ğ')
+          .replaceAll('ü', 'Ü')
+          .replaceAll('ö', 'Ö')
+          .toUpperCase();
+          
+      formattedWords.add(upperFirst + rest);
+    }
+    
+    return formattedWords.join(' ');
+  }
+
   Future<void> _showLocationDialog() async {
-    final city = _location['cityName'] ?? 'Bilinmiyor';
-    final district = _location['districtName'] ?? 'Bilinmiyor';
+    final loc = await _repository.getSavedLocation();
+    setState(() {
+      _location = loc;
+    });
+    final String rawCity = loc['cityName'] ?? 'Bilinmiyor';
+    final String rawDistrict = _location['districtName'] ?? 'Bilinmiyor';
+
+    final String city = _formatTurkishCity(rawCity);
+    String district = _formatTurkishDistrict(rawDistrict);
+
+    if (rawCity.trim().toLowerCase() == rawDistrict.trim().toLowerCase()) {
+      district = 'Merkez';
+    }
+
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    List<Map<String, dynamic>> citiesList = [];
+    List<Map<String, dynamic>> districtsList = [];
+    Map<String, dynamic>? selectedCity;
+    Map<String, dynamic>? selectedDistrict;
+    bool loadingCities = true;
+    bool loadingDistricts = false;
+    bool savingLocation = false;
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Lokasyonlarım'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.location_on, color: Color(0xFF27A770)),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '$city / $district',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Konumunuzu otomatik olarak güncelleyebilir veya manuel olarak değiştirebilirsiniz.',
-              style: TextStyle(fontSize: 13, color: Colors.grey),
-            ),
-          ],
-        ),
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Kapat', style: TextStyle(color: Colors.grey)),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          if (citiesList.isEmpty && loadingCities) {
+            _repository.getCities().then((cities) {
+              if (context.mounted) {
+                setDialogState(() {
+                  citiesList = cities;
+                  loadingCities = false;
+                });
+              }
+            }).catchError((e) {
+              if (context.mounted) {
+                setDialogState(() {
+                  loadingCities = false;
+                });
+              }
+            });
+          }
+
+          return AlertDialog(
+            backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
+            title: Text(
+              'Lokasyonlarım',
+              style: TextStyle(
+                color: dark ? Colors.white : const Color(0xFF1E5E43),
+                fontWeight: FontWeight.bold,
               ),
-              Row(
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1E5E43),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    ),
-                    icon: const Icon(Icons.gps_fixed, size: 14),
-                    label: const Text('Otomatik Bul', style: TextStyle(fontSize: 12)),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await _autoDetectAndSaveLocation();
-                    },
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Color(0xFF27A770)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          '$city / $district',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: dark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Konumunuzu otomatik güncelleyebilir veya aşağıdan yenisini seçebilirsiniz:',
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: dark ? Colors.white60 : Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (savingLocation)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: CircularProgressIndicator(color: Color(0xFF27A770)),
+                      ),
+                    )
+                  else ...[
+                    // GPS Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1E5E43),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        icon: const Icon(Icons.gps_fixed, size: 16, color: Color(0xFFD4AF37)),
+                        label: const Text('Cihaz Konumunu Kullan (GPS)', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
+                        onPressed: () async {
+                          Navigator.pop(context); // Close dialog
+                          await _autoDetectAndSaveLocation();
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Divider(height: 1, color: Colors.white12),
+                    const SizedBox(height: 16),
+
+                    // City Dropdown
+                    if (loadingCities)
+                      const Center(child: CircularProgressIndicator(color: Color(0xFF27A770)))
+                    else
+                      DropdownButtonFormField<Map<String, dynamic>>(
+                        dropdownColor: dark ? const Color(0xFF131D31) : Colors.white,
+                        style: TextStyle(color: dark ? Colors.white : Colors.black87),
+                        decoration: InputDecoration(
+                          labelText: "Şehir Seçin",
+                          labelStyle: TextStyle(color: dark ? Colors.white70 : Colors.grey[700]),
+                          filled: true,
+                          fillColor: dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          prefixIcon: const Icon(Icons.location_city, color: Color(0xFF27A770), size: 18),
+                        ),
+                        value: selectedCity,
+                        items: citiesList.map((c) {
+                          return DropdownMenuItem<Map<String, dynamic>>(
+                            value: c,
+                            child: Text(c['SehirAdi'] ?? '', style: const TextStyle(fontSize: 13.5)),
+                          );
+                        }).toList(),
+                        onChanged: (val) async {
+                          setDialogState(() {
+                            selectedCity = val;
+                            selectedDistrict = null;
+                            loadingDistricts = true;
+                          });
+                          if (val != null) {
+                            final dists = await _repository.getDistricts(val['SehirID'].toString());
+                            setDialogState(() {
+                              districtsList = dists;
+                              loadingDistricts = false;
+                            });
+                          }
+                        },
+                      ),
+                    const SizedBox(height: 12),
+
+                    // District Dropdown
+                    if (selectedCity != null) ...[
+                      if (loadingDistricts)
+                        const Center(child: CircularProgressIndicator(color: Color(0xFF27A770)))
+                      else
+                        DropdownButtonFormField<Map<String, dynamic>>(
+                          dropdownColor: dark ? const Color(0xFF131D31) : Colors.white,
+                          style: TextStyle(color: dark ? Colors.white : Colors.black87),
+                          decoration: InputDecoration(
+                            labelText: "İlçe Seçin",
+                            labelStyle: TextStyle(color: dark ? Colors.white70 : Colors.grey[700]),
+                            filled: true,
+                            fillColor: dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: const Icon(Icons.map, color: Color(0xFF27A770), size: 18),
+                          ),
+                          value: selectedDistrict,
+                          items: districtsList.map((d) {
+                            return DropdownMenuItem<Map<String, dynamic>>(
+                              value: d,
+                              child: Text(d['IlceAdi'] ?? '', style: const TextStyle(fontSize: 13.5)),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            setDialogState(() {
+                              selectedDistrict = val;
+                            });
+                          },
+                        ),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
+                ],
+              ),
+            ),
+            actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('İptal', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[700])),
+                  ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF27A770),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await _repository.clearLocation();
-                      await _notificationService.cancelAllAlarms();
-                      widget.onLocationReset();
-                    },
-                    child: const Text('Manuel Seç', style: TextStyle(fontSize: 12)),
+                    onPressed: (selectedCity == null || selectedDistrict == null || savingLocation)
+                        ? null
+                        : () async {
+                            setDialogState(() => savingLocation = true);
+                            try {
+                              final String cityName = selectedCity!['SehirAdi'];
+                              final String cityId = selectedCity!['SehirID'].toString();
+                              final String districtName = selectedDistrict!['IlceAdi'];
+                              final String districtId = selectedDistrict!['IlceID'].toString();
+
+                              final times = await _repository.getPrayerTimes(districtId, forceRefresh: true);
+                              await _repository.saveLocation(cityName, cityId, districtName, districtId);
+                              await _notificationService.schedulePrayerAlarms(times);
+
+                              await loadSettings();
+
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                                _showSnackBar("Konum başarıyla güncellendi: $cityName / $districtName", success: true);
+                              }
+                              widget.onLocationChanged?.call();
+                            } catch (e) {
+                              setDialogState(() => savingLocation = false);
+                              _showSnackBar("Konum güncellenirken hata oluştu.");
+                            }
+                          },
+                    child: const Text('Konumu Güncelle', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   ),
                 ],
               ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     if (_loading) {
-      return const Scaffold(
-        body: Center(
+      return Scaffold(
+        backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
+        body: const Center(
           child: CircularProgressIndicator(color: Color(0xFF27A770)),
         ),
       );
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
+      appBar: AppBar(
+        title: const Text(
+          "Ayarlar",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43),
+        iconTheme: const IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).maybePop();
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // Header - "Ayarlar" title + close button
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 12.0,
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  const Text(
-                    'Ayarlar',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        color: Colors.grey,
-                        size: 26,
-                      ),
-                      onPressed: () {
-                        // Navigate back to home tab
-                        Navigator.of(context).maybePop();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
             // Scrollable menu items
             Expanded(
@@ -724,7 +961,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
@@ -757,6 +994,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Widget? trailing,
     required VoidCallback onTap,
   }) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -771,17 +1009,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: dark ? Colors.white : Colors.black87,
                     ),
                   ),
                   if (subtitle != null) ...[
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 12, 
+                        color: dark ? Colors.white54 : Colors.grey[600],
+                      ),
                     ),
                   ],
                 ],
@@ -796,9 +1037,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   /// Builds a horizontal section divider
   Widget _buildSectionDivider() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Divider(color: Colors.grey[200], thickness: 1),
+      child: Divider(color: dark ? Colors.white10 : Colors.grey[200], thickness: 1),
     );
   }
 }

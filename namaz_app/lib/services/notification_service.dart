@@ -22,12 +22,12 @@ class NotificationService {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // 3. Configure iOS settings
+    // 3. Configure iOS settings (do NOT request permissions on startup)
     const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-          requestAlertPermission: true,
-          requestBadgePermission: true,
-          requestSoundPermission: true,
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
         );
 
     const InitializationSettings initializationSettings =
@@ -43,8 +43,22 @@ class NotificationService {
         print("Notification clicked: ${details.payload}");
       },
     );
+  }
 
-    // 5. Request permissions for Android 13+ (SDK 33+)
+  // Request permissions on demand
+  Future<void> requestPermissions() async {
+    // For iOS/macOS/Darwin
+    final iosImplementation = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+        >();
+    await iosImplementation?.requestPermissions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    // For Android 13+ (SDK 33+)
     if (Platform.isAndroid) {
       final androidImplementation = flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -148,16 +162,34 @@ class NotificationService {
             iOS: iosDetails,
           );
 
-          await flutterLocalNotificationsPlugin.zonedSchedule(
-            id: notificationId++,
-            title: 'Ezan Vakti ($prayerName)',
-            body:
-                'Günün bu kutsal vaktinde ibadete davet. $prayerName vakti girdi.',
-            scheduledDate: tzScheduledDate,
-            notificationDetails: platformDetails,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            payload: prayerName,
-          );
+          try {
+            await flutterLocalNotificationsPlugin.zonedSchedule(
+              id: notificationId++,
+              title: 'Ezan Vakti ($prayerName)',
+              body:
+                  'Günün bu kutsal vaktinde ibadete davet. $prayerName vakti girdi.',
+              scheduledDate: tzScheduledDate,
+              notificationDetails: platformDetails,
+              androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+              payload: prayerName,
+            );
+          } catch (e) {
+            print("Failed to schedule exact alarm, falling back to inexact: $e");
+            try {
+              await flutterLocalNotificationsPlugin.zonedSchedule(
+                id: notificationId - 1,
+                title: 'Ezan Vakti ($prayerName)',
+                body:
+                    'Günün bu kutsal vaktinde ibadete davet. $prayerName vakti girdi.',
+                scheduledDate: tzScheduledDate,
+                notificationDetails: platformDetails,
+                androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+                payload: prayerName,
+              );
+            } catch (innerEx) {
+              print("Failed to schedule inexact alarm: $innerEx");
+            }
+          }
 
           scheduledCount++;
           // Cap it at 50 notifications to prevent OS limits

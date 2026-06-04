@@ -73,7 +73,17 @@ flutter:
     - assets/ramazan.png
     - assets/tebrik.png
     - assets/muslim_boy_heart.png
+    - assets/kuran_kerim.png
+    - assets/zikir.png
+    - assets/dualar.png
+    - assets/dini_bilgiler.png
     - assets/adhan.mp3
+    - assets/onb_welcome.png
+    - assets/onb_location.png
+    - assets/onb_compass.png
+    - assets/onb_community.png
+    - assets/onb_notification.png
+    - assets/onb_setup.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

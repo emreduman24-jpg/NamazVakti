@@ -11,15 +11,19 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/prayer_data.dart';
 import '../data/prayer_repository.dart';
+import '../data/quran_data.dart';
+import 'quran_detail_screen.dart';
 
 class ToolDetailScreen extends StatefulWidget {
   final String toolId;
   final String toolTitle;
+  final bool isTab;
 
   const ToolDetailScreen({
     super.key,
     required this.toolId,
     required this.toolTitle,
+    this.isTab = false,
   });
 
   @override
@@ -28,6 +32,164 @@ class ToolDetailScreen extends StatefulWidget {
 
 class _ToolDetailScreenState extends State<ToolDetailScreen> {
   final PrayerRepository _repository = PrayerRepository();
+
+  // Color Utility Getters
+  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+  Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xFF1E5E43);
+  Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000);
+  Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000);
+  Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;
+  Color get _goldColor => const Color(0xFFD4AF37);
+
+  // General state variables
+  String _currentLocationName = "";
+
+  Future<void> _loadLocationName() async {
+    final savedLoc = await _repository.getSavedLocation();
+    final savedCity = savedLoc['cityName'] ?? "İstanbul";
+    if (mounted) {
+      setState(() {
+        _currentLocationName = savedCity;
+      });
+    }
+  }
+
+  // Monthly Times state
+  int _monthlyViewMode = 0; // 0 for Liste, 1 for Takvim
+  int _selectedCalendarDayIndex = 0;
+  List<Map<String, dynamic>> _monthlyPrayerTimes = [];
+  bool _loadingMonthlyTimes = true;
+  Set<String> _expandedAylikDays = {};
+
+  Future<void> _loadMonthlyTimes() async {
+    try {
+      final savedLoc = await _repository.getSavedLocation();
+      final districtId = savedLoc['districtId'] ?? "9541";
+      final List<Map<String, dynamic>> times = await _repository.getPrayerTimes(districtId);
+      if (mounted) {
+        setState(() {
+          _monthlyPrayerTimes = times;
+          _loadingMonthlyTimes = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading monthly prayer times: $e');
+      if (mounted) {
+        setState(() {
+          _loadingMonthlyTimes = false;
+        });
+      }
+    }
+  }
+
+  // Quran V2 State
+  int _lastSuraNo = 1;
+  String _lastSuraName = "Fatiha";
+  int _lastAyahNo = 1;
+  int _lastTotalAyahs = 7;
+  double _lastPercent = 0.0;
+  String _quranSearchQuery = "";
+  int _quranTab = 0; // 0 for Sureler, 1 for Cüzler
+  Set<String> _quranBookmarks = {};
+
+  Future<void> _loadQuranLastRead() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bookmarkedList = prefs.getStringList('quran_bookmarks') ?? [];
+    if (mounted) {
+      setState(() {
+        _lastSuraNo = prefs.getInt('quran_last_sura_no') ?? 1;
+        _lastSuraName = prefs.getString('quran_last_sura_name') ?? "Fatiha";
+        _lastAyahNo = prefs.getInt('quran_last_ayah_no') ?? 1;
+        _lastTotalAyahs = prefs.getInt('quran_last_total_ayahs') ?? 7;
+        _lastPercent = _lastTotalAyahs > 0 ? (_lastAyahNo / _lastTotalAyahs) : 0.0;
+        _quranBookmarks = Set<String>.from(bookmarkedList);
+      });
+    }
+  }
+
+  Future<void> _toggleQuranBookmark(String surahNo) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (_quranBookmarks.contains(surahNo)) {
+        _quranBookmarks.remove(surahNo);
+      } else {
+        _quranBookmarks.add(surahNo);
+      }
+    });
+    await prefs.setStringList('quran_bookmarks', _quranBookmarks.toList());
+  }
+
+  // Zikirmatik V2 State
+  Set<String> _zikirCompletedDates = {};
+  double _counterScale = 1.0;
+
+  Future<void> _loadZikirCompletedDates() async {
+    final prefs = await SharedPreferences.getInstance();
+    final completed = prefs.getStringList('zikir_completed_dates') ?? [];
+    if (mounted) {
+      setState(() {
+        _zikirCompletedDates = Set<String>.from(completed);
+      });
+    }
+  }
+
+  Future<void> _markZikirCompletedToday() async {
+    final now = DateTime.now();
+    final todayStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    setState(() {
+      _zikirCompletedDates.add(todayStr);
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('zikir_completed_dates', _zikirCompletedDates.toList());
+  }
+
+  // Dualar V2 State
+  int _dualarTab = 0; // 0 for Kur'an, 1 for Hadis
+  bool _showOnlyFavorites = false;
+  Set<String> _favoriteDualar = {};
+  String _dualarSearchQuery = "";
+  Set<String> _expandedDualar = {};
+
+  Future<void> _loadDualarFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final list = prefs.getStringList('favorite_dualar') ?? [];
+    if (mounted) {
+      setState(() {
+        _favoriteDualar = Set<String>.from(list);
+      });
+    }
+  }
+
+  Future<void> _toggleDuaFavorite(String duaId) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (_favoriteDualar.contains(duaId)) {
+        _favoriteDualar.remove(duaId);
+      } else {
+        _favoriteDualar.add(duaId);
+      }
+    });
+    await prefs.setStringList('favorite_dualar', _favoriteDualar.toList());
+  }
+
+  // Dini Hoca State
+  List<Map<String, dynamic>> _diniHocaMessages = [];
+  bool _diniHocaIsTyping = false;
+  final ScrollController _diniHocaScrollController = ScrollController();
+  final TextEditingController _diniHocaInputController = TextEditingController();
+
+  void _initDiniHoca() {
+    if (_diniHocaMessages.isEmpty) {
+      _diniHocaMessages = [
+        {
+          'isMe': false,
+          'text': "Selamün Aleyküm mümin kardeşim. Ben yapay zeka Dini Hoca asistanınızım. İslamiyet, ibadetler (namaz, abdest, gusül, oruç, zekat vb.), dualar ve sureler hakkında sormak istediğiniz soruları cevaplamaktan mutluluk duyarım. Nasıl yardımcı olabilirim?",
+          'time': DateTime.now(),
+        }
+      ];
+    }
+  }
+
   AudioPlayer? _audioPlayer;
   PlayerState _playerState = PlayerState.stopped;
   String _currentAudioUrl = "";
@@ -626,7 +788,15 @@ out center body;
   void initState() {
     super.initState();
     _initMosques();
-    if (widget.toolId == 'yakindaki-camiler') {
+    _loadLocationName();
+    _loadQuranLastRead();
+    _loadZikirCompletedDates();
+    _loadDualarFavorites();
+    _initDiniHoca();
+    if (widget.toolId == 'namaz-vakitleri-aylik') {
+      _loadMonthlyTimes();
+    }
+    if (widget.toolId == 'yakindaki-camiler' || widget.toolId == 'kible-bulucu') {
       _getUserLocation();
     }
     _initAudio();
@@ -694,6 +864,8 @@ out center body;
     _qaInputController.dispose();
     _chatInputController.dispose();
     _hadisSearchController.dispose();
+    _diniHocaInputController.dispose();
+    _diniHocaScrollController.dispose();
     _goldController.dispose();
     _cashController.dispose();
     _businessController.dispose();
@@ -727,32 +899,7 @@ out center body;
     await _repository.setZikirCount(0);
   }
 
-  Future<void> _incrementZikir() async {
-    HapticFeedback.lightImpact();
-    if (_zikirSoundEnabled) {
-      SystemSound.play(SystemSoundType.click);
-    }
-    setState(() {
-      _zikirCount++;
-    });
-    await _repository.setZikirCount(_zikirCount);
 
-    if (_zikirTarget != 9999 && _zikirCount >= _zikirTarget) {
-      HapticFeedback.vibrate();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Tebrikler! ${_zikirData[_selectedZikirId]?['ad'] ?? ''} zikrini tamamladınız!",
-          ),
-          backgroundColor: const Color(0xFF27A770),
-        ),
-      );
-      setState(() {
-        _zikirCount = 0;
-      });
-      await _repository.setZikirCount(0);
-    }
-  }
 
   Future<void> _resetZikir() async {
     setState(() {
@@ -857,9 +1004,11 @@ out center body;
 
   @override
   Widget build(BuildContext context) {
+    final bool dark = _isDark;
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F8F5),
+      backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
       appBar: AppBar(
+        automaticallyImplyLeading: !widget.isTab,
         title: Text(
           widget.toolTitle,
           style: const TextStyle(
@@ -867,7 +1016,7 @@ out center body;
             color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF1E5E43),
+        backgroundColor: dark ? const Color(0xFF111A2E) : const Color(0xFF1E5E43),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -894,6 +1043,10 @@ out center body;
         return _buildPeygamberHayati();
       case 'kuran-kerim':
         return _buildKuranKerim();
+      case 'dini-hoca':
+        return _buildDiniHoca();
+      case 'namaz-vakitleri-aylik':
+        return _buildAylikNamazVakitleri();
       case 'esmaul-husna':
         return _buildEsmaulHusna();
       case 'ramazan-hakkinda':
@@ -1046,8 +1199,65 @@ out center body;
     }
   }
 
-  // 1. Dini Günler
+  // 1. Dini Günler Helpers
+  DateTime? _parseTurkishDate(String tarihStr) {
+    try {
+      final parts = tarihStr.trim().split(' ');
+      if (parts.length < 3) return null;
+      
+      final dayNum = int.tryParse(parts[0]) ?? 1;
+      final monthName = parts[1].toLowerCase();
+      final monthsMap = {
+        'ocak': 1, 'şubat': 2, 'mart': 3, 'nisan': 4,
+        'mayıs': 5, 'haziran': 6, 'temmuz': 7, 'ağustos': 8, 'ağu': 8,
+        'eylül': 9, 'ekim': 10, 'kasım': 11, 'aralık': 12
+      };
+      final monthNum = monthsMap[monthName] ?? 1;
+      final yearNum = int.tryParse(parts[2]) ?? DateTime.now().year;
+      
+      return DateTime(yearNum, monthNum, dayNum);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Map<String, String>? _getNextReligiousDay() {
+    try {
+      final now = DateTime.now();
+      final currentYear = now.year.toString();
+      final days = _diniGunlerByYear[currentYear];
+      if (days == null || days.isEmpty) return null;
+
+      Map<String, String>? closestDay;
+      int minDiffDays = 99999;
+
+      for (var day in days) {
+        final tarihStr = day['tarih'] ?? '';
+        if (tarihStr.isEmpty) continue;
+
+        final dt = _parseTurkishDate(tarihStr);
+        if (dt == null) continue;
+
+        final todayMidnight = DateTime(now.year, now.month, now.day);
+        final diff = dt.difference(todayMidnight).inDays;
+        if (diff >= 0 && diff < minDiffDays) {
+          minDiffDays = diff;
+          closestDay = {
+            'ad': day['ad'] ?? '',
+            'tarih': tarihStr,
+            'gun': day['gun'] ?? '',
+            'kalan': diff == 0 ? "Bugün" : "$diff gün kaldı",
+          };
+        }
+      }
+      return closestDay;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Widget _buildDiniGunler() {
+    final bool dark = _isDark;
     final list = _diniGunlerByYear[_selectedDiniGunlerYear] ?? [];
     final Map<String, List<Map<String, String>>> grouped = {};
     for (var item in list) {
@@ -1062,101 +1272,334 @@ out center body;
       "Hicri Yılbaşı ve Aşure"
     ];
 
+    final nextDay = _getNextReligiousDay();
+    final now = DateTime.now();
+    final todayMidnight = DateTime(now.year, now.month, now.day);
+
     return Column(
       children: [
-        // Year tabs horizontally
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
+        // 1. Dynamic Next Upcoming Religious Day Banner
+        if (nextDay != null && _selectedDiniGunlerYear == now.year.toString())
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: dark
+                    ? [const Color(0xFF131D31), const Color(0xFF0F1B2A)]
+                    : [Colors.white, const Color(0xFFEAF7F1)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: dark ? const Color(0xFF1E2D4A) : const Color(0xFF27A770).withOpacity(0.18),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(dark ? 0.05 : 0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: _goldColor.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.star_rounded, color: _goldColor, size: 26),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Yaklaşan Dini Gün",
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: _goldColor,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          nextDay['ad']!,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: _textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          "${nextDay['tarih']} • ${nextDay['gun']}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _subtitleColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: _greenColor.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      nextDay['kalan']!,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.bold,
+                        color: _greenColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+        // 2. Custom Year Selector Horizontal Scroll Strip
+        Container(
+          height: 40,
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             children: ["2026", "2027", "2028", "2029", "2030"].map((year) {
               final isSelected = _selectedDiniGunlerYear == year;
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: ChoiceChip(
-                  label: Text(
-                    year,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : const Color(0xFF1E5E43),
-                      fontWeight: FontWeight.bold,
+                padding: const EdgeInsets.only(right: 8.0),
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedDiniGunlerYear = year;
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(20),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 2),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: isSelected
+                          ? LinearGradient(
+                              colors: [_greenColor, _greenColor.withOpacity(0.8)],
+                            )
+                          : null,
+                      color: isSelected ? null : (dark ? const Color(0xFF131D31) : Colors.white),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isSelected
+                            ? Colors.transparent
+                            : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0)),
+                        width: 1.5,
+                      ),
+                      boxShadow: isSelected
+                          ? [
+                              BoxShadow(
+                                color: _greenColor.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              )
+                            ]
+                          : null,
+                    ),
+                    child: Text(
+                      year,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13.5,
+                      ),
                     ),
                   ),
-                  selected: isSelected,
-                  selectedColor: const Color(0xFF27A770),
-                  backgroundColor: Colors.white,
-                  onSelected: (val) {
-                    if (val) {
-                      setState(() {
-                        _selectedDiniGunlerYear = year;
-                      });
-                    }
-                  },
                 ),
               );
             }).toList(),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
+
+        // 3. Redesigned Category Sections and Cards
         Expanded(
-          child: ListView(
-            children: categoryOrder.map((catName) {
+          child: ListView.builder(
+            padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 24.0),
+            itemCount: categoryOrder.length,
+            itemBuilder: (context, catIdx) {
+              final catName = categoryOrder[catIdx];
               final items = grouped[catName] ?? [];
               if (items.isEmpty) return const SizedBox.shrink();
+
+              IconData catIcon;
+              Color catAccentColor;
+              switch (catName) {
+                case "Kandil ve Mübarek Geceler":
+                  catIcon = Icons.nights_stay;
+                  catAccentColor = const Color(0xFF5C6BC0);
+                  break;
+                case "Ramazan Bayramı":
+                  catIcon = Icons.mosque;
+                  catAccentColor = const Color(0xFF27A770);
+                  break;
+                case "Kurban Bayramı":
+                  catIcon = Icons.favorite;
+                  catAccentColor = const Color(0xFFFF7043);
+                  break;
+                default:
+                  catIcon = Icons.auto_awesome;
+                  catAccentColor = const Color(0xFFFFB300);
+              }
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Category Header
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    margin: const EdgeInsets.only(top: 12, bottom: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF27A770).withOpacity(0.08),
-                      border: const Border(
-                        left: BorderSide(color: Color(0xFF27A770), width: 4),
-                      ),
-                    ),
-                    child: Text(
-                      catName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E5E43),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                  // Items in this category
-                  ...items.map((day) {
-                    return Card(
-                      elevation: 1,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        title: Text(
-                          day['ad'] ?? '',
-                          style: const TextStyle(
+                  // Category Header Row
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0, top: 16.0, bottom: 8.0),
+                    child: Row(
+                      children: [
+                        Icon(catIcon, color: catAccentColor, size: 16),
+                        const SizedBox(width: 8),
+                        Text(
+                          catName,
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            color: catAccentColor,
+                            fontSize: 13,
+                            letterSpacing: 0.5,
                           ),
                         ),
-                        subtitle: Text(
-                          day['gun'] ?? '',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                      ],
+                    ),
+                  ),
+
+                  // Category Cards List
+                  ...items.map((day) {
+                    final String tarihStr = day['tarih'] ?? '';
+                    final dt = _parseTurkishDate(tarihStr);
+                    
+                    String statusText = "";
+                    Color statusColor = Colors.grey;
+                    bool isFuture = false;
+
+                    if (dt != null) {
+                      final diff = dt.difference(todayMidnight).inDays;
+                      if (diff < 0) {
+                        statusText = "Geçti";
+                        statusColor = dark ? Colors.white30 : Colors.black26;
+                      } else if (diff == 0) {
+                        statusText = "Bugün";
+                        statusColor = _goldColor;
+                      } else {
+                        statusText = "$diff gün kaldı";
+                        statusColor = _greenColor;
+                        isFuture = true;
+                      }
+                    }
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                      decoration: BoxDecoration(
+                        color: _cardBgColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: dt != null && dt.difference(todayMidnight).inDays == 0
+                              ? _goldColor
+                              : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0)),
+                          width: dt != null && dt.difference(todayMidnight).inDays == 0 ? 1.8 : 1.0,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(dark ? 0.05 : 0.01),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        leading: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: catAccentColor.withOpacity(0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(catIcon, color: catAccentColor, size: 18),
+                        ),
+                        title: Text(
+                          day['ad'] ?? '',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            color: _textColor,
+                          ),
+                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                day['gun'] ?? '',
+                                style: TextStyle(
+                                  color: _subtitleColor,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              if (statusText.isNotEmpty) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  width: 4,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: _subtitleColor.withOpacity(0.5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  statusText,
+                                  style: TextStyle(
+                                    color: statusColor,
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
                         trailing: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF27A770).withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(20),
+                            color: isFuture
+                                ? _greenColor.withOpacity(0.12)
+                                : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9)),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isFuture
+                                  ? _greenColor.withOpacity(0.2)
+                                  : Colors.transparent,
+                            ),
                           ),
                           child: Text(
-                            day['tarih'] ?? '',
-                            style: const TextStyle(
-                              color: Color(0xFF1E5E43),
+                            tarihStr,
+                            style: TextStyle(
+                              color: isFuture ? _greenColor : _textColor.withOpacity(0.8),
                               fontWeight: FontWeight.bold,
-                              fontSize: 12,
+                              fontSize: 11.5,
                             ),
                           ),
                         ),
@@ -1165,7 +1608,7 @@ out center body;
                   }).toList(),
                 ],
               );
-            }).toList(),
+            },
           ),
         ),
       ],
@@ -1678,120 +2121,440 @@ out center body;
     );
   }
 
-  // 6. Kuran-ı Kerim Player
+  // 6. Kuran-ı Kerim V2
   Widget _buildKuranKerim() {
+    final bool dark = _isDark;
+
+    // Filter surahs/juzs
+    final queryNormalized = _normalize(_quranSearchQuery);
+    final List<QuranSurah> filteredSuras = QURAN_SURAHS.where((s) {
+      return _normalize(s.name).contains(queryNormalized) ||
+          _normalize(s.arabicName).contains(queryNormalized) ||
+          s.number.toString().contains(queryNormalized);
+    }).toList();
+
+    // Filter Juz list
+    final List<QuranJuz> filteredJuzs = QURAN_JUZS.where((j) {
+      return j.number.toString().contains(queryNormalized) ||
+          "${j.number}. cüz".contains(queryNormalized);
+    }).toList();
+
     return Column(
       children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: const Color(0xFFEAF7F1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFF27A770).withOpacity(0.3)),
+        // Kaldığın Yer bookmark progress card
+        if (_lastSuraName.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            child: Card(
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              elevation: dark ? 0 : 1.5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: dark
+                    ? BorderSide(color: Colors.white.withOpacity(0.08), width: 1.5)
+                    : BorderSide.none,
+              ),
+              child: InkWell(
+                onTap: () {
+                  final targetSurah = QURAN_SURAHS.firstWhere(
+                    (s) => s.number == _lastSuraNo,
+                    orElse: () => QURAN_SURAHS[0],
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuranDetailScreen(
+                        surah: targetSurah,
+                        targetAyah: _lastAyahNo,
+                      ),
+                    ),
+                  ).then((_) => _loadQuranLastRead());
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _greenColor.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.bookmark_rounded, color: _goldColor, size: 28),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "KALDIĞIN YER",
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                                color: _goldColor,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "$_lastSuraName Suresi",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: _textColor,
+                              ),
+                            ),
+                            Text(
+                              "Ayet $_lastAyahNo / $_lastTotalAyahs",
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: _subtitleColor,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: LinearProgressIndicator(
+                                value: _lastPercent,
+                                backgroundColor: dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9),
+                                valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
+                                minHeight: 6,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.arrow_forward_ios, color: _greenColor, size: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
+
+        // Tabs switcher & search row
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
           child: Column(
             children: [
-              const Icon(Icons.music_note, color: Color(0xFF27A770), size: 36),
-              const SizedBox(height: 8),
-              Text(
-                _currentTrackName.isEmpty
-                    ? "Cüz seçin ve oynatın"
-                    : _currentTrackName,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: Color(0xFF1E5E43),
+              Container(
+                height: 46,
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: dark ? const Color(0xFF131D31) : const Color(0xFFEAF7F1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => setState(() => _quranTab = 0),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: _quranTab == 0
+                                ? _greenColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "Sureler",
+                            style: TextStyle(
+                              color: _quranTab == 0 ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => setState(() => _quranTab = 1),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: _quranTab == 1
+                                ? _greenColor
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "Cüzler",
+                            style: TextStyle(
+                              color: _quranTab == 1 ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    iconSize: 40,
-                    icon: Icon(
-                      _playerState == PlayerState.playing
-                          ? Icons.pause_circle_filled
-                          : Icons.play_circle_filled,
-                      color: const Color(0xFF27A770),
+
+              // Search bar
+              Container(
+                decoration: BoxDecoration(
+                  color: dark ? const Color(0xFF131D31) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(dark ? 0.05 : 0.03),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
-                    onPressed: _currentAudioUrl.isEmpty
-                        ? null
-                        : () => _playAudio(_currentAudioUrl, _currentTrackName),
+                  ],
+                ),
+                child: TextField(
+                  style: TextStyle(color: _textColor),
+                  decoration: InputDecoration(
+                    hintText: _quranTab == 0 ? "Sure adı veya no ara..." : "Cüz no ara...",
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    prefixIcon: Icon(Icons.search, color: _greenColor),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  if (_playerState != PlayerState.stopped)
-                    IconButton(
-                      iconSize: 40,
-                      icon: const Icon(Icons.stop_circle, color: Colors.red),
-                      onPressed: () async {
-                        await _audioPlayer?.stop();
-                        setState(() {
-                          _playerState = PlayerState.stopped;
-                        });
-                      },
-                    ),
-                ],
+                  onChanged: (val) {
+                    setState(() {
+                      _quranSearchQuery = val;
+                    });
+                  },
+                ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "30 Cüz Listesi",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: Color(0xFF1E5E43),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 1.8,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: 30,
-            itemBuilder: (context, index) {
-              final juzNum = index + 1;
-              final url =
-                  "https://server8.mp3quran.net/afs/${juzNum.toString().padLeft(3, '0')}.mp3";
-              final name = "$juzNum. Cüz Tilaveti - Fatih Çollak";
-              final isCurrent = _currentAudioUrl == url;
 
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isCurrent
-                      ? const Color(0xFF27A770)
-                      : Colors.white,
-                  foregroundColor: isCurrent
-                      ? Colors.white
-                      : const Color(0xFF1E5E43),
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () => _playAudio(url, name),
-                child: Text(
-                  "$juzNum. Cüz",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              );
-            },
-          ),
+        // List builder
+        Expanded(
+          child: _quranTab == 0
+              ? _buildSurelerList(filteredSuras)
+              : _buildCuzlerList(filteredJuzs),
         ),
       ],
     );
+  }
+
+  Widget _buildSurelerList(List<QuranSurah> list) {
+    final bool dark = _isDark;
+    if (list.isEmpty) {
+      return Center(
+        child: Text(
+          "Eşleşen sure bulunamadı.",
+          style: TextStyle(color: _subtitleColor, fontSize: 14),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 36.0),
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        final surah = list[index];
+        final isBookmarked = _quranBookmarks.contains(surah.number.toString());
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          decoration: BoxDecoration(
+            color: _cardBgColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+            ),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuranDetailScreen(
+                    surah: surah,
+                    targetAyah: 1,
+                  ),
+                ),
+              ).then((_) => _loadQuranLastRead());
+            },
+            leading: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                border: Border.all(color: _goldColor, width: 1.5),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                surah.number.toString(),
+                style: TextStyle(
+                  color: _goldColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            title: Text(
+              surah.name,
+              style: TextStyle(
+                color: _textColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
+            subtitle: Text(
+              "${surah.versesCount} Ayet • ${surah.revelationPlace}",
+              style: TextStyle(
+                color: _subtitleColor,
+                fontSize: 12,
+              ),
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  surah.arabicName,
+                  style: TextStyle(
+                    color: _greenColor,
+                    fontFamily: 'Traditional Arabic',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                IconButton(
+                  icon: Icon(
+                    isBookmarked ? Icons.star_rounded : Icons.star_outline_rounded,
+                    color: isBookmarked ? _goldColor : (dark ? Colors.white38 : Colors.black26),
+                    size: 22,
+                  ),
+                  onPressed: () => _toggleQuranBookmark(surah.number.toString()),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCuzlerList(List<QuranJuz> list) {
+    final bool dark = _isDark;
+    if (list.isEmpty) {
+      return Center(
+        child: Text(
+          "Eşleşen cüz bulunamadı.",
+          style: TextStyle(color: _subtitleColor, fontSize: 14),
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 36.0),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 1.3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+      ),
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        final juz = list[index];
+        return Card(
+          elevation: dark ? 0 : 1,
+          color: _cardBgColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+            ),
+          ),
+          child: InkWell(
+            onTap: () {
+              final startInfo = _getJuzStartInfo(juz.number);
+              final targetSurah = QURAN_SURAHS.firstWhere(
+                (s) => s.number == startInfo['sura'],
+                orElse: () => QURAN_SURAHS[0],
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuranDetailScreen(
+                    surah: targetSurah,
+                    isJuz: true,
+                    juz: juz,
+                    targetAyah: startInfo['ayah']!,
+                  ),
+                ),
+              ).then((_) => _loadQuranLastRead());
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "🕋",
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "${juz.number}. Cüz",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: _textColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Map<String, int> _getJuzStartInfo(int juzNumber) {
+    const juzStarts = {
+      1: {'sura': 1, 'ayah': 1},
+      2: {'sura': 2, 'ayah': 142},
+      3: {'sura': 2, 'ayah': 253},
+      4: {'sura': 3, 'ayah': 93},
+      5: {'sura': 4, 'ayah': 24},
+      6: {'sura': 4, 'ayah': 148},
+      7: {'sura': 5, 'ayah': 82},
+      8: {'sura': 6, 'ayah': 111},
+      9: {'sura': 7, 'ayah': 88},
+      10: {'sura': 8, 'ayah': 41},
+      11: {'sura': 9, 'ayah': 93},
+      12: {'sura': 11, 'ayah': 6},
+      13: {'sura': 12, 'ayah': 53},
+      14: {'sura': 15, 'ayah': 1},
+      15: {'sura': 17, 'ayah': 1},
+      16: {'sura': 18, 'ayah': 75},
+      17: {'sura': 21, 'ayah': 1},
+      18: {'sura': 23, 'ayah': 1},
+      19: {'sura': 25, 'ayah': 21},
+      20: {'sura': 27, 'ayah': 56},
+      21: {'sura': 29, 'ayah': 46},
+      22: {'sura': 33, 'ayah': 31},
+      23: {'sura': 36, 'ayah': 28},
+      24: {'sura': 39, 'ayah': 32},
+      25: {'sura': 41, 'ayah': 47},
+      26: {'sura': 46, 'ayah': 1},
+      27: {'sura': 51, 'ayah': 31},
+      28: {'sura': 58, 'ayah': 1},
+      29: {'sura': 67, 'ayah': 1},
+      30: {'sura': 78, 'ayah': 1},
+    };
+    return juzStarts[juzNumber] ?? {'sura': 1, 'ayah': 1};
   }
 
   // 7. Esmaül Hüsna
@@ -2070,6 +2833,7 @@ out center body;
   }
 
   // 10. Kıble Bulucu Compass
+  // 10. Kıble Bulucu V2 (Qibla Radar)
   Widget _buildKibleBulucu() {
     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
 
@@ -2077,256 +2841,294 @@ out center body;
       stream: FlutterCompass.events,
       builder: (context, snapshot) {
         double? heading = snapshot.data?.heading;
-        bool hasSensor = heading != null && !_forceSimulation;
+        final bool dark = _isDark;
 
-        // Use manual rotation if no sensor is available or simulation is forced
-        double finalHeading = hasSensor ? heading : _manualCompassHeading;
-        double needleRotation = qiblaAngle - finalHeading;
-        double dialRotation = -finalHeading;
+        // If no sensor detected, display a beautiful fallback message
+        if (heading == null) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.explore_off_outlined,
+                    color: Colors.orange,
+                    size: 64,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "Pusula Sensörü Bulunamadı",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Cihazınızda manyetik pusula sensörü tespit edilemedi. Kıble Radar özelliğini kullanabilmek için lütfen pusula desteği olan bir mobil cihaz kullanın.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.4),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        double needleRotation = qiblaAngle - heading;
+
+        // Calculate difference for direction instructions
+        double diff = (qiblaAngle - heading) % 360;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+        
+        bool isAligned = diff.abs() < 3;
+
+        // Blip coordinates on the radar grid
+        final double angleRad = (needleRotation - 90) * 3.141592653589793 / 180;
+        final double radarRadius = 90.0; // Half of 180
+        final double blipX = 120.0 + radarRadius * math.cos(angleRad) - 16;
+        final double blipY = 120.0 + radarRadius * math.sin(angleRad) - 16;
+
+        // Real distance to Kaaba from user's current GPS, fallback to Istanbul
+        double meccaDistance = 2400.0;
+        if (_currentPosition != null) {
+          meccaDistance = _calculateDistance(_currentPosition!.latitude, _currentPosition!.longitude, 21.4225, 39.8262);
+        }
+
+        Widget instructionWidget;
+        if (isAligned) {
+          instructionWidget = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            decoration: BoxDecoration(
+              color: const Color(0xFF27A770).withOpacity(0.15),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: const Color(0xFF27A770), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF27A770).withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF27A770),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                const Text(
+                  "KIBLE KİLİTLENDİ 🕋",
+                  style: TextStyle(
+                    color: Color(0xFF27A770),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ],
+            ),
+          );
+        } else {
+          String dirText = diff > 0 
+              ? "SAĞA DÖNÜN: ${diff.round()}° ↪️" 
+              : "SOLA DÖNÜN: ${diff.abs().round()}° ↩️";
+          instructionWidget = Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: Colors.orange.withOpacity(0.5), width: 1.5),
+            ),
+            child: Text(
+              dirText,
+              style: const TextStyle(
+                color: Colors.orange,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+                letterSpacing: 0.5,
+              ),
+            ),
+          );
+        }
 
         return SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 8),
-              const Card(
-                color: Color(0xFFFFF7EA),
+              Card(
+                color: dark ? const Color(0xFF1E2E4A).withOpacity(0.2) : const Color(0xFFEAF7F1).withOpacity(0.4),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  side: BorderSide(
+                    color: dark ? const Color(0xFF27A770).withOpacity(0.15) : const Color(0xFF27A770).withOpacity(0.1),
+                    width: 1,
+                  ),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   child: Column(
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 18),
-                          SizedBox(width: 6),
+                          Icon(Icons.radar_rounded, color: _greenColor, size: 20),
+                          const SizedBox(width: 8),
                           Text(
-                            "Cihazınızı düz zeminde yatay tutun.",
-                            style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.orange),
+                            "Kıble Radar Arayüzü",
+                            style: TextStyle(
+                              fontSize: 14.5, 
+                              fontWeight: FontWeight.bold, 
+                              color: _greenColor,
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 6),
                       Text(
-                        "Pusulayı döndürerek seccadeyi Kıble yönüne (🕌) hizalayın.",
+                        "Telefonunuzu yatay tutup kendi etrafınızda dönün. Parıldayan Kabe hedefini (🕋) en üstteki kırmızı hedef çizgisine yerleştirin.",
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                        style: TextStyle(fontSize: 11.5, color: _subtitleColor, height: 1.35),
                       ),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              // Custom Visual Compass stack
+              
+              // Futuristic Qibla Radar Screen
               Center(
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Compass Ring (Dial) rotated by DialRotation
-                    Transform.rotate(
-                      angle: (dialRotation * math.pi / 180),
-                      child: Container(
-                        width: 230,
-                        height: 230,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFF27A770),
-                            width: 5,
+                    Container(
+                      width: 240,
+                      height: 240,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: isAligned
+                                ? const Color(0xFF27A770).withOpacity(0.1)
+                                : (dark ? Colors.black45 : Colors.black12),
+                            blurRadius: 20,
+                            spreadRadius: 2,
                           ),
-                          boxShadow: const [
-                            BoxShadow(color: Colors.black12, blurRadius: 15),
-                          ],
-                        ),
-                        child: const Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.topCenter,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "K",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "G",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black54,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "B",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black54,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  "D",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black54,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        ],
+                      ),
+                      child: CustomPaint(
+                        painter: _KibleRadarPainter(
+                          needleRotation: needleRotation,
+                          isAligned: isAligned,
+                          isDark: dark,
                         ),
                       ),
                     ),
-                    // Compass Needle (Qibla pointer) pointing to 137° (Prayer rug Seccade)
-                    Transform.rotate(
-                      angle: (needleRotation * math.pi / 180),
-                      child: SizedBox(
-                        width: 60,
-                        height: 160,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Prayer rug (Seccade) rectangle pointing UP
-                            Positioned(
-                              top: 15,
-                              child: Container(
-                                width: 36,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF27A770),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: const Color(0xFF1E5E43),
-                                    width: 1.5,
-                                  ),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.black26,
-                                      blurRadius: 4,
-                                      offset: Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.arrow_upward,
-                                        color: Colors.white,
-                                        size: 16,
-                                      ),
-                                      Text(
-                                        "🕌",
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Center dot
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF1E5E43),
-                                shape: BoxShape.circle,
-                              ),
+                    Positioned(
+                      left: blipX,
+                      top: blipY,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isAligned ? const Color(0xFF27A770) : _cardBgColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isAligned ? Colors.white : (dark ? const Color(0xFFD4AF37) : const Color(0xFF27A770)),
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: isAligned ? const Color(0xFF27A770).withOpacity(0.8) : Colors.black26,
+                              blurRadius: isAligned ? 12 : 4,
+                              spreadRadius: isAligned ? 2 : 0,
                             ),
                           ],
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "🕋",
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 36),
-              Text(
-                "Kıble Açısı: ${qiblaAngle.toInt()}° (İstanbul)",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: Color(0xFF1E5E43),
+              const SizedBox(height: 30),
+              
+              instructionWidget,
+              
+              const SizedBox(height: 24),
+              
+              // HUD Information Panel
+              Card(
+                color: _cardBgColor,
+                elevation: 1,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "KIBLE RADAR VERİLERİ",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
+                          color: _subtitleColor,
+                        ),
+                      ),
+                      const Divider(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Hedef Açısı:", style: TextStyle(fontSize: 13, color: _subtitleColor)),
+                          Text("${qiblaAngle.toInt()}° (İstanbul)", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: _greenColor)),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Cihaz Yönü:", style: TextStyle(fontSize: 13, color: _subtitleColor)),
+                          Text("${heading.round()}°", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: _textColor)),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Kabe'ye Uzaklık:", style: TextStyle(fontSize: 13, color: _subtitleColor)),
+                          Text("${meccaDistance.round()} km", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Konum:", style: TextStyle(fontSize: 13, color: _subtitleColor)),
+                          Text(_currentLocationName.isNotEmpty ? _currentLocationName : "İstanbul", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: _textColor)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                hasSensor
-                    ? "Pusula Yönü: ${finalHeading.round()}°"
-                    : "Simüle Yönü: ${finalHeading.round()}°",
-                style: const TextStyle(color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: SwitchListTile(
-                  title: const Text(
-                    "Simülasyon Modu",
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: const Text(
-                    "Pusulayı el ile döndürmek için aktifleştirin",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  value: _forceSimulation,
-                  activeThumbColor: const Color(0xFF27A770),
-                  onChanged: (val) {
-                    setState(() {
-                      _forceSimulation = val;
-                    });
-                  },
-                ),
-              ),
-              if (!hasSensor) ...[
-                const SizedBox(height: 8),
-                const Text(
-                  "Sürgü ile pusula açısını döndürün:",
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Slider(
-                    value: _manualCompassHeading,
-                    min: 0,
-                    max: 360,
-                    activeColor: const Color(0xFF27A770),
-                    onChanged: (val) {
-                      setState(() {
-                        _manualCompassHeading = val;
-                      });
-                    },
-                  ),
-                ),
-              ],
               const SizedBox(height: 24),
             ],
           ),
@@ -2336,71 +3138,106 @@ out center body;
   }
 
   // 11. Zikirmatik
+  // 11. Zikirmatik V2
   Widget _buildZikirmatik() {
     final zikir = _zikirData[_selectedZikirId] ?? _zikirData['subhanallah']!;
+    final bool dark = _isDark;
+
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Dhikr Selector Dropdown
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Zikir Seçin: ",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF1E5E43)),
-                ),
-                DropdownButton<String>(
-                  value: _selectedZikirId,
-                  underline: const SizedBox.shrink(),
-                  icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF27A770)),
-                  items: const [
-                    DropdownMenuItem(value: "subhanallah", child: Text("Sübhânallâh (33)", style: TextStyle(fontSize: 13))),
-                    DropdownMenuItem(value: "elhamdulillah", child: Text("Elhamdülillâh (33)", style: TextStyle(fontSize: 13))),
-                    DropdownMenuItem(value: "allahuekber", child: Text("Allâhu Ekber (34)", style: TextStyle(fontSize: 13))),
-                    DropdownMenuItem(value: "lailaheillallah", child: Text("Lâ ilâhe illallâh (Limitsiz)", style: TextStyle(fontSize: 13))),
-                  ],
-                  onChanged: _onZikirSelected,
-                ),
-              ],
+            height: 80,
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              itemCount: _zikirData.length,
+              itemBuilder: (context, index) {
+                final key = _zikirData.keys.elementAt(index);
+                final item = _zikirData[key]!;
+                final isSelected = _selectedZikirId == key;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: InkWell(
+                    onTap: () => _onZikirSelected(key),
+                    borderRadius: BorderRadius.circular(16),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      width: 140,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected ? _greenColor : _cardBgColor,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isSelected
+                              ? _greenColor
+                              : (dark ? const Color(0xFF2E3D5A) : const Color(0xFFE2E8F0)),
+                          width: 1.5,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: _greenColor.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
+                                )
+                              ]
+                            : null,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['ad'] ?? '',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: isSelected ? Colors.white : _textColor,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            item['hedef'] == 9999 ? "∞" : "Hedef: ${item['hedef']}",
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: isSelected ? Colors.white70 : _subtitleColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-          const SizedBox(height: 16),
-          // Dhikr Info Card
+          const SizedBox(height: 12),
+
           Card(
-            elevation: 1.5,
+            color: _cardBgColor,
+            elevation: dark ? 0 : 1.5,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
+              side: dark
+                  ? BorderSide(color: Colors.white.withOpacity(0.08), width: 1)
+                  : BorderSide.none,
             ),
-            color: Colors.white,
+            margin: const EdgeInsets.symmetric(horizontal: 12),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    zikir['ad'] ?? '',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF27A770),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
                   Text(
                     zikir['arapca'] ?? '',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 28,
+                    style: TextStyle(
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E5E43),
+                      color: _greenColor,
                       fontFamily: 'Traditional Arabic',
                     ),
                   ),
@@ -2409,27 +3246,29 @@ out center body;
                     "“${zikir['anlam']}”",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 12.5,
+                      fontSize: 13,
                       fontStyle: FontStyle.italic,
-                      color: Colors.grey[700],
+                      color: _textColor,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF7EA),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: const Color(0xFFF9EDD4)),
+                      color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFFFF9F2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: dark ? const Color(0xFF2E3D5A) : const Color(0xFFFFECE0),
+                      ),
                     ),
                     child: Text(
                       zikir['fazilet'] ?? '',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 11,
+                      style: TextStyle(
+                        fontSize: 11.5,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange,
-                        height: 1.35,
+                        color: dark ? const Color(0xFFE2B04E) : Colors.orange[800],
+                        height: 1.4,
                       ),
                     ),
                   ),
@@ -2437,64 +3276,117 @@ out center body;
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          // Zikir circle button
+          const SizedBox(height: 24),
+
           GestureDetector(
-            onTap: _incrementZikir,
-            child: Container(
-              width: 170,
-              height: 170,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF27A770), width: 8),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black12, blurRadius: 15, offset: Offset(0, 4)),
-                ],
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "$_zikirCount",
-                      style: const TextStyle(
-                        fontSize: 48,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E5E43),
-                      ),
+            onTapDown: (_) {
+              setState(() {
+                _counterScale = 0.92;
+              });
+            },
+            onTapUp: (_) {
+              setState(() {
+                _counterScale = 1.0;
+              });
+            },
+            onTapCancel: () {
+              setState(() {
+                _counterScale = 1.0;
+              });
+            },
+            onTap: () async {
+              HapticFeedback.lightImpact();
+              if (_zikirSoundEnabled) {
+                SystemSound.play(SystemSoundType.click);
+              }
+              setState(() {
+                _zikirCount++;
+              });
+              await _repository.setZikirCount(_zikirCount);
+
+              final now = DateTime.now();
+              final todayStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+              if (!_zikirCompletedDates.contains(todayStr)) {
+                await _markZikirCompletedToday();
+              }
+
+              if (_zikirTarget != 9999 && _zikirCount >= _zikirTarget) {
+                HapticFeedback.vibrate();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Tebrikler! ${zikir['ad']} zikrini tamamladınız!",
                     ),
-                    Text(
-                      _zikirTarget == 9999 ? "/ ∞" : "/ $_zikirTarget",
-                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    backgroundColor: const Color(0xFF27A770),
+                  ),
+                );
+                setState(() {
+                  _zikirCount = 0;
+                });
+                await _repository.setZikirCount(0);
+              }
+            },
+            child: AnimatedScale(
+              scale: _counterScale,
+              duration: const Duration(milliseconds: 100),
+              child: Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  color: _cardBgColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: _greenColor, width: 8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _greenColor.withOpacity(dark ? 0.2 : 0.1),
+                      blurRadius: 20,
+                      spreadRadius: 2,
                     ),
                   ],
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "$_zikirCount",
+                        style: TextStyle(
+                          fontSize: 54,
+                          fontWeight: FontWeight.bold,
+                          color: _greenColor,
+                        ),
+                      ),
+                      Text(
+                        _zikirTarget == 9999 ? "/ ∞" : "/ $_zikirTarget",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: _subtitleColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
           const SizedBox(height: 24),
-          // Zikir actions
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.red,
-                  side: const BorderSide(color: Colors.red, width: 1),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                  elevation: 0,
+                  side: const BorderSide(color: Colors.red, width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 onPressed: () {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text("Sıfırla"),
-                      content: const Text(
-                        "Sayacı sıfırlamak istediğinize emin misiniz?",
-                      ),
+                      title: const Text("Sayaç Sıfırlansın mı?"),
+                      content: const Text("Zikir sayacınızı sıfırlamak istediğinize emin misiniz?"),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
@@ -2505,20 +3397,21 @@ out center body;
                             _resetZikir();
                             Navigator.pop(context);
                           },
-                          child: const Text("Evet"),
+                          child: const Text("Sıfırla", style: TextStyle(color: Colors.red)),
                         ),
                       ],
                     ),
                   );
                 },
-                child: const Text("Sıfırla", style: TextStyle(fontWeight: FontWeight.bold)),
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text("Sıfırla", style: TextStyle(fontWeight: FontWeight.bold)),
               ),
-              ElevatedButton(
+              ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _zikirSoundEnabled ? const Color(0xFF27A770) : Colors.grey,
+                  backgroundColor: _zikirSoundEnabled ? _greenColor : Colors.grey[600],
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   elevation: 0,
                 ),
                 onPressed: () {
@@ -2526,15 +3419,117 @@ out center body;
                     _zikirSoundEnabled = !_zikirSoundEnabled;
                   });
                 },
-                child: Text(
+                icon: Icon(_zikirSoundEnabled ? Icons.volume_up : Icons.volume_off, size: 18),
+                label: Text(
                   _zikirSoundEnabled ? "Ses: Açık" : "Ses: Kapalı",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
+
+          _buildWeekViewChart(),
+          const SizedBox(height: 24),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWeekViewChart() {
+    final bool dark = _isDark;
+    final now = DateTime.now();
+    final monday = now.subtract(Duration(days: now.weekday - 1));
+    final daysOfWeek = List.generate(7, (i) => monday.add(Duration(days: i)));
+    final List<String> dayNames = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+
+    return Card(
+      color: _cardBgColor,
+      elevation: dark ? 0 : 1.5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: dark
+            ? BorderSide(color: Colors.white.withOpacity(0.08), width: 1)
+            : BorderSide.none,
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.calendar_today_rounded, color: _goldColor, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  "Bu Haftanın Zikir Takibi",
+                  style: TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.bold,
+                    color: _textColor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(7, (index) {
+                final day = daysOfWeek[index];
+                final dayStr = "${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}";
+                final bool isCompleted = _zikirCompletedDates.contains(dayStr);
+                final bool isToday = day.year == now.year && day.month == now.month && day.day == now.day;
+
+                return Column(
+                  children: [
+                    Text(
+                      dayNames[index],
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isToday ? _greenColor : _subtitleColor,
+                        fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: isCompleted
+                            ? const Color(0xFF27A770)
+                            : (isToday
+                                ? _greenColor.withOpacity(0.15)
+                                : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9))),
+                        shape: BoxShape.circle,
+                        border: isToday
+                            ? Border.all(color: _greenColor, width: 2)
+                            : Border.all(
+                                color: isCompleted
+                                    ? const Color(0xFF27A770)
+                                    : (dark ? const Color(0xFF2E3D5A) : const Color(0xFFE2E8F0)),
+                                width: 1.5,
+                              ),
+                      ),
+                      child: Center(
+                        child: isCompleted
+                            ? const Icon(Icons.check, color: Colors.white, size: 18)
+                            : Text(
+                                "${day.day}",
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: isToday ? _greenColor : _textColor,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -3254,157 +4249,753 @@ out center body;
   }
 
   // 17. Günlük Dualar
+  // 17. Günlük Dualar (Dualar V2)
+  String _getCategoryTitle(String cat) {
+    switch (cat) {
+      case 'sabah_aksam':
+        return "☀️ Sabah & Akşam Ezkarı";
+      case 'namaz':
+        return "🕋 Namaz Duaları";
+      case 'uyku':
+        return "🛌 Uyku Duaları";
+      case 'yolculuk':
+        return "🚗 Yolculuk Duaları";
+      case 'yemek':
+        return "🍽️ Yemek Duaları";
+      case 'genel':
+      default:
+        return "🤲 Genel Dualar";
+    }
+  }
+
   Widget _buildGunlukDualar() {
-    return ListView.builder(
-      itemCount: DUALAR.length,
-      itemBuilder: (context, index) {
-        final dua = DUALAR[index];
-        return Card(
-          elevation: 1.5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          margin: const EdgeInsets.only(bottom: 12),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  dua['ad'] ?? '',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Color(0xFF1E5E43),
-                  ),
+    final bool dark = _isDark;
+    final List<Map<String, String>> sourceList = _dualarTab == 0 ? KURAN_DUALARI : HADIS_DUALARI;
+
+    final queryNormalized = _normalize(_dualarSearchQuery);
+    final List<Map<String, String>> filteredDualar = sourceList.where((d) {
+      final matchesSearch = _normalize(d['ad'] ?? '').contains(queryNormalized) ||
+          _normalize(d['anlam'] ?? '').contains(queryNormalized) ||
+          _normalize(d['okunus'] ?? '').contains(queryNormalized);
+      final isFav = _favoriteDualar.contains(d['id'] ?? '');
+      if (_showOnlyFavorites) {
+        return matchesSearch && isFav;
+      }
+      return matchesSearch;
+    }).toList();
+
+    final Map<String, List<Map<String, String>>> groupedDualar = {};
+    for (final dua in filteredDualar) {
+      final cat = dua['kategori'] ?? 'genel';
+      groupedDualar.putIfAbsent(cat, () => []).add(dua);
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+          child: Column(
+            children: [
+              Container(
+                height: 46,
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: dark ? const Color(0xFF131D31) : const Color(0xFFEAF7F1),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const Divider(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    dua['arapca'] ?? '',
-                    style: const TextStyle(
-                      fontFamily: 'Traditional Arabic',
-                      fontSize: 18,
-                      height: 1.8,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF27A770),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => setState(() => _dualarTab = 0),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: _dualarTab == 0 ? _greenColor : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "Kur'an Duaları",
+                            style: TextStyle(
+                              color: _dualarTab == 0 ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13.5,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    textAlign: TextAlign.right,
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => setState(() => _dualarTab = 1),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: _dualarTab == 1 ? _greenColor : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "Hadis Duaları",
+                            style: TextStyle(
+                              color: _dualarTab == 1 ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: dark ? const Color(0xFF131D31) : Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(dark ? 0.05 : 0.03),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        style: TextStyle(color: _textColor),
+                        decoration: InputDecoration(
+                          hintText: "Dua ara...",
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          prefixIcon: Icon(Icons.search, color: _greenColor),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onChanged: (val) {
+                          setState(() {
+                            _dualarSearchQuery = val;
+                          });
+                        },
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Anlamı: ${dua['anlam']}",
-                  style: const TextStyle(fontSize: 13, color: Colors.black87),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _showOnlyFavorites = !_showOnlyFavorites;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: _showOnlyFavorites ? Colors.red : (dark ? const Color(0xFF131D31) : Colors.white),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: _showOnlyFavorites ? Colors.red : (dark ? const Color(0xFF2E3D5A) : const Color(0xFFE2E8F0)),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(dark ? 0.05 : 0.03),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        _showOnlyFavorites ? Icons.favorite : Icons.favorite_border,
+                        color: _showOnlyFavorites ? Colors.white : Colors.red,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        );
-      },
+        ),
+        Expanded(
+          child: filteredDualar.isEmpty
+              ? Center(
+                  child: Text(
+                    _showOnlyFavorites ? "Favorilere eklenmiş dua bulunamadı." : "Eşleşen dua bulunamadı.",
+                    style: TextStyle(color: _subtitleColor, fontSize: 14),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 36.0),
+                  itemCount: groupedDualar.keys.length,
+                  itemBuilder: (context, catIndex) {
+                    final cat = groupedDualar.keys.elementAt(catIndex);
+                    final prayers = groupedDualar[cat]!;
+                    final catTitle = _getCategoryTitle(cat);
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 10.0),
+                          child: Text(
+                            "$catTitle (${prayers.length})",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: _goldColor,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                        ...List.generate(prayers.length, (duaIndex) {
+                          final dua = prayers[duaIndex];
+                          final id = dua['id'] ?? '';
+                          final title = dua['ad'] ?? '';
+                          final source = dua['sure'] ?? dua['kaynak'] ?? '';
+                          final arabic = dua['arapca'] ?? '';
+                          final mean = dua['anlam'] ?? '';
+                          final reading = dua['okunus'] ?? '';
+                          final audio = dua['ses'] ?? '';
+                          
+                          final isExpanded = _expandedDualar.contains(id);
+                          final isFav = _favoriteDualar.contains(id);
+                          final isPlaying = _currentAudioUrl == audio && _playerState == PlayerState.playing;
+
+                          return Card(
+                            color: _cardBgColor,
+                            elevation: dark ? 0 : 1,
+                            margin: const EdgeInsets.only(bottom: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              side: BorderSide(
+                                color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+                              ),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (isExpanded) {
+                                    _expandedDualar.remove(id);
+                                  } else {
+                                    _expandedDualar.add(id);
+                                  }
+                                });
+                              },
+                              borderRadius: BorderRadius.circular(16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(14.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        if (audio.isNotEmpty && _dualarTab != 1)
+                                          GestureDetector(
+                                            onTap: () => _playAudio(audio, title),
+                                            child: Container(
+                                              width: 38,
+                                              height: 38,
+                                              decoration: BoxDecoration(
+                                                color: isPlaying ? _greenColor : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFEAF7F1)),
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                isPlaying ? Icons.pause : Icons.play_arrow,
+                                                color: isPlaying ? Colors.white : _greenColor,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        if (audio.isNotEmpty && _dualarTab != 1) const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                title,
+                                                style: TextStyle(
+                                                  fontSize: 14.5,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: _textColor,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                source,
+                                                style: TextStyle(
+                                                  fontSize: 11,
+                                                  color: _subtitleColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        IconButton(
+                                          icon: Icon(
+                                            isFav ? Icons.favorite : Icons.favorite_border,
+                                            color: Colors.red,
+                                            size: 22,
+                                          ),
+                                          onPressed: () => _toggleDuaFavorite(id),
+                                        ),
+                                      ],
+                                    ),
+                                    if (isExpanded) ...[
+                                      const Divider(height: 20),
+                                      if (arabic.isNotEmpty) ...[
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                            arabic,
+                                            textAlign: TextAlign.right,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: _greenColor,
+                                              fontFamily: 'Traditional Arabic',
+                                              height: 1.8,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                      ],
+                                      if (reading.isNotEmpty) ...[
+                                        Text(
+                                          "Okunuşu:",
+                                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: _goldColor),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          reading,
+                                          style: TextStyle(fontSize: 13, color: _textColor, height: 1.35),
+                                        ),
+                                        const SizedBox(height: 12),
+                                      ],
+                                      Text(
+                                        "Anlamı:",
+                                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: _goldColor),
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        mean,
+                                        style: TextStyle(fontSize: 13, color: _textColor, height: 1.4),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                        const SizedBox(height: 12),
+                      ],
+                    );
+                  },
+                ),
+        ),
+      ],
     );
   }
 
   // 18. Zekat Hesaplayıcı
+  Widget _buildZekatInputField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData prefixIcon,
+    required Color iconColor,
+    required bool dark,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: _cardBgColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+          width: 1.0,
+        ),
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        style: TextStyle(
+          color: _textColor,
+          fontSize: 14.5,
+          fontWeight: FontWeight.w600,
+        ),
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: TextStyle(
+            color: _subtitleColor,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w500,
+          ),
+          floatingLabelStyle: TextStyle(
+            color: _greenColor,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+          prefixIcon: Icon(prefixIcon, color: iconColor, size: 20),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResultRow(String label, String value, {bool isBold = false, bool isRed = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              color: isBold ? _textColor : _subtitleColor,
+              fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13.5,
+              color: isRed ? const Color(0xFFFF7043) : (isBold ? _greenColor : _textColor),
+              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildZekatResultBoard(bool dark, double goldPrice, double nisapLimit) {
+    final gold = double.tryParse(_goldController.text) ?? 0.0;
+    final cash = double.tryParse(_cashController.text) ?? 0.0;
+    final business = double.tryParse(_businessController.text) ?? 0.0;
+    final debts = double.tryParse(_debtsController.text) ?? 0.0;
+    final totalWealth = (gold * goldPrice) + cash + business - debts;
+
+    final String resultStr = _zekatResult;
+    final bool zekatDue = resultStr.startsWith("ZEKAT_ODENECEK:");
+    final bool nisapUnder = resultStr.startsWith("TOPLAM_YOKSA_NISAP_ALTI:");
+    
+    String statusTitle = "";
+    String statusDesc = "";
+    Color statusBorderColor = Colors.grey;
+    IconData statusIcon = Icons.info_outline;
+
+    if (zekatDue) {
+      statusTitle = "Zekat Vermeniz Farzdır";
+      statusDesc = "Toplam net varlığınız nisap sınırının üzerindedir. Vermeniz gereken yıllık zekat tutarı aşağıda gösterilmiştir.";
+      statusBorderColor = _greenColor;
+      statusIcon = Icons.check_circle_rounded;
+    } else if (nisapUnder) {
+      statusTitle = "Zekat Düşmemektedir";
+      statusDesc = "Toplam net varlığınız nisap sınırının (${nisapLimit.toStringAsFixed(0)} TL) altındadır. Zekat mükellefi değilsiniz.";
+      statusBorderColor = _goldColor;
+      statusIcon = Icons.info_rounded;
+    } else {
+      statusTitle = "Zekat Düşmemektedir";
+      statusDesc = "Zekata tabi net bir varlığınız bulunmamaktadır.";
+      statusBorderColor = Colors.grey;
+      statusIcon = Icons.remove_circle_outline_rounded;
+    }
+
+    final double zekatAmount = zekatDue ? totalWealth / 40.0 : 0.0;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: _cardBgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: statusBorderColor.withOpacity(dark ? 0.3 : 0.4),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(dark ? 0.05 : 0.01),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(statusIcon, color: zekatDue ? _greenColor : (nisapUnder ? _goldColor : Colors.grey), size: 24),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    statusTitle,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: _textColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              statusDesc,
+              style: TextStyle(
+                fontSize: 12,
+                color: _subtitleColor,
+                height: 1.4,
+              ),
+            ),
+            const Divider(height: 24),
+
+            _buildResultRow("Altın Varlık Değeri", "${(gold * goldPrice).toStringAsFixed(0)} TL"),
+            _buildResultRow("Nakit ve Döviz", "${cash.toStringAsFixed(0)} TL"),
+            _buildResultRow("Ticari Varlıklar", "${business.toStringAsFixed(0)} TL"),
+            _buildResultRow("Borçlar (Düşülen)", "-${debts.toStringAsFixed(0)} TL", isRed: true),
+            const Divider(height: 16),
+            _buildResultRow(
+              "Net Varlık", 
+              "${totalWealth.toStringAsFixed(0)} TL", 
+              isBold: true,
+            ),
+            _buildResultRow("Nisap Sınırı", "${nisapLimit.toStringAsFixed(0)} TL"),
+            
+            if (zekatDue) ...[
+              const Divider(height: 24),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: _greenColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: _greenColor.withOpacity(0.2),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      "ÖDENMESİ GEREKEN ZEKAT (%2.5)",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: _greenColor,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "${zekatAmount.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} TL",
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: _goldColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                "\"Namazı kılın, zekatı verin... Kendiniz için önden gönderdiğiniz her iyiliği Allah katında bulacaksınız.\"\n(Bakara Suresi, 110. Ayet)",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: _subtitleColor,
+                  height: 1.45,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildZekatHesaplama() {
+    final bool dark = _isDark;
+    const double goldPrice = 3000.0;
+    const double nisapLimit = 80.18 * goldPrice;
+
     return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Dinen zengin sayılan kişilerin yılda bir kez vermesi gereken zekat miktarını hesaplayın.",
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+          // 1. Nisap Limit Banner Card
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: dark
+                    ? [const Color(0xFF131D31), const Color(0xFF0F1B2A)]
+                    : [Colors.white, const Color(0xFFFFFDF5)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: dark ? const Color(0xFF2E2413) : const Color(0xFFD4AF37).withOpacity(0.25),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(dark ? 0.05 : 0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: _goldColor.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.monetization_on_rounded, color: _goldColor, size: 28),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "2026 Yılı Nisap Miktarı",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _goldColor,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          "${nisapLimit.toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.')} TL",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: _textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          "80.18 gram altın veya karşılığı. Net varlığı bu sınırın üstünde olan Müslümanların zekat vermesi farzdır.",
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: _subtitleColor,
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 12),
-          TextField(
+
+          // 2. Input Fields Section
+          Text(
+            "Zekata Tabi Varlıklarınızı Girin",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: _greenColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildZekatInputField(
             controller: _goldController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: "Altın Miktarı (Gram)",
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
+            labelText: "Altın Miktarı (Gram)",
+            prefixIcon: Icons.brightness_5_rounded,
+            iconColor: _goldColor,
+            dark: dark,
           ),
-          const SizedBox(height: 8),
-          TextField(
+          _buildZekatInputField(
             controller: _cashController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: "Nakit Para (TL)",
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
+            labelText: "Nakit Para ve Döviz (TL)",
+            prefixIcon: Icons.account_balance_wallet_rounded,
+            iconColor: const Color(0xFF27A770),
+            dark: dark,
           ),
-          const SizedBox(height: 8),
-          TextField(
+          _buildZekatInputField(
             controller: _businessController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: "Ticari Mal ve Varlıklar (TL)",
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
+            labelText: "Ticari Mal ve Varlıklar (TL)",
+            prefixIcon: Icons.shopping_bag_rounded,
+            iconColor: const Color(0xFF5C6BC0),
+            dark: dark,
+          ),
+          _buildZekatInputField(
+            controller: _debtsController,
+            labelText: "Borçlarınız (Düşülecektir) (TL)",
+            prefixIcon: Icons.remove_circle_outline_rounded,
+            iconColor: const Color(0xFFFF7043),
+            dark: dark,
           ),
           const SizedBox(height: 8),
-          TextField(
-            controller: _debtsController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: "Borçlarınız (Düşülecektir) (TL)",
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
+
+          // 3. Calculate Action Button
+          Container(
             width: double.infinity,
             height: 48,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [_greenColor, _greenColor.withOpacity(0.85)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: _greenColor.withOpacity(0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF27A770),
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               onPressed: () {
                 final gold = double.tryParse(_goldController.text) ?? 0.0;
                 final cash = double.tryParse(_cashController.text) ?? 0.0;
-                final business =
-                    double.tryParse(_businessController.text) ?? 0.0;
+                final business = double.tryParse(_businessController.text) ?? 0.0;
                 final debts = double.tryParse(_debtsController.text) ?? 0.0;
 
-                const double goldPrice =
-                    3000.0; // Current representation gold price
-                final totalWealth =
-                    (gold * goldPrice) + cash + business - debts;
-                const double nisapLimit =
-                    80.18 * goldPrice; // 80.18g Gold Nisap threshold
+                final totalWealth = (gold * goldPrice) + cash + business - debts;
 
                 setState(() {
                   if (totalWealth <= 0) {
-                    _zekatResult =
-                        "Zekata tabi net varlığınız bulunmamaktadır.";
+                    _zekatResult = "Zekata tabi net varlığınız bulunmamaktadır.";
                   } else if (totalWealth < nisapLimit) {
-                    _zekatResult =
-                        "Toplam varlığınız (${totalWealth.toStringAsFixed(0)} TL), nisap sınırı olan ${nisapLimit.toStringAsFixed(0)} TL altındadır. Zekat düşmemektedir.";
+                    _zekatResult = "TOPLAM_YOKSA_NISAP_ALTI:${totalWealth.toStringAsFixed(0)}";
                   } else {
                     final zekat = totalWealth / 40.0;
-                    _zekatResult =
-                        "Toplam Varlık: ${totalWealth.toStringAsFixed(0)} TL\n\nÖdemeniz Gereken Zekat (%2.5):\n${zekat.toStringAsFixed(0)} TL";
+                    _zekatResult = "ZEKAT_ODENECEK:${totalWealth.toStringAsFixed(0)}:${zekat.toStringAsFixed(0)}";
                   }
                 });
               },
@@ -3413,36 +5004,18 @@ out center body;
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
+                  fontSize: 15,
                 ),
               ),
             ),
           ),
+
+          // 4. Detailed Structured Result Card
           if (_zekatResult.isNotEmpty) ...[
-            const SizedBox(height: 20),
-            Center(
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEAF7F1),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: const Color(0xFF27A770).withOpacity(0.3),
-                  ),
-                ),
-                child: Text(
-                  _zekatResult,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Color(0xFF1E5E43),
-                    height: 1.4,
-                  ),
-                ),
-              ),
-            ),
+            const SizedBox(height: 24),
+            _buildZekatResultBoard(dark, goldPrice, nisapLimit),
           ],
+          const SizedBox(height: 24),
         ],
       ),
     );
@@ -5225,4 +6798,1421 @@ out center body;
       "Kalkale (Yankılama): (ق, ط, b, ج, د) harfleri sakin (cezimli) geldiğinde kuvvetli bir ses vurgusuyla yankılatılarak okunur.",
     ]);
   }
+
+  // 21. Dini Hoca AI Chat
+  Widget _buildDiniHoca() {
+    _initDiniHoca();
+    final bool dark = _isDark;
+
+    final List<String> suggestions = [
+      "Abdest nasıl alınır? 💧",
+      "Namazın farzları nelerdir? 🕋",
+      "Gusül abdesti farzları 🚿",
+      "Sehiv secdesi nedir? 🙇",
+      "Zekat kimlere verilir? 💰",
+      "Orucu bozan şeyler 🍽️",
+      "Kaza namazı nasıl kılınır? 🕰️",
+    ];
+
+    return Column(
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: dark ? const Color(0xFF131D31) : const Color(0xFFEBF5F0),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFC2E3D2),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: dark ? const Color(0xFF1E2D4A) : Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.psychology_rounded, color: _goldColor, size: 28),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Dini Hoca AI Danışmanı",
+                      style: TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.bold,
+                        color: dark ? Colors.white : const Color(0xFF1E5E43),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      "Sorularınıza fıkıh kaynaklı yapay zeka yanıtları alın.",
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: _subtitleColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            controller: _diniHocaScrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            itemCount: _diniHocaMessages.length + (_diniHocaIsTyping ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == _diniHocaMessages.length) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: _greenColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.mosque,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: dark ? const Color(0xFF1A263B) : const Color(0xFFF1F5F9),
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(16),
+                            bottomRight: Radius.circular(16),
+                            topLeft: Radius.circular(16),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Dini Hoca yazıyor ",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: _subtitleColor,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            _buildMiniTypingIndicator(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final msg = _diniHocaMessages[index];
+              final bool isMe = msg['isMe'] ?? false;
+              final String text = msg['text'] ?? "";
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                child: Row(
+                  mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!isMe) ...[
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: _greenColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.mosque,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    Flexible(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isMe
+                              ? _greenColor
+                              : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9)),
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(16),
+                            topRight: const Radius.circular(16),
+                            bottomLeft: isMe ? const Radius.circular(16) : Radius.zero,
+                            bottomRight: isMe ? Radius.zero : const Radius.circular(16),
+                          ),
+                        ),
+                        child: _buildMessageText(text, isMe),
+                      ),
+                    ),
+                    if (isMe) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.person,
+                          color: dark ? Colors.white70 : Colors.black54,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+        Container(
+          height: 44,
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            itemCount: suggestions.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ActionChip(
+                  backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
+                  side: BorderSide(
+                    color: dark ? const Color(0xFF2E3D5A) : const Color(0xFFCBD5E1),
+                  ),
+                  label: Text(
+                    suggestions[index],
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: dark ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                  onPressed: () {
+                    _handleDiniHocaSend(suggestions[index].replaceAll(RegExp(r'\s\S+$'), ''));
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: dark ? const Color(0xFF0C1524) : Colors.grey[50],
+            border: Border(
+              top: BorderSide(color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0)),
+            ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: dark ? const Color(0xFF131D31) : Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFCBD5E1),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: TextField(
+                      controller: _diniHocaInputController,
+                      style: TextStyle(color: _textColor),
+                      decoration: const InputDecoration(
+                        hintText: "Dini Hoca'ya sor...",
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: InputBorder.none,
+                      ),
+                      onSubmitted: _handleDiniHocaSend,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () => _handleDiniHocaSend(_diniHocaInputController.text),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: _greenColor,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: _greenColor.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.send_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMessageText(String text, bool isMe) {
+    final List<TextSpan> spans = [];
+    final RegExp regex = RegExp(r'\*\*(.*?)\*\*');
+    int lastIndex = 0;
+
+    for (final Match match in regex.allMatches(text)) {
+      if (match.start > lastIndex) {
+        spans.add(TextSpan(text: text.substring(lastIndex, match.start)));
+      }
+      spans.add(TextSpan(
+        text: match.group(1),
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ));
+      lastIndex = match.end;
+    }
+
+    if (lastIndex < text.length) {
+      spans.add(TextSpan(text: text.substring(lastIndex)));
+    }
+
+    return RichText(
+      text: TextSpan(
+        children: spans,
+        style: TextStyle(
+          fontSize: 14,
+          height: 1.45,
+          color: isMe ? Colors.white : _textColor,
+        ),
+      ),
+    );
+  }
+
+  void _handleDiniHocaSend(String text) {
+    if (text.trim().isEmpty) return;
+
+    final userMsg = text.trim();
+    _diniHocaInputController.clear();
+
+    setState(() {
+      _diniHocaMessages.add({
+        'isMe': true,
+        'text': userMsg,
+        'time': DateTime.now(),
+      });
+      _diniHocaIsTyping = true;
+    });
+
+    _scrollToBottomDiniHoca();
+
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      if (!mounted) return;
+
+      final reply = _getDiniHocaResponse(userMsg);
+      setState(() {
+        _diniHocaIsTyping = false;
+        _diniHocaMessages.add({
+          'isMe': false,
+          'text': reply,
+          'time': DateTime.now(),
+        });
+      });
+      _scrollToBottomDiniHoca();
+    });
+  }
+
+  void _scrollToBottomDiniHoca() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_diniHocaScrollController.hasClients) {
+        _diniHocaScrollController.animateTo(
+          _diniHocaScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Widget _buildMiniTypingIndicator() {
+    return _MiniDotAnimator(color: _subtitleColor);
+  }
+
+  String _getDiniHocaResponse(String query) {
+    final q = _normalize(query);
+
+    if (q.contains("abdest")) {
+      return """**Abdest Nasıl Alınır?** 💧
+
+Abdest, belirli uzuvları usulüne uygun yıkamak ve mesh etmekten ibaret ibadet temizliğidir. Sırasıyla şu şekildedir:
+
+1. **Niyet ve Besmele**: "Niyet ettim Allah rızası için abdest almaya" denir ve Eûzü-Besmele çekilir.
+2. **Elleri Yıkamak**: Eller bileklere kadar üç defa yıkanır. Parmak araları hilallenir.
+3. **Ağza Su Vermek**: Sağ el ile ağıza üç kere su verilip çalkalanır.
+4. **Buruna Su Vermek**: Sağ el ile buruna üç kere su çekilip sol el ile temizlenir.
+5. **Yüzü Yıkamak**: Alından çene altına, kulak yumuşaklarına kadar yüzün tamamı üç kere yıkanır.
+6. **Kolları Yıkamak**: Önce sağ, sonra sol kol dirseklerle beraber üç kere yıkanır.
+7. **Başı Mesh Etmek**: Sağ elin içi ıslatılarak başın dörtte biri mesh edilir.
+8. **Kulak ve Boynu Mesh Etmek**: Parmaklar ıslatılarak kulakların içi ve arkası mesh edilir, elin dışı ile boyun mesh edilir.
+9. **Ayakları Yıkamak**: Önce sağ, sonra sol ayak topuklarla birlikte, parmak aralarından başlanarak üç kere yıkanır.
+
+**Abdestin Farzları (4'tür):**
+1. Yüzü bir kere yıkamak.
+2. Kolları dirseklerle beraber bir kere yıkamak.
+3. Başın dörtte birini mesh etmek.
+4. Ayakları topuklarla beraber bir kere yıkamak.""";
+    }
+
+    if (q.contains("gusul") || q.contains("gusül") || q.contains("boy abdesti")) {
+      return """**Gusül Abdesti (Boy Abdesti) Nasıl Alınır?** 🚿
+
+Gusül, bütün vücudun temiz suyla iğne ucu kadar kuru yer kalmayacak şekilde yıkanmasıdır.
+
+**Guslün Farzları (3'tür):**
+1. **Ağıza Bolca Su Vermek (Mazmaza)**: Boğaza kadar su götürüp çalkalamak (3 defa).
+2. **Buruna Bolca Su Vermek (İstinşak)**: Burun kemiği sızlayacak kadar derine su çekmek (3 defa).
+3. **Bütün Vücudu Yıkamak**: Tepeden tırnağa kuru yer kalmayacak şekilde yıkanmak.
+
+**Sünnete Uygun Gusül Alınışı:**
+- Niyet edilir: *"Niyet ettim Allah rızası için boy abdesti almaya."* Besmele çekilir.
+- Önce eller ve avret yerleri yıkanır, varsa vücuttaki kirler temizlenir.
+- Namaz abdesti gibi tam bir abdest alınır (ağız ve buruna su bolca verilir).
+- Önce başa, sonra sağ omuza, sonra sol omuza üçer defa su dökülür. Her su döküşte vücut ovulur.
+- Vücutta iğne ucu kadar kuru yer kalmamasına dikkat edilir (göbek çukuru, küpe delikleri vb. ıslatılmalıdır).""";
+    }
+
+    if (q.contains("namaz")) {
+      return """**Namazın Farzları Nelerdir?** 🕋
+
+Namazın dışındaki (şartları) ve içindeki (rüknü) olmak üzere toplam **12 farzı** vardır.
+
+**A) Dışındaki Farzlar (Şartlar):**
+1. **Hadesten Taharet**: Abdest veya gusül almak.
+2. **Necasetten Taharet**: Vücut, elbise ve namaz kılınacak yerin temiz olması.
+3. **Setr-i Avret**: Vücudun örtülmesi gereken yerlerini örtmek.
+4. **İstikbal-i Kıble**: Namaz kılarken Kıble'ye (Kabe'ye) dönmek.
+5. **Vakit**: Namazı kendi vakti içinde kılmak.
+6. **Niyet**: Kılınacak namaza niyet etmek.
+
+**B) İçindeki Farzlar (Rükünler):**
+1. **İftitah Tekbiri**: Namaza "Allahu Ekber" diyerek başlamak.
+2. **Kıyam**: Ayakta durmak (ayakta duramayanlar oturarak kılabilir).
+3. **Kıraat**: Namazda ayaktayken Kur'an okumak (Fatiha ve sure).
+4. **Rükû**: Elleri dizlere koyup eğilmek ve üç defa *"Sübhane Rabbiye'l-Azîm"* demek.
+5. **Secde**: Alnı ve burnu yere koyup iki kez secde etmek ve *"Sübhane Rabbiye'l-A'lâ"* demek.
+6. **Ka'de-i Âhire**: Son rekatta Ettehiyyatü duasını okuyacak kadar oturmak.""";
+    }
+
+    if (q.contains("oruc") || q.contains("oruç")) {
+      return """**Orucu Bozan ve Bozmayan Şeyler** 🌙
+
+**A) Orucu Bozan Şeyler (Hem Kaza Hem Keffaret Gerektirenler):**
+- Bilerek bir şey yemek, içmek.
+- İlaç yutmak veya sigara içmek.
+
+**B) Orucu Bozan Ama Sadece Kaza Gerektirenler (1 Gün Kaza):**
+- Unutarak yiyip içtikten sonra orucun bozulduğunu sanarak bilerek yemeye devam etmek.
+- Buruna ilaç damlatmak veya kulağa ağrı kesici damla damlatmak.
+- İmsak vaktinin girmediğini veya iftar vaktinin geldiğini sanarak hataen yiyip içmek.
+
+**C) Orucu Bozmayan Şeyler:**
+- Unutarak yemek, içmek (hatırlayınca hemen ağız çalkalanıp oruca devam edilir).
+- Ağza giren yağmur damlasını istem dışı yutmak.
+- Diş fırçalamak (macun yutulmamak kaydıyla).
+- Kan vermek, banyo yapmak, göze damla damlatmak.
+- Parfüm veya kolonya koklamak.""";
+    }
+
+    if (q.contains("zekat") || q.contains("zekât")) {
+      return """**Zekat Kimlere Verilir ve Miktarı Nedir?** 💰
+
+Zekat, dinen zengin sayılan Müslümanların, yılda bir kez mallarının belirli bir kısmını fakirlere vermesidir.
+
+**Zekat Kimlere Verilir? (Tevbe Suresi 60. Ayet):**
+1. Fakirler ve miskinler (hiçbir şeyi olmayanlar).
+2. Borçlular (borcunu ödeyemeyecek durumda olanlar).
+3. Yolda kalmış yolcular.
+4. Allah yolunda olanlar (ilim talebeleri, cihat edenler).
+
+**Zekat Kimlere Verilmez?**
+- Anneye, babaya, büyükanne ve büyükbabalara.
+- Çocuklara ve torunlara.
+- Gayrimüslimlere.
+- Zengin kişilere.
+- Eşlerin birbirine zekat vermesi caiz değildir.
+
+**Zekat Miktarı ve Şartları:**
+- Kişinin temel ihtiyaçları ve borçları dışında **80.18 gram altın** veya muadili para/ticaret malına (Nisap miktarı) sahip olması gerekir.
+- Bu malın üzerinden **1 tam kameri yıl** geçmiş olmalıdır.
+- Zekat oranı genelde **1/40 yani %2.5**'tir.""";
+    }
+
+    if (q.contains("sehiv")) {
+      return """**Sehiv Secdesi Nedir ve Nasıl Yapılır?** 🙇
+
+Sehiv secdesi (yanılma secdesi), namaz kılarken farzların geciktirilmesi veya vaciplerin unutularak terk edilmesi veya geciktirilmesi durumunda namazın sonunda yapılan secdedir. Namazdaki eksikliği tamamlar.
+
+**Nasıl Yapılır?**
+1. Son rekatta oturup sadece **Ettehiyyatü** duası okunur.
+2. Sağ tarafa selam verilir. (Bazı görüşlere göre iki tarafa da selam verilebilir.)
+3. Selamdan hemen sonra *"Allahu Ekber"* denilerek secdeye gidilir.
+4. Secdede üç defa *"Sübhane Rabbiye'l-A'lâ"* denir, doğrulunur ve tekrar secdeye gidilir.
+5. İkinci secdeden sonra oturulur ve **Ettehiyyatü, Salli, Barik ve Rabbena** duaları okunarak her iki tarafa da selam verilerek namaz tamamlanır.""";
+    }
+
+    if (q.contains("kaza")) {
+      return """**Kaza Namazı Nasıl Kılınır?** 🕰️
+
+Kaza namazı, vaktinde kılınamamış olan farz namazların sonradan kılınmasıdır.
+
+**Kaza Namazının Şartları ve Kılınışı:**
+- Sadece **farz namazlar ve vitir namazı** kaza edilir (Sünnetlerin kazası olmaz, sadece sabah namazı o günün öğle vaktine kadar kaza edilirse sünneti de kılınabilir).
+- Niyet edilirken hangi vaktin kazası olduğu belirtilir: *"Niyet ettim Allah rızası için en son kazaya kalan Sabah namazının farzını kılmaya."*
+- Sırasıyla kılınır. Kaza namazları kılınırken kerahat vakitleri (güneş doğarken, tam tepedeyken ve batarken) dışında her vakit kılınabilir.
+- Günlük kaçırılan namaz miktarı:
+  - Sabah: 2 rekat farz.
+  - Öğle: 4 rekat farz.
+  - İkindi: 4 rekat farz.
+  - Akşam: 3 rekat farz.
+  - Yatsı: 4 rekat farz + 3 rekat Vitir vacip.""";
+    }
+
+    if (q.contains("dua") || q.contains("zikir")) {
+      return """**Dua ve Zikir Kavramları** 🤲
+
+**Dua**: Kulun halini Yaradan'a arz etmesi, isteklerini O'ndan dilemesidir. Kur'an-ı Kerim'de *"Bana dua edin, size cevap vereyim"* (Mü'min, 60) buyurulmuştur. Dua, ibadetin özüdür.
+
+**Zikir**: Allah'ı anmak, hatırlamak ve kalpte canlı tutmaktır. Kalpler ancak Allah'ı anmakla huzur bulur.
+
+**Önemli Zikirlerin Faziletleri:**
+- **Sübhanallah**: Allah'ı tüm noksanlıklardan tenzih etmektir.
+- **Elhamdülillah**: Nimete karşı hamd etmektir, mizanı doldurur.
+- **Allahu Ekber**: Allah'ın her şeyden büyük ve yüce olduğunu ikrar etmektir.
+- **La ilahe illallah**: Zikrin en faziletlisidir, tevhid beyanıdır.""";
+    }
+
+    return """Değerli mümin kardeşim, sorduğunuz konuyu tam olarak anlayamadım veya kelime haznemde yer almıyor olabilir. 
+
+Lütfen sorunuzu daha açık kelimelerle sorunuz. Örneğin; **abdest alışı, guslün farzları, namazın farzları, sehiv secdesi, zekat verilecek kişiler, orucu bozan şeyler veya kaza namazları** gibi konularda doğrudan anahtar kelimeler kullanarak sorarsanız size çok daha detaylı bilgi aktarabilirim. 
+
+Fıkhi konulardaki en doğru ve kesin hükümler için Diyanet İşleri Başkanlığı'nın resmi fetvalarına veya muteber fıkıh kitaplarına başvurmanızı tavsiye ederim.""";
+  }
+
+  // 22. Aylık Namaz Vakitleri V2
+  static const List<Map<String, dynamic>> vakitMeta = [
+    {'name': 'İmsak', 'key': 'Imsak', 'icon': Icons.nights_stay, 'color': Color(0xFF5C6BC0)},
+    {'name': 'Güneş', 'key': 'Gunes', 'icon': Icons.wb_twilight, 'color': Color(0xFFFFB300)},
+    {'name': 'Öğle', 'key': 'Ogle', 'icon': Icons.wb_sunny, 'color': Color(0xFFF57C00)},
+    {'name': 'İkindi', 'key': 'Ikindi', 'icon': Icons.wb_sunny_outlined, 'color': Color(0xFF8D6E63)},
+    {'name': 'Akşam', 'key': 'Aksam', 'icon': Icons.flare, 'color': Color(0xFFFF7043)},
+    {'name': 'Yatsı', 'key': 'Yatsi', 'icon': Icons.brightness_3, 'color': Color(0xFF3F51B5)},
+  ];
+
+  Map<String, String> _getNextPrayerInfo(Map<String, dynamic> todayTimes) {
+    try {
+      final now = DateTime.now();
+      final currentMinutes = now.hour * 60 + now.minute;
+
+      final times = [
+        {'name': 'İmsak', 'time': todayTimes['Imsak'] ?? ''},
+        {'name': 'Güneş', 'time': todayTimes['Gunes'] ?? ''},
+        {'name': 'Öğle', 'time': todayTimes['Ogle'] ?? ''},
+        {'name': 'İkindi', 'time': todayTimes['Ikindi'] ?? ''},
+        {'name': 'Akşam', 'time': todayTimes['Aksam'] ?? ''},
+        {'name': 'Yatsı', 'time': todayTimes['Yatsi'] ?? ''},
+      ];
+
+      for (final t in times) {
+        final timeStr = t['time'] as String;
+        if (timeStr.isEmpty) continue;
+        final parts = timeStr.split(':');
+        if (parts.length < 2) continue;
+        final hour = int.tryParse(parts[0]) ?? 0;
+        final minute = int.tryParse(parts[1]) ?? 0;
+        final prayerMinutes = hour * 60 + minute;
+
+        if (prayerMinutes > currentMinutes) {
+          final diff = prayerMinutes - currentMinutes;
+          final diffHours = diff ~/ 60;
+          final diffMins = diff % 60;
+          final remainingStr = diffHours > 0 
+              ? "$diffHours saat $diffMins dk" 
+              : "$diffMins dk";
+          return {
+            'name': t['name']!,
+            'time': timeStr,
+            'remaining': remainingStr,
+          };
+        }
+      }
+
+      // If all prayer times of today have passed, the next prayer is tomorrow's İmsak
+      return {
+        'name': 'İmsak',
+        'time': '',
+        'remaining': 'Yarın sabah',
+      };
+    } catch (e) {
+      return {'name': '', 'time': '', 'remaining': ''};
+    }
+  }
+
+  Widget _buildAylikNamazVakitleri() {
+    final bool dark = _isDark;
+
+    if (_loadingMonthlyTimes) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "Namaz Vakitleri Yükleniyor...",
+              style: TextStyle(
+                fontSize: 14,
+                color: _textColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_monthlyPrayerTimes.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.cloud_off, color: Colors.grey, size: 64),
+              const SizedBox(height: 16),
+              Text(
+                "Namaz Vakitleri Alınamadı",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: _textColor,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Lütfen internet bağlantınızı kontrol edip tekrar deneyin veya konum ayarlarınızı güncelleyin.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12.5, color: _subtitleColor, height: 1.4),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final now = DateTime.now();
+    final todayStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}";
+
+    // Find today's times for countdown
+    final todayIndex = _monthlyPrayerTimes.indexWhere((t) => (t['MiladiTarihKisa'] ?? '') == todayStr);
+    final todayTimes = todayIndex != -1 ? _monthlyPrayerTimes[todayIndex] : null;
+    final nextPrayer = todayTimes != null ? _getNextPrayerInfo(todayTimes) : null;
+    final String hicriBugun = todayTimes != null ? (todayTimes['HicriTarihUzun'] ?? '') : '';
+
+    return Column(
+      children: [
+        // Redesigned Location & Countdown Header Banner
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: dark
+                  ? [const Color(0xFF131D31), const Color(0xFF0F1B2A)]
+                  : [Colors.white, const Color(0xFFEAF7F1)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: dark ? const Color(0xFF1E2D4A) : const Color(0xFF27A770).withOpacity(0.18),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(dark ? 0.05 : 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: _greenColor.withOpacity(0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.location_on, color: _greenColor, size: 24),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _currentLocationName.isNotEmpty ? _currentLocationName : "İstanbul",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: _textColor,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            hicriBugun.isNotEmpty ? hicriBugun : "Aylık Namaz Vakitleri",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _goldColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.mosque_rounded, color: _goldColor.withOpacity(0.4), size: 36),
+                  ],
+                ),
+                if (nextPrayer != null && nextPrayer['name']!.isNotEmpty) ...[
+                  const Divider(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.access_time_filled, color: _goldColor, size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            "Sıradaki Vakit: ",
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: _subtitleColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            "${nextPrayer['name']}",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: _textColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: _greenColor.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          nextPrayer['remaining'] == 'Yarın sabah'
+                              ? "Yarın sabah"
+                              : "${nextPrayer['remaining']} kaldı",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: _greenColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+
+        // Sliding Mode Switcher Pill
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+          child: Container(
+            height: 46,
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: dark ? const Color(0xFF131D31) : const Color(0xFFEAF7F1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () => setState(() => _monthlyViewMode = 0),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: _monthlyViewMode == 0 ? _greenColor : Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        "Liste Görünümü",
+                        style: TextStyle(
+                          color: _monthlyViewMode == 0 ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _monthlyViewMode = 1;
+                        final idx = _monthlyPrayerTimes.indexWhere((t) => (t['MiladiTarihKisa'] ?? '') == todayStr);
+                        _selectedCalendarDayIndex = idx != -1 ? idx : 0;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: _monthlyViewMode == 1 ? _greenColor : Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        "Takvim Görünümü",
+                        style: TextStyle(
+                          color: _monthlyViewMode == 1 ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+
+        Expanded(
+          child: _monthlyViewMode == 0
+              ? _buildMonthlyListView(dark, todayStr)
+              : _buildMonthlyCalendarView(dark, todayStr),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMonthlyListView(bool dark, String todayStr) {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 36.0),
+      itemCount: _monthlyPrayerTimes.length,
+      itemBuilder: (context, index) {
+        final day = _monthlyPrayerTimes[index];
+        final String dateStr = day['MiladiTarihKisa'] ?? '';
+        final isToday = dateStr == todayStr;
+
+        final String dateUzun = day['MiladiTarihUzun'] ?? '';
+        final String hicriStr = day['HicriTarihUzun'] ?? '';
+        
+        final isExpanded = _expandedAylikDays.contains(dateStr) || 
+            (isToday && !_expandedAylikDays.contains("${dateStr}_collapsed"));
+
+        // Format nice card date display
+        final List<String> dateParts = dateUzun.split(' ');
+        String dayNum = dateStr.split('.')[0];
+        if (dayNum.startsWith('0')) dayNum = dayNum.substring(1);
+        
+        String monthAndDay = "";
+        if (dateParts.length >= 4) {
+          final String mName = dateParts[1];
+          final String dName = dateParts[3];
+          monthAndDay = "$mName, $dName";
+        }
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            color: _cardBgColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isToday
+                  ? _greenColor
+                  : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0)),
+              width: isToday ? 2.0 : 1.0,
+            ),
+            boxShadow: isToday
+                ? [
+                    BoxShadow(
+                      color: _greenColor.withOpacity(dark ? 0.2 : 0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(dark ? 0.05 : 0.02),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    )
+                  ],
+          ),
+          child: Column(
+            children: [
+              // Day Card Header (Tap to Expand)
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    if (isToday) {
+                      if (_expandedAylikDays.contains("${dateStr}_collapsed")) {
+                        _expandedAylikDays.remove("${dateStr}_collapsed");
+                      } else {
+                        _expandedAylikDays.add("${dateStr}_collapsed");
+                      }
+                    } else {
+                      if (_expandedAylikDays.contains(dateStr)) {
+                        _expandedAylikDays.remove(dateStr);
+                      } else {
+                        _expandedAylikDays.add(dateStr);
+                      }
+                    }
+                  });
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                  child: Row(
+                    children: [
+                      // Date Number Icon Badge
+                      Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: isToday 
+                              ? _greenColor 
+                              : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFEAF7F1)),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          dayNum,
+                          style: TextStyle(
+                            color: isToday ? Colors.white : _greenColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Date descriptions
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  isToday ? "Bugün" : monthAndDay,
+                                  style: TextStyle(
+                                    fontSize: 14.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: isToday ? _greenColor : _textColor,
+                                  ),
+                                ),
+                                if (isToday) ...[
+                                  const SizedBox(width: 6),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: _goldColor,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: const Text(
+                                      "Bugün",
+                                      style: TextStyle(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              hicriStr,
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: _subtitleColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Anchor Summary (İmsak & Akşam times show collapsed)
+                      if (!isExpanded)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Row(
+                            children: [
+                              Text(
+                                "İ: ${day['Imsak']}",
+                                style: TextStyle(fontSize: 11.5, color: _subtitleColor, fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                "A: ${day['Aksam']}",
+                                style: TextStyle(fontSize: 11.5, color: _greenColor, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                      Icon(
+                        isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                        color: isToday ? _greenColor : _subtitleColor,
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Expanded Symmetrical 6-Grid View
+              if (isExpanded) ...[
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Divider(height: 1),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 3,
+                    childAspectRatio: 1.6,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    children: vakitMeta.map((meta) {
+                      final String value = day[meta['key']] ?? '';
+                      final IconData icon = meta['icon'];
+                      final Color color = meta['color'];
+
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: dark ? const Color(0xFF1E2D4A).withOpacity(0.5) : const Color(0xFFFAFAFA),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: dark ? const Color(0xFF2E3D5A) : const Color(0xFFF1F5F9),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(icon, color: color, size: 12),
+                                const SizedBox(width: 4),
+                                Text(
+                                  meta['name'],
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: _subtitleColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              value,
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold,
+                                color: _textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMonthlyCalendarView(bool dark, String todayStr) {
+    final headerColor = dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9);
+    const colWidths = {
+      0: FlexColumnWidth(1.2), // Tarih
+      1: FlexColumnWidth(1.0), // İmsak
+      2: FlexColumnWidth(1.0), // Güneş
+      3: FlexColumnWidth(1.0), // Öğle
+      4: FlexColumnWidth(1.0), // İkindi
+      5: FlexColumnWidth(1.0), // Akşam
+      6: FlexColumnWidth(1.0), // Yatsı
+    };
+
+    return Card(
+      color: _cardBgColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: dark ? 0 : 2,
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Table Header
+            Container(
+              color: headerColor,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Table(
+                columnWidths: colWidths,
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                children: [
+                  TableRow(
+                    children: [
+                      _buildTableHeaderCell("Tarih", dark),
+                      _buildTableHeaderCell("İmsak", dark),
+                      _buildTableHeaderCell("Güneş", dark),
+                      _buildTableHeaderCell("Öğle", dark),
+                      _buildTableHeaderCell("İkindi", dark),
+                      _buildTableHeaderCell("Akşam", dark),
+                      _buildTableHeaderCell("Yatsı", dark),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1, thickness: 1),
+            
+            // Table Body (Scrollable)
+            Expanded(
+              child: ListView.builder(
+                itemCount: _monthlyPrayerTimes.length,
+                padding: EdgeInsets.zero,
+                itemBuilder: (context, index) {
+                  final day = _monthlyPrayerTimes[index];
+                  final String dateStr = day['MiladiTarihKisa'] ?? '';
+                  final bool isToday = dateStr == todayStr;
+                  
+                  // Format date nice & short (e.g. "04 Haz")
+                  final String dateUzun = day['MiladiTarihUzun'] ?? '';
+                  final List<String> parts = dateUzun.split(' ');
+                  String formattedDate = dateStr; // Fallback
+                  if (parts.length >= 4) {
+                    final String dayNum = parts[0].padLeft(2, '0');
+                    String monthName = parts[1];
+                    if (monthName.length > 3) monthName = monthName.substring(0, 3);
+                    formattedDate = "$dayNum $monthName";
+                  }
+                  
+                  // Row backgrounds
+                  final Color rowBg = isToday
+                      ? _greenColor.withOpacity(dark ? 0.15 : 0.1)
+                      : (index % 2 == 0
+                          ? (dark ? const Color(0xFF1E2D4A).withOpacity(0.3) : const Color(0xFFF8FAFC))
+                          : Colors.transparent);
+                          
+                  final BorderSide borderSide = isToday
+                      ? BorderSide(color: _greenColor, width: 1.5)
+                      : BorderSide(color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9), width: 0.5);
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: rowBg,
+                      border: Border(
+                        bottom: borderSide,
+                        top: isToday ? borderSide : BorderSide.none,
+                        left: isToday ? borderSide : BorderSide.none,
+                        right: isToday ? borderSide : BorderSide.none,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Table(
+                      columnWidths: colWidths,
+                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                      children: [
+                        TableRow(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: Text(
+                                formattedDate,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                                  color: isToday ? _goldColor : _textColor,
+                                ),
+                              ),
+                            ),
+                            _buildTableCell(day['Imsak'] ?? '', isToday, dark),
+                            _buildTableCell(day['Gunes'] ?? '', isToday, dark),
+                            _buildTableCell(day['Ogle'] ?? '', isToday, dark),
+                            _buildTableCell(day['Ikindi'] ?? '', isToday, dark),
+                            _buildTableCell(day['Aksam'] ?? '', isToday, dark),
+                            _buildTableCell(day['Yatsi'] ?? '', isToday, dark),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableHeaderCell(String title, bool dark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 2.0),
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        style: TextStyle(
+          fontSize: 10.5,
+          fontWeight: FontWeight.bold,
+          color: dark ? Colors.white70 : Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableCell(String value, bool isToday, bool dark) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
+      child: Text(
+        value,
+        textAlign: TextAlign.center,
+        maxLines: 1,
+        style: TextStyle(
+          fontSize: 11.5,
+          fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+          color: isToday ? _greenColor : _textColor,
+        ),
+      ),
+    );
+  }
+
+}
+
+
+class _MiniDotAnimator extends StatefulWidget {
+  final Color color;
+
+  const _MiniDotAnimator({required this.color});
+
+  @override
+  State<_MiniDotAnimator> createState() => _MiniDotAnimatorState();
+}
+
+class _MiniDotAnimatorState extends State<_MiniDotAnimator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(3, (index) {
+            final double animVal = math.sin((_controller.value * math.pi * 2) - (index * math.pi / 2));
+            final double scale = 0.5 + 0.5 * (animVal + 1.0) / 2.0;
+            return Container(
+              width: 5,
+              height: 5,
+              margin: const EdgeInsets.symmetric(horizontal: 1.5),
+              decoration: BoxDecoration(
+                color: widget.color.withOpacity(scale),
+                shape: BoxShape.circle,
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+}
+
+class _KibleRadarPainter extends CustomPainter {
+  final double needleRotation;
+  final bool isAligned;
+  final bool isDark;
+
+  _KibleRadarPainter({
+    required this.needleRotation,
+    required this.isAligned,
+    required this.isDark,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // 1. Paint radar background
+    final bgPaint = Paint()
+      ..color = isDark
+          ? const Color(0xFF0F1B2A).withOpacity(0.4)
+          : const Color(0xFFEAF7F1).withOpacity(0.3)
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(center, radius, bgPaint);
+
+    // 2. Paint concentric radar rings
+    final ringPaint = Paint()
+      ..color = isAligned
+          ? const Color(0xFF27A770).withOpacity(0.3)
+          : (isDark ? const Color(0xFF3E5C76).withOpacity(0.3) : const Color(0xFF27A770).withOpacity(0.15))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    canvas.drawCircle(center, radius, ringPaint);
+    canvas.drawCircle(center, radius * 0.75, ringPaint);
+    canvas.drawCircle(center, radius * 0.45, ringPaint);
+
+    // 3. Paint crosshairs
+    final linePaint = Paint()
+      ..color = isAligned
+          ? const Color(0xFF27A770).withOpacity(0.4)
+          : (isDark ? const Color(0xFF3E5C76).withOpacity(0.25) : const Color(0xFF27A770).withOpacity(0.15))
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    canvas.drawLine(Offset(center.dx, 0), Offset(center.dx, size.height), linePaint);
+    canvas.drawLine(Offset(0, center.dy), Offset(size.width, center.dy), linePaint);
+
+    // 4. Draw radar angle scale ticks (every 10 degrees)
+    final tickPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    for (int i = 0; i < 360; i += 10) {
+      final double angle = i * math.pi / 180;
+      final bool isMajor = i % 30 == 0;
+
+      final double tickLength = isMajor ? 8 : 4;
+      final double startR = radius;
+      final double endR = radius - tickLength;
+
+      tickPaint.color = isAligned
+          ? const Color(0xFF27A770).withOpacity(0.5)
+          : (isDark ? Colors.white24 : Colors.black12);
+      tickPaint.strokeWidth = isMajor ? 1.5 : 1.0;
+
+      final Offset startPoint = Offset(
+        center.dx + startR * math.cos(angle),
+        center.dy + startR * math.sin(angle),
+      );
+      final Offset endPoint = Offset(
+        center.dx + endR * math.cos(angle),
+        center.dy + endR * math.sin(angle),
+      );
+
+      canvas.drawLine(startPoint, endPoint, tickPaint);
+    }
+
+    // 5. Draw active radar scanning beam
+    final double radAngle = (needleRotation - 90) * math.pi / 180;
+
+    final sweepPaint = Paint()
+      ..color = isAligned
+          ? const Color(0xFF27A770).withOpacity(0.15)
+          : (isDark ? const Color(0xFFD4AF37).withOpacity(0.08) : const Color(0xFF27A770).withOpacity(0.08))
+      ..style = PaintingStyle.fill;
+
+    final sweepPath = Path()
+      ..moveTo(center.dx, center.dy)
+      ..arcTo(
+        Rect.fromCircle(center: center, radius: radius),
+        radAngle - 0.2,
+        0.4,
+        false,
+      )
+      ..close();
+    canvas.drawPath(sweepPath, sweepPaint);
+
+    // 6. Draw outer target marker (red bracket at the top)
+    final targetPaint = Paint()
+      ..color = isAligned ? const Color(0xFF27A770) : Colors.redAccent
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    final double bracketW = 16;
+    final double bracketH = 8;
+    final bracketPath = Path()
+      ..moveTo(center.dx - bracketW, bracketH)
+      ..lineTo(center.dx - bracketW, 0)
+      ..lineTo(center.dx + bracketW, 0)
+      ..lineTo(center.dx + bracketW, bracketH);
+    canvas.drawPath(bracketPath, targetPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
