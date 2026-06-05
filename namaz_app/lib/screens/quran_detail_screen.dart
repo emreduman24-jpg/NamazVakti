@@ -68,10 +68,6 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
     _initAudio();
     _loadVerses();
     _checkDownloadState();
-    final int startingAyah = widget.isJuz ? _getJuzStartInfo(widget.juz!.number)['ayah']! : 1;
-    if (widget.targetAyah == startingAyah) {
-      _loadSavedBookmark();
-    }
   }
 
   void _onScroll() {
@@ -105,10 +101,10 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
     }
   }
 
-  Future<void> _loadSavedBookmark() async {
+  Future<bool> _loadSavedBookmark() async {
     final prefs = await SharedPreferences.getInstance();
     if (widget.isJuz) {
-      final lastJuzNo = prefs.getInt('quran_last_juz_no') ?? 1;
+      final lastJuzNo = prefs.getInt('quran_last_juz_no');
       final lastJuzSuraNo = prefs.getInt('quran_last_juz_sura_no') ?? 1;
       final lastJuzAyahNo = prefs.getInt('quran_last_juz_ayah_no') ?? 1;
       if (lastJuzNo == widget.juz!.number) {
@@ -121,11 +117,12 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
               _activeVerseIndex = targetIndex;
             });
             _scrollToVerse(targetIndex);
+            return true;
           }
         }
       }
     } else {
-      final lastSura = prefs.getInt('quran_last_sura_no') ?? 1;
+      final lastSura = prefs.getInt('quran_last_sura_no');
       final lastAyah = prefs.getInt('quran_last_ayah_no') ?? 1;
       if (lastSura == widget.surah.number) {
         if (mounted && _verses.isNotEmpty) {
@@ -135,10 +132,12 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
               _activeVerseIndex = targetIndex;
             });
             _scrollToVerse(targetIndex);
+            return true;
           }
         }
       }
     }
+    return false;
   }
 
   Future<void> _updateLastReadQuietly(int suraNo, String suraName, int ayahNo, int totalAyahs) async {
@@ -358,7 +357,15 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
         _verseKeys.addAll(List.generate(_verses.length, (_) => GlobalKey()));
         _loading = false;
       });
-      _scrollToTarget();
+      final int startingAyah = widget.isJuz ? _getJuzStartInfo(widget.juz!.number)['ayah']! : 1;
+      if (widget.targetAyah == startingAyah) {
+        final bookmarked = await _loadSavedBookmark();
+        if (!bookmarked) {
+          _scrollToTarget();
+        }
+      } else {
+        _scrollToTarget();
+      }
       _updateLastReadForActiveVerse();
       return;
     }
@@ -405,7 +412,15 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
               _verseKeys.addAll(List.generate(fetchedVerses.length, (_) => GlobalKey()));
               _loading = false;
             });
-            _scrollToTarget();
+            final int startingAyah = widget.isJuz ? _getJuzStartInfo(widget.juz!.number)['ayah']! : 1;
+            if (widget.targetAyah == startingAyah) {
+              final bookmarked = await _loadSavedBookmark();
+              if (!bookmarked) {
+                _scrollToTarget();
+              }
+            } else {
+              _scrollToTarget();
+            }
             _updateLastReadForActiveVerse();
           }
         } else {
@@ -443,7 +458,15 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
                 _verseKeys.addAll(List.generate(fetchedVerses.length, (_) => GlobalKey()));
                 _loading = false;
               });
-              _scrollToTarget();
+              final int startingAyah = widget.isJuz ? _getJuzStartInfo(widget.juz!.number)['ayah']! : 1;
+              if (widget.targetAyah == startingAyah) {
+                final bookmarked = await _loadSavedBookmark();
+                if (!bookmarked) {
+                  _scrollToTarget();
+                }
+              } else {
+                _scrollToTarget();
+              }
               _updateLastReadForActiveVerse();
             }
           } else {

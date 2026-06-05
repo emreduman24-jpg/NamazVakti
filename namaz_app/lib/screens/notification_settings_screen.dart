@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/notification_service.dart';
+import '../data/prayer_repository.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
@@ -31,6 +32,7 @@ class _NotificationSettingsScreenState
   @override
   void initState() {
     super.initState();
+    NotificationService().requestPermissions();
     _loadSettings();
   }
 
@@ -59,6 +61,20 @@ class _NotificationSettingsScreenState
     await prefs.setBool('notification_prayer_aksam', _aksam);
     await prefs.setBool('notification_prayer_yatsi', _yatsi);
     await prefs.setBool('notification_sound_enabled', _soundEnabled);
+
+    // Reschedule alarms immediately with the updated preferences
+    final String? districtId = prefs.getString('selected_district_id');
+    if (districtId != null) {
+      try {
+        final times = await PrayerRepository().getPrayerTimes(districtId);
+        if (times.isNotEmpty) {
+          await NotificationService().schedulePrayerAlarms(times);
+        }
+      } catch (e) {
+        print("Error rescheduling alarms on save: $e");
+      }
+    }
+
     if (mounted) {
       Navigator.of(context).pop();
     }

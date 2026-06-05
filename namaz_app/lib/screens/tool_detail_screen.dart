@@ -88,6 +88,13 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
   int _lastAyahNo = 1;
   int _lastTotalAyahs = 7;
   double _lastPercent = 0.0;
+  // Juz Bookmark State
+  int _lastJuzNo = 0;
+  String _lastJuzTitle = "";
+  String _lastJuzRange = "";
+  int _lastJuzSuraNo = 0;
+  int _lastJuzAyahNo = 0;
+  double _lastJuzPercent = 0.0;
   String _quranSearchQuery = "";
   int _quranTab = 0; // 0 for Sureler, 1 for Cüzler
   Set<String> _quranBookmarks = {};
@@ -103,6 +110,14 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
         _lastTotalAyahs = prefs.getInt('quran_last_total_ayahs') ?? 7;
         _lastPercent = _lastTotalAyahs > 0 ? (_lastAyahNo / _lastTotalAyahs) : 0.0;
         _quranBookmarks = Set<String>.from(bookmarkedList);
+
+        _lastJuzNo = prefs.getInt('quran_last_juz_no') ?? 0;
+        _lastJuzTitle = prefs.getString('quran_last_juz_title') ?? "";
+        _lastJuzRange = prefs.getString('quran_last_juz_range') ?? "";
+        _lastJuzSuraNo = prefs.getInt('quran_last_juz_sura_no') ?? 0;
+        _lastJuzAyahNo = prefs.getInt('quran_last_juz_ayah_no') ?? 0;
+        final int juzPercentVal = prefs.getInt('quran_last_juz_percent') ?? 0;
+        _lastJuzPercent = juzPercentVal / 100.0;
       });
     }
   }
@@ -2176,7 +2191,7 @@ out center body;
     return Column(
       children: [
         // Kaldığın Yer bookmark progress card
-        if (_lastSuraName.isNotEmpty)
+        if (_quranTab == 0 && _lastSuraName.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
             child: Card(
@@ -2252,6 +2267,105 @@ out center body;
                               borderRadius: BorderRadius.circular(6),
                               child: LinearProgressIndicator(
                                 value: _lastPercent,
+                                backgroundColor: dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9),
+                                valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
+                                minHeight: 6,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.arrow_forward_ios, color: _greenColor, size: 16),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        if (_quranTab == 1 && _lastJuzNo > 0)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+            child: Card(
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              elevation: dark ? 0 : 1.5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: dark
+                    ? BorderSide(color: Colors.white.withOpacity(0.08), width: 1.5)
+                    : BorderSide.none,
+              ),
+              child: InkWell(
+                onTap: () {
+                  final targetJuz = QURAN_JUZS.firstWhere(
+                    (j) => j.number == _lastJuzNo,
+                    orElse: () => QURAN_JUZS[0],
+                  );
+                  final startInfo = _getJuzStartInfo(_lastJuzNo);
+                  final targetSurah = QURAN_SURAHS.firstWhere(
+                    (s) => s.number == (_lastJuzSuraNo > 0 ? _lastJuzSuraNo : startInfo['sura']),
+                    orElse: () => QURAN_SURAHS[0],
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => QuranDetailScreen(
+                        surah: targetSurah,
+                        isJuz: true,
+                        juz: targetJuz,
+                        targetAyah: _lastJuzAyahNo > 0 ? _lastJuzAyahNo : startInfo['ayah']!,
+                      ),
+                    ),
+                  ).then((_) => _loadQuranLastRead());
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _greenColor.withOpacity(0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.bookmark_rounded, color: _goldColor, size: 28),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "KALDIĞIN YER",
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.0,
+                                color: _goldColor,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "$_lastJuzNo. Cüz",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: _textColor,
+                              ),
+                            ),
+                            Text(
+                              "Sure $_lastJuzSuraNo, Ayet $_lastJuzAyahNo",
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: _subtitleColor,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: LinearProgressIndicator(
+                                value: _lastJuzPercent,
                                 backgroundColor: dark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9),
                                 valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
                                 minHeight: 6,

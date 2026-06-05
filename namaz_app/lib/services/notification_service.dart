@@ -2,6 +2,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -81,6 +82,16 @@ class NotificationService {
     // First cancel existing to prevent duplicates
     await cancelAllAlarms();
 
+    final prefs = await SharedPreferences.getInstance();
+    final bool imsakEnabled = prefs.getBool('notification_prayer_imsak') ?? true;
+    final bool sabahEnabled = prefs.getBool('notification_prayer_sabah') ?? true; // Maps to Güneş
+    final bool ogleEnabled = prefs.getBool('notification_prayer_ogle') ?? true;
+    final bool ikindiEnabled = prefs.getBool('notification_prayer_ikindi') ?? true;
+    final bool aksamEnabled = prefs.getBool('notification_prayer_aksam') ?? true;
+    final bool yatsiEnabled = prefs.getBool('notification_prayer_yatsi') ?? true;
+    final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? false;
+    final int offset = prefs.getInt('notification_timing_offset') ?? 0;
+
     final now = DateTime.now();
     int notificationId = 100;
 
@@ -108,6 +119,24 @@ class NotificationService {
       final int year = int.parse(parts[2]);
 
       for (var prayerName in prayers) {
+        // Filter by settings
+        bool isPrayerEnabled = true;
+        if (prayerName == 'İmsak') {
+          isPrayerEnabled = imsakEnabled;
+        } else if (prayerName == 'Güneş') {
+          isPrayerEnabled = sabahEnabled;
+        } else if (prayerName == 'Öğle') {
+          isPrayerEnabled = ogleEnabled;
+        } else if (prayerName == 'İkindi') {
+          isPrayerEnabled = ikindiEnabled;
+        } else if (prayerName == 'Akşam') {
+          isPrayerEnabled = aksamEnabled;
+        } else if (prayerName == 'Yatsı') {
+          isPrayerEnabled = yatsiEnabled;
+        }
+
+        if (!isPrayerEnabled) continue;
+
         final String? timeStr =
             dayTime[prayerName == 'Öğle'
                 ? 'Ogle'
@@ -128,7 +157,9 @@ class NotificationService {
         final int hour = int.parse(timeParts[0]);
         final int minute = int.parse(timeParts[1]);
 
-        final scheduledDate = DateTime(year, month, day, hour, minute);
+        // Subtract offset to get the scheduled time
+        final scheduledDate = DateTime(year, month, day, hour, minute)
+            .subtract(Duration(minutes: offset));
 
         // Only schedule future notifications
         if (scheduledDate.isAfter(now)) {
@@ -136,7 +167,7 @@ class NotificationService {
 
           // Configure sound
           // Android: Uses the resource raw/adhan.mp3 (without extension)
-          const AndroidNotificationDetails androidDetails =
+          final AndroidNotificationDetails androidDetails =
               AndroidNotificationDetails(
                 'adhan_alarms_channel',
                 'Ezan Alarmları',
@@ -144,20 +175,20 @@ class NotificationService {
                     'Ezan vakitlerinde kısa ezan sesi ile bildirim gönderir.',
                 importance: Importance.max,
                 priority: Priority.high,
-                sound: RawResourceAndroidNotificationSound('adhan'),
+                sound: soundEnabled ? const RawResourceAndroidNotificationSound('adhan') : null,
                 playSound: true,
               );
 
           // iOS custom sound config (expects adhan.mp3 in App Bundle resources)
-          const DarwinNotificationDetails iosDetails =
+          final DarwinNotificationDetails iosDetails =
               DarwinNotificationDetails(
-                sound: 'adhan.mp3',
+                sound: soundEnabled ? 'adhan.mp3' : null,
                 presentSound: true,
                 presentAlert: true,
                 presentBadge: true,
               );
 
-          const NotificationDetails platformDetails = NotificationDetails(
+          final NotificationDetails platformDetails = NotificationDetails(
             android: androidDetails,
             iOS: iosDetails,
           );
@@ -202,7 +233,13 @@ class NotificationService {
 
   // Play test alarm for user feedback
   Future<void> playTestNotification() async {
-    const AndroidNotificationDetails androidDetails =
+    // Request permission first to ensure dialog pops up if needed
+    await requestPermissions();
+
+    final prefs = await SharedPreferences.getInstance();
+    final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? false;
+
+    final AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
           'test_alarms_channel',
           'Test Bildirimleri',
@@ -210,16 +247,18 @@ class NotificationService {
               'Ezan bildirim sesini test etmek için kullanılır.',
           importance: Importance.max,
           priority: Priority.high,
-          sound: RawResourceAndroidNotificationSound('adhan'),
+          sound: soundEnabled ? const RawResourceAndroidNotificationSound('adhan') : null,
           playSound: true,
         );
 
-    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-      sound: 'adhan.mp3',
+    final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      sound: soundEnabled ? 'adhan.mp3' : null,
       presentSound: true,
+      presentAlert: true,
+      presentBadge: true,
     );
 
-    const NotificationDetails platformDetails = NotificationDetails(
+    final NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
