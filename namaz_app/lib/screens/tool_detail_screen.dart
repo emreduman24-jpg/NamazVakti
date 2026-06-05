@@ -225,11 +225,11 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     // Try progressively larger radii until we find enough mosques
     final radii = [3000, 5000, 10000]; // meters
     
-    // Multiple Overpass API endpoints for reliability
+    // Multiple Overpass API endpoints for reliability - Official and Swiss mirrors first!
     final overpassEndpoints = [
-      'https://overpass.kumi.systems/api/interpreter',
-      'https://overpass-api.de/api/interpreter',
-      'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+      'https://overpass-api.de/api/interpreter', // Official, main server, extremely fast
+      'https://overpass.osm.ch/api/interpreter', // Swiss mirror, very fast and stable
+      'https://overpass.kumi.systems/api/interpreter', // Backup mirror
     ];
 
     for (final radius in radii) {
@@ -237,7 +237,7 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
         try {
           // Overpass QL query: find nodes and ways tagged as mosque within radius
           final query = '''
-[out:json][timeout:15];
+[out:json][timeout:10];
 (
   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
@@ -255,7 +255,7 @@ out center body;
               'Accept': '*/*',
               'User-Agent': 'NamazVakitleri/1.0',
             },
-          ).timeout(const Duration(seconds: 20));
+          ).timeout(const Duration(seconds: 4)); // 4 seconds is plenty for a fast network call
 
           debugPrint('Overpass API [$endpoint] response: status=${response.statusCode}, radius=$radius');
 
@@ -468,31 +468,61 @@ out center body;
         permission = await Geolocator.requestPermission();
       }
 
-      // 3. Try to get high-accuracy live GPS location first if permitted (tam konum sokağına kadar)
+      // 3. Try to get last known position first (instantaneous, under 10ms)
       if (serviceEnabled &&
           (permission == LocationPermission.whileInUse ||
               permission == LocationPermission.always)) {
         try {
-          debugPrint("Attempting to get fresh live GPS location...");
-          position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high, // High accuracy down to street level
-            timeLimit: const Duration(seconds: 7),
-          );
-          debugPrint("Successfully fetched live high-accuracy GPS: ${position.latitude}, ${position.longitude}");
-        } catch (e) {
-          debugPrint("Failed to fetch fresh live GPS: $e. Trying cached last known position.");
-          try {
-            position = await Geolocator.getLastKnownPosition();
-            if (position != null) {
-              debugPrint("Successfully fetched cached last known GPS: ${position.latitude}, ${position.longitude}");
-            }
-          } catch (e2) {
-            debugPrint("Failed to fetch cached GPS: $e2");
+          position = await Geolocator.getLastKnownPosition();
+          if (position != null) {
+            debugPrint("Using last known position immediately: ${position.latitude}, ${position.longitude}");
+            _currentPosition = position;
+            // Fetch mosques immediately so UI doesn't wait
+            _fetchNearbyMosques(position.latitude, position.longitude);
+            // Hide loading indicator as we have some data
+            _loadingLocation = false;
+            if (mounted) setState(() {});
           }
+        } catch (e) {
+          debugPrint("Failed to get last known position: $e");
+        }
+
+        // 4. Try to get fresh location in parallel/background
+        try {
+          debugPrint("Attempting to get fresh live GPS location...");
+          final freshPosition = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.medium, // Medium is much faster than High
+            timeLimit: const Duration(seconds: 4), // 4 seconds timeout is sufficient
+          );
+          debugPrint("Successfully fetched live medium-accuracy GPS: ${freshPosition.latitude}, ${freshPosition.longitude}");
+          
+          bool shouldUpdate = false;
+          if (position == null) {
+            shouldUpdate = true;
+          } else {
+            final double distance = _calculateDistance(
+              position.latitude,
+              position.longitude,
+              freshPosition.latitude,
+              freshPosition.longitude,
+            );
+            if (distance > 0.15) { // If user moved > 150m, refresh
+              shouldUpdate = true;
+            }
+          }
+
+          if (shouldUpdate) {
+            position = freshPosition;
+            _currentPosition = position;
+            // Re-fetch mosques with fresh coordinates
+            await _fetchNearbyMosques(position.latitude, position.longitude);
+          }
+        } catch (e) {
+          debugPrint("Failed to fetch fresh live GPS: $e");
         }
       }
 
-      // 4. Fallback to manually selected city coordinates if live GPS is unavailable/denied/timeout
+      // 5. Fallback to manually selected city coordinates if live GPS is unavailable/denied/timeout
       if (position == null) {
         final savedLoc = await _repository.getSavedLocation();
         final savedCity = savedLoc['cityName'];
@@ -517,7 +547,7 @@ out center body;
         }
       }
 
-      // 5. Ultimate fallback to Büyükçekmece, İstanbul if everything fails
+      // 6. Ultimate fallback to Büyükçekmece, İstanbul if everything fails
       position ??= Position(
         latitude: 41.0207,
         longitude: 28.585,
@@ -532,24 +562,28 @@ out center body;
       );
 
       final pos = position!;
-      debugPrint('=== GPS POSITION: lat=${pos.latitude}, lon=${pos.longitude}, accuracy=${pos.accuracy} ===');
-      setState(() {
-        _currentPosition = pos;
-      });
+      debugPrint('=== FINAL GPS POSITION: lat=${pos.latitude}, lon=${pos.longitude}, accuracy=${pos.accuracy} ===');
+      
+      // Update UI state
+      if (mounted) {
+        setState(() {
+          _currentPosition = pos;
+          _loadingLocation = false;
+        });
+      }
 
-      // Fetch real nearby mosques from Overpass API using exact location
-      await _fetchNearbyMosques(pos.latitude, pos.longitude);
-
+      // If we haven't loaded mosques yet (meaning lastKnownPosition was null), fetch them now
+      if (_dynamicMosquesList.isEmpty) {
+        await _fetchNearbyMosques(pos.latitude, pos.longitude);
+      }
+      
+    } catch (e) {
+      debugPrint("Location error: $e");
       if (mounted) {
         setState(() {
           _loadingLocation = false;
         });
       }
-    } catch (e) {
-      debugPrint("Location error: $e");
-      setState(() {
-        _loadingLocation = false;
-      });
     }
   }
 

@@ -38,6 +38,17 @@ This document contains the progress, architectural details, and recent changes o
 - Routed **Dini Danışman** card directly to the "Dini Hoca" tool inside the Tools/Araçlar screen.
 - Routed **Dini Bilgiler** card directly to the Tools/Araçlar section.
 
+### 5. Nearby Mosques Tool Speed Optimization
+- **Problem:** "Yakındaki Camiler" took 10+ seconds to open because:
+  1. It requested a fresh GPS position with `LocationAccuracy.high` and a 7-second timeout first.
+  2. The primary Overpass API server list placed a slow/unreliable mirror first (`overpass.kumi.systems`).
+  3. A 20-second timeout meant offline servers caused massive sequential hangs during radii loops.
+- **Solution:**
+  - Now requests `getLastKnownPosition` first (resolves instantly) to fetch and display nearby mosques immediately.
+  - Requests a fresh `LocationAccuracy.medium` GPS coordinate in the background and refreshes the list only if the user moved more than 150 meters.
+  - Reordered Overpass servers: official server (`overpass-api.de`) and Swiss mirror (`overpass.osm.ch`) are queried first.
+  - Reduced endpoint network timeout from 20 seconds to 4 seconds, avoiding long sequential freezes.
+
 ---
 
 ## 📋 Next Steps & Open Tasks
