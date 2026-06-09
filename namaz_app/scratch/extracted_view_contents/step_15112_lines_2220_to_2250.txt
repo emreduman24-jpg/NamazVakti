@@ -1,0 +1,39 @@
+Created At: 2026-06-03T06:18:34Z
+Completed At: 2026-06-03T06:18:34Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 2220 to 2250
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2220:                   ],
+2221:           ),
+2222:           child: ListTile(
+2223:             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+2224:             onTap: () {
+2225:               final startInfo = _getJuzStartInfo(juz.number);
+2226:               final targetSurah = QURAN_SURAHS.firstWhere(
+2227:                 (s) => s.number == startInfo['sura'],
+2228:                 orElse: () => QURAN_SURAHS[0],
+2229:               );
+2230:               Navigator.push(
+2231:                 context,
+2232:                 MaterialPageRoute(
+2233:                   builder: (context) => QuranDetailScreen(
+2234:                     surah: targetSurah,
+2235:                     isJuz: true,
+2236:                     juz: juz,
+2237:                     targetAyah: startInfo['ayah']!,
+2238:                   ),
+2239:                 ),
+2240:               ).then((_) => _loadQuranLastRead());
+2241:             },
+2242:             leading: Container(
+2243:               width: 36,
+2244:               height: 36,
+2245:               decoration: BoxDecoration(
+2246:                 border: Border.all(color: const Color(0xFFC5A059), width: 1.5),
+2247:                 shape: BoxShape.circle,
+2248:               ),
+2249:               alignment: Alignment.center,
+2250:               child: Text(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

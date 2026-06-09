@@ -1,0 +1,86 @@
+Created At: 2026-06-03T13:47:12Z
+Completed At: 2026-06-03T13:47:12Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8257
+Total Bytes: 337169
+Showing lines 1850 to 1950
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1850:               ElevatedButton(
+1851:                 onPressed: () => Navigator.pop(context),
+1852:                 style: ElevatedButton.styleFrom(
+1853:                   backgroundColor: const Color(0xFF27A770),
+1854:                   shape: RoundedRectangleBorder(
+1855:                     borderRadius: BorderRadius.circular(15),
+1856:                   ),
+1857:                   padding: EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+1858:                   elevation: 1,
+1859:                 ),
+1860:                 child: Text(
+1861:                   "Geri Dön",
+1862:                   style: TextStyle(
+1863:                     color: Colors.white,
+1864:                     fontWeight: FontWeight.bold,
+1865:                     fontSize: 13,
+1866:                   ),
+1867:                 ),
+1868:               ),
+1869:             ],
+1870:           ),
+1871:         ),
+1872: 
+1873:         // Message List
+1874:         Expanded(
+1875:           child: ListView.builder(
+1876:             controller: _diniHocaScrollController,
+1877:             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+1878:             itemCount: _diniHocaMessages.length + (_diniHocaIsTyping ? 1 : 0),
+1879:             itemBuilder: (context, index) {
+1880:               if (index == _diniHocaMessages.length) {
+1881:                 // Typing indicator
+1882:                 return Padding(
+1883:                   padding: const EdgeInsets.symmetric(vertical: 8.0),
+1884:                   child: Row(
+1885:                     crossAxisAl
+<truncated 1344 bytes>
+           ),
+1911:                         child: Row(
+1912:                           mainAxisSize: MainAxisSize.min,
+1913:                           children: [
+1914:                             Text(
+1915:                               "Dini Hoca yazıyor ",
+1916:                               style: TextStyle(
+1917:                                 fontSize: 13,
+1918:                                 color: _subtitleColor,
+1919:                               ),
+1920:                             ),
+1921:                             const SizedBox(width: 4),
+1922:                             _buildMiniTypingIndicator(),
+1923:                           ],
+1924:                         ),
+1925:                       ),
+1926:                     ],
+1927:                   ),
+1928:                 );
+1929:               }
+1930: 
+1931:               final msg = _diniHocaMessages[index];
+1932:               final bool isMe = msg['isMe'] ?? false;
+1933:               final String text = msg['text'] ?? "";
+1934:               
+1935:               return Padding(
+1936:                 padding: const EdgeInsets.symmetric(vertical: 8.0),
+1937:                 child: Row(
+1938:                   mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+1939:                   crossAxisAlignment: CrossAxisAlignment.start,
+1940:                   children: [
+1941:                     if (!isMe) ...[
+1942:                       Container(
+1943:                         width: 36,
+1944:                         height: 36,
+1945:                         decoration: const BoxDecoration(
+1946:                           color: Color(0xFF1E5E43),
+1947:                           shape: BoxShape.circle,
+1948:                         ),
+1949:                         child: const Icon(
+1950:                           Icons.mosque_rounded,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

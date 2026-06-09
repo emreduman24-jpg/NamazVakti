@@ -1,0 +1,44 @@
+Created At: 2026-05-23T22:30:30Z
+Completed At: 2026-05-23T22:30:30Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4597
+Total Bytes: 187793
+Showing lines 3980 to 4015
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3980:         "dua": "Salavat-ı Şerife",
+3981:         "arapca": "اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ",
+3982:         "anlam": "Peygamber Efendimize salat ve selam getirmek.",
+3983:         "hedef": 100,
+3984:       },
+3985:     ];
+3986: 
+3987:     return _buildEzkarInteractive(
+3988:       "Akşam Zikirleri ve Duaları",
+3989:       ezkar,
+3990:       _aksamEzkarCounts,
+3991:     );
+3992:   }
+3993: 
+3994:   Widget _buildEzkarInteractive(
+3995:     String title,
+3996:     List<Map<String, dynamic>> ezkar,
+3997:     List<int> countList,
+3998:   ) {
+3999:     return Column(
+4000:       crossAxisAlignment: CrossAxisAlignment.start,
+4001:       children: [
+4002:         Text(
+4003:           title,
+4004:           style: const TextStyle(
+4005:             fontSize: 16,
+4006:             fontWeight: FontWeight.bold,
+4007:             color: Color(0xFF1E5E43),
+4008:           ),
+4009:         ),
+4010:         const SizedBox(height: 4),
+4011:         const Text(
+4012:           "Kartların üzerine dokunarak zikirlerinizi çekebilirsiniz.",
+4013:           style: TextStyle(fontSize: 12, color: Colors.grey),
+4014:         ),
+4015:         const SizedBox(height: 12),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,44 @@
+Created At: 2026-06-03T12:44:31Z
+Completed At: 2026-06-03T12:44:32Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7117
+Total Bytes: 289398
+Showing lines 1465 to 1500
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1465:                       Row(
+1466:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+1467:                         children: [
+1468:                           Text(
+1469:                             "${item['amin'] ?? 0} kişi Amin dedi",
+1470:                             style: TextStyle(
+1471:                               color: Colors.grey,
+1472:                               fontSize: 12,
+1473:                             ),
+1474:                           ),
+1475:                           ElevatedButton.icon(
+1476:                             onPressed: () => _aminDua(index),
+1477:                             icon: Icon(
+1478:                               Icons.favorite,
+1479:                               size: 14,
+1480:                               color: Colors.red,
+1481:                             ),
+1482:                             label: Text(
+1483:                               "Amin de",
+1484:                               style: TextStyle(
+1485:                                 fontSize: 11,
+1486:                                 color: _greenColor,
+1487:                               ),
+1488:                             ),
+1489:                             style: ElevatedButton.styleFrom(
+1490:                               backgroundColor: const Color(0xFFEAF4FB),
+1491:                               elevation: 0,
+1492:                               shape: RoundedRectangleBorder(
+1493:                                 borderRadius: BorderRadius.circular(12),
+1494:                               ),
+1495:                               padding: EdgeInsets.symmetric(
+1496:                                 horizontal: 10,
+1497:                                 vertical: 4,
+1498:                               ),
+1499:                             ),
+1500:                           ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

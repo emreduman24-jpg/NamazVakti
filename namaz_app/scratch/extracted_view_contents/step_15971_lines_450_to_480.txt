@@ -1,0 +1,39 @@
+Created At: 2026-06-03T11:37:51Z
+Completed At: 2026-06-03T11:37:52Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6934
+Total Bytes: 282658
+Showing lines 450 to 480
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+450:       // Fetch real nearby mosques from Overpass API using exact location
+451:       await _fetchNearbyMosques(pos.latitude, pos.longitude);
+452: 
+453:       if (mounted) {
+454:         setState(() {
+455:           _loadingLocation = false;
+456:         });
+457:       }
+458:     } catch (e) {
+459:       debugPrint("Location error: $e");
+460:       setState(() {
+461:         _loadingLocation = false;
+462:       });
+463:     }
+464:   }
+465: 
+466:   // Zikirmatik State
+467:   int _zikirCount = 0;
+468:   int _zikirTarget = 33;
+469:   bool _zikirSoundEnabled = true;
+470:   String _selectedZikirId = 'subhanallah';
+471: 
+472:   final Map<String, Map<String, dynamic>> _zikirData = {
+473:     'subhanallah': {
+474:       'ad': 'Sübhânallâh',
+475:       'arapca': 'سُبْحَانَ اللَّهِ',
+476:       'anlam': 'Allah noksan sıfatlardan uzaktır.',
+477:       'fazilet': 'Günde 100 defa okuyanın günahları deniz köpüğü kadar da olsa bağışlanır.',
+478:       'hedef': 33
+479:     },
+480:     'elhamdulillah': {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

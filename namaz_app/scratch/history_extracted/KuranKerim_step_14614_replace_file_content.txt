@@ -1,0 +1,14 @@
+
+Timestamp: 2026-06-03T05:03:14Z
+Args keys: AllowMultiple,Description,EndLine,Instruction,ReplacementContent,StartLine,TargetContent,TargetFile
+Arguments: {
+  "AllowMultiple": "false",
+  "Description": "\"Customize build method for kuran-kerim tool (dark theme, edge-to-edge)\"",
+  "EndLine": "1151",
+  "Instruction": "\"Check if toolId is kuran-kerim to change background color and remove padding\"",
+  "ReplacementContent": "\"  @override\\n  Widget build(BuildContext context) {\\n    final isQuran = widget.toolId == 'kuran-kerim';\\n    return Scaffold(\\n      backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5)),\\n      appBar: AppBar(\\n        title: Text(\\n          widget.toolTitle,\\n          style: const TextStyle(\\n            fontWeight: FontWeight.bold,\\n            color: Colors.white,\\n            fontSize: 20,\\n          ),\\n        ),\\n        centerTitle: true,\\n        backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43)),\\n        elevation: 0,\\n        iconTheme: const IconThemeData(color: Colors.white),\\n        automaticallyImplyLeading: !widget.isTab,\\n      ),\\n      body: SafeArea(\\n        child: isQuran\\n            ? _buildKuranKerim()\\n            : Padding(\\n                padding: const EdgeInsets.all(16.0),\\n                child: _buildToolBody(),\\n              ),\\n      ),\\n    );\\n  }\"",
+  "StartLine": "1124",
+  "TargetContent": "\"  @override\\n  Widget build(BuildContext context) {\\n    return Scaffold(\\n      backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),\\n      appBar: AppBar(\\n        title: Text(\\n          widget.toolTitle,\\n          style: const TextStyle(\\n            fontWeight: FontWeight.bold,\\n            color: Colors.white,\\n            fontSize: 20,\\n          ),\\n        ),\\n        centerTitle: true,\\n        backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43),\\n        elevation: 0,\\n        iconTheme: const IconThemeData(color: Colors.white),\\n        automaticallyImplyLeading: !widget.isTab,\\n      ),\\n      body: SafeArea(\\n        child: Padding(\\n          padding: EdgeInsets.all(16.0),\\n          child: _buildToolBody(),\\n        ),\\n      ),\\n    );\\n  }\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\""
+}
+

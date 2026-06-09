@@ -1,0 +1,96 @@
+Created At: 2026-06-01T11:56:18Z
+Completed At: 2026-06-01T11:56:19Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5894
+Total Bytes: 238386
+Showing lines 2650 to 2750
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2650:                   : [Colors.white, const Color(0xFFF0F4F8)],
+2651:               begin: Alignment.topLeft,
+2652:               end: Alignment.bottomRight,
+2653:             ),
+2654:             borderRadius: BorderRadius.circular(16),
+2655:             border: Border.all(
+2656:               color: dark ? const Color(0xFF27A770).withOpacity(0.15) : const Color(0xFF27A770).withOpacity(0.1),
+2657:               width: 1,
+2658:             ),
+2659:             boxShadow: [
+2660:               BoxShadow(
+2661:                 color: Colors.black.withOpacity(0.02),
+2662:                 blurRadius: 6,
+2663:                 offset: const Offset(0, 2),
+2664:               ),
+2665:             ],
+2666:           ),
+2667:           child: Row(
+2668:             children: [
+2669:               Container(
+2670:                 padding: const EdgeInsets.all(8),
+2671:                 decoration: BoxDecoration(
+2672:                   color: const Color(0xFFD4AF37).withOpacity(0.1),
+2673:                   shape: BoxShape.circle,
+2674:                 ),
+2675:                 child: const Icon(
+2676:                   Icons.calendar_month,
+2677:                   color: Color(0xFFD4AF37),
+2678:                   size: 24,
+2679:                 ),
+2680:               ),
+2681:               const SizedBox(width: 12),
+2682:               Expanded(
+2683:                 child: Column(
+2684:                   crossAxisAlignment: CrossAxisAlignment.start,
+2685:                   children: [
+2686:                     Text(
+2687:                       "${_current
+<truncated 767 bytes>
+   ],
+2703:                 ),
+2704:               ),
+2705:             ],
+2706:           ),
+2707:         ),
+2708: 
+2709:         // Custom Column Headers Row
+2710:         Container(
+2711:           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+2712:           decoration: BoxDecoration(
+2713:             color: dark ? const Color(0xFF1C2C42) : const Color(0xFFEAF7F1),
+2714:             borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+2715:           ),
+2716:           child: Row(
+2717:             children: [
+2718:               Expanded(
+2719:                 flex: 2,
+2720:                 child: Text(
+2721:                   "Tarih",
+2722:                   style: TextStyle(
+2723:                     fontSize: 11.5,
+2724:                     fontWeight: FontWeight.bold,
+2725:                     color: dark ? Colors.white70 : const Color(0xFF1E5E43),
+2726:                   ),
+2727:                 ),
+2728:               ),
+2729:               ...['İmsak', 'Güneş', 'Öğle', 'İkindi', 'Akşam', 'Yatsı'].map(
+2730:                 (vakit) => Expanded(
+2731:                   flex: 1,
+2732:                   child: Text(
+2733:                     vakit,
+2734:                     textAlign: TextAlign.center,
+2735:                     style: TextStyle(
+2736:                       fontSize: 11.5,
+2737:                       fontWeight: FontWeight.bold,
+2738:                       color: dark ? Colors.white70 : const Color(0xFF1E5E43),
+2739:                     ),
+2740:                   ),
+2741:                 ),
+2742:               ),
+2743:             ],
+2744:           ),
+2745:         ),
+2746: 
+2747:         // Scrollable List of days
+2748:         Expanded(
+2749:           child: ClipRRect(
+2750:             borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,103 @@
+Created At: 2026-06-01T15:35:05Z
+Completed At: 2026-06-01T15:35:05Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6355
+Total Bytes: 257924
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:convert';
+3: import 'dart:math' as math;
+4: import 'package:flutter/material.dart';
+5: import 'package:http/http.dart' as http;
+6: import 'package:flutter/services.dart';
+7: import 'package:flutter_compass/flutter_compass.dart';
+8: import 'package:audioplayers/audioplayers.dart';
+9: import 'package:shared_preferences/shared_preferences.dart';
+10: import 'package:geolocator/geolocator.dart';
+11: import 'package:url_launcher/url_launcher.dart';
+12: import '../data/prayer_data.dart';
+13: import '../data/prayer_repository.dart';
+14: 
+15: class ToolDetailScreen extends StatefulWidget {
+16:   final String toolId;
+17:   final String toolTitle;
+18: 
+19:   const ToolDetailScreen({
+20:     super.key,
+21:     required this.toolId,
+22:     required this.toolTitle,
+23:   });
+24: 
+25:   @override
+26:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+27: }
+28: 
+29: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+30:   final PrayerRepository _repository = PrayerRepository();
+31:   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+32:   Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xff1e5e43);
+33:   Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000); // _textColor equivalent
+34:   Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000); // _subtitleColor equivalent
+35:   Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;
+36:   String _currentLocationName = "";
+37: 
+38:   Future<voi
+<truncated 35970 bytes>
+:         .replaceAll('ö', 'o')
+746:         .replaceAll('ç', 'c');
+747:   }
+748: 
+749:   @override
+750:   void dispose() {
+751:     _audioPlayer?.dispose();
+752:     _duaNameController.dispose();
+753:     _duaTextController.dispose();
+754:     _questionNameController.dispose();
+755:     _qaInputController.dispose();
+756:     _chatInputController.dispose();
+757:     _hadisSearchController.dispose();
+758:     _goldController.dispose();
+759:     _cashController.dispose();
+760:     _businessController.dispose();
+761:     _debtsController.dispose();
+762:     super.dispose();
+763:   }
+764: 
+765:   // Zikirmatik persistence
+766:   Future<void> _loadZikirState() async {
+767:     final count = await _repository.getZikirCount();
+768:     final target = await _repository.getZikirTarget();
+769:     final prefs = await SharedPreferences.getInstance();
+770:     setState(() {
+771:       _zikirCount = count;
+772:       _zikirTarget = target;
+773:       _selectedZikirId = prefs.getString('zikir_selected_id') ?? 'subhanallah';
+774:     });
+775:   }
+776: 
+777:   void _onZikirSelected(String? id) async {
+778:     if (id == null) return;
+779:     final prefs = await SharedPreferences.getInstance();
+780:     await prefs.setString('zikir_selected_id', id);
+781:     final target = _zikirData[id]?['hedef'] ?? 33;
+782:     setState(() {
+783:       _selectedZikirId = id;
+784:       _zikirTarget = target;
+785:       _zikirCount = 0;
+786:     });
+787:     await _repository.setZikirTarget(target);
+788:     await _repository.setZikirCount(0);
+789:   }
+790: 
+791:   Future<void> _incrementZikir() async {
+792:     HapticFeedback.lightImpact();
+793:     if (_zikirSoundEnabled) {
+794:       SystemSound.play(SystemSoundType.click);
+795:     }
+796:     setState(() {
+797:       _zikirCount++;
+798:     });
+799:     await _repository.setZikirCount(_zikirCount);
+800: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,24 @@
+Created At: 2026-06-01T18:23:08Z
+Completed At: 2026-06-01T18:23:09Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6358
+Total Bytes: 258018
+Showing lines 920 to 935
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+920: 
+921:   @override
+922:   Widget build(BuildContext context) {
+923:     return Scaffold(
+924:       backgroundColor: const Color(0xFFF3F8F5),
+925:       appBar: AppBar(
+926:         title: Text(
+927:           widget.toolTitle,
+928:           style: TextStyle(
+929:             fontWeight: FontWeight.bold,
+930:             color: Colors.white,
+931:           ),
+932:         ),
+933:         backgroundColor: _greenColor,
+934:         elevation: 0,
+935:         iconTheme: IconThemeData(color: Colors.white),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

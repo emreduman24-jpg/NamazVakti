@@ -1,0 +1,16 @@
+{
+  "step_index": 9056,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Implement onTap map launching in Flutter using url_launcher\"",
+    "EndLine": "2962",
+    "Instruction": "\"Update onTap callback to parse and launch the map URL using url_launcher.dart\"",
+    "ReplacementContent": "\"                            onTap: () async {\\n                              final urlStr = camii['harita'] ?? '';\\n                              if (urlStr.isNotEmpty) {\\n                                final uri = Uri.parse(urlStr);\\n                                try {\\n                                  if (await canLaunchUrl(uri)) {\\n                                    await launchUrl(uri, mode: LaunchMode.externalApplication);\\n                                  } else {\\n                                    if (context.mounted) {\\n                                      ScaffoldMessenger.of(context).showSnackBar(\\n                                        const SnackBar(\\n                                          content: Text(\\\"Harita uygulaması açılamadı.\\\"),\\n                                          backgroundColor: Colors.red,\\n                                        ),\\n                                      );\\n                                    }\\n                                  }\\n                                } catch (e) {\\n                                  debugPrint(\\\"Launch map error: $e\\\");\\n                                  if (context.mounted) {\\n                                    ScaffoldMessenger.of(context).showSnackBar(\\n                                      const SnackBar(\\n                                        content: Text(\\\"Harita açılırken bir hata oluştu.\\\"),\\n                                        backgroundColor: Colors.red,\\n                                      ),\\n                                    );\\n                                  }\\n                                }\\n                              }\\n                            },\"",
+    "StartLine": "2956",
+    "TargetContent": "\"                            onTap: () {\\n                              final url = camii['harita'] ?? '';\\n                              if (url.isNotEmpty) {\\n                                // Open Google Maps link\\n                                debugPrint(\\\"Opening map: $url\\\");\\n                              }\\n                            },\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Updating mosque list onTap to use url_launcher\"",
+    "toolSummary": "\"Replace onTap in tool_detail_screen.dart\""
+  }
+}

@@ -1,0 +1,79 @@
+Created At: 2026-06-03T05:00:18Z
+Completed At: 2026-06-03T05:00:18Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6363
+Total Bytes: 258283
+Showing lines 80 to 150
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+80:       print('Error loading monthly prayer times: $e');
+81:       if (mounted) {
+82:         setState(() {
+83:           _loadingMonthlyTimes = false;
+84:         });
+85:       }
+86:     }
+87:   }
+88: 
+89:   AudioPlayer? _audioPlayer;
+90:   PlayerState _playerState = PlayerState.stopped;
+91:   String _currentAudioUrl = "";
+92:   String _currentTrackName = "";
+93:   int _quranTab = 0; // 0: Sureler, 1: Cüzler
+94: 
+95:   // Yakındaki Camiler (Location & GPS State)
+96:   Position? _currentPosition;
+97:   bool _loadingLocation = false;
+98:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+99: 
+100:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+101:     const r = 6371; // Earth radius in km
+102:     final dLat = _toRadians(lat2 - lat1);
+103:     final dLon = _toRadians(lon2 - lon1);
+104:     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+105:         math.cos(_toRadians(lat1)) * math.cos(_toRadians(lat2)) *
+106:         math.sin(dLon / 2) * math.sin(dLon / 2);
+107:     final c = 2 * math.asin(math.sqrt(a));
+108:     return r * c;
+109:   }
+110: 
+111:   double _toRadians(double degree) {
+112:     return degree * math.pi / 180;
+113:   }
+114: 
+115:   void _initMosques() {
+116:     _dynamicMosquesList = [];
+117:   }
+118: 
+119:   /// Fetches real nearby mosques from OpenStreetMap Overpass API
+120:   Future<void> _fetchNearbyMosques(double lat, double lon) async {
+121:     debugPrint('=== MOSQUE SEARCH: Searching near lat=$lat, lon=$lon ===');
+122:     // Try progressively larger radii until we find enough mosques
+123:     final radii = [3000, 5000, 10000]; // meters
+124:     
+125:     // Multiple Overpass API endpoints for reliability
+126:     final overpassEndpoints = [
+127:       'https://overpass.kumi.systems/api/interpreter',
+128:       'https://overpass-api.de/api/interpreter',
+129:       'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+130:     ];
+131: 
+132:     for (final radius in radii) {
+133:       for (final endpoint in overpassEndpoints) {
+134:         try {
+135:           // Overpass QL query: find nodes and ways tagged as mosque within radius
+136:           final query = '''
+137: [out:json][timeout:15];
+138: (
+139:   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+140:   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+141:   node["building"="mosque"](around:$radius,$lat,$lon);
+142:   way["building"="mosque"](around:$radius,$lat,$lon);
+143: );
+144: out center body;
+145: ''';
+146: 
+147:           final encodedQuery = Uri.encodeComponent(query);
+148:           final url = Uri.parse('$endpoint?data=$encodedQuery');
+149:           final response = await http.get(
+150:             url,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

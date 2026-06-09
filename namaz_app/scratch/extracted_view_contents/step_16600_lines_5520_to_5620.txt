@@ -1,0 +1,71 @@
+Created At: 2026-06-03T13:10:50Z
+Completed At: 2026-06-03T13:10:51Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7690
+Total Bytes: 312474
+Showing lines 5520 to 5620
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5520:                   Expanded(
+5521:                     child: SingleChildScrollView(
+5522:                       physics: const BouncingScrollPhysics(),
+5523:                       child: Column(
+5524:                         crossAxisAlignment: CrossAxisAlignment.start,
+5525:                         children: [
+5526:                           if (arabic.isNotEmpty) ...[
+5527:                             Container(
+5528:                               width: double.infinity,
+5529:                               padding: const EdgeInsets.all(16),
+5530:                               decoration: BoxDecoration(
+5531:                                 color: _isDark ? const Color(0xFF1E1715) : const Color(0xFFF9FBF9),
+5532:                                 borderRadius: BorderRadius.circular(16),
+5533:                                 border: Border.all(
+5534:                                   color: _isDark ? const Color(0xFF2C221F) : Colors.grey[100]!,
+5535:                                   width: 1,
+5536:                                 ),
+5537:                               ),
+5538:                               child: SelectionArea(
+5539:                                 child: Text(
+5540:                                   arabic,
+5541:                                   style: TextStyle(
+5542:                                     fontFamily: 'Traditional Arabic',
+5543:                                     fontSize: arabicFontSize,
+5544:                                     height: 1.8,
+5545:                                     fontWeight: FontWeight.b
+<truncated 2156 bytes>
+            ),
+5586:                             ),
+5587:                             const SizedBox(height: 6),
+5588:                             SelectionArea(
+5589:                               child: Text(
+5590:                                 translation,
+5591:                                 style: TextStyle(
+5592:                                   fontSize: translationFontSize,
+5593:                                   height: 1.5,
+5594:                                   color: _isDark ? Colors.white70 : Colors.black87,
+5595:                                 ),
+5596:                               ),
+5597:                             ),
+5598:                             const SizedBox(height: 20),
+5599:                           ],
+5600:                         ],
+5601:                       ),
+5602:                     ),
+5603:                   ),
+5604:                   const Divider(height: 20),
+5605:                   if (url.isNotEmpty)
+5606:                     Container(
+5607:                       padding: const EdgeInsets.symmetric(vertical: 8),
+5608:                       child: Row(
+5609:                         mainAxisAlignment: MainAxisAlignment.center,
+5610:                         children: [
+5611:                           GestureDetector(
+5612:                             onTap: () async {
+5613:                               await _playAudio(url, title);
+5614:                               setModalState(() {});
+5615:                             },
+5616:                             child: Container(
+5617:                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+5618:                               decoration: BoxDecoration(
+5619:                                 color: const Color(0xFFC19E67),
+5620:                                 borderRadius: BorderRadius.circular(30),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

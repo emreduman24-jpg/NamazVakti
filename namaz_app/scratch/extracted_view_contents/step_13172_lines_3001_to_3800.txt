@@ -1,0 +1,88 @@
+Created At: 2026-06-01T15:35:12Z
+Completed At: 2026-06-01T15:35:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6355
+Total Bytes: 257924
+Showing lines 3001 to 3800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3001:                               fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+3002:                               color: isToday
+3003:                                   ? const Color(0xFF27A770)
+3004:                                   : (dark ? Colors.white.withOpacity(0.85) : Colors.black87),
+3005:                             ),
+3006:                           ),
+3007:                         ),
+3008:                       ),
+3009:                     ],
+3010:                   ),
+3011:                 );
+3012:               },
+3013:             ),
+3014:           ),
+3015:         ],
+3016:       ),
+3017:     );
+3018:   }
+3019: 
+3020:   // Spiritual Calendar Sheet Grid View
+3021:   Widget _buildMonthlyCalendarView(bool dark, String todayStr) {
+3022:     DateTime? firstDate;
+3023:     if (_monthlyPrayerTimes.isNotEmpty) {
+3024:       final parts = _monthlyPrayerTimes[0]['MiladiTarihKisa']?.split('.');
+3025:       if (parts != null && parts.length == 3) {
+3026:         firstDate = DateTime(
+3027:           int.parse(parts[2]),
+3028:           int.parse(parts[1]),
+3029:           int.parse(parts[0]),
+3030:         );
+3031:       }
+3032:     }
+3033:     int startOffset = firstDate != null ? firstDate.weekday - 1 : 0;
+3034:     final daysCount = _monthlyPrayerTimes.length;
+3035:     final totalCells = startOffset + daysCount;
+3036: 
+3037:     // Selected day data
+3038:     final selectedDayData = _monthlyPrayerTimes.isNotEmpty &&
+3039:             _selectedCalendarDayIndex >= 0 &&
+3040:             _selectedCalendarDayIndex < _monthlyP
+<truncated 32259 bytes>
+  ),
+3763:         SizedBox(height: 16),
+3764:         Align(
+3765:           alignment: Alignment.centerLeft,
+3766:           child: Text(
+3767:             "Yasin-i Şerif İlk Ayetleri",
+3768:             style: TextStyle(
+3769:               fontWeight: FontWeight.bold,
+3770:               fontSize: 15,
+3771:               color: _greenColor,
+3772:             ),
+3773:           ),
+3774:         ),
+3775:         SizedBox(height: 8),
+3776:         Expanded(
+3777:           child: Container(
+3778:             padding: EdgeInsets.all(16),
+3779:             decoration: BoxDecoration(
+3780:               color: Colors.white,
+3781:               borderRadius: BorderRadius.circular(16),
+3782:               border: Border.all(color: Colors.grey[200]!),
+3783:             ),
+3784:             child: SingleChildScrollView(
+3785:               child: Text(
+3786:                 "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\n"
+3787:                 "يس ﴿١﴾ وَالْقُرْآنِ الْحَكِيمِ ﴿٢﴾ إِنَّكَ لَمِنَ الْمُرْسَلِينَ ﴿٣﴾ عَلَىٰ صِرَاطٍ مُسْتَقِيمٍ ﴿٤﴾ تَنْزِيلَ الْعَزِيزِ الرَّحِيمِ ﴿٥﴾ لِتُنْذِرَ قَوْمًا مَا أُنْdevİRİLMİŞTİR ﴿٦﴾ لَقَدْ حَقَّ الْقَوْلُ عَلَىٰ أَكْثَرِهِمْ فَهُمْ لَا يُؤْمِنُونَ ﴿٧﴾",
+3788:                 textAlign: TextAlign.right,
+3789:                 style: TextStyle(
+3790:                   fontFamily: 'Traditional Arabic',
+3791:                   fontSize: 20,
+3792:                   height: 2.2,
+3793:                   color: _textColor,
+3794:                 ),
+3795:               ),
+3796:             ),
+3797:           ),
+3798:         ),
+3799:       ],
+3800:     );
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

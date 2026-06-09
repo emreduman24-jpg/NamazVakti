@@ -1,0 +1,88 @@
+Created At: 2026-05-28T14:42:52Z
+Completed At: 2026-05-28T14:42:52Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5257
+Total Bytes: 213773
+Showing lines 1 to 250
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:convert';
+3: import 'dart:math' as math;
+4: import 'package:flutter/material.dart';
+5: import 'package:http/http.dart' as http;
+6: import 'package:flutter/services.dart';
+7: import 'package:flutter_compass/flutter_compass.dart';
+8: import 'package:audioplayers/audioplayers.dart';
+9: import 'package:shared_preferences/shared_preferences.dart';
+10: import 'package:geolocator/geolocator.dart';
+11: import '../data/prayer_data.dart';
+12: import '../data/prayer_repository.dart';
+13: 
+14: class ToolDetailScreen extends StatefulWidget {
+15:   final String toolId;
+16:   final String toolTitle;
+17: 
+18:   const ToolDetailScreen({
+19:     super.key,
+20:     required this.toolId,
+21:     required this.toolTitle,
+22:   });
+23: 
+24:   @override
+25:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+26: }
+27: 
+28: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+29:   final PrayerRepository _repository = PrayerRepository();
+30:   AudioPlayer? _audioPlayer;
+31:   PlayerState _playerState = PlayerState.stopped;
+32:   String _currentAudioUrl = "";
+33:   String _currentTrackName = "";
+34: 
+35:   // Yakındaki Camiler (Location & GPS State)
+36:   Position? _currentPosition;
+37:   bool _loadingLocation = false;
+38:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+39: 
+40:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+41:     const r = 6371; // Earth radius in km
+42:     final dLat = _toRadians(lat2 - lat1);
+43:     final dLon = _toRadians(lon2 - lon1);
+44:     
+<truncated 7669 bytes>
+": {"lat": 38.6810, "lon": 39.2230},
+217:     "ERZINCAN": {"lat": 39.7500, "lon": 39.5000},
+218:     "ERZURUM": {"lat": 39.9000, "lon": 41.2700},
+219:     "ESKISEHIR": {"lat": 39.7767, "lon": 30.5206},
+220:     "GAZIANTEP": {"lat": 37.0662, "lon": 37.3833},
+221:     "GIRESUN": {"lat": 40.9128, "lon": 38.3895},
+222:     "GUMUSHANE": {"lat": 40.4600, "lon": 39.4817},
+223:     "HAKKARI": {"lat": 37.5833, "lon": 43.7333},
+224:     "HATAY": {"lat": 36.4018, "lon": 36.3498},
+225:     "ISPARTA": {"lat": 37.7648, "lon": 30.5566},
+226:     "MERSIN": {"lat": 36.8000, "lon": 34.6333},
+227:     "ICEL": {"lat": 36.8000, "lon": 34.6333},
+228:     "ISTANBUL": {"lat": 41.0082, "lon": 28.9784},
+229:     "IZMIR": {"lat": 38.4192, "lon": 27.1287},
+230:     "KARS": {"lat": 40.6013, "lon": 43.0949},
+231:     "KASTAMONU": {"lat": 41.3887, "lon": 33.7827},
+232:     "KAYSERI": {"lat": 38.7312, "lon": 35.4787},
+233:     "KIRKLARELI": {"lat": 41.7333, "lon": 27.2167},
+234:     "KIRSEHIR": {"lat": 39.1425, "lon": 34.1709},
+235:     "KOCAELI": {"lat": 40.8533, "lon": 29.8815},
+236:     "KONYA": {"lat": 37.8714, "lon": 32.4847},
+237:     "KUTAHYA": {"lat": 39.4167, "lon": 29.9833},
+238:     "MALATYA": {"lat": 38.3552, "lon": 38.3095},
+239:     "MANISA": {"lat": 38.6191, "lon": 27.4287},
+240:     "KAHRAMANMARAS": {"lat": 37.5858, "lon": 36.9371},
+241:     "MARAS": {"lat": 37.5858, "lon": 36.9371},
+242:     "KMARAS": {"lat": 37.5858, "lon": 36.9371},
+243:     "MARDIN": {"lat": 37.3122, "lon": 40.7339},
+244:     "MUGLA": {"lat": 37.2153, "lon": 28.3636},
+245:     "MUS": {"lat": 38.7432, "lon": 41.5064},
+246:     "NEVSEHIR": {"lat": 38.6244, "lon": 34.7144},
+247:     "NIGDE": {"lat": 37.9667, "lon": 34.6833},
+248:     "ORDU": {"lat": 40.9839, "lon": 37.8764},
+249:     "RIZE": {"lat": 41.0201, "lon": 40.5234},
+250:     "SAKARYA": {"lat": 40.7569, "lon": 30.3789},
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

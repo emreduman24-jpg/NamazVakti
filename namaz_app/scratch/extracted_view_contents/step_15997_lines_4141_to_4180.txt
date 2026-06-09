@@ -1,0 +1,48 @@
+Created At: 2026-06-03T11:40:07Z
+Completed At: 2026-06-03T11:40:07Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6948
+Total Bytes: 283255
+Showing lines 4141 to 4180
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+4141:                 style: ElevatedButton.styleFrom(
+4142:                   backgroundColor: _zikirSoundEnabled ? const Color(0xFF27A770) : Colors.grey,
+4143:                   foregroundColor: Colors.white,
+4144:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+4145:                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+4146:                   elevation: 0,
+4147:                 ),
+4148:                 onPressed: () {
+4149:                   setState(() {
+4150:                     _zikirSoundEnabled = !_zikirSoundEnabled;
+4151:                   });
+4152:                 },
+4153:                 child: Text(
+4154:                   _zikirSoundEnabled ? "Ses: Açık" : "Ses: Kapalı",
+4155:                   style: TextStyle(fontWeight: FontWeight.bold),
+4156:                 ),
+4157:               ),
+4158:             ],
+4159:           ),
+4160:           SizedBox(height: 16),
+4161:         ],
+4162:       ),
+4163:     );
+4164:   }
+4165: 
+4166:   // 12. Miladi - Hicri Çevirici
+4167:   Widget _buildMiladiHicri() {
+4168:     return Column(
+4169:       crossAxisAlignment: CrossAxisAlignment.start,
+4170:       children: [
+4171:         Row(
+4172:           children: [
+4173:             Text(
+4174:               "Çeviri Yönü: ",
+4175:               style: TextStyle(fontWeight: FontWeight.bold),
+4176:             ),
+4177:             const Spacer(),
+4178:             ChoiceChip(
+4179:               label: Text("Miladi -> Hicri"),
+4180:               selected: _miladiToHicri,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

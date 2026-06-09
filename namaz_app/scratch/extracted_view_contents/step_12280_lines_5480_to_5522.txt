@@ -1,0 +1,53 @@
+Created At: 2026-06-01T10:25:13Z
+Completed At: 2026-06-01T10:25:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5522
+Total Bytes: 227716
+Showing lines 5480 to 5522
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5480:                 "4. Eğer kul hakkı varsa, hak sahibiyle helalleşmek.",
+5481:           ),
+5482:           const SizedBox(height: 12),
+5483:           _buildSimpleDuaCard(
+5484:             "Seyyidül İstiğfar Duası",
+5485:             "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ",
+5486:             "Allahümme ente Rabbi la ilahe illa ente halakteni ve ene abdüke ve ene ala ahdike ve va'dike mesteta'tü. Euzü bike min şerri ma sana'tü, ebu'ü leke bi-ni'metike aleyye ve ebu'ü bi-zenbi fağfirli fe-innehû la yağfiruz-zünube illa ente.",
+5487:             "Allah'ım! Sen benim Rabbimsin. Senden başka hiçbir ilah yoktur. Beni sen yarattın, ben senin kulunum. Gücüm yettiğince sana verdiğim söz ve ahd üzereyim. Yaptıklarımın şerrinden sana sığınırım. Üzerimdeki nimetini itiraf ederim, günahımı da itiraf ederim. Beni bağışla, çünkü günahları senden başka bağışlayacak kimse yoktur.",
+5488:           ),
+5489:         ],
+5490:       ),
+5491:     );
+5492:   }
+5493: 
+5494:   // 69. Sadaka-i Cariye
+5495:   Widget _buildSadakaICariye() {
+5496:     return _buildInfoSection(
+5497:       "Sadaka-i Cariye",
+5498:       "Ölümden sonra da sevabı devam eden yatırımlar",
+5499:       "Sadaka-i Cariye, etkisi ve faydası kalıcı olan sürekli iyiliklerdir. Kişi vefat etse dahi, geride bıraktığı bu hayırlı eser
+<truncated 3 bytes>
+den insanlar faydalandığı sürece amel defterine sevap yazılmaya devam eder.\n\n"
+5500:           "Sadaka-i Cariye Örnekleri:\n"
+5501:           "• Çeşme, su kuyusu açtırmak veya su yolları yaptırmak.\n"
+5502:           "• Okul, cami, kütüphane, hastane veya aşevi yaptırmak veya yapımına destek olmak.\n"
+5503:           "• İnsanlığa faydalı bilimsel icatlar yapmak, kitaplar yazmak, faydalı dijital kaynaklar üretmek.\n"
+5504:           "• Yol kenarlarına, ormanlara ağaç dikmek.\n"
+5505:           "• Hayırlı bir evlat yetiştirmek (vefat eden ana-babasına dua eden evlat da sadaka-i cariye hükmündedir).",
+5506:     );
+5507:   }
+5508: 
+5509:   // 70. Tecvid Kuralları
+5510:   Widget _buildTecvidKurallari() {
+5511:     return _buildListSection("Temel Tecvid Kuralları", [
+5512:       "Tecvid: Kuran-ı Kerim'i harflerin mahreçlerine (çıkış yerlerine) dikkat ederek, kurallarına uygun ve güzel okuma ilmidir.",
+5513:       "Med Harfleri (Uzatma): Elif (ا), Vav (و), Ya (ي) harfleridir. Önündeki harfi uzatarak okuturlar.",
+5514:       "Tenvin ve Sakin Nun Kuralları: Sakin nun (نْ) veya tenvin (ً ٍ ٌ) işaretlerinden sonra gelen harflere göre şekillenir.",
+5515:       "İzhar: Sakin nun veya tenvinden sonra boğaz harfleri (ء, هـ, ح, خ, ع, غ) gelirse, ses genizden getirilmeden açıkça okunur.",
+5516:       "İdgam-ı Mealgunne: Sakin nun veya tenvinden sonra (ي, م, ن, و) harfleri gelirse, ses burundan (genizden) verilerek şeddeli gibi okunur.",
+5517:       "İhfa: Sakin nun veya tenvinden sonra izhar ve idgam harfleri dışındaki 15 harf gelirse, nun sesi genizden gizlenerek okunur.",
+5518:       "Kalkale (Yankılama): (ق, ط, b, ج, د) harfleri sakin (cezimli) geldiğinde kuvvetli bir ses vurgusuyla yankılatılarak okunur.",
+5519:     ]);
+5520:   }
+5521: }
+5522: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

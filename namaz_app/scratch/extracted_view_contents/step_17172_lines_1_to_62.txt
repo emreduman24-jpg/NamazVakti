@@ -1,0 +1,71 @@
+Created At: 2026-06-03T14:44:05Z
+Completed At: 2026-06-03T14:44:06Z
+File Path: `file:///c:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 62
+Total Bytes: 3351
+Showing lines 1 to 62
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Redesign Peygamberin Hayatı Tool
+2: 
+3: **Goal**: Transform the existing "Peygamberin Hayatı" tool into a premium, modern, and visually stunning experience that aligns with the app's overall design language.
+4: 
+5: ## User Review Required
+6: > [!IMPORTANT]
+7: > The redesign will change navigation flow, UI components, and data presentation. Confirm that the new design direction (timeline with stepper, rich media, animations) aligns with your expectations.
+8: 
+9: ## Open Questions
+10: > [!WARNING]
+11: > 1. Should we include interactive timeline navigation (horizontal scroll) or stick to vertical stepper?
+12: > 2. Preferred color palette for this tool (e.g., dark teal with gold accents, or existing theme)?
+13: > 3. Any specific multimedia (images, audio) to associate with each life event?
+14: > 4. Should we add a "favorites" feature for events?
+15: 
+16: ## Proposed Changes
+17: ---
+18: ### Data Model Enhancements (`lib/data/peygamber_data.dart`)
+19: - Create a new data structure `LifeEvent` with fields: `id`, `title`, `date`, `subtitle`, `description`, `imageUrl`, `audioUrl`.
+20: - Populate a list `PEYGEMBER_EVENTS` grouped by chronological phases (e.g., `Childhood`, `Prophethood`, `Hijra`, `Medina` etc.).
+21: - Update `peygamber_repository.dart` to expose this list.
+22: 
+23: ### UI Redesign (`lib/screens/tool_detail_screen.dart`)
+24: - Add a new widget `PeygamberLifeScreen` replacing the current case.
+25: - Implement a **horizontal timeline** at the top with animated indicator (glassmorphism pill) showing current phase.
+26: - Belo
+<truncated 65 bytes>
+Card design: rounded corners, subtle shadow, gradient background, with a circular play button for audio and a heart toggle.
+28:   - Use **Google Fonts** (e.g., "Inter") for typography.
+29:   - Include smooth micro‑animations on scroll (fade‑in, slide‑up).
+30: - Tap on a card opens a **modal bottom sheet** with full details, larger image, Arabic calligraphy, and audio playback.
+31: - Integrate **Hero animations** for image transition.
+32: - Add a **search bar** to filter events by keyword.
+33: 
+34: ### Theming & Aesthetics
+35: - Leverage the app's existing dark/light theme but introduce a **premium accent color** (`#D4AF37` gold) for icons and active elements.
+36: - Use **glassmorphism** for the timeline background (blurred translucent container).
+37: - Include **subtle particle animation** in the background of the detail modal for visual flair.
+38: - Ensure all icons are vector (`SVG`) for crisp rendering.
+39: 
+40: ### Audio & Media Handling
+41: - Reuse the existing `AudioPlayer` singleton; ensure each event's `audioUrl` streams correctly.
+42: - Add a **loading skeleton** while audio buffers.
+43: 
+44: ### Testing & Validation
+45: - Run `flutter analyze` to ensure no lint errors.
+46: - Perform manual UI testing on the Android emulator (Pixel_7) for both dark and light themes.
+47: - Verify that all interactive elements are accessible (tap targets >= 48dp).
+48: 
+49: ## Verification Plan
+50: ### Automated Tests
+51: - Add widget tests for `PeygamberLifeScreen` covering timeline navigation and card tap actions.
+52: - Unit test the new data repository to confirm correct grouping.
+53: 
+54: ### Manual Verification
+55: - Launch app on emulator, navigate to **Araçlar > Peygamberin Hayatı**.
+56: - Verify visual fidelity: gradients, blur, animations.
+57: - Test audio playback for a few events.
+58: - Ensure responsiveness on different screen sizes.
+59: 
+60: ---
+61: *Please review the open questions and confirm the design direction.*
+62: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,14 @@
+{
+  "step_index": 14879,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Remove duplicate layout code residue from list builders merge\"",
+    "EndLine": "2446",
+    "Instruction": "\"Clean up duplicated code in _buildCuzlerList ending and transition to Esmaul Husna\"",
+    "ReplacementContent": "\"        );\\n      },\\n    );\\n  }\\n\\n  // 7. Esmaül Hüsna\"",
+    "StartLine": "2420",
+    "TargetContent": "\"        );\\n      },\\n    );\\n  }             children: [\\n                Text(\\n                  juz.arabicLabel,\\n                  style: const TextStyle(\\n                    color: Color(0xFF27A770),\\n                    fontFamily: 'Traditional Arabic',\\n                    fontSize: 18,\\n                    fontWeight: FontWeight.bold,\\n                  ),\\n                ),\\n                const SizedBox(width: 8),\\n                const Icon(\\n                  Icons.chevron_right_rounded,\\n                  color: Colors.white38,\\n                  size: 22,\\n                ),\\n              ],\\n            ),\\n          ),\\n        );\\n      },\\n    );\\n  }\\n\\n  // 7. Esmaül Hüsna\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\""
+  }
+}

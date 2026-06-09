@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Fix unnecessary const keyword in Padding padding property in tool_detail_screen.dart\"",
+  "EndLine": "1411",
+  "Instruction": "\"Fix unnecessary const keyword by removing it from EdgeInsets.only.\"",
+  "ReplacementContent": "\"                              const Padding(\\n                                padding: EdgeInsets.only(left: 6.0),\\n                                child: Icon(\\n                                  Icons.keyboard_arrow_right_rounded,\\n                                  color: Color(0xFFCBD5E0),\\n                                  size: 20,\\n                                ),\\n                              ),\"",
+  "StartLine": "1402",
+  "TargetContent": "\"                              const Padding(\\n                                padding: const EdgeInsets.only(left: 6.0),\\n                                child: Icon(\\n                                  Icons.keyboard_arrow_right_rounded,\\n                                  color: Color(0xFFCBD5E0),\\n                                  size: 20,\\n                                ),\\n                              ),\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Fixing unnecessary const keyword in padding in tool_detail_screen.dart\"",
+  "toolSummary": "\"Fix unnecessary const in tool_detail_screen.dart\""
+}

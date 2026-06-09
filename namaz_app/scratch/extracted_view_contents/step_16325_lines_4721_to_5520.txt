@@ -1,0 +1,86 @@
+Created At: 2026-06-03T12:42:48Z
+Completed At: 2026-06-03T12:42:48Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7117
+Total Bytes: 289398
+Showing lines 4721 to 5520
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+4721:                               backgroundColor: Color(0xFFEAF7F1),
+4722:                               child: Icon(Icons.mosque, color: Color(0xFF27A770)),
+4723:                             ),
+4724:                             title: Text(
+4725:                               camii['ad'] ?? '',
+4726:                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+4727:                             ),
+4728:                             subtitle: Text(
+4729:                               "📍 ${camii['adres'] ?? ''}",
+4730:                               style: TextStyle(fontSize: 12),
+4731:                               maxLines: 2,
+4732:                               overflow: TextOverflow.ellipsis,
+4733:                             ),
+4734:                             trailing: Column(
+4735:                               mainAxisAlignment: MainAxisAlignment.center,
+4736:                               children: [
+4737:                                 Text(
+4738:                                   camii['mesafeText'] ?? '',
+4739:                                   style: TextStyle(
+4740:                                     fontWeight: FontWeight.bold,
+4741:                                     color: Color(0xFF27A770),
+4742:                                     fontSize: 13,
+4743:                                   ),
+4744:                                 ),
+4745:                                 SizedBox(height: 2),
+4746:                                 Icon(Icons.directions, size: 16, color: Color(0xFF27A770)),
+4747:       
+<truncated 29881 bytes>
+ [
+5472:                             Text(
+5473:                               step['ad'] ?? '',
+5474:                               style: TextStyle(
+5475:                                 fontWeight: FontWeight.bold,
+5476:                                 fontSize: 15,
+5477:                                 color: _greenColor,
+5478:                               ),
+5479:                             ),
+5480:                             SizedBox(height: 4),
+5481:                             Text(
+5482:                               step['aciklama'] ?? '',
+5483:                               style: TextStyle(
+5484:                                 fontSize: 13,
+5485:                                 height: 1.4,
+5486:                                 color: _textColor,
+5487:                               ),
+5488:                             ),
+5489:                           ],
+5490:                         ),
+5491:                       ),
+5492:                     ],
+5493:                   ),
+5494:                 ),
+5495:               );
+5496:             },
+5497:           ),
+5498:         ),
+5499:       ],
+5500:     );
+5501:   }
+5502: 
+5503:   // 22. Vitir Namazı
+5504:   Widget _buildVitirNamazi() {
+5505:     return SingleChildScrollView(
+5506:       child: Column(
+5507:         crossAxisAlignment: CrossAxisAlignment.start,
+5508:         children: [
+5509:           Card(
+5510:             elevation: 1.5,
+5511:             shape: RoundedRectangleBorder(
+5512:               borderRadius: BorderRadius.circular(16),
+5513:             ),
+5514:             child: Padding(
+5515:               padding: EdgeInsets.all(16.0),
+5516:               child: Column(
+5517:                 crossAxisAlignment: CrossAxisAlignment.start,
+5518:                 children: [
+5519:                   Text(
+5520:                     "Vitir Namazı Nedir?",
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

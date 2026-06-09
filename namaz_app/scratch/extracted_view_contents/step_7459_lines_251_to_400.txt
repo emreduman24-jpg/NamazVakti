@@ -1,0 +1,65 @@
+Created At: 2026-05-27T19:57:50Z
+Completed At: 2026-05-27T19:57:50Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208297
+Showing lines 251 to 400
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+251: 
+252:       Position? position;
+253: 
+254:       // 1. Try last known position first if not forcing a fresh GPS lock (extremely fast on real devices)
+255:       if (!forceRefresh) {
+256:         try {
+257:           position = await Geolocator.getLastKnownPosition();
+258:           if (position != null) {
+259:             debugPrint("Found last known position: ${position.latitude}, ${position.longitude}");
+260:           }
+261:         } catch (e) {
+262:           debugPrint("getLastKnownPosition error: $e");
+263:         }
+264:       }
+265: 
+266:       // 2. Perform fresh position lookup if position is still null
+267:       if (position == null) {
+268:         try {
+269:           position = await Geolocator.getCurrentPosition(
+270:             desiredAccuracy: LocationAccuracy.medium, // Medium accuracy is much faster and highly reliable indoors
+271:             timeLimit: const Duration(seconds: 8), // 8 seconds timeout
+272:           );
+273:         } catch (e) {
+274:           debugPrint("getCurrentPosition error/timeout: $e");
+275:           
+276:           // Try a quick low-accuracy fallback before giving up
+277:           try {
+278:             position = await Geolocator.getCurrentPosition(
+279:               desiredAccuracy: LocationAccuracy.low,
+280:               timeLimit: const Duration(seconds: 4),
+281:             );
+282:           } catch (_) {}
+283:         }
+284:       }
+285: 
+286:       position ??= Position(
+287:         // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails
+288:         la
+<truncated 4927 bytes>
+k Geceler" },
+384:       { "ad": "Berat Kandili", "gun": "Cuma", "tarih": "19 Şubat 2027", "kat": "Kandil ve Mübarek Geceler" },
+385:       { "ad": "Ramazan Başlangıcı", "gun": "Pazartesi", "tarih": "8 Mart 2027", "kat": "Kandil ve Mübarek Geceler" },
+386:       { "ad": "Kadir Gecesi", "gun": "Cumartesi", "tarih": "3 Nisan 2027", "kat": "Kandil ve Mübarek Geceler" },
+387:       { "ad": "Ramazan Bayramı Arefesi", "gun": "Salı", "tarih": "6 Nisan 2027", "kat": "Ramazan Bayramı" },
+388:       { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Çarşamba", "tarih": "7 Nisan 2027", "kat": "Ramazan Bayramı" },
+389:       { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Perşembe", "tarih": "8 Nisan 2027", "kat": "Ramazan Bayramı" },
+390:       { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Cuma", "tarih": "9 Nisan 2027", "kat": "Ramazan Bayramı" },
+391:       { "ad": "Kurban Bayramı Arefesi", "gun": "Cuma", "tarih": "14 Mayıs 2027", "kat": "Kurban Bayramı" },
+392:       { "ad": "Kurban Bayramı (1. Gün)", "gun": "Cumartesi", "tarih": "15 Mayıs 2027", "kat": "Kurban Bayramı" },
+393:       { "ad": "Kurban Bayramı (2. Gün)", "gun": "Pazar", "tarih": "16 Mayıs 2027", "kat": "Kurban Bayramı" },
+394:       { "ad": "Kurban Bayramı (3. Gün)", "gun": "Pazartesi", "tarih": "17 Mayıs 2027", "kat": "Kurban Bayramı" },
+395:       { "ad": "Kurban Bayramı (4. Gün)", "gun": "Salı", "tarih": "18 Mayıs 2027", "kat": "Kurban Bayramı" },
+396:       { "ad": "Hicri Yılbaşı", "gun": "Cumartesi", "tarih": "5 Haziran 2027", "kat": "Hicri Yılbaşı ve Aşure" },
+397:       { "ad": "Aşure Günü", "gun": "Pazartesi", "tarih": "14 Haziran 2027", "kat": "Hicri Yılbaşı ve Aşure" },
+398:       { "ad": "Mevlid Kandili", "gun": "Perşembe", "tarih": "12 Ağustos 2027", "kat": "Kandil ve Mübarek Geceler" }
+399:     ],
+400:     "2028": [
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

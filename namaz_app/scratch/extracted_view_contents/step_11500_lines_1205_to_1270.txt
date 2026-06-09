@@ -1,0 +1,74 @@
+Created At: 2026-06-01T05:44:49Z
+Completed At: 2026-06-01T05:44:49Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5481
+Total Bytes: 225642
+Showing lines 1205 to 1270
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1205:               ),
+1206:             ],
+1207:           ),
+1208:         ),
+1209:         const SizedBox(height: 10),
+1210:         Expanded(
+1211:           child: ListView(
+1212:             physics: const BouncingScrollPhysics(),
+1213:             children: categoryOrder.map((catName) {
+1214:               final items = grouped[catName] ?? [];
+1215:               if (items.isEmpty) return const SizedBox.shrink();
+1216: 
+1217:               final style = categoryStyles[catName] ?? {
+1218:                 "icon": "📅",
+1219:                 "color": const Color(0xFF27A770),
+1220:                 "bgColor": const Color(0xFF27A770).withOpacity(0.08),
+1221:               };
+1222: 
+1223:               final Color themeColor = style["color"] as Color;
+1224:               final Color themeBgColor = style["bgColor"] as Color;
+1225:               final String catIcon = style["icon"] as String;
+1226: 
+1227:               return Column(
+1228:                 crossAxisAlignment: CrossAxisAlignment.start,
+1229:                 children: [
+1230:                   // Category Header
+1231:                   Container(
+1232:                     width: double.infinity,
+1233:                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+1234:                     margin: const EdgeInsets.only(top: 18, bottom: 10, left: 2, right: 2),
+1235:                     decoration: BoxDecoration(
+1236:                       color: themeBgColor,
+1237:                       borderRadius: BorderRadius.circular(12),
+1238:                       border: Border(
+1239:                         left: BorderSide(color: themeColor, width: 4),
+1240:                       ),
+1241:                     ),
+1242:                     child: Row(
+1243:                       children: [
+1244:                         Text(
+1245:                           catIcon,
+1246:                           style: const TextStyle(fontSize: 16),
+1247:                         ),
+1248:                         const SizedBox(width: 8),
+1249:                         Text(
+1250:                           catName,
+1251:                           style: TextStyle(
+1252:                             fontWeight: FontWeight.bold,
+1253:                             color: themeColor.withOpacity(0.9),
+1254:                             fontSize: 14,
+1255:                             letterSpacing: 0.3,
+1256:                           ),
+1257:                         ),
+1258:                       ],
+1259:                     ),
+1260:                   ),
+1261:                   // Items in this category
+1262:                   ...items.map((day) {
+1263:                     final dateStr = day['tarih'] ?? '';
+1264:                     final parsed = _parseDate(dateStr);
+1265: 
+1266:                     return Container(
+1267:                       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+1268:                       decoration: BoxDecoration(
+1269:                         color: Colors.white,
+1270:                         borderRadius: BorderRadius.circular(16),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

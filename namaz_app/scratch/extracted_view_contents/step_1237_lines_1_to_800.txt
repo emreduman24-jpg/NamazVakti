@@ -1,0 +1,91 @@
+Created At: 2026-05-22T16:05:08Z
+Completed At: 2026-05-22T16:05:08Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 1975
+Total Bytes: 78817
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import '../data/prayer_data.dart';
+9: import '../data/prayer_repository.dart';
+10: 
+11: class ToolDetailScreen extends StatefulWidget {
+12:   final String toolId;
+13:   final String toolTitle;
+14: 
+15:   const ToolDetailScreen({Key? key, required this.toolId, required this.toolTitle}) : super(key: key);
+16: 
+17:   @override
+18:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+19: }
+20: 
+21: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+22:   final PrayerRepository _repository = PrayerRepository();
+23:   AudioPlayer? _audioPlayer;
+24:   PlayerState _playerState = PlayerState.stopped;
+25:   String _currentAudioUrl = "";
+26:   String _currentTrackName = "";
+27:   
+28:   // Zikirmatik State
+29:   int _zikirCount = 0;
+30:   int _zikirTarget = 33;
+31:   bool _zikirSoundEnabled = true;
+32: 
+33:   // Dua Iste State
+34:   List<Map<String, dynamic>> _duaList = [];
+35:   final TextEditingController _duaNameController = TextEditingController();
+36:   final TextEditingController _duaTextController = TextEditingController();
+37: 
+38:   // Soru Cevap State
+39:   final List<Map<String, String>> _qaMessages = [
+40:     {
+41:       'sender': 'bot',
+42:       'text': 'Selamün Aleyküm, ben yapay zeka dini danışmanınız.
+<truncated 31062 bytes>
+               final juzNum = index + 1;
+762:               final url = "https://server8.mp3quran.net/afs/${juzNum.toString().padLeft(3, '0')}.mp3";
+763:               final name = "$juzNum. Cüz Tilaveti - Fatih Çollak";
+764:               final isCurrent = _currentAudioUrl == url;
+765: 
+766:               return ElevatedButton(
+767:                 style: ElevatedButton.styleFrom(
+768:                   backgroundColor: isCurrent ? const Color(0xFF27A770) : Colors.white,
+769:                   foregroundColor: isCurrent ? Colors.white : const Color(0xFF1E5E43),
+770:                   elevation: 1,
+771:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+772:                 ),
+773:                 onPressed: () => _playAudio(url, name),
+774:                 child: Text("$juzNum. Cüz", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+775:               );
+776:             },
+777:           ),
+778:         )
+779:       ],
+780:     );
+781:   }
+782: 
+783:   // 7. Esmaül Hüsna
+784:   Widget _buildEsmaulHusna() {
+785:     final filtered = ESMAUL_HUSNA.where((item) {
+786:       final name = item['ad'].toString().toLowerCase();
+787:       final meaning = item['anlam'].toString().toLowerCase();
+788:       final query = _esmaSearchQuery.toLowerCase();
+789:       return name.contains(query) || meaning.contains(query);
+790:     }).toList();
+791: 
+792:     return Column(
+793:       children: [
+794:         TextField(
+795:           decoration: InputDecoration(
+796:             hintText: "İsim ara (Örn: Rahman)...",
+797:             prefixIcon: const Icon(Icons.search, color: Color(0xFF27A770)),
+798:             filled: true,
+799:             fillColor: Colors.white,
+800:             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

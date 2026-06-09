@@ -1,0 +1,39 @@
+Created At: 2026-06-01T11:27:39Z
+Completed At: 2026-06-01T11:27:39Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 330 to 360
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+330:             if (position != null) {
+331:               debugPrint("Successfully fetched cached last known GPS: ${position.latitude}, ${position.longitude}");
+332:             }
+333:           } catch (e2) {
+334:             debugPrint("Failed to fetch cached GPS: $e2");
+335:           }
+336:         }
+337:       }
+338: 
+339:       // 4. Fallback to manually selected city coordinates if live GPS is unavailable/denied/timeout
+340:       if (position == null) {
+341:         final savedLoc = await _repository.getSavedLocation();
+342:         final savedCity = savedLoc['cityName'];
+343:         if (savedCity != null && savedCity.isNotEmpty) {
+344:           final normalized = _normalizeCityName(savedCity);
+345:           if (_cityCoordinates.containsKey(normalized)) {
+346:             final coords = _cityCoordinates[normalized]!;
+347:             position = Position(
+348:               latitude: coords["lat"]!,
+349:               longitude: coords["lon"]!,
+350:               timestamp: DateTime.now(),
+351:               accuracy: 0.0,
+352:               altitude: 0.0,
+353:               altitudeAccuracy: 0.0,
+354:               heading: 0.0,
+355:               headingAccuracy: 0.0,
+356:               speed: 0.0,
+357:               speedAccuracy: 0.0,
+358:             );
+359:             debugPrint("Live GPS unavailable. Using manual city coordinate fallback: $savedCity -> ${position.latitude}, ${position.longitude}");
+360:           }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

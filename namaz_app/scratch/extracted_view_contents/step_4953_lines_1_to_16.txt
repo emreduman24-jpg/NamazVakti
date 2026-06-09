@@ -1,0 +1,24 @@
+Created At: 2026-05-23T18:31:39Z
+Completed At: 2026-05-23T18:31:39Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 16
+Total Bytes: 1265
+Showing lines 1 to 16
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Task List - Sync & Tools Updates
+2: 
+3: - [ ] Sync Flutter app with API server (HTTP sync + SharedPreferences local caching & offline fallback)
+4:   - [ ] Update `prayer_repository.dart` to fetch/post Duas, Questions, and Tools config from/to the server
+5: - [ ] Refactor tools list screen in Flutter
+6:   - [ ] Update `tools_screen.dart` to load tools dynamically and sort them by the `sira` field from the database
+7: - [ ] Re-implement tools details screen in Flutter (`tool_detail_screen.dart`)
+8:   - [ ] **Canlı Dini Sohbet**: Show "Yakında" (Coming Soon) alert dialog box when tapped and close it
+9:   - [ ] **Zikirmatik**: Add dropdown selector for dhikrs, show name, Arabic text, meaning, benefit, and `count / target` counter, with vibration and reset
+10:   - [ ] **Dini Günler**: Add horizontal tabs for years 2026-2030, group events vertically by categories
+11:   - [ ] **Kıble Bulucu**: Rotate a prayer rug (seccade) dial, show digital angle, and display horizontal alignment warning
+12:   - [ ] **Yakındaki Camiler**: Add Hadith banner card at the top ("Camide Namaz Kılmanın Fazileti"), followed by the mosque list
+13: - [ ] Verify everything
+14:   - [ ] Test sync between Admin Panel and Flutter App in Emulator
+15:   - [ ] Test offline fallback of the Flutter app by stopping dev server
+16: 
+The above content shows the entire, complete file contents of the requested file.

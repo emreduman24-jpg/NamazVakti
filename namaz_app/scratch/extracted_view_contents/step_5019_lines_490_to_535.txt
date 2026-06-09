@@ -1,0 +1,54 @@
+Created At: 2026-05-23T22:29:43Z
+Completed At: 2026-05-23T22:29:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187772
+Showing lines 490 to 535
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+490:   }
+491: 
+492:   Widget _buildToolBody() {
+493:     switch (widget.toolId) {
+494:       case 'dini-gunler':
+495:         return _buildDiniGunler();
+496:       case 'dua-iste':
+497:         return _buildDuaIste();
+498:       case 'soru-cevap':
+499:         return _buildSoruCevap();
+500:       case 'canli-sohbet':
+501:         return _buildCanliSohbet();
+502:       case 'peygamber-hayati':
+503:         return _buildPeygamberHayati();
+504:       case 'kuran-kerim':
+505:         return _buildKuranKerim();
+506:       case 'esmaul-husna':
+507:         return _buildEsmaulHusna();
+508:       case 'ramazan-hakkinda':
+509:         return _buildRamazanHakkinda();
+510:       case 'oruc-rehberi':
+511:         return _buildOrucRehberi();
+512:       case 'kible-bulucu':
+513:         return _buildKibleBulucu();
+514:       case 'zikirmatik':
+515:         return _buildZikirmatik();
+516:       case 'miladi-hicri':
+517:         return _buildMiladiHicri();
+518:       case 'yasin-suresi':
+519:         return _buildYasinSuresi();
+520:       case 'yakindaki-camiler':
+521:         return _buildYakindakiCamiler();
+522:       case 'hadis-40':
+523:         return _buildHadis40();
+524:       case 'namaz-tesbihati':
+525:         return _buildNamazTesbihati();
+526:       case 'gunluk-dualar':
+527:         return _buildGunlukDualar();
+528:       case 'zekat-hesaplama':
+529:         return _buildZekatHesaplama();
+530:       case 'sahabe-hayatlari':
+531:         return _buildSahabeHayatlari();
+532:       case 'islam-tarihi':
+533:         return _buildIslamTarihi();
+534:       case 'namaz-kilma':
+535:         return _buildNamazKilma();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

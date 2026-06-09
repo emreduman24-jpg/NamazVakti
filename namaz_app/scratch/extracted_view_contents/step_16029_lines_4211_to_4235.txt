@@ -1,0 +1,33 @@
+Created At: 2026-06-03T11:46:44Z
+Completed At: 2026-06-03T11:46:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7050
+Total Bytes: 287002
+Showing lines 4211 to 4235
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+4211:                   side: BorderSide(color: Colors.red, width: 1),
+4212:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+4213:                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+4214:                   elevation: 0,
+4215:                 ),
+4216:                 onPressed: () {
+4217:                   showDialog(
+4218:                     context: context,
+4219:                     builder: (context) => AlertDialog(
+4220:                       title: Text("Sıfırla"),
+4221:                       content: Text(
+4222:                         "Sayacı sıfırlamak istediğinize emin misiniz?",
+4223:                       ),
+4224:                       actions: [
+4225:                         TextButton(
+4226:                           onPressed: () => Navigator.pop(context),
+4227:                           child: Text("İptal"),
+4228:                         ),
+4229:                         TextButton(
+4230:                           onPressed: () {
+4231:                             _resetZikir();
+4232:                             Navigator.pop(context);
+4233:                           },
+4234:                           child: Text("Evet"),
+4235:                         ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

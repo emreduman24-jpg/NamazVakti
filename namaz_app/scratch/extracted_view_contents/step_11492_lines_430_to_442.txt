@@ -1,0 +1,21 @@
+Created At: 2026-06-01T05:44:36Z
+Completed At: 2026-06-01T05:44:36Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5480
+Total Bytes: 225586
+Showing lines 430 to 442
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+430:       'fazilet': 'Zikrin en faziletlisi kelime-i tevhiddir.',
+431:       'hedef': 9999
+432:     }
+433:   };
+434: 
+435:   // Dini Gunler State
+436:   String _selectedDiniGunlerYear = "2026";
+437:   final Map<String, List<Map<String, String>>> _diniGunlerByYear = {
+438:     "2026": [
+439:       { "ad": "Miraç Kandili", "gun": "Perşembe", "tarih": "15 Ocak 2026", "kat": "Kandil ve Mübarek Geceler" },
+440:       { "ad": "Berat Kandili", "gun": "Pazartesi", "tarih": "2 Şubat 2026", "kat": "Kandil ve Mübarek Geceler" },
+441:       { "ad": "Ramazan Başlangıcı", "gun": "Perşembe", "tarih": "19 Şubat 2026", "kat": "Kandil ve Mübarek Geceler" },
+442:       { "ad": "Kadir Gecesi", "gun": "Pazartesi", "tarih": "16 Mart 2026", "kat": "Kandil ve Mübarek Geceler" },
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

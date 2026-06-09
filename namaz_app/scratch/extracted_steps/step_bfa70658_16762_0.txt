@@ -1,0 +1,1 @@
+  ];\n  final TextEditingController _chatInputController = TextEditingController();\n\n  // Dini Hoca State\n  List<Map<String, dynamic>> _diniHocaMessages = [];\n  bool _diniHocaIsTyping = false;

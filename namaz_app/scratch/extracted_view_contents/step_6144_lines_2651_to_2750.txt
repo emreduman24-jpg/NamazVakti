@@ -1,0 +1,94 @@
+Created At: 2026-05-26T05:27:51Z
+Completed At: 2026-05-26T05:27:51Z
+File Path: `file:///C:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4921
+Total Bytes: 198934
+Showing lines 2651 to 2750
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2651:                 child: ListTile(
+2652:                   leading: const CircleAvatar(
+2653:                     backgroundColor: Color(0xFFEAF7F1),
+2654:                     child: Icon(Icons.mosque, color: Color(0xFF27A770)),
+2655:                   ),
+2656:                   title: Text(
+2657:                     camii['ad'] ?? '',
+2658:                     style: const TextStyle(fontWeight: FontWeight.bold),
+2659:                   ),
+2660:                   subtitle: Text("📍 ${camii['adres'] ?? ''}"),
+2661:                   trailing: Column(
+2662:                     mainAxisAlignment: MainAxisAlignment.center,
+2663:                     children: [
+2664:                       Text(
+2665:                         camii['mesafeText'] ?? '',
+2666:                         style: const TextStyle(
+2667:                           fontWeight: FontWeight.bold,
+2668:                           color: Color(0xFF27A770),
+2669:                         ),
+2670:                       ),
+2671:                       const SizedBox(height: 2),
+2672:                       const Text(
+2673:                         "mesafe",
+2674:                         style: TextStyle(fontSize: 10, color: Colors.grey),
+2675:                       ),
+2676:                     ],
+2677:                   ),
+2678:                 ),
+2679:               );
+2680:             },
+2681:           ),
+2682:         ),
+2683:       ],
+2684:     );
+2685:   }
+2686: 
+2687:   // 15. 40 Hadis
+2688:   Widget _buildHadis40() {
+2689:     final filtered = HADISLER_40.where((h) {
+2690:       
+<truncated 710 bytes>
+rderRadius: BorderRadius.circular(15),
+2707:               borderSide: BorderSide.none,
+2708:             ),
+2709:           ),
+2710:           onChanged: (val) {
+2711:             setState(() {
+2712:               _hadisSearchQuery = val;
+2713:               _hadisIndex = 0;
+2714:             });
+2715:           },
+2716:         ),
+2717:         const SizedBox(height: 16),
+2718:         if (filtered.isEmpty)
+2719:           const Expanded(
+2720:             child: Center(child: Text("Aranan kriterde hadis bulunamadı.")),
+2721:           )
+2722:         else ...[
+2723:           Expanded(
+2724:             child: Card(
+2725:               elevation: 2,
+2726:               shape: RoundedRectangleBorder(
+2727:                 borderRadius: BorderRadius.circular(16),
+2728:               ),
+2729:               color: Colors.white,
+2730:               child: Padding(
+2731:                 padding: const EdgeInsets.all(24.0),
+2732:                 child: Column(
+2733:                   mainAxisAlignment: MainAxisAlignment.center,
+2734:                   children: [
+2735:                     Text(
+2736:                       "Hadis #${filtered[_hadisIndex]['no']}",
+2737:                       style: const TextStyle(
+2738:                         fontWeight: FontWeight.bold,
+2739:                         fontSize: 16,
+2740:                         color: Color(0xFF27A770),
+2741:                       ),
+2742:                     ),
+2743:                     const SizedBox(height: 20),
+2744:                     Text(
+2745:                       "“${filtered[_hadisIndex]['metin']}”",
+2746:                       textAlign: TextAlign.center,
+2747:                       style: const TextStyle(
+2748:                         fontSize: 15,
+2749:                         fontStyle: FontStyle.italic,
+2750:                         height: 1.45,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

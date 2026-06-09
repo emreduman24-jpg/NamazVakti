@@ -1,0 +1,100 @@
+Created At: 2026-06-01T05:25:44Z
+Completed At: 2026-06-01T05:25:45Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5236
+Total Bytes: 214372
+Showing lines 66 to 865
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+66:     // Multiple Overpass API endpoints for reliability (official mirror first)
+67:     final overpassEndpoints = [
+68:       'https://overpass-api.de/api/interpreter',
+69:       'https://overpass.kumi.systems/api/interpreter',
+70:       'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+71:     ];
+72: 
+73:     for (final radius in radii) {
+74:       for (final endpoint in overpassEndpoints) {
+75:         try {
+76:           // Overpass QL query: find nodes and ways tagged as mosque within radius
+77:           final query = '''
+78: [out:json][timeout:15];
+79: (
+80:   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+81:   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+82:   node["building"="mosque"](around:$radius,$lat,$lon);
+83:   way["building"="mosque"](around:$radius,$lat,$lon);
+84: );
+85: out center body;
+86: ''';
+87: 
+88:           final encodedQuery = Uri.encodeComponent(query);
+89:           final url = Uri.parse('$endpoint?data=$encodedQuery');
+90:           final response = await http.get(
+91:             url,
+92:             headers: {
+93:               'Accept': '*/*',
+94:               'User-Agent': 'NamazVakitleri/1.0',
+95:             },
+96:           ).timeout(const Duration(seconds: 5));
+97: 
+98:           debugPrint('Overpass API [$endpoint] response: status=${response.statusCode}, radius=$radius');
+99: 
+100:           if (response.statusCode == 200) {
+101:             final data = json.decode(response.body);
+102:             final elements = data['elemen
+<truncated 35316 bytes>
+2:   Future<void> _loadQuestionList() async {
+813:     final list = await _repository.getQuestionList();
+814:     if (mounted) {
+815:       setState(() {
+816:         _questionList = list
+817:             .where((q) => q['cevap'] != null && q['cevap'].toString().trim().isNotEmpty)
+818:             .toList();
+819:       });
+820:     }
+821:   }
+822: 
+823:   Future<void> _addQuestion() async {
+824:     final name = _questionNameController.text.trim();
+825:     final text = _qaInputController.text.trim();
+826:     if (text.isEmpty) return;
+827: 
+828:     _questionNameController.clear();
+829:     _qaInputController.clear();
+830: 
+831:     await _repository.sendQuestion(name.isEmpty ? "Anonim" : name, text);
+832:     await _loadQuestionList();
+833: 
+834:     ScaffoldMessenger.of(context).showSnackBar(
+835:       const SnackBar(
+836:         content: Text("Sorunuz onay için gönderildi. Cevaplandıktan sonra burada yayınlanacaktır."),
+837:         backgroundColor: Color(0xFF27A770),
+838:       ),
+839:     );
+840:   }
+841: 
+842:   // Audio Play helper
+843:   Future<void> _playAudio(String url, String name) async {
+844:     try {
+845:       if (_currentAudioUrl == url && _playerState == PlayerState.playing) {
+846:         await _audioPlayer!.pause();
+847:       } else if (_currentAudioUrl == url &&
+848:           _playerState == PlayerState.paused) {
+849:         await _audioPlayer!.resume();
+850:       } else {
+851:         await _audioPlayer!.stop();
+852:         setState(() {
+853:           _currentAudioUrl = url;
+854:           _currentTrackName = name;
+855:         });
+856:         await _audioPlayer!.play(UrlSource(url));
+857:       }
+858:     } catch (e) {
+859:       ScaffoldMessenger.of(
+860:         context,
+861:       ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+862:     }
+863:   }
+864: 
+865:   @override
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

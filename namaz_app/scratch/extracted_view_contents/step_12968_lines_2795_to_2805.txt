@@ -1,0 +1,19 @@
+Created At: 2026-06-01T11:55:42Z
+Completed At: 2026-06-01T11:55:42Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5894
+Total Bytes: 238371
+Showing lines 2795 to 2805
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2795:                               shortDate,
+2796:                               style: TextStyle(
+2797:                                 fontSize: 11.5,
+2798:                                 fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
+2799:                                 color: isToday 
+2800:                                     ? const Color(0xFF27A770) 
+2801:                                     : (dark ? Colors.white90 : Colors.black87),
+2802:                               ),
+2803:                             ),
+2804:                             if (isToday) ...[
+2805:                               const SizedBox(width: 4),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

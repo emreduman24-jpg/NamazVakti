@@ -1,0 +1,91 @@
+Created At: 2026-05-23T22:29:56Z
+Completed At: 2026-05-23T22:29:56Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187772
+Showing lines 3118 to 3200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3118:   Widget _buildVitirNamazi() {
+3119:     return SingleChildScrollView(
+3120:       child: Column(
+3121:         crossAxisAlignment: CrossAxisAlignment.start,
+3122:         children: [
+3123:           Card(
+3124:             elevation: 1.5,
+3125:             shape: RoundedRectangleBorder(
+3126:               borderRadius: BorderRadius.circular(16),
+3127:             ),
+3128:             child: Padding(
+3129:               padding: const EdgeInsets.all(16.0),
+3130:               child: Column(
+3131:                 crossAxisAlignment: CrossAxisAlignment.start,
+3132:                 children: [
+3133:                   const Text(
+3134:                     "Vitir Namazı Nedir?",
+3135:                     style: TextStyle(
+3136:                       fontWeight: FontWeight.bold,
+3137:                       fontSize: 16,
+3138:                       color: Color(0xFF1E5E43),
+3139:                     ),
+3140:                   ),
+3141:                   const Divider(height: 16),
+3142:                   Text(
+3143:                     VITIR_NAMAZI['aciklama'] ?? '',
+3144:                     style: const TextStyle(fontSize: 13, height: 1.45),
+3145:                   ),
+3146:                 ],
+3147:               ),
+3148:             ),
+3149:           ),
+3150:           const SizedBox(height: 16),
+3151:           _buildKunutCard("Kunut Duası - 1", VITIR_NAMAZI['kunut1']),
+3152:           const SizedBox(height: 16),
+3153:           _buildKunutCard("Kunut Duası - 2", VITIR_NAMAZI['kunut2']),
+3154:         ],
+3155:       ),
+3156:     );
+3157:   }
+3158: 
+3159:   Widget _buildKunutCard(String title, Map<String, dynamic> kunut) {
+3160:     return Card(
+3161:       elevation: 1.5,
+3162:       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+3163:       child: Padding(
+3164:         padding: const EdgeInsets.all(16.0),
+3165:         child: Column(
+3166:           crossAxisAlignment: CrossAxisAlignment.start,
+3167:           children: [
+3168:             Text(
+3169:               title,
+3170:               style: const TextStyle(
+3171:                 fontWeight: FontWeight.bold,
+3172:                 fontSize: 15,
+3173:                 color: Color(0xFF1E5E43),
+3174:               ),
+3175:             ),
+3176:             const Divider(height: 12),
+3177:             Align(
+3178:               alignment: Alignment.centerRight,
+3179:               child: Text(
+3180:                 kunut['arapca'] ?? '',
+3181:                 style: const TextStyle(
+3182:                   fontFamily: 'Traditional Arabic',
+3183:                   fontSize: 18,
+3184:                   height: 1.8,
+3185:                   fontWeight: FontWeight.bold,
+3186:                   color: Color(0xFF27A770),
+3187:                 ),
+3188:                 textAlign: TextAlign.right,
+3189:               ),
+3190:             ),
+3191:             const SizedBox(height: 8),
+3192:             Text(
+3193:               kunut['okunus'] ?? '',
+3194:               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+3195:             ),
+3196:             const SizedBox(height: 6),
+3197:             Text(
+3198:               "Meali: ${kunut['anlam']}",
+3199:               style: const TextStyle(fontSize: 12, color: Colors.black54),
+3200:             ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

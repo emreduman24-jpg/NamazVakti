@@ -1,0 +1,29 @@
+Created At: 2026-05-24T09:10:46Z
+Completed At: 2026-05-24T09:10:46Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4776
+Total Bytes: 193821
+Showing lines 2530 to 2550
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2530:                 ),
+2531:               ),
+2532:             ),
+2533:           ),
+2534:         ),
+2535:       ],
+2536:     );
+2537:   }
+2538: 
+2539:   // 14. Yakındaki Camiler
+2540: 
+2541: 
+2542:   // 15. 40 Hadis
+2543:   Widget _buildHadis40() {
+2544:     final filtered = HADISLER_40.where((h) {
+2545:       final text = _normalize(h['metin'].toString());
+2546:       final source = _normalize(h['kaynak'].toString());
+2547:       final query = _normalize(_hadisSearchQuery);
+2548:       return text.contains(query) || source.contains(query);
+2549:     }).toList();
+2550: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

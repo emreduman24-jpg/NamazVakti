@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Fix undefined 'white90' getter by replacing it with white.withOpacity(0.9).\"",
+  "EndLine": "2803",
+  "Instruction": "\"Replace Colors.white90 with Colors.white.withOpacity(0.9) in tool_detail_screen.dart.\"",
+  "ReplacementContent": "\"                                color: isToday \\n                                    ? const Color(0xFF27A770) \\n                                    : (dark ? Colors.white.withOpacity(0.9) : Colors.black87),\"",
+  "StartLine": "2799",
+  "TargetContent": "\"                                color: isToday \\n                                    ? const Color(0xFF27A770) \\n                                    : (dark ? Colors.white90 : Colors.black87),\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Fixing the Colors.white90 syntax issue\"",
+  "toolSummary": "\"File replace\""
+}

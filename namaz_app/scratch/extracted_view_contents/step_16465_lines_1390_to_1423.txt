@@ -1,0 +1,42 @@
+Created At: 2026-06-03T12:51:14Z
+Completed At: 2026-06-03T12:51:14Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/.system_generated/tasks/task-16158.log`
+Total Lines: 1423
+Total Bytes: 132254
+Showing lines 1390 to 1423
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1390: lib/screens/tool_detail_screen.dart:5449:48: Error: Couldn't find constructor 'EdgeInsets.bottom'.
+1391:                       margin: const EdgeInsets.bottom(15),
+1392:                                                ^^^^^^
+1393: Restarted application in 652ms.
+1394: Try again after fixing the above error(s).
+1395: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1396: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1397: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1398: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1399: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1400: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1401: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1402: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1403: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1404: 
+1405: Performing hot restart...                                       
+1406: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1407: Restarted application in 2.615ms.
+1408: D/FlutterJNI( 6315): Sending viewport metrics to the engine.
+1409: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1410: D/FlutterJNI( 6315): Sending viewport metrics to the engine.
+1411: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1412: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1413: D/WindowOnBackDispatcher( 6315): setTopOnBackInvokedCallback (unwrapped): io.flutter.embedding.android.FlutterActivity$1@3d352e
+1414: D/WindowOnBackDispatcher( 6315): setTopOnBackInvokedCallback (unwrapped): android.view.ImeBackAnimationController@e7a922f
+1415: I/flutter ( 6315): Attempting to get fresh live GPS location...
+1416: I/flutter ( 6315): Error fetching duas: TimeoutException after 0:00:02.000000: Future not completed. Using cache.
+1417: I/flutter ( 6315): Error fetching questions: TimeoutException after 0:00:02.000000: Future not completed. Using cache.
+1418: I/flutter ( 6315): Error fetching tools: TimeoutException after 0:00:02.000000: Future not completed. Using cache.
+1419: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1420: I/flutter ( 6315): Successfully fetched live high-accuracy GPS: 40.8241017, 29.3170133
+1421: I/flutter ( 6315): === GPS POSITION: lat=40.8241017, lon=29.3170133, accuracy=5.0 ===
+1422: I/flutter ( 6315): === MOSQUE SEARCH: Searching near lat=40.8241017, lon=29.3170133 ===
+1423: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,21 @@
+Created At: 2026-05-26T14:55:26Z
+Completed At: 2026-05-26T14:55:27Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4990
+Total Bytes: 201401
+Showing lines 143 to 155
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+143:       if (permission == LocationPermission.deniedForever) {
+144:         setState(() {
+145:           _loadingLocation = false;
+146:         });
+147:         if (mounted) {
+148:           ScaffoldMessenger.of(context).showSnackBar(
+149:             const SnackBar(
+150:               content: Text("Konum izni reddedildi. Lütfen ayarlardan izin verin."),
+151:               backgroundColor: Colors.redAccent,
+152:             ),
+153:           );
+154:         }
+155:         return;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,49 @@
+Created At: 2026-05-26T14:47:38Z
+Completed At: 2026-05-26T14:47:38Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4944
+Total Bytes: 199651
+Showing lines 410 to 450
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+410:   // Sabah & Aksam Ezkari counts
+411:   final List<int> _sabahEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+412:   final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+413:   int _ezkarTab = 0;
+414: 
+415:   @override
+416:   void initState() {
+417:     super.initState();
+418:     _initMosques();
+419:     if (widget.toolId == 'yakindaki-camiler') {
+420:       _getUserLocation();
+421:     }
+422:     _initAudio();
+423:     _loadZikirState();
+424:     _loadDuaList();
+425:     _loadQuestionList();
+426:     _loadKazaState();
+427:   }
+428: 
+429:   Future<void> _loadKazaState() async {
+430:     final prefs = await SharedPreferences.getInstance();
+431:     setState(() {
+432:       _kazaSabah = prefs.getInt('kaza_sabah') ?? 0;
+433:       _kazaOgle = prefs.getInt('kaza_ogle') ?? 0;
+434:       _kazaIkindi = prefs.getInt('kaza_ikindi') ?? 0;
+435:       _kazaAksam = prefs.getInt('kaza_aksam') ?? 0;
+436:       _kazaYatsi = prefs.getInt('kaza_yatsi') ?? 0;
+437:       _kazaVitir = prefs.getInt('kaza_vitir') ?? 0;
+438:     });
+439:   }
+440: 
+441:   Future<void> _updateKaza(String key, int delta) async {
+442:     final prefs = await SharedPreferences.getInstance();
+443:     int current = prefs.getInt(key) ?? 0;
+444:     int newValue = math.max(0, current + delta);
+445:     await prefs.setInt(key, newValue);
+446:     setState(() {
+447:       if (key == 'kaza_sabah') _kazaSabah = newValue;
+448:       if (key == 'kaza_ogle') _kazaOgle = newValue;
+449:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+450:       if (key == 'kaza_aksam') _kazaAksam = newValue;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

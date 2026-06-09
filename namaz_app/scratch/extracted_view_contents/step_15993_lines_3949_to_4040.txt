@@ -1,0 +1,92 @@
+Created At: 2026-06-03T11:39:59Z
+Completed At: 2026-06-03T11:40:00Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6948
+Total Bytes: 283255
+Showing lines 3949 to 4040
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3949:                         fontWeight: FontWeight.bold,
+3950:                         color: dark ? Colors.white : const Color(0xFF1E5E43),
+3951:                       ),
+3952:                     ),
+3953:                   ],
+3954:                 ),
+3955:               );
+3956:             },
+3957:           ),
+3958:         ],
+3959:       ),
+3960:     );
+3961:   }
+3962: 
+3963:   Widget _buildZikirmatik() {
+3964:     final zikir = _zikirData[_selectedZikirId] ?? _zikirData['subhanallah']!;
+3965:     return SingleChildScrollView(
+3966:       child: Column(
+3967:         children: [
+3968:           // Dhikr Selector Dropdown
+3969:           Container(
+3970:             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+3971:             decoration: BoxDecoration(
+3972:               color: Colors.white,
+3973:               borderRadius: BorderRadius.circular(12),
+3974:               border: Border.all(color: Colors.grey[200]!),
+3975:             ),
+3976:             child: Row(
+3977:               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+3978:               children: [
+3979:                 Text(
+3980:                   "Zikir Seçin: ",
+3981:                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: _greenColor),
+3982:                 ),
+3983:                 DropdownButton<String>(
+3984:                   value: _selectedZikirId,
+3985:                   underline: const SizedBox.shrink(),
+3986:                   icon: Icon(Icons.arrow_drop_down, color: Color(0xFF27A770)),
+3987:                   i
+<truncated 732 bytes>
+ ),
+3998:           SizedBox(height: 16),
+3999:           // Dhikr Info Card
+4000:           Card(
+4001:             elevation: 1.5,
+4002:             shape: RoundedRectangleBorder(
+4003:               borderRadius: BorderRadius.circular(16),
+4004:             ),
+4005:             color: Colors.white,
+4006:             child: Padding(
+4007:               padding: EdgeInsets.all(16.0),
+4008:               child: Column(
+4009:                 crossAxisAlignment: CrossAxisAlignment.stretch,
+4010:                 children: [
+4011:                   Text(
+4012:                     zikir['ad'] ?? '',
+4013:                     textAlign: TextAlign.center,
+4014:                     style: TextStyle(
+4015:                       fontSize: 22,
+4016:                       fontWeight: FontWeight.bold,
+4017:                       color: Color(0xFF27A770),
+4018:                     ),
+4019:                   ),
+4020:                   SizedBox(height: 6),
+4021:                   Text(
+4022:                     zikir['arapca'] ?? '',
+4023:                     textAlign: TextAlign.center,
+4024:                     style: TextStyle(
+4025:                       fontSize: 28,
+4026:                       fontWeight: FontWeight.bold,
+4027:                       color: _greenColor,
+4028:                       fontFamily: 'Traditional Arabic',
+4029:                     ),
+4030:                   ),
+4031:                   SizedBox(height: 8),
+4032:                   Text(
+4033:                     "“${zikir['anlam']}”",
+4034:                     textAlign: TextAlign.center,
+4035:                     style: TextStyle(
+4036:                       fontSize: 12.5,
+4037:                       fontStyle: FontStyle.italic,
+4038:                       color: _isDark ? Colors.white60 : Colors.grey[700],
+4039:                     ),
+4040:                   ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

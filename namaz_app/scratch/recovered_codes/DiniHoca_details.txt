@@ -1,0 +1,7 @@
+=== DiniHoca (Step 16831) ===
+Tool: replace_file_content
+Instruction: "Close _buildCanliSohbet and define _buildDiniHoca."
+Description: "Close _buildCanliSohbet properly and define _buildDiniHoca with suggestions to fix parser syntax errors."
+
+--- Replacement Content ---
+"            ],\n          ),\n        ),\n      ),\n    );\n  }\n\n  Widget _buildDiniHoca() {\n    final List<String> suggestions = [\n      \"Abdest nasıl alınır? 💧\",\n      \"Namazın farzları nelerdir? 🕋\",\n      \"Gusül abdesti farzları 🚿\",\n      \"Sehiv secdesi nedir? 🙇\",\n      \"Zekat kimlere verilir? 💰\",\n      \"Orucu bozan şeyler 🍽️\",\n    ];\n\n    return Column(\n      children: [\n        // Message List\n        Expanded("

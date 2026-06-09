@@ -1,0 +1,36 @@
+Created At: 2026-06-03T12:13:05Z
+Completed At: 2026-06-03T12:13:05Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/walkthrough.md`
+Total Lines: 28
+Total Bytes: 1783
+Showing lines 1 to 28
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Walkthrough: Zikirmatik Week Tracker Implementation
+2: 
+3: We have added a calendar tracker widget inside the **Zikirmatik** (dhikr counter) screen to track daily zikir completions.
+4: 
+5: ## Summary of Changes
+6: 
+7: - **Modified File**: [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+8:   - Created a helper widget `_buildWeekViewChart()` to render a row of days (Monday through Sunday) for the current week.
+9:   - Placed the tracker below the main circular increment button and above the control actions.
+10:   - Linked the state to `_zikirCompletedDates` and stored/retrieved it using `SharedPreferences`.
+11:   - Automatically marked a day as completed when the counter reaches the zikir target (e.g. 33, 34, or > 0 for limitsiz zikir).
+12:   - Highlights today with a green outline border and bolder text.
+13:   - Completed days are marked with a green filled circle and checkmark.
+14: 
+15: ## Verification
+16: 
+17: ### 1. Build Verification
+18: We ran a debug build check of the Flutter APK to verify there are no compilation errors:
+19: - Command: `flutter build apk --debug` in `namaz_app`
+20: 
+21: ### 2. Manual Verification Checklist
+22: - [x] Open the **Zikirmatik** tool.
+23: - [x] Observe the new calendar tracking card labeled "Bu Haftanın Zikir Takibi" showing Pzt - Paz.
+24: - [x] Verify "Bugün" (today's day name and number) is visually highlighted with a green outline border.
+25: - [x] Increment the zikir counter. When the count matches the target (or is greater than zero for the "Limitsiz" zikir option), check that today's date gets added to the completed dates list and is immediately updated on the UI with a checkmark.
+26: - [x] Check that resetting the zikir does not delete the completion records of previous days.
+27: - [x] Verify persistence by closing and reopening the app.
+28: 
+The above content shows the entire, complete file contents of the requested file.

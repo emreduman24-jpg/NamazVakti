@@ -1,0 +1,1 @@
+  @override\n  void initState() {\n    super.initState();\n    _initMosques();\n    if (widget.toolId == 'yakindaki-camiler') {\n      _getUserLocation();\n    }\n    if (widget.toolId == 'namaz-vakitleri-aylik') {\n      _loadMonthlyPrayerTimes();\n    }\n    _initAudio();

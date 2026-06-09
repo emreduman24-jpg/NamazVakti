@@ -1,0 +1,64 @@
+Created At: 2026-05-30T21:08:53Z
+Completed At: 2026-05-30T21:08:53Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5205
+Total Bytes: 212390
+Showing lines 140 to 195
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+140: 
+141:               final dist = _calculateDistance(lat, lon, mLat, mLon);
+142:               final encodedName = Uri.encodeComponent(name.toString());
+143: 
+144:               mosques.add({
+145:                 'ad': name.toString(),
+146:                 'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',
+147:                 'harita': 'https://maps.google.com/?q=$mLat,$mLon&query=$encodedName',
+148:                 'lat': mLat,
+149:                 'lon': mLon,
+150:                 'mesafeVal': dist,
+151:                 'mesafeText': dist < 1
+152:                     ? '${(dist * 1000).toInt()} m'
+153:                     : '${dist.toStringAsFixed(1)} km',
+154:               });
+155:             }
+156: 
+157:             // Sort by distance
+158:             mosques.sort((a, b) =>
+159:                 (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+160: 
+161:             if (mosques.isNotEmpty) {
+162:               if (mounted) {
+163:                 setState(() {
+164:                   _dynamicMosquesList = mosques;
+165:                 });
+166:               }
+167:               debugPrint('Found ${mosques.length} mosques within ${radius}m');
+168:               return; // success – stop expanding radius
+169:             }
+170:             // This endpoint returned 200 but no mosques at this radius, try next radius
+171:             break; // break endpoint loop, try next radius
+172:           }
+173:           // Non-200 status, try next endpoint
+174:           debugPrint('Overpass endpoint returned ${response.statusCode}, trying next...');
+175:         } catch (e) {
+176:           debugPrint('Overpass API error ($endpoint, radius=$radius): $e');
+177:           // Try next endpoint
+178:         }
+179:       }
+180:     }
+181: 
+182:     // If all radii failed, show a message
+183:     debugPrint('No mosques found from Overpass API');
+184:     if (mounted) {
+185:       setState(() {
+186:         _dynamicMosquesList = [];
+187:       });
+188:     }
+189:   }
+190: 
+191:   // static map of 81 Turkish cities and coordinates
+192:   static const Map<String, Map<String, double>> _cityCoordinates = {
+193:     "ADANA": {"lat": 36.9914, "lon": 35.3308},
+194:     "ADIYAMAN": {"lat": 37.7648, "lon": 38.2786},
+195:     "AFYONKARAHISAR": {"lat": 38.7507, "lon": 30.5567},
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

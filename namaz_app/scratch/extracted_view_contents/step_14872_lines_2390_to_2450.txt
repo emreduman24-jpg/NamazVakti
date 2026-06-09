@@ -1,0 +1,69 @@
+Created At: 2026-06-03T05:52:58Z
+Completed At: 2026-06-03T05:52:59Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6920
+Total Bytes: 280899
+Showing lines 2390 to 2450
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2390:                 Icon(
+2391:                   Icons.chevron_right_rounded,
+2392:                   color: _isDark ? Colors.white38 : Colors.black38,
+2393:                   size: 22,
+2394:                 ),
+2395:               ],
+2396:             ),
+2397:           ),
+2398:         );
+2399:       },
+2400:     );
+2401:   }             children: [
+2402:                 Text(
+2403:                   juz.arabicLabel,
+2404:                   style: const TextStyle(
+2405:                     color: Color(0xFF27A770),
+2406:                     fontFamily: 'Traditional Arabic',
+2407:                     fontSize: 18,
+2408:                     fontWeight: FontWeight.bold,
+2409:                   ),
+2410:                 ),
+2411:                 const SizedBox(width: 8),
+2412:                 const Icon(
+2413:                   Icons.chevron_right_rounded,
+2414:                   color: Colors.white38,
+2415:                   size: 22,
+2416:                 ),
+2417:               ],
+2418:             ),
+2419:           ),
+2420:         );
+2421:       },
+2422:     );
+2423:   }
+2424: 
+2425:   // 7. Esmaül Hüsna
+2426:   Widget _buildEsmaulHusna() {
+2427:     final filtered = ESMAUL_HUSNA.where((item) {
+2428:       final name = _normalize(item['ad'].toString());
+2429:       final meaning = _normalize(item['anlam'].toString());
+2430:       final query = _normalize(_esmaSearchQuery);
+2431:       return name.contains(query) || meaning.contains(query);
+2432:     }).toList();
+2433: 
+2434:     return Column(
+2435:       children: [
+2436:         TextField(
+2437:           decoration: InputDecoration(
+2438:             hintText: "İsim ara (Örn: Rahman)...",
+2439:             prefixIcon: Icon(Icons.search, color: Color(0xFF27A770)),
+2440:             filled: true,
+2441:             fillColor: Colors.white,
+2442:             border: OutlineInputBorder(
+2443:               borderRadius: BorderRadius.circular(15),
+2444:               borderSide: BorderSide.none,
+2445:             ),
+2446:           ),
+2447:           onChanged: (val) {
+2448:             setState(() {
+2449:               _esmaSearchQuery = val;
+2450:             });
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

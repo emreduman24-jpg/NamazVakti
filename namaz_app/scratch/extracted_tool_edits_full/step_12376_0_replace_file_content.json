@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add switch case for 'namaz-vakitleri-aylik' to build the monthly prayer calendar view.\"",
+  "EndLine": "895",
+  "Instruction": "\"Add case 'namaz-vakitleri-aylik': return _buildNamazVakitleriAylik(); to _buildToolBody().\"",
+  "ReplacementContent": "\"  Widget _buildToolBody() {\\n    switch (widget.toolId) {\\n      case 'namaz-vakitleri-aylik':\\n        return _buildNamazVakitleriAylik();\\n      case 'dini-gunler':\\n        return _buildDiniGunler();\"",
+  "StartLine": "891",
+  "TargetContent": "\"  Widget _buildToolBody() {\\n    switch (widget.toolId) {\\n      case 'dini-gunler':\\n        return _buildDiniGunler();\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Editing _buildToolBody\"",
+  "toolSummary": "\"Add switch case for monthly prayer\""
+}

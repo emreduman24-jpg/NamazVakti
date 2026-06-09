@@ -1,0 +1,44 @@
+Created At: 2026-06-03T13:11:13Z
+Completed At: 2026-06-03T13:11:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7691
+Total Bytes: 312553
+Showing lines 5630 to 5665
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5630:                                   ),
+5631:                                   const SizedBox(width: 8),
+5632:                                   Text(
+5633:                                     isPlaying() ? "Durdur" : "Dinle",
+5634:                                     style: const TextStyle(
+5635:                                       color: Colors.white,
+5636:                                       fontWeight: FontWeight.bold,
+5637:                                       fontSize: 14,
+5638:                                     ),
+5639:                                   ),
+5640:                                 ],
+5641:                               ),
+5642:                             ),
+5643:                           ),
+5644:                           const SizedBox(width: 16),
+5645:                           StatefulBuilder(
+5646:                             builder: (context, setFavState) {
+5647:                               final isFav = _favoriteDualar.contains(id);
+5648:                               return IconButton(
+5649:                                 icon: Icon(
+5650:                                   isFav ? Icons.favorite : Icons.favorite_border,
+5651:                                   color: isFav ? Colors.red : (_isDark ? Colors.white70 : Colors.black54),
+5652:                                 ),
+5653:                                 iconSize: 28,
+5654:                                 onPressed: () async {
+5655:                                   await _toggleFavoriteDua(id);
+5656:                                   setFavState(() {});
+5657:                                   setModalState(() {});
+5658:                                 },
+5659:                               );
+5660:                             },
+5661:                           ),
+5662:                         ],
+5663:                       ),
+5664:                     ),
+5665:                 ],
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,59 @@
+Created At: 2026-06-03T13:45:07Z
+Completed At: 2026-06-03T13:45:08Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7707
+Total Bytes: 313314
+Showing lines 600 to 650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+600:       { "ad": "Mevlid Kandili", "gun": "Cuma", "tarih": "12 Temmuz 2030", "kat": "Kandil ve Mübarek Geceler" },
+601:       { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "31 Ekim 2030", "kat": "Kandil ve Mübarek Geceler" },
+602:       { "ad": "Miraç Kandili", "gun": "Cuma", "tarih": "22 Kasım 2030", "kat": "Kandil ve Mübarek Geceler" },
+603:       { "ad": "Berat Kandili", "gun": "Pazartesi", "tarih": "9 Aralık 2030", "kat": "Kandil ve Mübarek Geceler" },
+604:       { "ad": "Ramazan Başlangıcı", "gun": "Perşembe", "tarih": "26 Aralık 2030", "kat": "Kandil ve Mübarek Geceler" }
+605:     ]
+606:   };
+607: 
+608:   // Dua Iste State
+609:   List<Map<String, dynamic>> _duaList = [];
+610:   final TextEditingController _duaNameController = TextEditingController();
+611:   final TextEditingController _duaTextController = TextEditingController();
+612: 
+613:   // Soru Cevap State
+614:   List<Map<String, dynamic>> _questionList = [];
+615:   final TextEditingController _questionNameController = TextEditingController();
+616:   final TextEditingController _qaInputController = TextEditingController();
+617: 
+618:   // Canli Dini Sohbet State
+619:   final List<Map<String, String>> _chatMessages = [
+620:     {
+621:       'sender': 'other',
+622:       'user': 'Mehmet Kaya',
+623:       'text':
+624:           'Selamün Aleyküm muhterem kardeşlerim, gününüz bereketli geçsin inşallah.',
+625:     },
+626:     {
+627:       'sender': 'other',
+628:       'user': 'Fatma Şahin',
+629:       'text': 'Ve Aleyküm Selam. Hayırlı günler dilerim.',
+630:     },
+631:     {
+632:       'sender': 'other',
+633:       'user': 'Ömer Faruk',
+634:       'text': 'Rabbim namazlarımızı ve dualarımızı kabul eylesin.',
+635:     },
+636:   ];
+637:   final TextEditingController _chatInputController = TextEditingController();
+638:   final List<String> _chatUsers = [
+639:     "Ayşe Yılmaz",
+640:     "Mustafa Demir",
+641:     "Zeynep Çelik",
+642:     "Ahmet Yıldız",
+643:     "Emine Kaya",
+644:   ];
+645:   final List<String> _chatReplies = [
+646:     "Allah hepimizden razı olsun inşallah.",
+647:     "Rabbim bu güzel günün hürmetine dualarımızı kabul eylesin.",
+648:     "Birlik ve beraberliğimiz daim olsun.",
+649:     "Hayırlı, huzurlu vakitler dilerim.",
+650:     "Ve aleyküm selam ve rahmetullah.",
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

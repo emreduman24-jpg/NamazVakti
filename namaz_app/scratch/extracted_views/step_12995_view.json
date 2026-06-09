@@ -1,0 +1,19 @@
+{
+  "step_index": 12995,
+  "source": "MODEL",
+  "type": "PLANNER_RESPONSE",
+  "status": "DONE",
+  "created_at": "2026-06-01T11:56:17Z",
+  "tool_calls": [
+    {
+      "name": "view_file",
+      "args": {
+        "AbsolutePath": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+        "EndLine": "2750",
+        "StartLine": "2650",
+        "toolAction": "\"Viewing lines 2650-2750 of tool_detail_screen.dart to see the rest of _buildAylikNamazVakitleri\"",
+        "toolSummary": "\"View _buildAylikNamazVakitleri details\""
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+Created At: 2026-05-23T13:45:50Z
+Completed At: 2026-05-23T13:45:50Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 1983 to 2100
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1983:   Widget _buildYakindakiCamiler() {
+1984:     return Column(
+1985:       children: [
+1986:         const Text(
+1987:           "İstanbul Fatih bölgesine en yakın camiler listelenmektedir.",
+1988:           style: TextStyle(color: Colors.grey, fontSize: 13),
+1989:         ),
+1990:         const SizedBox(height: 12),
+1991:         Expanded(
+1992:           child: ListView.builder(
+1993:             itemCount: MOCK_CAMILER.length,
+1994:             itemBuilder: (context, index) {
+1995:               final camii = MOCK_CAMILER[index];
+1996:               return Card(
+1997:                 elevation: 1.5,
+1998:                 shape: RoundedRectangleBorder(
+1999:                   borderRadius: BorderRadius.circular(16),
+2000:                 ),
+2001:                 margin: const EdgeInsets.only(bottom: 12),
+2002:                 child: ListTile(
+2003:                   leading: const CircleAvatar(
+2004:                     backgroundColor: Color(0xFFEAF7F1),
+2005:                     child: Icon(Icons.mosque, color: Color(0xFF27A770)),
+2006:                   ),
+2007:                   title: Text(
+2008:                     camii['ad'] ?? '',
+2009:                     style: const TextStyle(fontWeight: FontWeight.bold),
+2010:                   ),
+2011:                   subtitle: Text("📍 ${camii['adres'] ?? ''}"),
+2012:                   trailing: Column(
+2013:                     mainAxisAlignment: MainAxisAlignment.center,
+2014:                     children: [
+2015:                       Text(
+2016:                         camii['mesafe
+<truncated 1487 bytes>
+: OutlineInputBorder(
+2057:               borderRadius: BorderRadius.circular(15),
+2058:               borderSide: BorderSide.none,
+2059:             ),
+2060:           ),
+2061:           onChanged: (val) {
+2062:             setState(() {
+2063:               _hadisSearchQuery = val;
+2064:               _hadisIndex = 0;
+2065:             });
+2066:           },
+2067:         ),
+2068:         const SizedBox(height: 16),
+2069:         if (filtered.isEmpty)
+2070:           const Expanded(
+2071:             child: Center(child: Text("Aranan kriterde hadis bulunamadı.")),
+2072:           )
+2073:         else ...[
+2074:           Expanded(
+2075:             child: Card(
+2076:               elevation: 2,
+2077:               shape: RoundedRectangleBorder(
+2078:                 borderRadius: BorderRadius.circular(16),
+2079:               ),
+2080:               color: Colors.white,
+2081:               child: Padding(
+2082:                 padding: const EdgeInsets.all(24.0),
+2083:                 child: Column(
+2084:                   mainAxisAlignment: MainAxisAlignment.center,
+2085:                   children: [
+2086:                     Text(
+2087:                       "Hadis #${filtered[_hadisIndex]['no']}",
+2088:                       style: const TextStyle(
+2089:                         fontWeight: FontWeight.bold,
+2090:                         fontSize: 16,
+2091:                         color: Color(0xFF27A770),
+2092:                       ),
+2093:                     ),
+2094:                     const SizedBox(height: 20),
+2095:                     Text(
+2096:                       "“${filtered[_hadisIndex]['metin']}”",
+2097:                       textAlign: TextAlign.center,
+2098:                       style: const TextStyle(
+2099:                         fontSize: 15,
+2100:                         fontStyle: FontStyle.italic,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

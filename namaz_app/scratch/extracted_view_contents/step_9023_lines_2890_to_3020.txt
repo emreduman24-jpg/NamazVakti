@@ -1,0 +1,85 @@
+Created At: 2026-05-30T21:08:17Z
+Completed At: 2026-05-30T21:08:18Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5205
+Total Bytes: 212390
+Showing lines 2890 to 3020
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2890:                 )
+2891:               : _dynamicMosquesList.isEmpty
+2892:                   ? Center(
+2893:                       child: Column(
+2894:                         mainAxisAlignment: MainAxisAlignment.center,
+2895:                         children: [
+2896:                           const Icon(Icons.mosque, size: 48, color: Colors.grey),
+2897:                           const SizedBox(height: 12),
+2898:                           const Text(
+2899:                             "Yakınınızda cami bulunamadı.",
+2900:                             style: TextStyle(fontSize: 14, color: Colors.grey),
+2901:                           ),
+2902:                           const SizedBox(height: 8),
+2903:                           ElevatedButton.icon(
+2904:                             onPressed: () => _getUserLocation(forceRefresh: true),
+2905:                             icon: const Icon(Icons.refresh, size: 18),
+2906:                             label: const Text("Tekrar Dene"),
+2907:                             style: ElevatedButton.styleFrom(
+2908:                               backgroundColor: const Color(0xFF27A770),
+2909:                               foregroundColor: Colors.white,
+2910:                             ),
+2911:                           ),
+2912:                         ],
+2913:                       ),
+2914:                     )
+2915:                   : ListView.builder(
+2916:                       itemCount: _dynamicMosquesList.length,
+2917:                       itemBuilder: (context, index) {
+2918:                        
+<truncated 2881 bytes>
+'metin'].toString());
+2975:       final source = _normalize(h['kaynak'].toString());
+2976:       final query = _normalize(_hadisSearchQuery);
+2977:       return text.contains(query) || source.contains(query);
+2978:     }).toList();
+2979: 
+2980:     return Column(
+2981:       children: [
+2982:         TextField(
+2983:           controller: _hadisSearchController,
+2984:           decoration: InputDecoration(
+2985:             hintText: "Hadislerde ara...",
+2986:             prefixIcon: const Icon(Icons.search, color: Color(0xFF27A770)),
+2987:             filled: true,
+2988:             fillColor: Colors.white,
+2989:             border: OutlineInputBorder(
+2990:               borderRadius: BorderRadius.circular(15),
+2991:               borderSide: BorderSide.none,
+2992:             ),
+2993:           ),
+2994:           onChanged: (val) {
+2995:             setState(() {
+2996:               _hadisSearchQuery = val;
+2997:               _hadisIndex = 0;
+2998:             });
+2999:           },
+3000:         ),
+3001:         const SizedBox(height: 16),
+3002:         if (filtered.isEmpty)
+3003:           const Expanded(
+3004:             child: Center(child: Text("Aranan kriterde hadis bulunamadı.")),
+3005:           )
+3006:         else ...[
+3007:           Expanded(
+3008:             child: Card(
+3009:               elevation: 2,
+3010:               shape: RoundedRectangleBorder(
+3011:                 borderRadius: BorderRadius.circular(16),
+3012:               ),
+3013:               color: Colors.white,
+3014:               child: Padding(
+3015:                 padding: const EdgeInsets.all(24.0),
+3016:                 child: Column(
+3017:                   mainAxisAlignment: MainAxisAlignment.center,
+3018:                   children: [
+3019:                     Text(
+3020:                       "Hadis #${filtered[_hadisIndex]['no']}",
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

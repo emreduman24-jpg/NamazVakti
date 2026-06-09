@@ -1,0 +1,83 @@
+Created At: 2026-06-03T13:58:14Z
+Completed At: 2026-06-03T13:58:15Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8274
+Total Bytes: 337588
+Showing lines 1803 to 1877
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1803: 
+1804:   // 4. Canlı Sohbet
+1805:   Widget _buildCanliSohbet() {
+1806:     return Center(
+1807:       child: Card(
+1808:         elevation: 3,
+1809:         shadowColor: Colors.black12,
+1810:         shape: RoundedRectangleBorder(
+1811:           borderRadius: BorderRadius.circular(24),
+1812:         ),
+1813:         color: Colors.white,
+1814:         child: Padding(
+1815:           padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
+1816:           child: Column(
+1817:             mainAxisSize: MainAxisSize.min,
+1818:             mainAxisAlignment: MainAxisAlignment.center,
+1819:             children: [
+1820:               Container(
+1821:                 padding: EdgeInsets.all(20),
+1822:                 decoration: BoxDecoration(
+1823:                   color: Color(0xFFFBEAEA),
+1824:                   shape: BoxShape.circle,
+1825:                 ),
+1826:                 child: Icon(
+1827:                   Icons.headphones_rounded,
+1828:                   size: 54,
+1829:                   color: Color(0xFFD9534F),
+1830:                 ),
+1831:               ),
+1832:               SizedBox(height: 20),
+1833:               Text(
+1834:                 "Canlı Dini Sohbet",
+1835:                 style: TextStyle(
+1836:                   fontWeight: FontWeight.bold,
+1837:                   fontSize: 20,
+1838:                   color: _greenColor,
+1839:                 ),
+1840:               ),
+1841:               SizedBox(height: 12),
+1842:               Text(
+1843:                 "Değerli hocalarımızın canlı dini sohbet yayınları çok yakında bu ekranda sizlerle olacaktır.",
+1844:                 textAlign: TextAlign.center,
+1845:                 style: TextStyle(
+1846:                   color: Colors.grey,
+1847:                   fontSize: 13.5,
+1848:                   height: 1.45,
+1849:                 ),
+1850:               ),
+1851:               SizedBox(height: 24),
+1852:               ElevatedButton(
+1853:                 onPressed: () => Navigator.pop(context),
+1854:                 style: ElevatedButton.styleFrom(
+1855:                   backgroundColor: const Color(0xFF27A770),
+1856:                   shape: RoundedRectangleBorder(
+1857:                     borderRadius: BorderRadius.circular(15),
+1858:                   ),
+1859:                   padding: EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+1860:                   elevation: 1,
+1861:                 ),
+1862:                 child: Text(
+1863:                   "Geri Dön",
+1864:                   style: TextStyle(
+1865:                     color: Colors.white,
+1866:                     fontWeight: FontWeight.bold,
+1867:                     fontSize: 13,
+1868:                   ),
+1869:                 ),
+1870:               ),
+1871:             ],
+1872:           ),
+1873:         ),
+1874:       ),
+1875:     );
+1876:   }
+1877: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

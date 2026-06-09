@@ -1,0 +1,44 @@
+Created At: 2026-06-01T21:13:24Z
+Completed At: 2026-06-01T21:13:24Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6360
+Total Bytes: 258167
+Showing lines 890 to 925
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+890:     ScaffoldMessenger.of(context).showSnackBar(
+891:       const SnackBar(
+892:         content: Text("Sorunuz onay için gönderildi. Cevaplandıktan sonra burada yayınlanacaktır."),
+893:         backgroundColor: Color(0xFF27A770),
+894:       ),
+895:     );
+896:   }
+897: 
+898:   // Audio Play helper
+899:   Future<void> _playAudio(String url, String name) async {
+900:     try {
+901:       if (_currentAudioUrl == url && _playerState == PlayerState.playing) {
+902:         await _audioPlayer!.pause();
+903:       } else if (_currentAudioUrl == url &&
+904:           _playerState == PlayerState.paused) {
+905:         await _audioPlayer!.resume();
+906:       } else {
+907:         await _audioPlayer!.stop();
+908:         setState(() {
+909:           _currentAudioUrl = url;
+910:           _currentTrackName = name;
+911:         });
+912:         await _audioPlayer!.play(UrlSource(url));
+913:       }
+914:     } catch (e) {
+915:       ScaffoldMessenger.of(
+916:         context,
+917:       ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+918:     }
+919:   }
+920: 
+921:   @override
+922:   Widget build(BuildContext context) {
+923:     return Scaffold(
+924:       backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
+925:       appBar: AppBar(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,27 @@
+Created At: 2026-05-24T09:06:36Z
+Completed At: 2026-05-24T09:06:37Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4649
+Total Bytes: 189706
+Showing lines 320 to 338
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+320: 
+321:   @override
+322:   void dispose() {
+323:     _audioPlayer?.dispose();
+324:     _duaNameController.dispose();
+325:     _duaTextController.dispose();
+326:     _qaInputController.dispose();
+327:     _chatInputController.dispose();
+328:     _hadisSearchController.dispose();
+329:     _goldController.dispose();
+330:     _cashController.dispose();
+331:     _businessController.dispose();
+332:     _debtsController.dispose();
+333:     super.dispose();
+334:   }
+335: 
+336:   // Zikirmatik persistence
+337:   Future<void> _loadZikirState() async {
+338:     final count = await _repository.getZikirCount();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

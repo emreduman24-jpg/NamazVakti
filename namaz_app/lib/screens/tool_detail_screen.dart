@@ -213,6 +213,7 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
   // Yakındaki Camiler (Location & GPS State)
   Position? _currentPosition;
   bool _loadingLocation = false;
+  bool _qiblaWasAligned = false; // Track Qibla alignment for haptic feedback
   List<Map<String, dynamic>> _dynamicMosquesList = [];
 
   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -238,39 +239,42 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
   Future<void> _fetchNearbyMosques(double lat, double lon) async {
     debugPrint('=== MOSQUE SEARCH: Searching near lat=$lat, lon=$lon ===');
     // Try progressively larger radii until we find enough mosques
-    final radii = [3000, 5000, 10000]; // meters
-    
-    // Multiple Overpass API endpoints for reliability - Official and Swiss mirrors first!
+    final radii = [3000, 5000, 10000, 20000]; // meters
+
+    // Multiple Overpass API endpoints for reliability
     final overpassEndpoints = [
-      'https://overpass-api.de/api/interpreter', // Official, main server, extremely fast
-      'https://overpass.osm.ch/api/interpreter', // Swiss mirror, very fast and stable
-      'https://overpass.kumi.systems/api/interpreter', // Backup mirror
+      'https://overpass-api.de/api/interpreter',
+      'https://overpass.osm.ch/api/interpreter',
+      'https://overpass.kumi.systems/api/interpreter',
     ];
 
     for (final radius in radii) {
-      for (final endpoint in overpassEndpoints) {
-        try {
-          // Overpass QL query: find nodes and ways tagged as mosque within radius
-          final query = '''
-[out:json][timeout:10];
+      // Broader Overpass QL query: find ALL mosque-related features
+      final query = '''
+[out:json][timeout:25];
 (
   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+  relation["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
   node["building"="mosque"](around:$radius,$lat,$lon);
   way["building"="mosque"](around:$radius,$lat,$lon);
+  node["amenity"="place_of_worship"](around:$radius,$lat,$lon);
+  way["amenity"="place_of_worship"](around:$radius,$lat,$lon);
 );
 out center body;
 ''';
 
-          final encodedQuery = Uri.encodeComponent(query);
-          final url = Uri.parse('$endpoint?data=$encodedQuery');
-          final response = await http.get(
-            url,
+      for (final endpoint in overpassEndpoints) {
+        try {
+          // Use POST for reliability with complex queries
+          final response = await http.post(
+            Uri.parse(endpoint),
             headers: {
-              'Accept': '*/*',
+              'Content-Type': 'application/x-www-form-urlencoded',
               'User-Agent': 'NamazVakitleri/1.0',
             },
-          ).timeout(const Duration(seconds: 4)); // 4 seconds is plenty for a fast network call
+            body: 'data=${Uri.encodeComponent(query)}',
+          ).timeout(const Duration(seconds: 12));
 
           debugPrint('Overpass API [$endpoint] response: status=${response.statusCode}, radius=$radius');
 
@@ -280,7 +284,8 @@ out center body;
             debugPrint('Overpass API response: elements=${elements.length}');
 
             final List<Map<String, dynamic>> mosques = [];
-            final Set<String> seenNames = {}; // avoid duplicates
+            final Set<String> seenCoords = {}; // avoid duplicates by coordinate
+            int unnamedCount = 0;
 
             for (final el in elements) {
               final tags = el['tags'] as Map<String, dynamic>? ?? {};
@@ -289,25 +294,36 @@ out center body;
               if (el['type'] == 'node') {
                 mLat = (el['lat'] as num?)?.toDouble();
                 mLon = (el['lon'] as num?)?.toDouble();
-              } else if (el['type'] == 'way' && el['center'] != null) {
+              } else if ((el['type'] == 'way' || el['type'] == 'relation') && el['center'] != null) {
                 mLat = (el['center']['lat'] as num?)?.toDouble();
                 mLon = (el['center']['lon'] as num?)?.toDouble();
               }
 
               if (mLat == null || mLon == null) continue;
 
-              // Determine name
-              final name = tags['name'] ?? tags['name:tr'] ?? tags['name:en'] ?? '';
-              if (name.toString().isEmpty) continue; // skip unnamed
+              // Filter: only Muslim places of worship (skip churches etc.)
+              final religion = tags['religion']?.toString().toLowerCase() ?? '';
+              final building = tags['building']?.toString().toLowerCase() ?? '';
+              final amenity = tags['amenity']?.toString().toLowerCase() ?? '';
+              if (religion.isNotEmpty && religion != 'muslim') continue;
+              // If no religion tag, only include if building=mosque or amenity matches
+              if (religion.isEmpty && building != 'mosque' && amenity != 'place_of_worship') continue;
 
-              // Skip duplicates (same name)
-              final nameKey = name.toString().toLowerCase();
-              if (seenNames.contains(nameKey)) continue;
-              seenNames.add(nameKey);
+              // Skip duplicates by coordinate proximity (within ~10m)
+              final coordKey = '${mLat.toStringAsFixed(4)},${mLon.toStringAsFixed(4)}';
+              if (seenCoords.contains(coordKey)) continue;
+              seenCoords.add(coordKey);
+
+              // Determine name - accept unnamed mosques too
+              String name = (tags['name'] ?? tags['name:tr'] ?? tags['name:en'] ?? '').toString();
+              if (name.isEmpty) {
+                unnamedCount++;
+                name = 'Cami #$unnamedCount';
+              }
 
               // Build address from tags
               final street = tags['addr:street'] ?? '';
-              final district = tags['addr:district'] ?? tags['addr:suburb'] ?? '';
+              final district = tags['addr:district'] ?? tags['addr:suburb'] ?? tags['addr:neighbourhood'] ?? '';
               final city = tags['addr:city'] ?? '';
               String address = [street, district, city]
                   .where((s) => s.toString().isNotEmpty)
@@ -317,10 +333,9 @@ out center body;
               }
 
               final dist = _calculateDistance(lat, lon, mLat, mLon);
-              final encodedName = Uri.encodeComponent(name.toString());
 
               mosques.add({
-                'ad': name.toString(),
+                'ad': name,
                 'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',
                 'harita': 'https://www.google.com/maps/dir/?api=1&destination=$mLat,$mLon',
                 'lat': mLat,
@@ -492,9 +507,8 @@ out center body;
           if (position != null) {
             debugPrint("Using last known position immediately: ${position.latitude}, ${position.longitude}");
             _currentPosition = position;
-            // Fetch mosques immediately so UI doesn't wait
-            _fetchNearbyMosques(position.latitude, position.longitude);
-            // Hide loading indicator as we have some data
+            // Fetch mosques and WAIT for results before hiding loading
+            await _fetchNearbyMosques(position.latitude, position.longitude);
             _loadingLocation = false;
             if (mounted) setState(() {});
           }
@@ -505,32 +519,48 @@ out center body;
         // 4. Try to get fresh location in parallel/background
         try {
           debugPrint("Attempting to get fresh live GPS location...");
-          final freshPosition = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.medium, // Medium is much faster than High
-            timeLimit: const Duration(seconds: 4), // 4 seconds timeout is sufficient
-          );
-          debugPrint("Successfully fetched live medium-accuracy GPS: ${freshPosition.latitude}, ${freshPosition.longitude}");
-          
-          bool shouldUpdate = false;
-          if (position == null) {
-            shouldUpdate = true;
-          } else {
-            final double distance = _calculateDistance(
-              position.latitude,
-              position.longitude,
-              freshPosition.latitude,
-              freshPosition.longitude,
+          Position? freshPosition;
+          try {
+            freshPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high,
+              timeLimit: const Duration(seconds: 10),
             );
-            if (distance > 0.15) { // If user moved > 150m, refresh
-              shouldUpdate = true;
+          } catch (e) {
+            debugPrint("High accuracy GPS failed: $e, trying low accuracy...");
+            try {
+              freshPosition = await Geolocator.getCurrentPosition(
+                desiredAccuracy: LocationAccuracy.low,
+                timeLimit: const Duration(seconds: 8),
+              );
+            } catch (e2) {
+              debugPrint("Low accuracy GPS also failed: $e2");
             }
           }
 
-          if (shouldUpdate) {
-            position = freshPosition;
-            _currentPosition = position;
-            // Re-fetch mosques with fresh coordinates
-            await _fetchNearbyMosques(position.latitude, position.longitude);
+          if (freshPosition != null) {
+            debugPrint("Successfully fetched live GPS: ${freshPosition.latitude}, ${freshPosition.longitude}");
+          
+            bool shouldUpdate = false;
+            if (position == null) {
+              shouldUpdate = true;
+            } else {
+              final double distance = _calculateDistance(
+                position.latitude,
+                position.longitude,
+                freshPosition.latitude,
+                freshPosition.longitude,
+              );
+              if (distance > 0.15) { // If user moved > 150m, refresh
+                shouldUpdate = true;
+              }
+            }
+
+            if (shouldUpdate) {
+              position = freshPosition;
+              _currentPosition = position;
+              // Re-fetch mosques with fresh coordinates
+              await _fetchNearbyMosques(position.latitude, position.longitude);
+            }
           }
         } catch (e) {
           debugPrint("Failed to fetch fresh live GPS: $e");
@@ -3033,6 +3063,14 @@ out center body;
         if (diff < -180) diff += 360;
         
         bool isAligned = diff.abs() < 3;
+
+        // Haptic feedback when first aligning to Qibla
+        if (isAligned && !_qiblaWasAligned) {
+          HapticFeedback.mediumImpact();
+          _qiblaWasAligned = true;
+        } else if (!isAligned) {
+          _qiblaWasAligned = false;
+        }
 
         // Blip coordinates on the radar grid
         final double angleRad = (needleRotation - 90) * 3.141592653589793 / 180;

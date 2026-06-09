@@ -1,0 +1,16 @@
+{
+  "step_index": 12815,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Define _currentLocationName state variable and _loadLocationName() method in _ToolDetailScreenState.\"",
+    "EndLine": "37",
+    "Instruction": "\"Add _currentLocationName and _loadLocationName() in _ToolDetailScreenState.\"",
+    "ReplacementContent": "\"  Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;\\n  String _currentLocationName = \\\"\\\";\\n\\n  Future<void> _loadLocationName() async {\\n    final savedLoc = await _repository.getSavedLocation();\\n    final savedCity = savedLoc['cityName'] ?? \\\"İstanbul\\\";\\n    if (mounted) {\\n      setState(() {\\n        _currentLocationName = savedCity;\\n      });\\n    }\\n  }\\n\\n  AudioPlayer? _audioPlayer;\"",
+    "StartLine": "35",
+    "TargetContent": "\"  Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;\\n\\n  AudioPlayer? _audioPlayer;\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding location name state variables and getters to the top of tool_detail_screen.dart\"",
+    "toolSummary": "\"File replace\""
+  }
+}

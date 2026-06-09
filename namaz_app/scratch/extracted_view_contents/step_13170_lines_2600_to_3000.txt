@@ -1,0 +1,89 @@
+Created At: 2026-06-01T15:35:10Z
+Completed At: 2026-06-01T15:35:10Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6355
+Total Bytes: 257924
+Showing lines 2600 to 3000
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2600:     {'name': 'Yatsı', 'key': 'Yatsi', 'icon': Icons.brightness_3, 'color': Color(0xFF3F51B5)},
+2601:   ];
+2602: 
+2603:   Widget _buildAylikNamazVakitleri() {
+2604:     final bool dark = _isDark;
+2605: 
+2606:     if (_loadingMonthlyTimes) {
+2607:       return Center(
+2608:         child: Column(
+2609:           mainAxisAlignment: MainAxisAlignment.center,
+2610:           children: [
+2611:             CircularProgressIndicator(
+2612:               valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
+2613:             ),
+2614:             const SizedBox(height: 16),
+2615:             Text(
+2616:               "Namaz Vakitleri Yükleniyor...",
+2617:               style: TextStyle(
+2618:                 fontSize: 14,
+2619:                 color: _textColor,
+2620:                 fontWeight: FontWeight.w500,
+2621:               ),
+2622:             ),
+2623:           ],
+2624:         ),
+2625:       );
+2626:     }
+2627: 
+2628:     if (_monthlyPrayerTimes.isEmpty) {
+2629:       return Center(
+2630:         child: Padding(
+2631:           padding: const EdgeInsets.all(24.0),
+2632:           child: Column(
+2633:             mainAxisAlignment: MainAxisAlignment.center,
+2634:             children: [
+2635:               const Icon(
+2636:                 Icons.cloud_off,
+2637:                 color: Colors.grey,
+2638:                 size: 64,
+2639:               ),
+2640:               const SizedBox(height: 16),
+2641:               Text(
+2642:                 "Namaz Vakitleri Alınamadı",
+2643:                 style: TextStyle(
+2644:                
+<truncated 15001 bytes>
+const Color(0xFF27A770) 
+2967:                                       : (dark ? Colors.white.withOpacity(0.9) : Colors.black87),
+2968:                                 ),
+2969:                               ),
+2970:                               if (isToday) ...[
+2971:                                 const SizedBox(width: 4),
+2972:                                 Container(
+2973:                                   padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
+2974:                                   decoration: BoxDecoration(
+2975:                                     color: const Color(0xFFD4AF37),
+2976:                                     borderRadius: BorderRadius.circular(4),
+2977:                                   ),
+2978:                                   child: const Text(
+2979:                                     "Bugün",
+2980:                                     style: TextStyle(
+2981:                                       fontSize: 7,
+2982:                                       fontWeight: FontWeight.bold,
+2983:                                       color: Colors.white,
+2984:                                     ),
+2985:                                   ),
+2986:                                 ),
+2987:                               ],
+2988:                             ],
+2989:                           ),
+2990:                         ),
+2991:                       ),
+2992:                       // Times
+2993:                       ...vakitMeta.map(
+2994:                         (meta) => Expanded(
+2995:                           flex: 1,
+2996:                           child: Text(
+2997:                             day[meta['key']] ?? '',
+2998:                             textAlign: TextAlign.center,
+2999:                             style: TextStyle(
+3000:                               fontSize: 10.5,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

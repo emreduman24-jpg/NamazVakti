@@ -1,0 +1,117 @@
+Created At: 2026-05-31T13:51:06Z
+Completed At: 2026-05-31T13:51:06Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart`
+Total Lines: 387
+Total Bytes: 10411
+Showing lines 1 to 250
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'package:flutter/material.dart';
+3: import 'data/prayer_repository.dart';
+4: import 'services/notification_service.dart';
+5: import 'screens/main_screen.dart';
+6: import 'screens/tools_screen.dart';
+7: import 'screens/settings_screen.dart';
+8: import 'screens/tool_detail_screen.dart';
+9: import 'screens/splash_screen.dart';
+10: 
+11: void main() async {
+12:   WidgetsFlutterBinding.ensureInitialized();
+13: 
+14:   // Initialize Notification Service
+15:   final notificationService = NotificationService();
+16:   await notificationService.init();
+17: 
+18:   runApp(const MyApp());
+19: }
+20: 
+21: class MyApp extends StatefulWidget {
+22:   const MyApp({super.key});
+23: 
+24:   @override
+25:   State<MyApp> createState() => _MyAppState();
+26: }
+27: 
+28: class _MyAppState extends State<MyApp> {
+29:   final PrayerRepository _repository = PrayerRepository();
+30:   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+31:   ThemeMode _themeMode = ThemeMode.light;
+32:   bool _loading = true;
+33:   bool _locationSelected = false;
+34:   bool _isBlocked = false;
+35:   Timer? _blockTimer;
+36: 
+37:   @override
+38:   void initState() {
+39:     super.initState();
+40:     _initializeApp();
+41:     _startBlockCheckTimer();
+42:   }
+43: 
+44:   @override
+45:   void dispose() {
+46:     _blockTimer?.cancel();
+47:     super.dispose();
+48:   }
+49: 
+50:   void _startBlockCheckTimer() {
+51:     _blockTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+52:       _checkBlockStatus();
+53:     });
+54:   }
+55: 
+56:   Future<void> _checkBlockSt
+<truncated 4449 bytes>
+ion: 0,
+200:       ),
+201:       scaffoldBackgroundColor: const Color(0xFFF3F8F5),
+202:       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+203:         selectedItemColor: Color(0xFF27A770),
+204:         unselectedItemColor: Colors.grey,
+205:         backgroundColor: Colors.white,
+206:         elevation: 8,
+207:       ),
+208:       cardTheme: CardThemeData(
+209:         color: Colors.white,
+210:         elevation: 2,
+211:         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+212:       ),
+213:     );
+214:   }
+215: 
+216:   // Dark Theme Definition
+217:   ThemeData get _darkTheme {
+218:     return ThemeData(
+219:       useMaterial3: true,
+220:       brightness: Brightness.dark,
+221:       primaryColor: const Color(0xFF27A770),
+222:       colorScheme: ColorScheme.fromSeed(
+223:         seedColor: const Color(0xFF27A770),
+224:         primary: const Color(0xFF27A770),
+225:         secondary: const Color(0xFF4CAF50),
+226:         background: const Color(0xFF121212),
+227:         surface: const Color(0xFF1E1E1E),
+228:         brightness: Brightness.dark,
+229:       ),
+230:       appBarTheme: const AppBarTheme(
+231:         backgroundColor: Color(0xFF1E1E1E),
+232:         foregroundColor: Colors.white,
+233:         elevation: 0,
+234:       ),
+235:       scaffoldBackgroundColor: const Color(0xFF121212),
+236:       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+237:         selectedItemColor: Color(0xFF27A770),
+238:         unselectedItemColor: Colors.grey,
+239:         backgroundColor: Color(0xFF1E1E1E),
+240:         elevation: 8,
+241:       ),
+242:       cardTheme: CardThemeData(
+243:         color: const Color(0xFF1E1E1E),
+244:         elevation: 2,
+245:         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+246:       ),
+247:     );
+248:   }
+249: }
+250: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

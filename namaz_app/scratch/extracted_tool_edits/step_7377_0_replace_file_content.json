@@ -1,0 +1,16 @@
+{
+  "step_index": 7377,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Adding debug log for API response status and element count to diagnose Overpass API issues\"",
+    "EndLine": "90",
+    "Instruction": "\"Add debug logging after API response to show status code and element count\"",
+    "ReplacementContent": "\"        if (response.statusCode == 200) {\\n          final data = json.decode(response.body);\\n          final elements = data['elements'] as List<dynamic>? ?? [];\\n          debugPrint('Overpass API response: status=200, elements=${elements.length}, radius=$radius');\\n\"",
+    "StartLine": "85",
+    "TargetContent": "\"        if (response.statusCode == 200) {\\n          final data = json.decode(response.body);\\n          final elements = data['elements'] as List<dynamic>? ?? [];\\n\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding API response logging\"",
+    "toolSummary": "\"Add debug prints\""
+  }
+}

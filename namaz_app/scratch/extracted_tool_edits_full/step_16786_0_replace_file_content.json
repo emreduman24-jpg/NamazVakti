@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Append _MiniDotAnimator class to the end of tool_detail_screen.dart.\"",
+  "EndLine": "8213",
+  "Instruction": "\"Append _MiniDotAnimator class definition.\"",
+  "ReplacementContent": "\"  @override\\n  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;\\n}\\n\\nclass _MiniDotAnimator extends StatefulWidget {\\n  final Color color;\\n  const _MiniDotAnimator({Key? key, required this.color}) : super(key: key);\\n\\n  @override\\n  __MiniDotAnimatorState createState() => __MiniDotAnimatorState();\\n}\\n\\nclass __MiniDotAnimatorState extends State<_MiniDotAnimator> with SingleTickerProviderStateMixin {\\n  late AnimationController _controller;\\n  \\n  @override\\n  void initState() {\\n    super.initState();\\n    _controller = AnimationController(\\n      vsync: this,\\n      duration: const Duration(milliseconds: 1000),\\n    )..repeat();\\n  }\\n  \\n  @override\\n  void dispose() {\\n    _controller.dispose();\\n    super.dispose();\\n  }\\n  \\n  @override\\n  Widget build(BuildContext context) {\\n    return AnimatedBuilder(\\n      animation: _controller,\\n      builder: (context, child) {\\n        String dots = \\\".\\\";\\n        if (_controller.value > 0.33) dots = \\\"..\\\";\\n        if (_controller.value > 0.66) dots = \\\"...\\\";\\n        return Text(\\n          dots,\\n          style: TextStyle(\\n            color: widget.color,\\n            fontWeight: FontWeight.bold,\\n            fontSize: 14,\\n          ),\\n        );\\n      },\\n    );\\n  }\\n}\\n\"",
+  "StartLine": "8210",
+  "TargetContent": "\"  @override\\n  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;\\n}\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Appending _MiniDotAnimator class to tool_detail_screen.dart\"",
+  "toolSummary": "\"Edit file\""
+}

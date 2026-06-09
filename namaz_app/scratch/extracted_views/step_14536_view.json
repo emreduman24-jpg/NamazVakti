@@ -1,0 +1,20 @@
+{
+  "step_index": 14536,
+  "source": "MODEL",
+  "type": "PLANNER_RESPONSE",
+  "status": "DONE",
+  "created_at": "2026-06-03T05:00:27Z",
+  "content": "I will view the code around line 660 of `tool_detail_screen.dart` where other search queries are defined to add `_quranSearchQuery`.",
+  "tool_calls": [
+    {
+      "name": "view_file",
+      "args": {
+        "AbsolutePath": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+        "EndLine": "680",
+        "StartLine": "640",
+        "toolAction": "\"Viewing search query definitions\"",
+        "toolSummary": "\"View tool_detail_screen.dart L640-680\""
+      }
+    }
+  ]
+}

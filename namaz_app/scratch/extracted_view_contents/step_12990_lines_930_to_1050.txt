@@ -1,0 +1,102 @@
+Created At: 2026-06-01T11:56:12Z
+Completed At: 2026-06-01T11:56:12Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5894
+Total Bytes: 238386
+Showing lines 930 to 1050
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+930:       case 'dini-gunler':
+931:         return _buildDiniGunler();
+932:       case 'dua-iste':
+933:         return _buildDuaIste();
+934:       case 'soru-cevap':
+935:         return _buildSoruCevap();
+936:       case 'canli-sohbet':
+937:         return _buildCanliSohbet();
+938:       case 'peygamber-hayati':
+939:         return _buildPeygamberHayati();
+940:       case 'kuran-kerim':
+941:         return _buildKuranKerim();
+942:       case 'esmaul-husna':
+943:         return _buildEsmaulHusna();
+944:       case 'ramazan-hakkinda':
+945:         return _buildRamazanHakkinda();
+946:       case 'oruc-rehberi':
+947:         return _buildOrucRehberi();
+948:       case 'kible-bulucu':
+949:         return _buildKibleBulucu();
+950:       case 'namaz-vakitleri-aylik':
+951:         return _buildAylikNamazVakitleri();
+952:       case 'zikirmatik':
+953:         return _buildZikirmatik();
+954:       case 'miladi-hicri':
+955:         return _buildMiladiHicri();
+956:       case 'yasin-suresi':
+957:         return _buildYasinSuresi();
+958:       case 'yakindaki-camiler':
+959:         return _buildYakindakiCamiler();
+960:       case 'hadis-40':
+961:         return _buildHadis40();
+962:       case 'namaz-tesbihati':
+963:         return _buildNamazTesbihati();
+964:       case 'gunluk-dualar':
+965:         return _buildGunlukDualar();
+966:       case 'zekat-hesaplama':
+967:         return _buildZekatHesaplama();
+968:       case 'sahabe-hayatlari':
+969:         return _buildSahabeHayatlari();
+970:       case 'islam-tarihi':
+971:         return _buildIslamTarihi();
+972
+<truncated 1109 bytes>
+i();
+1002:       case 'sehiv-secdesi':
+1003:       case 'secdei-sehiv':
+1004:         return _buildSehivSecdesi();
+1005:       case 'tilavet-secdesi':
+1006:       case 'secdei-tilavet':
+1007:         return _buildTilavetSecdesi();
+1008:       case 'kaza-namazi':
+1009:       case 'kaza-namazlari':
+1010:         return _buildKazaNamazi();
+1011:       case 'sabah-ezkari':
+1012:         return _buildSabahEzkari();
+1013:       case 'aksam-ezkari':
+1014:         return _buildAksamEzkari();
+1015:       case 'ezkar':
+1016:         return _buildEzkar();
+1017:       case 'kunut-duasi':
+1018:         return SingleChildScrollView(
+1019:           child: Column(
+1020:             children: [
+1021:               _buildKunutCard("Kunut Duası - 1", VITIR_NAMAZI['kunut1']),
+1022:               SizedBox(height: 16),
+1023:               _buildKunutCard("Kunut Duası - 2", VITIR_NAMAZI['kunut2']),
+1024:             ],
+1025:           ),
+1026:         );
+1027:       case 'yemek-duasi':
+1028:         return _buildYemekDuasi();
+1029:       case 'sifa-duasi':
+1030:         return _buildSifaDuasi();
+1031:       case 'koruyucu-dualar':
+1032:         return _buildKoruyucuDualar();
+1033:       case 'sikinti-borc-duasi':
+1034:         return _buildSikintiBorcDuasi();
+1035:       case 'rabbena-dualar':
+1036:         return _buildRabbenaDualar();
+1037:       case 'hac-umre':
+1038:         return _buildHacUmre();
+1039:       case 'kurban-rehberi':
+1040:         return _buildKurbanRehberi();
+1041:       case 'sadaka-bilgileri':
+1042:         return _buildSadakaBilgileri();
+1043:       case 'islamin-sartlari':
+1044:         return _buildIslaminSartlari();
+1045:       case 'imanin-sartlari':
+1046:         return _buildImaninSartlari();
+1047:       case 'farz-32':
+1048:         return _buildFarz32();
+1049:       case 'farz-54':
+1050:         return _buildFarz54();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

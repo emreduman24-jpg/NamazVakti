@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Fix MainAxisAlignment.min to MainAxisAlignment.center in Column inside Seccade widget\"",
+  "EndLine": "1747",
+  "Instruction": "\"Change mainAxisAlignment to MainAxisAlignment.center in the Column widget\"",
+  "ReplacementContent": "\"                                child: const Center(\\n                                  child: Column(\\n                                    mainAxisAlignment: MainAxisAlignment.center,\\n                                    children: [\"",
+  "StartLine": "1741",
+  "TargetContent": "\"                                child: const Center(\\n                                  child: Column(\\n                                    mainAxisAlignment: MainAxisAlignment.min,\\n                                    children: [\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Fixing MainAxisAlignment error in tool_detail_screen.dart\"",
+  "toolSummary": "\"Edit tool detail screen\""
+}

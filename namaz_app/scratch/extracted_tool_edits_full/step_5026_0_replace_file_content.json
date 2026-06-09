@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add _ezkarTab state variable in tool_detail_screen.dart\"",
+  "EndLine": "267",
+  "Instruction": "\"Define _ezkarTab as int under _aksamEzkarCounts\"",
+  "ReplacementContent": "\"  final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];\\n  int _ezkarTab = 0;\\n\\n  @override\"",
+  "StartLine": "264",
+  "TargetContent": "\"  final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];\\n\\n  @override\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Modifying tool_detail_screen.dart state variables\"",
+  "toolSummary": "\"Edit state variables\""
+}

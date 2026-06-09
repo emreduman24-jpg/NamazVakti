@@ -1,0 +1,39 @@
+Created At: 2026-06-03T12:45:26Z
+Completed At: 2026-06-03T12:45:27Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7117
+Total Bytes: 289398
+Showing lines 820 to 850
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+820:     });
+821:   }
+822: 
+823:   void _initAudio() {
+824:     _audioPlayer = AudioPlayer();
+825:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+826:       if (mounted) {
+827:         setState(() {
+828:           _playerState = state;
+829:         });
+830:       }
+831:     });
+832:   }
+833: 
+834:   String _normalize(String text) {
+835:     return text
+836:         .toLowerCase()
+837:         .replaceAll('ı', 'i')
+838:         .replaceAll('ğ', 'g')
+839:         .replaceAll('ü', 'u')
+840:         .replaceAll('ş', 's')
+841:         .replaceAll('ö', 'o')
+842:         .replaceAll('ç', 'c');
+843:   }
+844: 
+845:   @override
+846:   void dispose() {
+847:     _audioPlayer?.dispose();
+848:     _duaNameController.dispose();
+849:     _duaTextController.dispose();
+850:     _questionNameController.dispose();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Import Geolocator package in tool_detail_screen.dart\"",
+  "EndLine": "10",
+  "Instruction": "\"Add geolocator import to imports list\"",
+  "ReplacementContent": "\"import 'dart:async';\\nimport 'dart:math' as math;\\nimport 'package:flutter/material.dart';\\nimport 'package:flutter/services.dart';\\nimport 'package:flutter_compass/flutter_compass.dart';\\nimport 'package:audioplayers/audioplayers.dart';\\nimport 'package:shared_preferences/shared_preferences.dart';\\nimport 'package:geolocator/geolocator.dart';\\nimport '../data/prayer_data.dart';\\nimport '../data/prayer_repository.dart';\"",
+  "StartLine": "1",
+  "TargetContent": "\"import 'dart:async';\\nimport 'dart:math' as math;\\nimport 'package:flutter/material.dart';\\nimport 'package:flutter/services.dart';\\nimport 'package:flutter_compass/flutter_compass.dart';\\nimport 'package:audioplayers/audioplayers.dart';\\nimport 'package:shared_preferences/shared_preferences.dart';\\nimport '../data/prayer_data.dart';\\nimport '../data/prayer_repository.dart';\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Importing Geolocator package\"",
+  "toolSummary": "\"Geolocator import\""
+}

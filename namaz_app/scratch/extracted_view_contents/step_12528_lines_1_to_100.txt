@@ -1,0 +1,100 @@
+Created At: 2026-06-01T11:02:28Z
+Completed At: 2026-06-01T11:02:28Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5600
+Total Bytes: 233419
+Showing lines 1 to 100
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:convert';
+3: import 'dart:math' as math;
+4: import 'package:flutter/material.dart';
+5: import 'package:http/http.dart' as http;
+6: import 'package:flutter/services.dart';
+7: import 'package:flutter_compass/flutter_compass.dart';
+8: import 'package:audioplayers/audioplayers.dart';
+9: import 'package:shared_preferences/shared_preferences.dart';
+10: import 'package:geolocator/geolocator.dart';
+11: import 'package:url_launcher/url_launcher.dart';
+12: import '../data/prayer_data.dart';
+13: import '../data/prayer_repository.dart';
+14: 
+15: class ToolDetailScreen extends StatefulWidget {
+16:   final String toolId;
+17:   final String toolTitle;
+18: 
+19:   const ToolDetailScreen({
+20:     super.key,
+21:     required this.toolId,
+22:     required this.toolTitle,
+23:   });
+24: 
+25:   @override
+26:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+27: }
+28: 
+29: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+30:   final PrayerRepository _repository = PrayerRepository();
+31:   AudioPlayer? _audioPlayer;
+32:   PlayerState _playerState = PlayerState.stopped;
+33:   String _currentAudioUrl = "";
+34:   String _currentTrackName = "";
+35: 
+36:   // Yakındaki Camiler (Location & GPS State)
+37:   Position? _currentPosition;
+38:   bool _loadingLocation = false;
+39:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+40: 
+41:   // Aylık Namaz Vakitleri State
+42:   List<Map<String, dynamic>> _monthlyPrayerTimes = [];
+43:   bool _loadingMonthlyTimes = false;
+<truncated 480 bytes>
+ 2 * math.asin(math.sqrt(a));
+54:     return r * c;
+55:   }
+56: 
+57:   double _toRadians(double degree) {
+58:     return degree * math.pi / 180;
+59:   }
+60: 
+61:   void _initMosques() {
+62:     _dynamicMosquesList = [];
+63:   }
+64: 
+65:   /// Fetches real nearby mosques from OpenStreetMap Overpass API
+66:   Future<void> _fetchNearbyMosques(double lat, double lon) async {
+67:     debugPrint('=== MOSQUE SEARCH: Searching near lat=$lat, lon=$lon ===');
+68:     // Try progressively larger radii until we find enough mosques
+69:     final radii = [3000, 5000, 10000]; // meters
+70:     
+71:     // Multiple Overpass API endpoints for reliability
+72:     final overpassEndpoints = [
+73:       'https://overpass.kumi.systems/api/interpreter',
+74:       'https://overpass-api.de/api/interpreter',
+75:       'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+76:     ];
+77: 
+78:     for (final radius in radii) {
+79:       for (final endpoint in overpassEndpoints) {
+80:         try {
+81:           // Overpass QL query: find nodes and ways tagged as mosque within radius
+82:           final query = '''
+83: [out:json][timeout:15];
+84: (
+85:   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+86:   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+87:   node["building"="mosque"](around:$radius,$lat,$lon);
+88:   way["building"="mosque"](around:$radius,$lat,$lon);
+89: );
+90: out center body;
+91: ''';
+92: 
+93:           final encodedQuery = Uri.encodeComponent(query);
+94:           final url = Uri.parse('$endpoint?data=$encodedQuery');
+95:           final response = await http.get(
+96:             url,
+97:             headers: {
+98:               'Accept': '*/*',
+99:               'User-Agent': 'NamazVakitleri/1.0',
+100:             },
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,19 @@
+{
+  "step_index": 12779,
+  "source": "MODEL",
+  "type": "PLANNER_RESPONSE",
+  "status": "DONE",
+  "created_at": "2026-06-01T11:29:31Z",
+  "tool_calls": [
+    {
+      "name": "view_file",
+      "args": {
+        "AbsolutePath": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+        "EndLine": "2085",
+        "StartLine": "2075",
+        "toolAction": "\"Viewing line 2075 to 2085 in tool_detail_screen.dart\"",
+        "toolSummary": "\"View file content\""
+      }
+    }
+  ]
+}

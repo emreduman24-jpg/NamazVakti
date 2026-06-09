@@ -1,0 +1,44 @@
+Created At: 2026-06-03T14:00:06Z
+Completed At: 2026-06-03T14:00:07Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8789
+Total Bytes: 358430
+Showing lines 1080 to 1115
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1080:       appBar: AppBar(
+1081:         title: widget.toolId == 'gunluk-dualar' && _isSearchingDualar
+1082:             ? TextField(
+1083:                 controller: _dualarSearchController,
+1084:                 autofocus: true,
+1085:                 style: const TextStyle(color: Colors.white),
+1086:                 decoration: const InputDecoration(
+1087:                   hintText: 'Dua ara...',
+1088:                   hintStyle: TextStyle(color: Colors.white60),
+1089:                   border: InputBorder.none,
+1090:                 ),
+1091:                 onChanged: (val) {
+1092:                   setState(() {
+1093:                     _dualarSearchQuery = val;
+1094:                   });
+1095:                 },
+1096:               )
+1097:             : Text(
+1098:                 widget.toolTitle == 'Günlük Dualar' ? 'Dualar' : widget.toolTitle,
+1099:                 style: const TextStyle(
+1100:                   fontWeight: FontWeight.bold,
+1101:                   color: Colors.white,
+1102:                   fontSize: 20,
+1103:                 ),
+1104:               ),
+1105:         centerTitle: true,
+1106:         backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43)),
+1107:         elevation: 0,
+1108:         iconTheme: const IconThemeData(color: Colors.white),
+1109:         automaticallyImplyLeading: !widget.isTab,
+1110:         actions: widget.toolId == 'gunluk-dualar'
+1111:             ? [
+1112:                 IconButton(
+1113:                   icon: Icon(_isSearchingDualar ? Icons.close : Icons.search),
+1114:                   onPressed: () {
+1115:                     setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

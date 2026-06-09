@@ -1,0 +1,1 @@
+      } catch (e) {\n        debugPrint(\"getCurrentPosition error/timeout: $e\");\n        // Bypass getLastKnownPosition on emulator timeout to ensure fallback mock coordinates are used\n        position = null;\n      }

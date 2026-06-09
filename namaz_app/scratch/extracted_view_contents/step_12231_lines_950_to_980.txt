@@ -1,0 +1,39 @@
+Created At: 2026-06-01T10:22:44Z
+Completed At: 2026-06-01T10:22:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5512
+Total Bytes: 227382
+Showing lines 950 to 980
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+950:         return _buildBayramNamazi();
+951:       case 'cenaze-namazi':
+952:         return _buildCenazeNamazi();
+953:       case 'teheccud-namazi':
+954:         return _buildTeheccudNamazi();
+955:       case 'duha-namazi':
+956:         return _buildDuhaNamazi();
+957:       case 'evvabin-namazi':
+958:         return _buildEvvabinNamazi();
+959:       case 'hacet-namazi':
+960:         return _buildHacetNamazi();
+961:       case 'istihare-namazi':
+962:         return _buildIstihareNamazi();
+963:       case 'sehiv-secdesi':
+964:       case 'secdei-sehiv':
+965:         return _buildSehivSecdesi();
+966:       case 'tilavet-secdesi':
+967:       case 'secdei-tilavet':
+968:         return _buildTilavetSecdesi();
+969:       case 'kaza-namazi':
+970:       case 'kaza-namazlari':
+971:         return _buildKazaNamazi();
+972:       case 'sabah-ezkari':
+973:         return _buildSabahEzkari();
+974:       case 'aksam-ezkari':
+975:         return _buildAksamEzkari();
+976:       case 'ezkar':
+977:         return _buildEzkar();
+978:       case 'kunut-duasi':
+979:         return SingleChildScrollView(
+980:           child: Column(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

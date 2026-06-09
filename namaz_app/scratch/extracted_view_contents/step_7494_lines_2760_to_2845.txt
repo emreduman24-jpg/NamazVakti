@@ -1,0 +1,84 @@
+Created At: 2026-05-27T19:59:11Z
+Completed At: 2026-05-27T19:59:12Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208297
+Showing lines 2760 to 2845
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2760:                     ),
+2761:                   ),
+2762:                 ),
+2763:               ],
+2764:             ),
+2765:           ),
+2766:         ),
+2767:         const SizedBox(height: 12),
+2768:         Row(
+2769:           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2770:           children: [
+2771:             Expanded(
+2772:               child: Text(
+2773:                 _loadingLocation
+2774:                     ? "Yakındaki camiler aranıyor..."
+2775:                     : _currentPosition != null
+2776:                         ? "Konumunuza En Yakın ${_dynamicMosquesList.length} Cami"
+2777:                         : "Konum alınıyor...",
+2778:                 style: const TextStyle(
+2779:                   fontWeight: FontWeight.bold,
+2780:                   color: Color(0xFF1E5E43),
+2781:                   fontSize: 13.5,
+2782:                 ),
+2783:               ),
+2784:             ),
+2785:             if (_loadingLocation)
+2786:               const SizedBox(
+2787:                 width: 20,
+2788:                 height: 20,
+2789:                 child: CircularProgressIndicator(
+2790:                   strokeWidth: 2,
+2791:                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF27A770)),
+2792:                 ),
+2793:               )
+2794:             else
+2795:               IconButton(
+2796:                 icon: const Icon(Icons.my_location, color: Color(0xFF27A770), size: 20),
+2797:                 onPressed: () => _getUserLocation(forceRefresh: true),
+2798:                 tooltip: "Konumu 
+<truncated 485 bytes>
+>(Color(0xFF27A770)),
+2811:                       ),
+2812:                       SizedBox(height: 16),
+2813:                       Text(
+2814:                         "Konumunuza yakın camiler aranıyor...",
+2815:                         style: TextStyle(color: Colors.grey, fontSize: 13),
+2816:                       ),
+2817:                     ],
+2818:                   ),
+2819:                 )
+2820:               : _dynamicMosquesList.isEmpty
+2821:                   ? Center(
+2822:                       child: Column(
+2823:                         mainAxisAlignment: MainAxisAlignment.center,
+2824:                         children: [
+2825:                           const Icon(Icons.mosque, size: 48, color: Colors.grey),
+2826:                           const SizedBox(height: 12),
+2827:                           const Text(
+2828:                             "Yakınınızda cami bulunamadı.",
+2829:                             style: TextStyle(fontSize: 14, color: Colors.grey),
+2830:                           ),
+2831:                           const SizedBox(height: 8),
+2832:                           ElevatedButton.icon(
+2833:                             onPressed: () => _getUserLocation(forceRefresh: true),
+2834:                             icon: const Icon(Icons.refresh, size: 18),
+2835:                             label: const Text("Tekrar Dene"),
+2836:                             style: ElevatedButton.styleFrom(
+2837:                               backgroundColor: const Color(0xFF27A770),
+2838:                               foregroundColor: Colors.white,
+2839:                             ),
+2840:                           ),
+2841:                         ],
+2842:                       ),
+2843:                     )
+2844:                   : ListView.builder(
+2845:                       itemCount: _dynamicMosquesList.length,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

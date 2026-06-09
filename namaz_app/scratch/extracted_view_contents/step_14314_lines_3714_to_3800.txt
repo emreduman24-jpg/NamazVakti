@@ -1,0 +1,84 @@
+Created At: 2026-06-01T21:12:57Z
+Completed At: 2026-06-01T21:12:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6360
+Total Bytes: 258167
+Showing lines 3714 to 3800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3714:   Widget _buildYasinSuresi() {
+3715:     const String yasinUrl = "https://server8.mp3quran.net/afs/036.mp3";
+3716:     const String yasinName = "Yasin Suresi - Meal ve Tilavet";
+3717:     final isCurrent = _currentAudioUrl == yasinUrl;
+3718: 
+3719:     return Column(
+3720:       children: [
+3721:         Container(
+3722:           padding: EdgeInsets.all(16),
+3723:           decoration: BoxDecoration(
+3724:             color: const Color(0xFFEAF7F1),
+3725:             borderRadius: BorderRadius.circular(16),
+3726:             border: Border.all(color: const Color(0xFF27A770).withOpacity(0.3)),
+3727:           ),
+3728:           child: Column(
+3729:             children: [
+3730:               Text(
+3731:                 "💚 Yasin Suresi Dinle",
+3732:                 style: TextStyle(
+3733:                   fontWeight: FontWeight.bold,
+3734:                   fontSize: 16,
+3735:                   color: _greenColor,
+3736:                 ),
+3737:               ),
+3738:               SizedBox(height: 12),
+3739:               Row(
+3740:                 mainAxisAlignment: MainAxisAlignment.center,
+3741:                 children: [
+3742:                   IconButton(
+3743:                     iconSize: 48,
+3744:                     icon: Icon(
+3745:                       (isCurrent && _playerState == PlayerState.playing)
+3746:                           ? Icons.pause_circle_filled
+3747:                           : Icons.play_circle_filled,
+3748:                       color: const Color(0xFF27A770),
+3749:                     ),
+3750:             
+<truncated 650 bytes>
+       ],
+3764:               ),
+3765:             ],
+3766:           ),
+3767:         ),
+3768:         SizedBox(height: 16),
+3769:         Align(
+3770:           alignment: Alignment.centerLeft,
+3771:           child: Text(
+3772:             "Yasin-i Şerif İlk Ayetleri",
+3773:             style: TextStyle(
+3774:               fontWeight: FontWeight.bold,
+3775:               fontSize: 15,
+3776:               color: _greenColor,
+3777:             ),
+3778:           ),
+3779:         ),
+3780:         SizedBox(height: 8),
+3781:         Expanded(
+3782:           child: Container(
+3783:             padding: EdgeInsets.all(16),
+3784:             decoration: BoxDecoration(
+3785:               color: Colors.white,
+3786:               borderRadius: BorderRadius.circular(16),
+3787:               border: Border.all(color: Colors.grey[200]!),
+3788:             ),
+3789:             child: SingleChildScrollView(
+3790:               child: Text(
+3791:                 "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\n"
+3792:                 "يس ﴿١﴾ وَالْقُرْآنِ الْحَكِيمِ ﴿٢﴾ إِنَّكَ لَمِنَ الْمُرْسَلِينَ ﴿٣﴾ عَلَىٰ صِرَاطٍ مُسْتَقِيمٍ ﴿٤﴾ تَنْزِيلَ الْعَزِيزِ الرَّحِيمِ ﴿٥﴾ لِتُنْذِرَ قَوْمًا مَا أُنْdevİRİLMİŞTİR ﴿٦﴾ لَقَدْ حَقَّ الْقَوْلُ عَلَىٰ أَكْثَرِهِمْ فَهُمْ لَا يُؤْمِنُونَ ﴿٧﴾",
+3793:                 textAlign: TextAlign.right,
+3794:                 style: TextStyle(
+3795:                   fontFamily: 'Traditional Arabic',
+3796:                   fontSize: 20,
+3797:                   height: 2.2,
+3798:                   color: _textColor,
+3799:                 ),
+3800:               ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

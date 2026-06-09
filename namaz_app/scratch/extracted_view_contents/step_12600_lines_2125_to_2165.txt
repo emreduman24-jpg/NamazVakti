@@ -1,0 +1,49 @@
+Created At: 2026-06-01T11:05:34Z
+Completed At: 2026-06-01T11:05:35Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5235
+Total Bytes: 211718
+Showing lines 2125 to 2165
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2125:                     ],
+2126:                   ),
+2127:                 ),
+2128:               ),
+2129:               SizedBox(height: 24),
+2130:               // Custom Visual Compass stack
+2131:               Center(
+2132:                 child: Stack(
+2133:                   alignment: Alignment.center,
+2134:                   children: [
+2135:                     // Compass Ring (Dial) rotated by DialRotation
+2136:                     Transform.rotate(
+2137:                       angle: (dialRotation * math.pi / 180),
+2138:                       child: Container(
+2139:                         width: 230,
+2140:                         height: 230,
+2141:                         decoration: BoxDecoration(
+2142:                           color: Colors.white,
+2143:                           shape: BoxShape.circle,
+2144:                           border: Border.all(
+2145:                             color: const Color(0xFF27A770),
+2146:                             width: 5,
+2147:                           ),
+2148:                           boxShadow: const [
+2149:                             BoxShadow(color: Colors.black12, blurRadius: 15),
+2150:                           ],
+2151:                         ),
+2152:                         child: const Stack(
+2153:                           children: [
+2154:                             Align(
+2155:                               alignment: Alignment.topCenter,
+2156:                               child: Padding(
+2157:                                 padding: EdgeInsets.all(8.0),
+2158:                                 child: Text(
+2159:                                   "K",
+2160:                                   style: TextStyle(
+2161:                                     fontWeight: FontWeight.bold,
+2162:                                     color: Colors.red,
+2163:                                     fontSize: 18,
+2164:                                   ),
+2165:                                 ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

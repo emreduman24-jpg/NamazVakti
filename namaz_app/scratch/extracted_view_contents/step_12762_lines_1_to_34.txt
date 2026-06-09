@@ -1,0 +1,42 @@
+Created At: 2026-06-01T11:28:47Z
+Completed At: 2026-06-01T11:28:48Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 34
+Total Bytes: 2138
+Showing lines 1 to 34
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Implementation Plan - Futuristic Qibla Radar Redesign (No Simulation)
+2: 
+3: Based on your feedback, we are discarding the traditional circular compass style. We will implement a completely different, extremely modern, and highly functional **Futuristic Qibla Radar & Waypoint Lock Screen**, removing all simulation controls entirely.
+4: 
+5: ## User Review Required
+6: 
+7: > [!IMPORTANT]
+8: > - **Futuristic Qibla Radar Grid:** Instead of a circular compass tape with North/South markers, we are creating a dark military-tech **Radar Scan Screen** with glowing concentric rings and scanning sweep beams.
+9: > - **Kaaba Waypoint Tracking:** The Kaaba appears as a glowing golden blip `🕋` that physically rotates around the radar rings.
+10: > - **Target-Lock Alignment Assist:** When the user rotates the device to bring the Kaaba waypoint directly into the target bracket at the top of the radar (0°), it triggers a **"TARGET LOCK" (Kıbleye Hizalandı)** event with a glowing green success effect.
+11: > - **No Simulation:** All simulation controls (switches, sliders, manual variables) are removed completely. If no sensor is available, a clean error screen is presented.
+12: 
+13: ## Proposed Changes
+14: 
+15: ### [Component Name] UI Screens (namaz_app/lib/screens)
+16: 
+17: ---
+18: 
+19: #### [MODIFY] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+20: 
+21: - Define `_KibleRadarPainter` to draw concentric radar scanner rings, sweep trails, and a target bracket.
+22: - Implement the radar tracking widget structure in `_buildKibleBulucu()`.
+23: - Calculate the real-time distance from the user's GPS coordinates (`_currentPosition`) to Mecca (`21.4225`, `39.8262`) and display it in a beautiful glassmorphic HUD.
+24: - Display a clean warning message if the device doesn't support magnetic compass sensors.
+25: 
+26: ## Verification Plan
+27: 
+28: ### Automated Tests
+29: - Run `flutter analyze lib/` to ensure zero compilation errors.
+30: 
+31: ### Manual Verification
+32: - Deploy using Hot Restart and open the Qibla Finder tool on a real device with compass sensors.
+33: - Verify that rotating the device updates the Kaaba radar blip position and locks on green with high contrast.
+34: 
+The above content shows the entire, complete file contents of the requested file.

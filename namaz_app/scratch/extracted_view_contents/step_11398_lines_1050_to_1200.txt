@@ -1,0 +1,97 @@
+Created At: 2026-06-01T05:25:47Z
+Completed At: 2026-06-01T05:25:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5236
+Total Bytes: 214372
+Showing lines 1050 to 1200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1050:         return const Center(
+1051:           child: Text("Bu özellik çok yakında eklenecektir."),
+1052:         );
+1053:     }
+1054:   }
+1055: 
+1056:   // 1. Dini Günler
+1057:   Widget _buildDiniGunler() {
+1058:     final list = _diniGunlerByYear[_selectedDiniGunlerYear] ?? [];
+1059:     final Map<String, List<Map<String, String>>> grouped = {};
+1060:     for (var item in list) {
+1061:       final cat = item['kat'] ?? 'Diğer';
+1062:       grouped.putIfAbsent(cat, () => []).add(item);
+1063:     }
+1064: 
+1065:     final categoryOrder = [
+1066:       "Kandil ve Mübarek Geceler",
+1067:       "Ramazan Bayramı",
+1068:       "Kurban Bayramı",
+1069:       "Hicri Yılbaşı ve Aşure"
+1070:     ];
+1071: 
+1072:     return Column(
+1073:       children: [
+1074:         // Year tabs horizontally
+1075:         SingleChildScrollView(
+1076:           scrollDirection: Axis.horizontal,
+1077:           child: Row(
+1078:             children: ["2026", "2027", "2028", "2029", "2030"].map((year) {
+1079:               final isSelected = _selectedDiniGunlerYear == year;
+1080:               return Padding(
+1081:                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
+1082:                 child: ChoiceChip(
+1083:                   label: Text(
+1084:                     year,
+1085:                     style: TextStyle(
+1086:                       color: isSelected ? Colors.white : const Color(0xFF1E5E43),
+1087:                       fontWeight: FontWeight.bold,
+1088:                     ),
+1089:                   ),
+1090:                   selec
+<truncated 2917 bytes>
+:                         ),
+1155:                         trailing: Container(
+1156:                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+1157:                           decoration: BoxDecoration(
+1158:                             color: const Color(0xFF27A770).withOpacity(0.12),
+1159:                             borderRadius: BorderRadius.circular(20),
+1160:                           ),
+1161:                           child: Text(
+1162:                             day['tarih'] ?? '',
+1163:                             style: const TextStyle(
+1164:                               color: Color(0xFF1E5E43),
+1165:                               fontWeight: FontWeight.bold,
+1166:                               fontSize: 12,
+1167:                             ),
+1168:                           ),
+1169:                         ),
+1170:                       ),
+1171:                     );
+1172:                   }).toList(),
+1173:                 ],
+1174:               );
+1175:             }).toList(),
+1176:           ),
+1177:         ),
+1178:       ],
+1179:     );
+1180:   }
+1181: 
+1182:   // 2. Dua İste
+1183:   Widget _buildDuaIste() {
+1184:     return Column(
+1185:       crossAxisAlignment: CrossAxisAlignment.start,
+1186:       children: [
+1187:         Card(
+1188:           elevation: 2,
+1189:           shape: RoundedRectangleBorder(
+1190:             borderRadius: BorderRadius.circular(16),
+1191:           ),
+1192:           child: Padding(
+1193:             padding: const EdgeInsets.all(14.0),
+1194:             child: Column(
+1195:               crossAxisAlignment: CrossAxisAlignment.start,
+1196:               children: [
+1197:                 const Text(
+1198:                   "Dua Talebinde Bulun",
+1199:                   style: TextStyle(
+1200:                     fontWeight: FontWeight.bold,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

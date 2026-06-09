@@ -1,0 +1,39 @@
+Created At: 2026-06-01T12:06:21Z
+Completed At: 2026-06-01T12:06:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6509
+Total Bytes: 263355
+Showing lines 2970 to 3000
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2970:         ],
+2971:       ),
+2972:     );
+2973:   }
+2974: 
+2975:   Widget _buildMonthlyListView(bool dark, String todayStr) {
+2976:     Map<String, dynamic>? todayData;
+2977:     for (var day in _monthlyPrayerTimes) {
+2978:       if (day['MiladiTarihKisa'] == todayStr) {
+2979:         todayData = day;
+2980:         break;
+2981:       }
+2982:     }
+2983: 
+2984:     return Expanded(
+2985:       child: ListView(
+2986:         padding: EdgeInsets.zero,
+2987:         children: [
+2988:           if (todayData != null) _buildTodayFeaturedCard(todayData, dark),
+2989:           
+2990:           Padding(
+2991:             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+2992:             child: Row(
+2993:               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2994:               children: [
+2995:                 Text(
+2996:                   "Aylık Liste",
+2997:                   style: TextStyle(
+2998:                     fontSize: 13.5,
+2999:                     fontWeight: FontWeight.bold,
+3000:                     color: dark ? Colors.white : const Color(0xFF1E5E43),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

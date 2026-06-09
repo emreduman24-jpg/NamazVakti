@@ -1,0 +1,94 @@
+Created At: 2026-05-23T18:32:24Z
+Completed At: 2026-05-23T18:32:25Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187772
+Showing lines 1750 to 1845
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1750:                                       Text(
+1751:                                         "🕌",
+1752:                                         style: TextStyle(fontSize: 16),
+1753:                                       ),
+1754:                                     ],
+1755:                                   ),
+1756:                                 ),
+1757:                               ),
+1758:                             ),
+1759:                             // Center dot
+1760:                             Container(
+1761:                               width: 12,
+1762:                               height: 12,
+1763:                               decoration: const BoxDecoration(
+1764:                                 color: Color(0xFF1E5E43),
+1765:                                 shape: BoxShape.circle,
+1766:                               ),
+1767:                             ),
+1768:                           ],
+1769:                         ),
+1770:                       ),
+1771:                     ),
+1772:                   ],
+1773:                 ),
+1774:               ),
+1775:               const SizedBox(height: 36),
+1776:               Text(
+1777:                 "Kıble Açısı: ${qiblaAngle.toInt()}° (İstanbul)",
+1778:                 style: const TextStyle(
+1779:                   fontWeight: FontWeight.bold,
+1780:                   fontSize: 16,
+1781:                   color: Color(0xFF1E5E43),
+1782:                 ),
+1783:               ),
+1784:               const SizedBox(height: 8),
+1785:               Text(
+1786:            
+<truncated 634 bytes>
+             ),
+1799:                   subtitle: const Text(
+1800:                     "Pusulayı el ile döndürmek için aktifleştirin",
+1801:                     style: TextStyle(fontSize: 12),
+1802:                   ),
+1803:                   value: _forceSimulation,
+1804:                   activeThumbColor: const Color(0xFF27A770),
+1805:                   onChanged: (val) {
+1806:                     setState(() {
+1807:                       _forceSimulation = val;
+1808:                     });
+1809:                   },
+1810:                 ),
+1811:               ),
+1812:               if (!hasSensor) ...[
+1813:                 const SizedBox(height: 8),
+1814:                 const Text(
+1815:                   "Sürgü ile pusula açısını döndürün:",
+1816:                   style: TextStyle(fontSize: 12, color: Colors.grey),
+1817:                 ),
+1818:                 Padding(
+1819:                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+1820:                   child: Slider(
+1821:                     value: _manualCompassHeading,
+1822:                     min: 0,
+1823:                     max: 360,
+1824:                     activeColor: const Color(0xFF27A770),
+1825:                     onChanged: (val) {
+1826:                       setState(() {
+1827:                         _manualCompassHeading = val;
+1828:                       });
+1829:                     },
+1830:                   ),
+1831:                 ),
+1832:               ],
+1833:               const SizedBox(height: 24),
+1834:             ],
+1835:           ),
+1836:         );
+1837:       },
+1838:     );
+1839:   }
+1840: 
+1841:   // 11. Zikirmatik
+1842:   Widget _buildZikirmatik() {
+1843:     final zikir = _zikirData[_selectedZikirId] ?? _zikirData['subhanallah']!;
+1844:     return SingleChildScrollView(
+1845:       child: Column(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

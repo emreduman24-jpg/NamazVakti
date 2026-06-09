@@ -1,0 +1,79 @@
+Created At: 2026-06-03T15:24:28Z
+Completed At: 2026-06-03T15:24:29Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8820
+Total Bytes: 360037
+Showing lines 2421 to 3220
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2421:         ),
+2422: 
+2423:         // Input Field
+2424:         Container(
+2425:           padding: const EdgeInsets.all(12),
+2426:           decoration: BoxDecoration(
+2427:             color: _isDark ? const Color(0xFF0C1524) : Colors.grey[50],
+2428:             border: Border(
+2429:               top: BorderSide(
+2430:                 color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+2431:               ),
+2432:             ),
+2433:           ),
+2434:           child: SafeArea(
+2435:             top: false,
+2436:             child: Row(
+2437:               children: [
+2438:                 Expanded(
+2439:                   child: Container(
+2440:                     decoration: BoxDecoration(
+2441:                       color: _isDark ? const Color(0xFF131D31) : Colors.white,
+2442:                       borderRadius: BorderRadius.circular(24),
+2443:                       border: Border.all(
+2444:                         color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFCBD5E1),
+2445:                       ),
+2446:                     ),
+2447:                     child: Row(
+2448:                       children: [
+2449:                         const SizedBox(width: 14),
+2450:                         Expanded(
+2451:                           child: TextField(
+2452:                             controller: _diniHocaInputController,
+2453:                             style: TextStyle(color: _textColor, fontSize: 14.5),
+2454:                             decoration: const InputDecoration(
+2455:                             
+<truncated 38062 bytes>
+                alignment: Alignment.center,
+3187:                           child: Text(
+3188:                             "Cüzler",
+3189:                             style: TextStyle(
+3190:                               color: _quranTab == 1 ? Colors.white : (_isDark ? Colors.white60 : Colors.black54),
+3191:                               fontWeight: FontWeight.bold,
+3192:                               fontSize: 14,
+3193:                             ),
+3194:                           ),
+3195:                         ),
+3196:                       ),
+3197:                     ),
+3198:                   ],
+3199:                 ),
+3200:               ),
+3201:               const SizedBox(height: 12),
+3202:               // Search Bar
+3203:               TextField(
+3204:                 style: TextStyle(color: _isDark ? Colors.white : Colors.black87),
+3205:                 decoration: InputDecoration(
+3206:                   hintText: _quranTab == 0 ? "Sure ara (Örn: Yasin)..." : "Cüz ara...",
+3207:                   hintStyle: TextStyle(color: _isDark ? Colors.white38 : Colors.black45),
+3208:                   prefixIcon: Icon(Icons.search_rounded, color: _isDark ? Colors.white54 : Colors.black45),
+3209:                   suffixIcon: _quranSearchQuery.isNotEmpty
+3210:                       ? IconButton(
+3211:                           icon: Icon(Icons.clear_rounded, color: _isDark ? Colors.white54 : Colors.black45),
+3212:                           onPressed: () {
+3213:                             setState(() {
+3214:                               _quranSearchQuery = "";
+3215:                             });
+3216:                           },
+3217:                         )
+3218:                       : null,
+3219:                   filled: true,
+3220:                   fillColor: _isDark ? const Color(0xFF131F35) : Colors.white,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

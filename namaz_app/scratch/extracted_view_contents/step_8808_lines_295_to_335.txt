@@ -1,0 +1,49 @@
+Created At: 2026-05-30T20:57:55Z
+Completed At: 2026-05-30T20:57:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5200
+Total Bytes: 212169
+Showing lines 295 to 335
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+295:     });
+296:     try {
+297:       Position? position;
+298: 
+299:       // 1. Check if location services are enabled
+300:       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+301:       LocationPermission permission = await Geolocator.checkPermission();
+302: 
+303:       // 2. Request permission if denied
+304:       if (permission == LocationPermission.denied) {
+305:         permission = await Geolocator.requestPermission();
+306:       }
+307: 
+308:       // 3. Try to get high-accuracy live GPS location first if permitted (tam konum sokağına kadar)
+309:       if (serviceEnabled &&
+310:           (permission == LocationPermission.whileInUse ||
+311:               permission == LocationPermission.always)) {
+312:         try {
+313:           // Attempt last known position first as a fast warm-up/cache
+314:           position = await Geolocator.getLastKnownPosition();
+315:           
+316:           // Request high-accuracy live GPS position (sokağına kadar)
+317:           position = await Geolocator.getCurrentPosition(
+318:             desiredAccuracy: LocationAccuracy.high, // High accuracy down to street level
+319:             timeLimit: const Duration(seconds: 7),
+320:           );
+321:           debugPrint("Successfully fetched live high-accuracy GPS: ${position.latitude}, ${position.longitude}");
+322:         } catch (e) {
+323:           debugPrint("Failed to fetch live GPS: $e. Trying fallback.");
+324:         }
+325:       }
+326: 
+327:       // 4. Fallback to manually selected city coordinates if live GPS is unavailable/denied/timeout
+328:       if (position == null) {
+329:         final savedLoc = await _repository.getSavedLocation();
+330:         final savedCity = savedLoc['cityName'];
+331:         if (savedCity != null && savedCity.isNotEmpty) {
+332:           final normalized = _normalizeCityName(savedCity);
+333:           if (_cityCoordinates.containsKey(normalized)) {
+334:             final coords = _cityCoordinates[normalized]!;
+335:             position = Position(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

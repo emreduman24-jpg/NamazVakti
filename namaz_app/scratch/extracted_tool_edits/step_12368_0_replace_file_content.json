@@ -1,0 +1,16 @@
+{
+  "step_index": 12368,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Declare Aylık Namaz Vakitleri state variables in _ToolDetailScreenState.\"",
+    "EndLine": "40",
+    "Instruction": "\"Add _monthlyPrayerTimes, _loadingMonthlyTimes, and _currentLocationName state fields.\"",
+    "ReplacementContent": "\"  // Yakındaki Camiler (Location & GPS State)\\n  Position? _currentPosition;\\n  bool _loadingLocation = false;\\n  List<Map<String, dynamic>> _dynamicMosquesList = [];\\n\\n  // Aylık Namaz Vakitleri State\\n  List<Map<String, dynamic>> _monthlyPrayerTimes = [];\\n  bool _loadingMonthlyTimes = false;\\n  String _currentLocationName = \\\"\\\";\"",
+    "StartLine": "36",
+    "TargetContent": "\"  // Yakındaki Camiler (Location & GPS State)\\n  Position? _currentPosition;\\n  bool _loadingLocation = false;\\n  List<Map<String, dynamic>> _dynamicMosquesList = [];\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Editing state variables\"",
+    "toolSummary": "\"Adding monthly state variables\""
+  }
+}

@@ -1,0 +1,59 @@
+Created At: 2026-06-03T06:18:57Z
+Completed At: 2026-06-03T06:18:58Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 1900 to 1950
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1900:                                 style: TextStyle(
+1901:                                   color: const Color(0xFFC5A059),
+1902:                                   fontWeight: FontWeight.bold,
+1903:                                   fontSize: 12,
+1904:                                   letterSpacing: 1.0,
+1905:                                 ),
+1906:                               ),
+1907:                             ],
+1908:                           ),
+1909:                           Container(
+1910:                             width: 32,
+1911:                             height: 32,
+1912:                             decoration: const BoxDecoration(
+1913:                               color: Color(0xFFC5A059),
+1914:                               shape: BoxShape.circle,
+1915:                             ),
+1916:                             child: Icon(
+1917:                               Icons.play_arrow_rounded,
+1918:                               color: _isDark ? const Color(0xFF0C1524) : Colors.white,
+1919:                               size: 20,
+1920:                             ),
+1921:                           ),
+1922:                         ],
+1923:                       ),
+1924:                       const SizedBox(height: 12),
+1925:                       Text(
+1926:                         _lastSuraName,
+1927:                         style: const TextStyle(
+1928:                           color: Colors.white,
+1929:                           fontWeight: FontWeight.bold,
+1930:                           fontSize: 22,
+1931:                         ),
+1932:                       ),
+1933:                       const SizedBox(height: 4),
+1934:                       Text(
+1935:                         "Ayet $_lastAyahNo / $_lastTotalAyahs",
+1936:                         style: const TextStyle(
+1937:                           color: Colors.white70,
+1938:                           fontSize: 13,
+1939:                         ),
+1940:                       ),
+1941:                       const SizedBox(height: 16),
+1942:                       Row(
+1943:                         children: [
+1944:                           Expanded(
+1945:                             child: ClipRRect(
+1946:                               borderRadius: BorderRadius.circular(4),
+1947:                               child: LinearProgressIndicator(
+1948:                                 value: _lastPercent / 100.0,
+1949:                                 backgroundColor: Colors.white.withOpacity(0.1),
+1950:                                 valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFC5A059)),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

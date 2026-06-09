@@ -1,0 +1,64 @@
+Created At: 2026-06-01T12:00:24Z
+Completed At: 2026-06-01T12:00:25Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6505
+Total Bytes: 263114
+Showing lines 3095 to 3150
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3095:                       bottom: BorderSide(
+3096:                         color: dark ? Colors.white.withOpacity(0.04) : Colors.grey[200]!,
+3097:                         width: 1,
+3098:                       ),
+3099:                       left: isToday
+3100:                           ? const BorderSide(color: Color(0xFF27A770), width: 4.5)
+3101:                           : BorderSide.none,
+3102:                     ),
+3103:                   ),
+3104:                   child: Row(
+3105:                     children: [
+3106:                       // Date
+3107:                       Expanded(
+3108:                         flex: 2,
+3109:                         child: Row(
+3110:                           children: [
+3111:                             Text(
+3112:                               shortDate,
+3113:                               style: TextStyle(
+3114:                                 fontSize: 10.5,
+3115:                                 fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
+3116:                                 color: isToday 
+3117:                                     ? const Color(0xFF27A770) 
+3118:                                     : (dark ? Colors.white.withOpacity(0.9) : Colors.black87),
+3119:                               ),
+3120:                             ),
+3121:                             if (isToday) ...[
+3122:                               const SizedBox(width: 4),
+3123:                               Container(
+3124:                                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
+3125:                                 decoration: BoxDecoration(
+3126:                                   color: const Color(0xFFD4AF37),
+3127:                                   borderRadius: BorderRadius.circular(4),
+3128:                                 ),
+3129:                                 child: const Text(
+3130:                                   "Bugün",
+3131:                                   style: TextStyle(
+3132:                                     fontSize: 7,
+3133:                                     fontWeight: FontWeight.bold,
+3134:                                     color: Colors.white,
+3135:                                   ),
+3136:                                 ),
+3137:                               ),
+3138:                             ],
+3139:                           ],
+3140:                         ),
+3141:                       ),
+3142:                       // Times
+3143:                       ...vakitMeta.map(
+3144:                         (meta) => Expanded(
+3145:                           flex: 1,
+3146:                           child: Text(
+3147:                             day[meta['key']] ?? '',
+3148:                             textAlign: TextAlign.center,
+3149:                             style: TextStyle(
+3150:                               fontSize: 10.5,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

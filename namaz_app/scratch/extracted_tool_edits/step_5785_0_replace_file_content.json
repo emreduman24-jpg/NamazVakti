@@ -1,0 +1,16 @@
+{
+  "step_index": 5785,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Insert the dynamic _buildYakindakiCamiler method into tool_detail_screen.dart\"",
+    "EndLine": "2541",
+    "Instruction": "\"Insert _buildYakindakiCamiler method above _buildHadis40\"",
+    "ReplacementContent": "\"  }\\n\\n  // 14. Yakındaki Camiler\\n  Widget _buildYakindakiCamiler() {\\n    return Column(\\n      children: [\\n        // Hadith Card at the top\\n        Card(\\n          elevation: 1.5,\\n          shape: RoundedRectangleBorder(\\n            borderRadius: BorderRadius.circular(16),\\n          ),\\n          color: const Color(0xFFEAF7F1),\\n          child: Container(\\n            decoration: BoxDecoration(\\n              borderRadius: BorderRadius.circular(16),\\n              border: Border.all(\\n                color: const Color(0xFF27A770).withOpacity(0.3),\\n                width: 1,\\n              ),\\n            ),\\n            padding: const EdgeInsets.all(16.0),\\n            child: Column(\\n              crossAxisAlignment: CrossAxisAlignment.start,\\n              children: const [\\n                Row(\\n                  children: [\\n                    Icon(\\n                      Icons.mosque,\\n                      color: Color(0xFF27A770),\\n                      size: 20,\\n                    ),\\n                    SizedBox(width: 8),\\n                    Text(\\n                      \\\"Camide Namaz Kılmanın Fazileti\\\",\\n                      style: TextStyle(\\n                        fontWeight: FontWeight.bold,\\n                        fontSize: 14,\\n                        color: Color(0xFF1E5E43),\\n                      ),\\n                    ),\\n                  ],\\n                ),\\n                SizedBox(height: 8),\\n                Text(\\n                  \\\"“Cemaatle kılınan namaz, tek başına kılınan namazdan yirmi yedi derece daha faziletlidir.”\\\",\\n                  style: TextStyle(\\n                    fontStyle: FontStyle.italic,\\n                    fontSize: 13,\\n                    color: Colors.black87,\\n                    height: 1.35,\\n                  ),\\n                ),\\n                SizedBox(height: 6),\\n                Align(\\n                  alignment: Alignment.bottomRight,\\n                  child: Text(\\n                    \\\"(Buhârî, Ezân 30\n<truncated 3285 bytes>",
+    "StartLine": "2537",
+    "TargetContent": "\"  }\\n\\n\\n  // 15. 40 Hadis\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding dynamic mosque list widget\"",
+    "toolSummary": "\"Add dynamic mosque list widget\""
+  }
+}

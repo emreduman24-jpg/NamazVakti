@@ -1,0 +1,49 @@
+Created At: 2026-06-01T21:13:16Z
+Completed At: 2026-06-01T21:13:16Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6360
+Total Bytes: 258167
+Showing lines 720 to 760
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+720:       if (key == 'kaza_sabah') _kazaSabah = newValue;
+721:       if (key == 'kaza_ogle') _kazaOgle = newValue;
+722:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+723:       if (key == 'kaza_aksam') _kazaAksam = newValue;
+724:       if (key == 'kaza_yatsi') _kazaYatsi = newValue;
+725:       if (key == 'kaza_vitir') _kazaVitir = newValue;
+726:     });
+727:   }
+728: 
+729:   void _initAudio() {
+730:     _audioPlayer = AudioPlayer();
+731:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+732:       if (mounted) {
+733:         setState(() {
+734:           _playerState = state;
+735:         });
+736:       }
+737:     });
+738:   }
+739: 
+740:   String _normalize(String text) {
+741:     return text
+742:         .toLowerCase()
+743:         .replaceAll('ı', 'i')
+744:         .replaceAll('ğ', 'g')
+745:         .replaceAll('ü', 'u')
+746:         .replaceAll('ş', 's')
+747:         .replaceAll('ö', 'o')
+748:         .replaceAll('ç', 'c');
+749:   }
+750: 
+751:   @override
+752:   void dispose() {
+753:     _audioPlayer?.dispose();
+754:     _duaNameController.dispose();
+755:     _duaTextController.dispose();
+756:     _questionNameController.dispose();
+757:     _qaInputController.dispose();
+758:     _chatInputController.dispose();
+759:     _hadisSearchController.dispose();
+760:     _goldController.dispose();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

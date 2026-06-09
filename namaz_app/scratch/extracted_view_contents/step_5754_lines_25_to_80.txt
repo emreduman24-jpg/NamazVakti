@@ -1,0 +1,64 @@
+Created At: 2026-05-24T09:09:47Z
+Completed At: 2026-05-24T09:09:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4767
+Total Bytes: 194197
+Showing lines 25 to 80
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+25: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+26:   final PrayerRepository _repository = PrayerRepository();
+27:   AudioPlayer? _audioPlayer;
+28:   PlayerState _playerState = PlayerState.stopped;
+29:   String _currentAudioUrl = "";
+30:   String _currentTrackName = "";
+31: 
+32:   // Zikirmatik State
+33:   int _zikirCount = 0;
+34:   int _zikirTarget = 33;
+35:   bool _zikirSoundEnabled = true;
+36:   String _selectedZikirId = 'subhanallah';
+37: 
+38:   final Map<String, Map<String, dynamic>> _zikirData = {
+39:     'subhanallah': {
+40:       'ad': 'Sübhânallâh',
+41:       'arapca': 'سُبْحَانَ اللَّهِ',
+42:       'anlam': 'Allah noksan sıfatlardan uzaktır.',
+43:       'fazilet': 'Günde 100 defa okuyanın günahları deniz köpüğü kadar da olsa bağışlanır.',
+44:       'hedef': 33
+45:     },
+46:     'elhamdulillah': {
+47:       'ad': 'Elhamdülillâh',
+48:       'arapca': 'الْحَمْدُ لِلَّهِ',
+49:       'anlam': 'Hamd Allah\'a mahsustur.',
+50:       'fazilet': 'Mizanı dolduran en hayırlı hamd cümlesidir.',
+51:       'hedef': 33
+52:     },
+53:     'allahuekber': {
+54:       'ad': 'Allâhu Ekber',
+55:       'arapca': 'اللَّهُ أَكْبَرُ',
+56:       'anlam': 'Allah en büyüktür.',
+57:       'fazilet': 'Allah\'ın büyüklüğünü ve yüceliğini tefekkür zikridir.',
+58:       'hedef': 34
+59:     },
+60:     'lailaheillallah': {
+61:       'ad': 'Lâ ilâhe illallâh',
+62:       'arapca': 'لَا إِلَٰهَ إِلَّا اللَّهُ',
+63:       'anlam': 'Allah\'tan başka ilah yoktur.',
+64:       'fazilet': 'Zikrin en faziletlisi kelime-i tevhiddir.',
+65:       'hedef': 9999
+66:     }
+67:   };
+68: 
+69:   // Dini Gunler State
+70:   String _selectedDiniGunlerYear = "2026";
+71:   final Map<String, List<Map<String, String>>> _diniGunlerByYear = {
+72:     "2026": [
+73:       { "ad": "Regaib Kandili", "gun": "Pazartesi", "tarih": "26 Ocak 2026", "kat": "Kandil ve Mübarek Geceler" },
+74:       { "ad": "Miraç Kandili", "gun": "Cuma", "tarih": "13 Şubat 2026", "kat": "Kandil ve Mübarek Geceler" },
+75:       { "ad": "Berat Kandili", "gun": "Pazartesi", "tarih": "2 Mart 2026", "kat": "Kandil ve Mübarek Geceler" },
+76:       { "ad": "Ramazan Başlangıcı", "gun": "Perşembe", "tarih": "19 Mart 2026", "kat": "Kandil ve Mübarek Geceler" },
+77:       { "ad": "Kadir Gecesi", "gun": "Salı", "tarih": "14 Nisan 2026", "kat": "Kandil ve Mübarek Geceler" },
+78:       { "ad": "Ramazan Bayramı Arefesi", "gun": "Cuma", "tarih": "17 Nisan 2026", "kat": "Ramazan Bayramı" },
+79:       { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Cumartesi", "tarih": "18 Nisan 2026", "kat": "Ramazan Bayramı" },
+80:       { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Pazar", "tarih": "19 Nisan 2026", "kat": "Ramazan Bayramı" },
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

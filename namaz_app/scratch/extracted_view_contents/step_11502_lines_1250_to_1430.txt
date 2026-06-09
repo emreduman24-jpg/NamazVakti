@@ -1,0 +1,85 @@
+Created At: 2026-06-01T05:44:51Z
+Completed At: 2026-06-01T05:44:52Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5481
+Total Bytes: 225642
+Showing lines 1250 to 1430
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1250:                           catName,
+1251:                           style: TextStyle(
+1252:                             fontWeight: FontWeight.bold,
+1253:                             color: themeColor.withOpacity(0.9),
+1254:                             fontSize: 14,
+1255:                             letterSpacing: 0.3,
+1256:                           ),
+1257:                         ),
+1258:                       ],
+1259:                     ),
+1260:                   ),
+1261:                   // Items in this category
+1262:                   ...items.map((day) {
+1263:                     final dateStr = day['tarih'] ?? '';
+1264:                     final parsed = _parseDate(dateStr);
+1265: 
+1266:                     return Container(
+1267:                       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+1268:                       decoration: BoxDecoration(
+1269:                         color: Colors.white,
+1270:                         borderRadius: BorderRadius.circular(16),
+1271:                         boxShadow: [
+1272:                           BoxShadow(
+1273:                             color: Colors.black.withOpacity(0.02),
+1274:                             blurRadius: 8,
+1275:                             offset: const Offset(0, 2),
+1276:                           ),
+1277:                         ],
+1278:                       ),
+1279:                       child: InkWell(
+1280:                         borderRadius: BorderRadius.circular(16),
+1281:                         onTap: () {}, // Interactive feel
+1282:
+<truncated 6620 bytes>
+                               ),
+1389:                                         const SizedBox(width: 8),
+1390:                                         Text(
+1391:                                           _selectedDiniGunlerYear,
+1392:                                           style: const TextStyle(
+1393:                                             color: Color(0xFF718096),
+1394:                                             fontSize: 12,
+1395:                                             fontWeight: FontWeight.w500,
+1396:                                           ),
+1397:                                         ),
+1398:                                       ],
+1399:                                     ),
+1400:                                   ],
+1401:                                 ),
+1402:                               ),
+1403:                               // Far right calendar decoration icon
+1404:                               const Padding(
+1405:                                 padding: EdgeInsets.only(left: 6.0),
+1406:                                 child: Icon(
+1407:                                   Icons.keyboard_arrow_right_rounded,
+1408:                                   color: Color(0xFFCBD5E0),
+1409:                                   size: 20,
+1410:                                 ),
+1411:                               ),
+1412:                             ],
+1413:                           ),
+1414:                         ),
+1415:                       ),
+1416:                     );
+1417:                   }).toList(),
+1418:                 ],
+1419:               );
+1420:             }).toList(),
+1421:           ),
+1422:         ),
+1423:       ],
+1424:     );
+1425:   }
+1426: 
+1427:   // 2. Dua İste
+1428:   Widget _buildDuaIste() {
+1429:     return Column(
+1430:       crossAxisAlignment: CrossAxisAlignment.start,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

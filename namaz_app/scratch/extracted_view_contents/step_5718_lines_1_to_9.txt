@@ -1,0 +1,17 @@
+Created At: 2026-05-24T09:09:05Z
+Completed At: 2026-05-24T09:09:05Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 9
+Total Bytes: 539
+Showing lines 1 to 9
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Görev Listesi (checklists)
+2: 
+3: - `[x]` 1. pubspec.yaml & AndroidManifest.xml (Geolocator Entegrasyonu)
+4: - `[x]` 2. prayer_repository.dart & db.json Güçlendirmesi
+5: - `[x]` 3. tool_detail_screen.dart (Dua & Soru-Cevap Onay Akışı ve Görsel İyileştirmeler)
+6: - `[/]` 4. tool_detail_screen.dart (Yakındaki Camiler - GPS Entegrasyonu ve Haversine Hesabı)
+7: - `[ ]` 5. main_screen.dart (Degrade Yeşil Header & Görsel Zenginlik İyileştirmeleri)
+8: - `[ ]` 6. Derleme ve Test (Kıble Bulucu, Dua, Soru-Cevap ve Cami Konum Değişimi Testleri)
+9: 
+The above content shows the entire, complete file contents of the requested file.

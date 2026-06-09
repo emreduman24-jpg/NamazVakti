@@ -1,0 +1,16 @@
+{
+  "step_index": 7375,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Adding debug logging to see what coordinates and API response the Overpass query returns, helping diagnose the \\\"no mosques found\\\" issue\"",
+    "EndLine": "66",
+    "Instruction": "\"Add debug print statement to log the coordinates being used for mosque search\"",
+    "ReplacementContent": "\"  Future<void> _fetchNearbyMosques(double lat, double lon) async {\\n    debugPrint('=== MOSQUE SEARCH: Searching near lat=$lat, lon=$lon ===');\\n    // Try progressively larger radii until we find enough mosques\\n    final radii = [3000, 5000, 10000]; // meters\\n\\n    for (final radius in radii) {\\n      try {\"",
+    "StartLine": "60",
+    "TargetContent": "\"  Future<void> _fetchNearbyMosques(double lat, double lon) async {\\n    // Try progressively larger radii until we find enough mosques\\n    final radii = [3000, 5000, 10000]; // meters\\n\\n    for (final radius in radii) {\\n      try {\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding debug logging\"",
+    "toolSummary": "\"Add debug prints\""
+  }
+}

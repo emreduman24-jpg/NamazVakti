@@ -1,0 +1,16 @@
+{
+  "step_index": 11497,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Add Set state variable to track expanded religious days categories in tool_detail_screen.dart\"",
+    "EndLine": "437",
+    "Instruction": "\"Add _expandedDiniGunlerCategories state variable below _selectedDiniGunlerYear.\"",
+    "ReplacementContent": "\"  // Dini Gunler State\\n  String _selectedDiniGunlerYear = \\\"2026\\\";\\n  final Set<String> _expandedDiniGunlerCategories = {};\\n  final Map<String, List<Map<String, String>>> _diniGunlerByYear = {\"",
+    "StartLine": "435",
+    "TargetContent": "\"  // Dini Gunler State\\n  String _selectedDiniGunlerYear = \\\"2026\\\";\\n  final Map<String, List<Map<String, String>>> _diniGunlerByYear = {\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Declaring _expandedDiniGunlerCategories state in tool_detail_screen.dart\"",
+    "toolSummary": "\"Add state variable in tool_detail_screen.dart\""
+  }
+}

@@ -1,0 +1,90 @@
+Created At: 2026-05-23T13:45:48Z
+Completed At: 2026-05-23T13:45:48Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 1627 to 1850
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1627:   Widget _buildZikirmatik() {
+1628:     return Column(
+1629:       mainAxisAlignment: MainAxisAlignment.center,
+1630:       children: [
+1631:         Row(
+1632:           mainAxisAlignment: MainAxisAlignment.center,
+1633:           children: [
+1634:             const Text(
+1635:               "Hedef Zikir: ",
+1636:               style: TextStyle(fontWeight: FontWeight.bold),
+1637:             ),
+1638:             DropdownButton<int>(
+1639:               value: _zikirTarget,
+1640:               items: const [
+1641:                 DropdownMenuItem(value: 33, child: Text("33")),
+1642:                 DropdownMenuItem(value: 99, child: Text("99")),
+1643:                 DropdownMenuItem(value: 100, child: Text("100")),
+1644:                 DropdownMenuItem(value: 1000, child: Text("1000")),
+1645:                 DropdownMenuItem(value: 9999, child: Text("Limitsiz")),
+1646:               ],
+1647:               onChanged: (val) {
+1648:                 if (val != null) {
+1649:                   setState(() {
+1650:                     _zikirTarget = val;
+1651:                     _zikirCount = 0;
+1652:                   });
+1653:                   _repository.setZikirTarget(val);
+1654:                   _repository.setZikirCount(0);
+1655:                 }
+1656:               },
+1657:             ),
+1658:           ],
+1659:         ),
+1660:         const SizedBox(height: 24),
+1661:         GestureDetector(
+1662:           onTap: _incrementZikir,
+1663:           child: Container(
+1664:             width: 200,
+1665:             height: 200,
+1666:   
+<truncated 5600 bytes>
+     ),
+1811:         const SizedBox(height: 20),
+1812:         SizedBox(
+1813:           width: double.infinity,
+1814:           height: 48,
+1815:           child: ElevatedButton(
+1816:             style: ElevatedButton.styleFrom(
+1817:               backgroundColor: const Color(0xFF27A770),
+1818:             ),
+1819:             onPressed: () {
+1820:               setState(() {
+1821:                 if (_miladiToHicri) {
+1822:                   // Rough estimation of Hijri Date
+1823:                   final gYear = _selectedDate.year;
+1824:                   final gMonth = _selectedDate.month;
+1825:                   final gDay = _selectedDate.day;
+1826:                   final hYear = ((gYear - 622) * 1.0307).floor();
+1827:                   final hijriMonths = [
+1828:                     "Muharrem",
+1829:                     "Safer",
+1830:                     "Rebiülevvel",
+1831:                     "Rebiülahir",
+1832:                     "Cemaziyelevvel",
+1833:                     "Cemaziyelahir",
+1834:                     "Recep",
+1835:                     "Şaban",
+1836:                     "Ramazan",
+1837:                     "Şevval",
+1838:                     "Zilkade",
+1839:                     "Zilhicce",
+1840:                   ];
+1841:                   final hMonthIndex = (gMonth + 4) % 12;
+1842:                   final hDay = (gDay + 15) % 29 + 1;
+1843:                   _convertedDateResult =
+1844:                       "Hicri: $hDay ${hijriMonths[hMonthIndex]} $hYear";
+1845:                 } else {
+1846:                   // Hicri to Miladi estimation (+30 days)
+1847:                   final converted = _selectedDate.add(const Duration(days: 30));
+1848:                   _convertedDateResult =
+1849:                       "Miladi: ${converted.day}.${converted.month}.${converted.year}";
+1850:                 }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

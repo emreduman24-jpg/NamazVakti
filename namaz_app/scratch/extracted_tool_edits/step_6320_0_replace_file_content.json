@@ -1,0 +1,16 @@
+{
+  "step_index": 6320,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Added timeout limit and fallback mock position to _getUserLocation to prevent Geolocator hangs (ANRs) on the emulator.\"",
+    "EndLine": "137",
+    "Instruction": "\"Implement a 4-second timeout and mock position fallback in _getUserLocation.\"",
+    "ReplacementContent": "\"      Position? position;\\n      try {\\n        position = await Geolocator.getCurrentPosition(\\n          desiredAccuracy: LocationAccuracy.high,\\n          timeLimit: const Duration(seconds: 4),\\n        );\\n      } catch (e) {\\n        debugPrint(\\\"getCurrentPosition error/timeout: $e\\\");\\n        try {\\n          position = await Geolocator.getLastKnownPosition();\\n        } catch (_) {}\\n      }\\n\\n      if (position == null) {\\n        // Fallback mock coordinates (Kadıköy, İstanbul) if GPS service hangs or fails\\n        position = Position(\\n          latitude: 40.9901,\\n          longitude: 29.0234,\\n          timestamp: DateTime.now(),\\n          accuracy: 0.0,\\n          altitude: 0.0,\\n          altitudeAccuracy: 0.0,\\n          heading: 0.0,\\n          headingAccuracy: 0.0,\\n          speed: 0.0,\\n          speedAccuracy: 0.0,\\n        );\\n      }\"",
+    "StartLine": "134",
+    "TargetContent": "\"      Position position = await Geolocator.getCurrentPosition(\\n        desiredAccuracy: LocationAccuracy.high\\n      );\"",
+    "TargetFile": "\"C:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Editing tool_detail_screen.dart\"",
+    "toolSummary": "\"Implement GPS fallback\""
+  }
+}

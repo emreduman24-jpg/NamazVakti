@@ -1,0 +1,1 @@
+  @override\n  void initState() {\n    super.initState();\n    _initMosques();\n    _loadLocationName();\n    if (widget.toolId == 'yakindaki-camiler' || widget.toolId == 'kible-bulucu') {\n      _getUserLocation();\n    }\n    _initAudio();\n    _loadZikirState();\n    _loadDuaList();\n    _loadQuestionList();\n    _loadKazaState();\n  }

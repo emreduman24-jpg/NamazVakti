@@ -1,0 +1,68 @@
+Created At: 2026-06-03T04:59:25Z
+Completed At: 2026-06-03T04:59:25Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6363
+Total Bytes: 258283
+Showing lines 1 to 60
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:convert';
+3: import 'dart:math' as math;
+4: import 'package:flutter/material.dart';
+5: import 'package:http/http.dart' as http;
+6: import 'package:flutter/services.dart';
+7: import 'package:flutter_compass/flutter_compass.dart';
+8: import 'package:audioplayers/audioplayers.dart';
+9: import 'package:shared_preferences/shared_preferences.dart';
+10: import 'package:geolocator/geolocator.dart';
+11: import 'package:url_launcher/url_launcher.dart';
+12: import '../data/prayer_data.dart';
+13: import '../data/prayer_repository.dart';
+14: import '../data/quran_data.dart';
+15: import 'quran_detail_screen.dart';
+16: 
+17: class ToolDetailScreen extends StatefulWidget {
+18:   final String toolId;
+19:   final String toolTitle;
+20:   final bool isTab;
+21: 
+22:   const ToolDetailScreen({
+23:     super.key,
+24:     required this.toolId,
+25:     required this.toolTitle,
+26:     this.isTab = false,
+27:   });
+28: 
+29:   @override
+30:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+31: }
+32: 
+33: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+34:   final PrayerRepository _repository = PrayerRepository();
+35:   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+36:   Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xff1e5e43);
+37:   Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000); // _textColor equivalent
+38:   Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000); // _subtitleColor equivalent
+39:   Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;
+40:   String _currentLocationName = "";
+41: 
+42:   Future<void> _loadLocationName() async {
+43:     final savedLoc = await _repository.getSavedLocation();
+44:     final savedCity = savedLoc['cityName'] ?? "İstanbul";
+45:     if (mounted) {
+46:       setState(() {
+47:         _currentLocationName = savedCity;
+48:       });
+49:     }
+50:   }
+51: 
+52:   List<Map<String, dynamic>> _monthlyPrayerTimes = [];
+53:   bool _loadingMonthlyTimes = true;
+54:   String _monthlyViewMode = 'liste'; // 'liste' or 'takvim'
+55:   int _selectedCalendarDayIndex = 0;
+56: 
+57:   Future<void> _loadMonthlyTimes() async {
+58:     try {
+59:       final savedLoc = await _repository.getSavedLocation();
+60:       final districtId = savedLoc['districtId'] ?? "9541";
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

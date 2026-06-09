@@ -1,0 +1,94 @@
+Created At: 2026-05-28T14:23:57Z
+Completed At: 2026-05-28T14:23:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208297
+Showing lines 240 to 325
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+240:           WidgetsBinding.instance.addPostFrameCallback((_) {
+241:             ScaffoldMessenger.of(context).showSnackBar(
+242:               const SnackBar(
+243:                 content: Text("Konum izni reddedildi. Lütfen ayarlardan izin verin."),
+244:                 backgroundColor: Colors.redAccent,
+245:               ),
+246:             );
+247:           });
+248:         }
+249:         return;
+250:       }
+251: 
+252:       Position? position;
+253: 
+254:       // 1. Try last known position first if not forcing a fresh GPS lock (extremely fast on real devices)
+255:       if (!forceRefresh) {
+256:         try {
+257:           position = await Geolocator.getLastKnownPosition();
+258:           if (position != null) {
+259:             debugPrint("Found last known position: ${position.latitude}, ${position.longitude}");
+260:           }
+261:         } catch (e) {
+262:           debugPrint("getLastKnownPosition error: $e");
+263:         }
+264:       }
+265: 
+266:       // 2. Perform fresh position lookup if position is still null
+267:       if (position == null) {
+268:         try {
+269:           position = await Geolocator.getCurrentPosition(
+270:             desiredAccuracy: LocationAccuracy.medium, // Medium accuracy is much faster and highly reliable indoors
+271:             timeLimit: const Duration(seconds: 8), // 8 seconds timeout
+272:           );
+273:         } catch (e) {
+274:           debugPrint("getCurrentPosition error/timeout: $e");
+275:           
+276:           // Try a quick low-accuracy fallback before giving up
+277:           try {
+278:             position = await Geolocator.getCurrentPosition(
+279:               desiredAccuracy: LocationAccuracy.low,
+280:               timeLimit: const Duration(seconds: 4),
+281:             );
+282:           } catch (_) {}
+283:         }
+284:       }
+285: 
+286:       position ??= Position(
+287:         // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails
+288:         latitude: 41.0207,
+289:         longitude: 28.585,
+290:         timestamp: DateTime.now(),
+291:         accuracy: 0.0,
+292:         altitude: 0.0,
+293:         altitudeAccuracy: 0.0,
+294:         heading: 0.0,
+295:         headingAccuracy: 0.0,
+296:         speed: 0.0,
+297:         speedAccuracy: 0.0,
+298:       );
+299: 
+300:       final pos = position!;
+301:       debugPrint('=== GPS POSITION: lat=${pos.latitude}, lon=${pos.longitude}, accuracy=${pos.accuracy} ===');
+302:       setState(() {
+303:         _currentPosition = pos;
+304:       });
+305: 
+306:       // Fetch real nearby mosques from Overpass API
+307:       await _fetchNearbyMosques(pos.latitude, pos.longitude);
+308: 
+309:       if (mounted) {
+310:         setState(() {
+311:           _loadingLocation = false;
+312:         });
+313:       }
+314:     } catch (e) {
+315:       debugPrint("Location error: $e");
+316:       setState(() {
+317:         _loadingLocation = false;
+318:       });
+319:     }
+320:   }
+321: 
+322:   // Zikirmatik State
+323:   int _zikirCount = 0;
+324:   int _zikirTarget = 33;
+325:   bool _zikirSoundEnabled = true;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

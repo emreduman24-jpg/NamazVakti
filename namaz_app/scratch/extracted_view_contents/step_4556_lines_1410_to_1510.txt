@@ -1,0 +1,81 @@
+Created At: 2026-05-23T13:51:57Z
+Completed At: 2026-05-23T13:51:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 1410 to 1510
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1410:       ],
+1411:     );
+1412:   }
+1413: 
+1414:   // 10. Kıble Bulucu Compass
+1415:   Widget _buildKibleBulucu() {
+1416:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+1417: 
+1418:     return StreamBuilder<CompassEvent>(
+1419:       stream: FlutterCompass.events,
+1420:       builder: (context, snapshot) {
+1421:         double? heading = snapshot.data?.heading;
+1422:         bool hasSensor = heading != null && !_forceSimulation;
+1423: 
+1424:         // Use manual rotation if no sensor is available or simulation is forced
+1425:         double finalHeading = hasSensor ? heading : _manualCompassHeading;
+1426:         double needleRotation = qiblaAngle - finalHeading;
+1427:         double dialRotation = -finalHeading;
+1428: 
+1429:         return SingleChildScrollView(
+1430:           child: Column(
+1431:             mainAxisAlignment: MainAxisAlignment.center,
+1432:             children: [
+1433:               const SizedBox(height: 16),
+1434:               const Text(
+1435:                 "Cihazınızı düz zeminde tutarak yeşil ibreyi kabe resmine hizalayın.",
+1436:                 textAlign: TextAlign.center,
+1437:                 style: TextStyle(fontSize: 13, color: Colors.grey),
+1438:               ),
+1439:               const SizedBox(height: 24),
+1440:               // Custom Visual Compass stack
+1441:               Center(
+1442:                 child: Stack(
+1443:                   alignment: Alignment.center,
+1444:                   children: [
+1445:                     // Compass Ring (Dial) rotated by DialR
+<truncated 1535 bytes>
+                           ),
+1476:                               ),
+1477:                             ),
+1478:                             Align(
+1479:                               alignment: Alignment.bottomCenter,
+1480:                               child: Padding(
+1481:                                 padding: EdgeInsets.all(8.0),
+1482:                                 child: Text(
+1483:                                   "G",
+1484:                                   style: TextStyle(
+1485:                                     fontWeight: FontWeight.bold,
+1486:                                     color: Colors.black54,
+1487:                                     fontSize: 15,
+1488:                                   ),
+1489:                                 ),
+1490:                               ),
+1491:                             ),
+1492:                             Align(
+1493:                               alignment: Alignment.centerLeft,
+1494:                               child: Padding(
+1495:                                 padding: EdgeInsets.all(8.0),
+1496:                                 child: Text(
+1497:                                   "B",
+1498:                                   style: TextStyle(
+1499:                                     fontWeight: FontWeight.bold,
+1500:                                     color: Colors.black54,
+1501:                                     fontSize: 15,
+1502:                                   ),
+1503:                                 ),
+1504:                               ),
+1505:                             ),
+1506:                             Align(
+1507:                               alignment: Alignment.centerRight,
+1508:                               child: Padding(
+1509:                                 padding: EdgeInsets.all(8.0),
+1510:                                 child: Text(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

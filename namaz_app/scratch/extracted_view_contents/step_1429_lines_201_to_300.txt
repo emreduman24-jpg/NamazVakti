@@ -1,0 +1,108 @@
+Created At: 2026-05-22T16:15:42Z
+Completed At: 2026-05-22T16:15:42Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 2010
+Total Bytes: 80335
+Showing lines 201 to 300
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+201:       "id": DateTime.now().millisecondsSinceEpoch,
+202:       "yazar": name.isEmpty ? "Anonim" : name,
+203:       "dua": text,
+204:       "amin": 0
+205:     };
+206: 
+207:     setState(() {
+208:       _duaList.insert(0, newDua);
+209:     });
+210: 
+211:     _duaNameController.clear();
+212:     _duaTextController.clear();
+213:     await _repository.saveDuaList(_duaList);
+214:     
+215:     ScaffoldMessenger.of(context).showSnackBar(
+216:       const SnackBar(
+217:         content: Text("Dua talebiniz paylaşıldı."),
+218:         backgroundColor: Color(0xFF27A770),
+219:       ),
+220:     );
+221:   }
+222: 
+223:   Future<void> _aminDua(int index) async {
+224:     HapticFeedback.lightImpact();
+225:     setState(() {
+226:       _duaList[index]['amin'] = (_duaList[index]['amin'] ?? 0) + 1;
+227:     });
+228:     await _repository.saveDuaList(_duaList);
+229:   }
+230: 
+231:   // Audio Play helper
+232:   Future<void> _playAudio(String url, String name) async {
+233:     try {
+234:       if (_currentAudioUrl == url && _playerState == PlayerState.playing) {
+235:         await _audioPlayer!.pause();
+236:       } else if (_currentAudioUrl == url && _playerState == PlayerState.paused) {
+237:         await _audioPlayer!.resume();
+238:       } else {
+239:         await _audioPlayer!.stop();
+240:         setState(() {
+241:           _currentAudioUrl = url;
+242:           _currentTrackName = name;
+243:         });
+244:         await _audioPlayer!.play(UrlSource(url));
+245:       }
+246:     } catch (e) {
+247:       ScaffoldMessenger.of(context).showSnackBar(
+248:         SnackBar(content: Text("Ses çalma hatası: $e")),
+249:       );
+250:     }
+251:   }
+252: 
+253:   @override
+254:   Widget build(BuildContext context) {
+255:     return Scaffold(
+256:       backgroundColor: const Color(0xFFF3F8F5),
+257:       appBar: AppBar(
+258:         title: Text(widget.toolTitle, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+259:         backgroundColor: const Color(0xFF1E5E43),
+260:         elevation: 0,
+261:         iconTheme: const IconThemeData(color: Colors.white),
+262:       ),
+263:       body: SafeArea(
+264:         child: Padding(
+265:           padding: const EdgeInsets.all(16.0),
+266:           child: _buildToolBody(),
+267:         ),
+268:       ),
+269:     );
+270:   }
+271: 
+272:   Widget _buildToolBody() {
+273:     switch (widget.toolId) {
+274:       case 'dini-gunler':
+275:         return _buildDiniGunler();
+276:       case 'dua-iste':
+277:         return _buildDuaIste();
+278:       case 'soru-cevap':
+279:         return _buildSoruCevap();
+280:       case 'canli-sohbet':
+281:         return _buildCanliSohbet();
+282:       case 'peygamber-hayati':
+283:         return _buildPeygamberHayati();
+284:       case 'kuran-kerim':
+285:         return _buildKuranKerim();
+286:       case 'esmaul-husna':
+287:         return _buildEsmaulHusna();
+288:       case 'ramazan-hakkinda':
+289:         return _buildRamazanHakkinda();
+290:       case 'oruc-rehberi':
+291:         return _buildOrucRehberi();
+292:       case 'kible-bulucu':
+293:         return _buildKibleBulucu();
+294:       case 'zikirmatik':
+295:         return _buildZikirmatik();
+296:       case 'miladi-hicri':
+297:         return _buildMiladiHicri();
+298:       case 'yasin-suresi':
+299:         return _buildYasinSuresi();
+300:       case 'yakindaki-camiler':
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

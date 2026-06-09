@@ -1,0 +1,98 @@
+Created At: 2026-05-27T19:44:43Z
+Completed At: 2026-05-27T19:44:43Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5111
+Total Bytes: 206998
+Showing lines 55 to 170
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+55:   void _initMosques() {
+56:     _dynamicMosquesList = [];
+57:   }
+58: 
+59:   /// Fetches real nearby mosques from OpenStreetMap Overpass API
+60:   Future<void> _fetchNearbyMosques(double lat, double lon) async {
+61:     // Try progressively larger radii until we find enough mosques
+62:     final radii = [3000, 5000, 10000]; // meters
+63: 
+64:     for (final radius in radii) {
+65:       try {
+66:         // Overpass QL query: find nodes and ways tagged as mosque within radius
+67:         final query = '''
+68: [out:json][timeout:15];
+69: (
+70:   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+71:   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+72:   node["building"="mosque"](around:$radius,$lat,$lon);
+73:   way["building"="mosque"](around:$radius,$lat,$lon);
+74: );
+75: out center body;
+76: ''';
+77: 
+78:         final url = Uri.parse('https://overpass-api.de/api/interpreter');
+79:         final response = await http.post(
+80:           url,
+81:           body: {'data': query},
+82:         ).timeout(const Duration(seconds: 20));
+83: 
+84:         if (response.statusCode == 200) {
+85:           final data = json.decode(response.body);
+86:           final elements = data['elements'] as List<dynamic>? ?? [];
+87: 
+88:           final List<Map<String, dynamic>> mosques = [];
+89:           final Set<String> seenNames = {}; // avoid duplicates
+90: 
+91:           for (final el in elements) {
+92:             final tags = el['tags'] as Map<String, dynamic>? ?? {};
+93:             double? mLa
+<truncated 1298 bytes>
+             if (address.isEmpty) {
+122:               address = tags['addr:full']?.toString() ?? '';
+123:             }
+124: 
+125:             final dist = _calculateDistance(lat, lon, mLat, mLon);
+126:             final encodedName = Uri.encodeComponent(name.toString());
+127: 
+128:             mosques.add({
+129:               'ad': name.toString(),
+130:               'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',
+131:               'harita': 'https://maps.google.com/?q=$mLat,$mLon&query=$encodedName',
+132:               'lat': mLat,
+133:               'lon': mLon,
+134:               'mesafeVal': dist,
+135:               'mesafeText': dist < 1
+136:                   ? '${(dist * 1000).toInt()} m'
+137:                   : '${dist.toStringAsFixed(1)} km',
+138:             });
+139:           }
+140: 
+141:           // Sort by distance
+142:           mosques.sort((a, b) =>
+143:               (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+144: 
+145:           if (mosques.isNotEmpty) {
+146:             if (mounted) {
+147:               setState(() {
+148:                 _dynamicMosquesList = mosques;
+149:               });
+150:             }
+151:             debugPrint('Found ${mosques.length} mosques within ${radius}m');
+152:             return; // success – stop expanding radius
+153:           }
+154:         }
+155:       } catch (e) {
+156:         debugPrint('Overpass API error (radius=$radius): $e');
+157:       }
+158:     }
+159: 
+160:     // If all radii failed, show a message
+161:     debugPrint('No mosques found from Overpass API');
+162:     if (mounted) {
+163:       setState(() {
+164:         _dynamicMosquesList = [];
+165:       });
+166:     }
+167:   }
+168: 
+169:   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+170:     setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

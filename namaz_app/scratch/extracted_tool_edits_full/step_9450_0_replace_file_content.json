@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Change map navigation URL format to use exact coordinates destination scheme for direct directions/routing instead of search query\"",
+  "EndLine": "156",
+  "Instruction": "\"Modify the 'harita' key to construct a direct routing URL using google maps API v1 with exact latitude and longitude destination coordinates.\"",
+  "ReplacementContent": "\"              mosques.add({\\n                'ad': name.toString(),\\n                'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',\\n                'harita': 'https://www.google.com/maps/dir/?api=1&destination=$mLat,$mLon',\\n                'lat': mLat,\\n                'lon': mLon,\\n                'mesafeVal': dist,\\n                'mesafeText': dist < 1\\n                    ? '${(dist * 1000).toInt()} m'\\n                    : '${dist.toStringAsFixed(1)} km',\\n              });\"",
+  "StartLine": "145",
+  "TargetContent": "\"              mosques.add({\\n                'ad': name.toString(),\\n                'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',\\n                'harita': 'https://maps.google.com/?q=$mLat,$mLon&query=$encodedName',\\n                'lat': mLat,\\n                'lon': mLon,\\n                'mesafeVal': dist,\\n                'mesafeText': dist < 1\\n                    ? '${(dist * 1000).toInt()} m'\\n                    : '${dist.toStringAsFixed(1)} km',\\n              });\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Modifying map link generation in tool_detail_screen.dart\"",
+  "toolSummary": "\"Modify harita URL in Flutter\""
+}

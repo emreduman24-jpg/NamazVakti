@@ -1,0 +1,54 @@
+Created At: 2026-06-01T11:58:32Z
+Completed At: 2026-06-01T11:58:33Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5894
+Total Bytes: 238386
+Showing lines 30 to 75
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+30:   final PrayerRepository _repository = PrayerRepository();
+31:   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+32:   Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xff1e5e43);
+33:   Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000); // _textColor equivalent
+34:   Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000); // _subtitleColor equivalent
+35:   Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;
+36:   String _currentLocationName = "";
+37: 
+38:   Future<void> _loadLocationName() async {
+39:     final savedLoc = await _repository.getSavedLocation();
+40:     final savedCity = savedLoc['cityName'] ?? "İstanbul";
+41:     if (mounted) {
+42:       setState(() {
+43:         _currentLocationName = savedCity;
+44:       });
+45:     }
+46:   }
+47: 
+48:   List<Map<String, dynamic>> _monthlyPrayerTimes = [];
+49:   bool _loadingMonthlyTimes = true;
+50: 
+51:   Future<void> _loadMonthlyTimes() async {
+52:     try {
+53:       final savedLoc = await _repository.getSavedLocation();
+54:       final districtId = savedLoc['districtId'] ?? "9541";
+55:       final List<Map<String, dynamic>> times = await _repository.getPrayerTimes(districtId);
+56:       if (mounted) {
+57:         setState(() {
+58:           _monthlyPrayerTimes = times;
+59:           _loadingMonthlyTimes = false;
+60:         });
+61:       }
+62:     } catch (e) {
+63:       print('Error loading monthly prayer times: $e');
+64:       if (mounted) {
+65:         setState(() {
+66:           _loadingMonthlyTimes = false;
+67:         });
+68:       }
+69:     }
+70:   }
+71: 
+72:   AudioPlayer? _audioPlayer;
+73:   PlayerState _playerState = PlayerState.stopped;
+74:   String _currentAudioUrl = "";
+75:   String _currentTrackName = "";
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

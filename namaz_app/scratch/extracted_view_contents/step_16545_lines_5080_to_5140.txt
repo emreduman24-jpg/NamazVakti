@@ -1,0 +1,69 @@
+Created At: 2026-06-03T13:02:52Z
+Completed At: 2026-06-03T13:02:53Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7690
+Total Bytes: 312474
+Showing lines 5080 to 5140
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5080:                         );
+5081:                         setState(() {
+5082:                           _tesbihCount = 0;
+5083:                           if (_tesbihStep < TESBIHAT_STEPS.length - 1) {
+5084:                             _tesbihStep++;
+5085:                           } else {
+5086:                             _tesbihStep = 0;
+5087:                           }
+5088:                         });
+5089:                       }
+5090:                     },
+5091:                     child: Container(
+5092:                       width: 130,
+5093:                       height: 130,
+5094:                       decoration: BoxDecoration(
+5095:                         color: const Color(0xFFEAF7F1),
+5096:                         shape: BoxShape.circle,
+5097:                         border: Border.all(
+5098:                           color: const Color(0xFF27A770),
+5099:                           width: 4,
+5100:                         ),
+5101:                       ),
+5102:                       child: Center(
+5103:                         child: Text(
+5104:                           "$_tesbihCount / $target",
+5105:                           style: TextStyle(
+5106:                             fontSize: 24,
+5107:                             fontWeight: FontWeight.bold,
+5108:                             color: _greenColor,
+5109:                           ),
+5110:                         ),
+5111:                       ),
+5112:                     ),
+5113:                   ),
+5114:                 ],
+5115:               ),
+5116:             ),
+5117:           ),
+5118:         ),
+5119:       ],
+5120:     );
+5121:   }
+5122: 
+5123:   // 17. Günlük Dualar
+5124:   // 17. Günlük Dualar
+5125:   Widget _buildGunlukDualar() {
+5126:     final totalKuran = KURAN_DUALARI.length;
+5127:     final totalHadis = HADIS_DUALARI.length;
+5128:     
+5129:     final rawList = _dualarTab == 0 ? KURAN_DUALARI : HADIS_DUALARI;
+5130:     final filteredList = rawList.where((dua) {
+5131:       final matchesSearch = _dualarSearchQuery.isEmpty ||
+5132:           _normalize(dua['ad'] ?? '').contains(_normalize(_dualarSearchQuery)) ||
+5133:           _normalize(dua['sure'] ?? '').contains(_normalize(_dualarSearchQuery)) ||
+5134:           _normalize(dua['anlam'] ?? '').contains(_normalize(_dualarSearchQuery));
+5135:       
+5136:       final matchesFavorite = !_showOnlyFavorites || _favoriteDualar.contains(dua['id']);
+5137:       
+5138:       return matchesSearch && matchesFavorite;
+5139:     }).toList();
+5140: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,14 @@
+{
+  "step_index": 14604,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Declare additional variables for Quran section in ToolDetailScreenState\"",
+    "EndLine": "95",
+    "Instruction": "\"Add _lastSuraNo, _lastSuraName, _lastAyahNo, _lastTotalAyahs, _lastPercent, _quranBookmarks, and _quranSearchQuery variables to ToolDetailScreenState\"",
+    "ReplacementContent": "\"  AudioPlayer? _audioPlayer;\\n  PlayerState _playerState = PlayerState.stopped;\\n  String _currentAudioUrl = \\\"\\\";\\n  String _currentTrackName = \\\"\\\";\\n  int _quranTab = 0; // 0: Sureler, 1: Cüzler\\n  int _lastSuraNo = 1;\\n  String _lastSuraName = \\\"Fâtiha\\\";\\n  int _lastAyahNo = 1;\\n  int _lastTotalAyahs = 7;\\n  int _lastPercent = 0;\\n  List<String> _quranBookmarks = [];\\n  String _quranSearchQuery = \\\"\\\";\"",
+    "StartLine": "89",
+    "TargetContent": "\"  AudioPlayer? _audioPlayer;\\n  PlayerState _playerState = PlayerState.stopped;\\n  String _currentAudioUrl = \\\"\\\";\\n  String _currentTrackName = \\\"\\\";\\n  int _quranTab = 0; // 0: Sureler, 1: Cüzler\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\""
+  }
+}

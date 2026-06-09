@@ -1,0 +1,91 @@
+Created At: 2026-05-27T19:50:31Z
+Completed At: 2026-05-27T19:50:31Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5114
+Total Bytes: 207289
+Showing lines 80 to 165
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+80:         final response = await http.post(
+81:           url,
+82:           body: {'data': query},
+83:         ).timeout(const Duration(seconds: 20));
+84: 
+85:         if (response.statusCode == 200) {
+86:           final data = json.decode(response.body);
+87:           final elements = data['elements'] as List<dynamic>? ?? [];
+88:           debugPrint('Overpass API response: status=200, elements=${elements.length}, radius=$radius');
+89: 
+90:           final List<Map<String, dynamic>> mosques = [];
+91:           final Set<String> seenNames = {}; // avoid duplicates
+92: 
+93:           for (final el in elements) {
+94:             final tags = el['tags'] as Map<String, dynamic>? ?? {};
+95:             double? mLat, mLon;
+96: 
+97:             if (el['type'] == 'node') {
+98:               mLat = (el['lat'] as num?)?.toDouble();
+99:               mLon = (el['lon'] as num?)?.toDouble();
+100:             } else if (el['type'] == 'way' && el['center'] != null) {
+101:               mLat = (el['center']['lat'] as num?)?.toDouble();
+102:               mLon = (el['center']['lon'] as num?)?.toDouble();
+103:             }
+104: 
+105:             if (mLat == null || mLon == null) continue;
+106: 
+107:             // Determine name
+108:             final name = tags['name'] ?? tags['name:tr'] ?? tags['name:en'] ?? '';
+109:             if (name.toString().isEmpty) continue; // skip unnamed
+110: 
+111:             // Skip duplicates (same name)
+112:             final nameKey = name.toString().toLowerCase();
+113:             if (seenNames.contains(nameKey)) continue;
+11
+<truncated 269 bytes>
+'addr:city'] ?? '';
+120:             String address = [street, district, city]
+121:                 .where((s) => s.toString().isNotEmpty)
+122:                 .join(', ');
+123:             if (address.isEmpty) {
+124:               address = tags['addr:full']?.toString() ?? '';
+125:             }
+126: 
+127:             final dist = _calculateDistance(lat, lon, mLat, mLon);
+128:             final encodedName = Uri.encodeComponent(name.toString());
+129: 
+130:             mosques.add({
+131:               'ad': name.toString(),
+132:               'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',
+133:               'harita': 'https://maps.google.com/?q=$mLat,$mLon&query=$encodedName',
+134:               'lat': mLat,
+135:               'lon': mLon,
+136:               'mesafeVal': dist,
+137:               'mesafeText': dist < 1
+138:                   ? '${(dist * 1000).toInt()} m'
+139:                   : '${dist.toStringAsFixed(1)} km',
+140:             });
+141:           }
+142: 
+143:           // Sort by distance
+144:           mosques.sort((a, b) =>
+145:               (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+146: 
+147:           if (mosques.isNotEmpty) {
+148:             if (mounted) {
+149:               setState(() {
+150:                 _dynamicMosquesList = mosques;
+151:               });
+152:             }
+153:             debugPrint('Found ${mosques.length} mosques within ${radius}m');
+154:             return; // success – stop expanding radius
+155:           }
+156:         }
+157:       } catch (e) {
+158:         debugPrint('Overpass API error (radius=$radius): $e');
+159:       }
+160:     }
+161: 
+162:     // If all radii failed, show a message
+163:     debugPrint('No mosques found from Overpass API');
+164:     if (mounted) {
+165:       setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

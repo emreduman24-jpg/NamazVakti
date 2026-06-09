@@ -1,0 +1,29 @@
+Created At: 2026-06-01T11:30:29Z
+Completed At: 2026-06-01T11:30:29Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5521
+Total Bytes: 224345
+Showing lines 595 to 615
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+595:   final TextEditingController _debtsController = TextEditingController();
+596:   String _zekatResult = "";
+597: 
+598:   // Date Converter State
+599:   DateTime _selectedDate = DateTime.now();
+600:   String _convertedDateResult = "";
+601:   bool _miladiToHicri = true;
+602: 
+603:   // Sahabe Hayatlari & Esmaül Hüsna Search State
+604:   String _esmaSearchQuery = "";
+605:   String _sahabeSearchQuery = "";
+606:   String _hadisSearchQuery = "";
+607: 
+608:   // Compass Manual Rotation Simulation (Fallback for Emulators)
+609:   double _manualCompassHeading = 0.0;
+610:   bool _forceSimulation = true;
+611: 
+612:   // Prophet Life Tab
+613:   int _prophetLifeTab = 0;
+614: 
+615:   // Namaz Kilma Tab
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

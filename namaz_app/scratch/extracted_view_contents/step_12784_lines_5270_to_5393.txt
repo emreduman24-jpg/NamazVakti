@@ -1,0 +1,96 @@
+Created At: 2026-06-01T11:29:37Z
+Completed At: 2026-06-01T11:29:38Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 5270 to 5393
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5270:       "İdgam-ı Mealgunne: Sakin nun veya tenvinden sonra (ي, م, ن, و) harfleri gelirse, ses burundan (genizden) verilerek şeddeli gibi okunur.",
+5271:       "İhfa: Sakin nun veya tenvinden sonra izhar ve idgam harfleri dışındaki 15 harf gelirse, nun sesi genizden gizlenerek okunur.",
+5272:       "Kalkale (Yankılama): (ق, ط, b, ج, د) harfleri sakin (cezimli) geldiğinde kuvvetli bir ses vurgusuyla yankılatılarak okunur.",
+5273:     ]);
+5274:   }
+5275: }
+5276: 
+5277: class _KibleRadarPainter extends CustomPainter {
+5278:   final double needleRotation;
+5279:   final bool isAligned;
+5280:   final bool isDark;
+5281: 
+5282:   _KibleRadarPainter({
+5283:     required this.needleRotation,
+5284:     required this.isAligned,
+5285:     required this.isDark,
+5286:   });
+5287: 
+5288:   @override
+5289:   void paint(Canvas canvas, Size size) {
+5290:     final center = Offset(size.width / 2, size.height / 2);
+5291:     final radius = size.width / 2;
+5292: 
+5293:     // 1. Paint radar background
+5294:     final bgPaint = Paint()
+5295:       ..color = isDark 
+5296:           ? const Color(0xFF0F1B2A).withOpacity(0.4) 
+5297:           : const Color(0xFFEAF7F1).withOpacity(0.3)
+5298:       ..style = PaintingStyle.fill;
+5299:     canvas.drawCircle(center, radius, bgPaint);
+5300: 
+5301:     // 2. Paint concentric radar rings
+5302:     final ringPaint = Paint()
+5303:       ..color = isAligned 
+5304:           ? const Color(0xFF27A770).withOpacity(0.3) 
+5305:           : (isDark ? const Color(0xFF3E5C76).withOpacity(0.3) : const Color(0xFF27A770).w
+<truncated 1653 bytes>
+ + startR * Math.cos(angle),
+5344:         center.dy + startR * Math.sin(angle),
+5345:       );
+5346:       final Offset endPoint = Offset(
+5347:         center.dx + endR * Math.cos(angle),
+5348:         center.dy + endR * Math.sin(angle),
+5349:       );
+5350: 
+5351:       canvas.drawLine(startPoint, endPoint, tickPaint);
+5352:     }
+5353: 
+5354:     // 5. Draw active radar scanning beam
+5355:     final double radAngle = (needleRotation - 90) * 3.141592653589793 / 180;
+5356:     
+5357:     final sweepPaint = Paint()
+5358:       ..color = isAligned 
+5359:           ? const Color(0xFF27A770).withOpacity(0.15) 
+5360:           : (isDark ? const Color(0xFFD4AF37).withOpacity(0.08) : const Color(0xFF27A770).withOpacity(0.08))
+5361:       ..style = PaintingStyle.fill;
+5362:     
+5363:     final sweepPath = Path()
+5364:       ..moveTo(center.dx, center.dy)
+5365:       ..arcTo(
+5366:         Rect.fromCircle(center: center, radius: radius),
+5367:         radAngle - 0.2, 
+5368:         0.4,
+5369:         false,
+5370:       )
+5371:       ..close();
+5372:     canvas.drawPath(sweepPath, sweepPaint);
+5373: 
+5374:     // 6. Draw outer target marker (red bracket at the top)
+5375:     final targetPaint = Paint()
+5376:       ..color = isAligned ? const Color(0xFF27A770) : Colors.redAccent
+5377:       ..style = PaintingStyle.stroke
+5378:       ..strokeWidth = 2.0;
+5379: 
+5380:     final double bracketW = 16;
+5381:     final double bracketH = 8;
+5382:     final bracketPath = Path()
+5383:       ..moveTo(center.dx - bracketW, bracketH)
+5384:       ..lineTo(center.dx - bracketW, 0)
+5385:       ..lineTo(center.dx + bracketW, 0)
+5386:       ..lineTo(center.dx + bracketW, bracketH);
+5387:     canvas.drawPath(bracketPath, targetPaint);
+5388:   }
+5389: 
+5390:   @override
+5391:   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+5392: }
+5393: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

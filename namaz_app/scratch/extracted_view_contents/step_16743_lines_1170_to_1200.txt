@@ -1,0 +1,39 @@
+Created At: 2026-06-03T13:44:25Z
+Completed At: 2026-06-03T13:44:25Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7705
+Total Bytes: 313257
+Showing lines 1170 to 1200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1170:         return _buildZikirmatik();
+1171:       case 'miladi-hicri':
+1172:         return _buildMiladiHicri();
+1173:       case 'yasin-suresi':
+1174:         return _buildYasinSuresi();
+1175:       case 'yakindaki-camiler':
+1176:         return _buildYakindakiCamiler();
+1177:       case 'hadis-40':
+1178:         return _buildHadis40();
+1179:       case 'namaz-tesbihati':
+1180:         return _buildNamazTesbihati();
+1181:       case 'gunluk-dualar':
+1182:         return _buildGunlukDualar();
+1183:       case 'zekat-hesaplama':
+1184:         return _buildZekatHesaplama();
+1185:       case 'sahabe-hayatlari':
+1186:         return _buildSahabeHayatlari();
+1187:       case 'islam-tarihi':
+1188:         return _buildIslamTarihi();
+1189:       case 'namaz-kilma':
+1190:         return _buildNamazKilma();
+1191:       case 'vitir-namazi':
+1192:         return _buildVitirNamazi();
+1193:       case 'abdest-rehberi':
+1194:         return _buildAbdestRehberi();
+1195:       case 'gusul-rehberi':
+1196:       case 'gusul-abdesti':
+1197:         return _buildGusulRehberi();
+1198:       case 'teyemmum-rehberi':
+1199:       case 'teyemmum':
+1200:         return _buildTeyemmumRehberi();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

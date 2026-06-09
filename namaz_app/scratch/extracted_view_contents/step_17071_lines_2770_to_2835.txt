@@ -1,0 +1,74 @@
+Created At: 2026-06-03T14:13:01Z
+Completed At: 2026-06-03T14:13:01Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8789
+Total Bytes: 358430
+Showing lines 2770 to 2835
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2770:   Widget _buildPeygamberHayati() {
+2771:     return Column(
+2772:       children: [
+2773:         SizedBox(
+2774:           height: 48,
+2775:           child: ListView.builder(
+2776:             scrollDirection: Axis.horizontal,
+2777:             itemCount: PEYGAMBER_HAYATI.length,
+2778:             itemBuilder: (context, index) {
+2779:               final active = _prophetLifeTab == index;
+2780:               return Padding(
+2781:                 padding: EdgeInsets.only(right: 8.0),
+2782:                 child: ChoiceChip(
+2783:                   label: Text(
+2784:                     PEYGAMBER_HAYATI[index]['baslik']?.split(' ')[0] ?? '',
+2785:                   ),
+2786:                   selected: active,
+2787:                   selectedColor: const Color(0xFF27A770),
+2788:                   labelStyle: TextStyle(
+2789:                     color: active ? Colors.white : _greenColor,
+2790:                     fontWeight: FontWeight.bold,
+2791:                   ),
+2792:                   onSelected: (val) {
+2793:                     setState(() {
+2794:                       _prophetLifeTab = index;
+2795:                     });
+2796:                   },
+2797:                 ),
+2798:               );
+2799:             },
+2800:           ),
+2801:         ),
+2802:         SizedBox(height: 16),
+2803:         Expanded(
+2804:           child: Card(
+2805:             elevation: 2,
+2806:             shape: RoundedRectangleBorder(
+2807:               borderRadius: BorderRadius.circular(16),
+2808:             ),
+2809:             child: Padding(
+2810:               padding: EdgeInsets.all(20.0),
+2811:               child: SingleChildScrollView(
+2812:                 child: Column(
+2813:                   crossAxisAlignment: CrossAxisAlignment.start,
+2814:                   children: [
+2815:                     Text(
+2816:                       PEYGAMBER_HAYATI[_prophetLifeTab]['baslik'] ?? '',
+2817:                       style: TextStyle(
+2818:                         fontSize: 18,
+2819:                         fontWeight: FontWeight.bold,
+2820:                         color: _greenColor,
+2821:                       ),
+2822:                     ),
+2823:                     Divider(height: 24),
+2824:                     Text(
+2825:                       PEYGAMBER_HAYATI[_prophetLifeTab]['icerik'] ?? '',
+2826:                       style: TextStyle(
+2827:                         fontSize: 14,
+2828:                         height: 1.6,
+2829:                         color: _textColor,
+2830:                       ),
+2831:                     ),
+2832:                   ],
+2833:                 ),
+2834:               ),
+2835:             ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

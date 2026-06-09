@@ -1,0 +1,39 @@
+Created At: 2026-05-23T22:57:44Z
+Completed At: 2026-05-23T22:57:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4654
+Total Bytes: 189812
+Showing lines 235 to 265
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+235:   // Date Converter State
+236:   DateTime _selectedDate = DateTime.now();
+237:   String _convertedDateResult = "";
+238:   bool _miladiToHicri = true;
+239: 
+240:   // Sahabe Hayatlari & Esmaül Hüsna Search State
+241:   String _esmaSearchQuery = "";
+242:   String _sahabeSearchQuery = "";
+243:   String _hadisSearchQuery = "";
+244: 
+245:   // Compass Manual Rotation Simulation (Fallback for Emulators)
+246:   double _manualCompassHeading = 0.0;
+247:   bool _forceSimulation = false;
+248: 
+249:   // Prophet Life Tab
+250:   int _prophetLifeTab = 0;
+251: 
+252:   // Namaz Kilma Tab
+253:   bool _namazKilmaErkek = true;
+254: 
+255:   // Kaza Namazi State
+256:   int _kazaSabah = 0;
+257:   int _kazaOgle = 0;
+258:   int _kazaIkindi = 0;
+259:   int _kazaAksam = 0;
+260:   int _kazaYatsi = 0;
+261:   int _kazaVitir = 0;
+262: 
+263:   // Sabah & Aksam Ezkari counts
+264:   final List<int> _sabahEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+265:   final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

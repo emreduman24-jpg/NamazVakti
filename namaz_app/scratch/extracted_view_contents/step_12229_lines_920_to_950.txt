@@ -1,0 +1,39 @@
+Created At: 2026-06-01T10:22:39Z
+Completed At: 2026-06-01T10:22:39Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5512
+Total Bytes: 227382
+Showing lines 920 to 950
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+920:         return _buildYakindakiCamiler();
+921:       case 'hadis-40':
+922:         return _buildHadis40();
+923:       case 'namaz-tesbihati':
+924:         return _buildNamazTesbihati();
+925:       case 'gunluk-dualar':
+926:         return _buildGunlukDualar();
+927:       case 'zekat-hesaplama':
+928:         return _buildZekatHesaplama();
+929:       case 'sahabe-hayatlari':
+930:         return _buildSahabeHayatlari();
+931:       case 'islam-tarihi':
+932:         return _buildIslamTarihi();
+933:       case 'namaz-kilma':
+934:         return _buildNamazKilma();
+935:       case 'vitir-namazi':
+936:         return _buildVitirNamazi();
+937:       case 'abdest-rehberi':
+938:         return _buildAbdestRehberi();
+939:       case 'gusul-rehberi':
+940:       case 'gusul-abdesti':
+941:         return _buildGusulRehberi();
+942:       case 'teyemmum-rehberi':
+943:       case 'teyemmum':
+944:         return _buildTeyemmumRehberi();
+945:       case 'cuma-namazi':
+946:         return _buildCumaNamazi();
+947:       case 'teravih-namazi':
+948:         return _buildTeravihNamazi();
+949:       case 'bayram-namazi':
+950:         return _buildBayramNamazi();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

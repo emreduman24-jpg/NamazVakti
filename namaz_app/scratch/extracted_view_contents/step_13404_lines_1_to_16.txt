@@ -1,0 +1,24 @@
+Created At: 2026-06-01T17:41:03Z
+Completed At: 2026-06-01T17:41:03Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 16
+Total Bytes: 1218
+Showing lines 1 to 16
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Kıble Bulucu Alt Menü Entegrasyonu Yapılacaklar Listesi
+2: 
+3: - [ ] `tool_detail_screen.dart` dosyasını güncelle
+4:   - [ ] `isTab` parametresini constructor'a ekle (varsayılan: `false`)
+5:   - [ ] `AppBar`'da `automaticallyImplyLeading: !widget.isTab` olarak ayarla
+6: - [ ] `main_screen.dart` dosyasını güncelle
+7:   - [ ] Konum seçilmediğindeki yönlendirme indeksini `widget.onTabChange(3)`'ten `widget.onTabChange(4)`'e çek
+8: - [ ] `main.dart` dosyasını güncelle
+9:   - [ ] `QiblaBottomTabIcon` adlı yeni estetik, büyük yuvarlak altın/zümrüt ikon sınıfını oluştur
+10:   - [ ] `_screens` dizisinin tam ortasına (indeks 2) `ToolDetailScreen(toolId: 'kible-bulucu', toolTitle: 'Kıble Bulucu', isTab: true)` ekle
+11:   - [ ] `_openToolDetail` metodunda `toolId == 'kible-bulucu'` ise `_currentIndex = 2` olarak sekme geçişi yaptır
+12:   - [ ] `BottomNavigationBar`'da `type: BottomNavigationBarType.fixed` olarak ayarla ve 5. eleman olarak `QiblaBottomTabIcon` ikonunu ekle
+13: - [ ] Doğrulama ve Test
+14:   - [ ] `flutter analyze lib` komutunu çalıştırarak sıfır hata olduğunu kontrol et
+15:   - [ ] Emülatör üzerinde sekme geçişlerini, ikonun estetiğini ve araçlar sayfasından tıklama yönlendirmesini test et
+16: 
+The above content shows the entire, complete file contents of the requested file.

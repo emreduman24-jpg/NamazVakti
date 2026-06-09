@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Remove the Today's Vakitleri Spotlight card from the Monthly List View as requested by the user.\"",
+  "EndLine": "2995",
+  "Instruction": "\"Remove the _buildTodayFeaturedCard call from _buildMonthlyListView.\"",
+  "ReplacementContent": "\"  Widget _buildMonthlyListView(bool dark, String todayStr) {\\n    return Expanded(\\n      child: ListView(\\n        padding: EdgeInsets.zero,\\n        children: [\\n          Padding(\"",
+  "StartLine": "2975",
+  "TargetContent": "\"  Widget _buildMonthlyListView(bool dark, String todayStr) {\\n    Map<String, dynamic>? todayData;\\n    for (var day in _monthlyPrayerTimes) {\\n      if (day['MiladiTarihKisa'] == todayStr) {\\n        todayData = day;\\n        break;\\n      }\\n    }\\n\\n    return Expanded(\\n      child: ListView(\\n        padding: EdgeInsets.zero,\\n        children: [\\n          if (todayData != null) _buildTodayFeaturedCard(todayData, dark),\\n          \\n          Padding(\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Removing today featured card from list view\"",
+  "toolSummary": "\"Remove featured card\""
+}

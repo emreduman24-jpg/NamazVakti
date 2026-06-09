@@ -1,0 +1,99 @@
+Created At: 2026-06-03T13:37:56Z
+Completed At: 2026-06-03T13:37:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 6740 to 6864
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+6740:   Widget _buildKazaNamazi() {
+6741:     final Map<String, int> kazalar = {
+6742:       'Sabah': _kazaSabah,
+6743:       'Öğle': _kazaOgle,
+6744:       'İkindi': _kazaIkindi,
+6745:       'Akşam': _kazaAksam,
+6746:       'Yatsı': _kazaYatsi,
+6747:       'Vitir': _kazaVitir,
+6748:     };
+6749: 
+6750:     final Map<String, String> keys = {
+6751:       'Sabah': 'kaza_sabah',
+6752:       'Öğle': 'kaza_ogle',
+6753:       'İkindi': 'kaza_ikindi',
+6754:       'Akşam': 'kaza_aksam',
+6755:       'Yatsı': 'kaza_yatsi',
+6756:       'Vitir': 'kaza_vitir',
+6757:     };
+6758: 
+6759:     return Column(
+6760:       crossAxisAlignment: CrossAxisAlignment.start,
+6761:       children: [
+6762:         Text(
+6763:           "Kaza Namazı Takip Çizelgesi",
+6764:           style: TextStyle(
+6765:             fontSize: 16,
+6766:             fontWeight: FontWeight.bold,
+6767:             color: _greenColor,
+6768:           ),
+6769:         ),
+6770:         SizedBox(height: 4),
+6771:         Text(
+6772:           "Geçmiş namaz borçlarınızı kaydetmek ve düzenlemek için +/- butonlarını kullanın.",
+6773:           style: TextStyle(fontSize: 12, color: Colors.grey),
+6774:         ),
+6775:         SizedBox(height: 12),
+6776:         Expanded(
+6777:           child: ListView(
+6778:             children: kazalar.keys.map((name) {
+6779:               final count = kazalar[name] ?? 0;
+6780:               final key = keys[name]!;
+6781:               return Card(
+6782:                 elevation: 1,
+6783:                 shape: RoundedRectangleBorder(
+6784:  
+<truncated 1701 bytes>
+lors.redAccent,
+6821:                               size: 28,
+6822:                             ),
+6823:                             onPressed: () => _updateKaza(key, -1),
+6824:                           ),
+6825:                           Container(
+6826:                             padding: EdgeInsets.symmetric(
+6827:                               horizontal: 16,
+6828:                               vertical: 6,
+6829:                             ),
+6830:                             decoration: BoxDecoration(
+6831:                               color: const Color(0xFF27A770).withOpacity(0.08),
+6832:                               borderRadius: BorderRadius.circular(10),
+6833:                             ),
+6834:                             child: Text(
+6835:                               "$count",
+6836:                               style: TextStyle(
+6837:                                 fontWeight: FontWeight.bold,
+6838:                                 fontSize: 16,
+6839:                                 color: _greenColor,
+6840:                               ),
+6841:                             ),
+6842:                           ),
+6843:                           IconButton(
+6844:                             icon: Icon(
+6845:                               Icons.add_circle_outline,
+6846:                               color: Color(0xFF27A770),
+6847:                               size: 28,
+6848:                             ),
+6849:                             onPressed: () => _updateKaza(key, 1),
+6850:                           ),
+6851:                         ],
+6852:                       ),
+6853:                     ],
+6854:                   ),
+6855:                 ),
+6856:               );
+6857:             }).toList(),
+6858:           ),
+6859:         ),
+6860:       ],
+6861:     );
+6862:   }
+6863: 
+6864:   // 38. Sabah Ezkarı
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

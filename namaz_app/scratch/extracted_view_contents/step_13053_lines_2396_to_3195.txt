@@ -1,0 +1,87 @@
+Created At: 2026-06-01T12:00:20Z
+Completed At: 2026-06-01T12:00:20Z
+File Path: `file:///C:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6505
+Total Bytes: 263114
+Showing lines 2396 to 3195
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2396:                         ),
+2397:                       ),
+2398:                     ),
+2399: 
+2400:                     // Rotating Qibla Needle pointing directly to Kaaba (needleRotation)
+2401:                     Transform.rotate(
+2402:                       angle: (needleRotation * math.pi / 180),
+2403:                       child: SizedBox(
+2404:                         width: 60,
+2405:                         height: 190,
+2406:                         child: Stack(
+2407:                           alignment: Alignment.center,
+2408:                           children: [
+2409:                             // Elegant Gold Pointer line
+2410:                             Positioned(
+2411:                               top: 24,
+2412:                               bottom: 95,
+2413:                               child: Container(
+2414:                                 width: 2.5,
+2415:                                 decoration: BoxDecoration(
+2416:                                   gradient: LinearGradient(
+2417:                                     begin: Alignment.bottomCenter,
+2418:                                     end: Alignment.topCenter,
+2419:                                     colors: [
+2420:                                       const Color(0xFFD4AF37).withOpacity(0.2),
+2421:                                       const Color(0xFFD4AF37),
+2422:                                     ],
+2423:                                   ),
+2424:                                   borderRadius: BorderRadius.circular(2),
+2425:                             
+<truncated 34208 bytes>
+extAlign.center,
+3149:                             style: TextStyle(
+3150:                               fontSize: 10.5,
+3151:                               fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+3152:                               color: isToday
+3153:                                   ? const Color(0xFF27A770)
+3154:                                   : (dark ? Colors.white.withOpacity(0.85) : Colors.black87),
+3155:                             ),
+3156:                           ),
+3157:                         ),
+3158:                       ),
+3159:                     ],
+3160:                   ),
+3161:                 );
+3162:               },
+3163:             ),
+3164:           ),
+3165:         ],
+3166:       ),
+3167:     );
+3168:   }
+3169: 
+3170:   // Spiritual Calendar Sheet Grid View
+3171:   Widget _buildMonthlyCalendarView(bool dark, String todayStr) {
+3172:     DateTime? firstDate;
+3173:     if (_monthlyPrayerTimes.isNotEmpty) {
+3174:       final parts = _monthlyPrayerTimes[0]['MiladiTarihKisa']?.split('.');
+3175:       if (parts != null && parts.length == 3) {
+3176:         firstDate = DateTime(
+3177:           int.parse(parts[2]),
+3178:           int.parse(parts[1]),
+3179:           int.parse(parts[0]),
+3180:         );
+3181:       }
+3182:     }
+3183:     int startOffset = firstDate != null ? firstDate.weekday - 1 : 0;
+3184:     final daysCount = _monthlyPrayerTimes.length;
+3185:     final totalCells = startOffset + daysCount;
+3186: 
+3187:     // Selected day data
+3188:     final selectedDayData = _monthlyPrayerTimes.isNotEmpty &&
+3189:             _selectedCalendarDayIndex >= 0 &&
+3190:             _selectedCalendarDayIndex < _monthlyPrayerTimes.length
+3191:          ? _monthlyPrayerTimes[_selectedCalendarDayIndex]
+3192:          : null;
+3193: 
+3194:     return Expanded(
+3195:       child: ListView(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

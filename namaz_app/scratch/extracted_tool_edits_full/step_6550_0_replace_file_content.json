@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Bypassing getLastKnownPosition on timeout to guarantee fallback coordinates are loaded in the emulator when high-accuracy GPS times out\"",
+  "EndLine": "146",
+  "Instruction": "\"Comment out getLastKnownPosition within the catch block so the app falls back to Büyükçekmece mock coordinates on emulator timeout\"",
+  "ReplacementContent": "\"      } catch (e) {\\n        debugPrint(\\\"getCurrentPosition error/timeout: $e\\\");\\n        // Bypass getLastKnownPosition on emulator timeout to ensure fallback mock coordinates are used\\n        position = null;\\n      }\"",
+  "StartLine": "140",
+  "TargetContent": "\"      } catch (e) {\\n        debugPrint(\\\"getCurrentPosition error/timeout: $e\\\");\\n        try {\\n          position = await Geolocator.getLastKnownPosition();\\n        } catch (_) {}\\n      }\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Bypassing getLastKnownPosition in tool_detail_screen.dart\"",
+  "toolSummary": "\"Bypass getLastKnownPosition on timeout\""
+}

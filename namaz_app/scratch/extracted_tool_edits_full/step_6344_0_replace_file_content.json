@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Refactored null check to a null-aware assignment to comply with Dart lint recommendation.\"",
+  "EndLine": "162",
+  "Instruction": "\"Use null-aware assignment ??= for Position fallback.\"",
+  "ReplacementContent": "\"      position ??= Position(\\n        // Fallback mock coordinates (Kadıköy, İstanbul) if GPS service hangs or fails\\n        latitude: 40.9901,\\n        longitude: 29.0234,\\n        timestamp: DateTime.now(),\\n        accuracy: 0.0,\\n        altitude: 0.0,\\n        altitudeAccuracy: 0.0,\\n        heading: 0.0,\\n        headingAccuracy: 0.0,\\n        speed: 0.0,\\n        speedAccuracy: 0.0,\\n      );\"",
+  "StartLine": "143",
+  "TargetContent": "\"      if (position == null) {\\n        // Fallback mock coordinates (Kadıköy, İstanbul) if GPS service hangs or fails\\n        position = Position(\\n          latitude: 40.9901,\\n          longitude: 29.0234,\\n          timestamp: DateTime.now(),\\n          accuracy: 0.0,\\n          altitude: 0.0,\\n          altitudeAccuracy: 0.0,\\n          heading: 0.0,\\n          headingAccuracy: 0.0,\\n          speed: 0.0,\\n          speedAccuracy: 0.0,\\n        );\\n      }\"",
+  "TargetFile": "\"C:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Applying null-aware lint fix\"",
+  "toolSummary": "\"Edit tool detail screen\""
+}

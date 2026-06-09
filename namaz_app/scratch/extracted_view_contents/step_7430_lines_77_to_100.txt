@@ -1,0 +1,32 @@
+Created At: 2026-05-27T19:54:21Z
+Completed At: 2026-05-27T19:54:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208282
+Showing lines 77 to 100
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+77: [out:json][timeout:15];
+78: (
+79:   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+80:   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+81:   node["building"="mosque"](around:$radius,$lat,$lon);
+82:   way["building"="mosque"](around:$radius,$lat,$lon);
+83: );
+84: out center body;
+85: ''';
+86: 
+87:           final url = Uri.parse(endpoint);
+88:           final response = await http.post(
+89:             url,
+90:             headers: {
+91:               'Content-Type': 'application/x-www-form-urlencoded',
+92:               'Accept': 'application/json',
+93:             },
+94:             body: {'data': query},
+95:           ).timeout(const Duration(seconds: 20));
+96: 
+97:           debugPrint('Overpass API [$endpoint] response: status=${response.statusCode}, radius=$radius');
+98: 
+99:           if (response.statusCode == 200) {
+100:             final data = json.decode(response.body);
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

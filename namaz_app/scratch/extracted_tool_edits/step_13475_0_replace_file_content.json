@@ -1,0 +1,16 @@
+{
+  "step_index": 13475,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Make the Scaffold background color adaptive in tool_detail_screen.dart to support dark mode correctly across all tools including Qibla Finder.\"",
+    "EndLine": "925",
+    "Instruction": "\"Change Scaffold's backgroundColor to adapt dynamically to dark theme using _isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5).\"",
+    "ReplacementContent": "\"    return Scaffold(\\n      backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),\"",
+    "StartLine": "923",
+    "TargetContent": "\"    return Scaffold(\\n      backgroundColor: const Color(0xFFF3F8F5),\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Updating Scaffold background color\"",
+    "toolSummary": "\"Updating Scaffold background color\""
+  }
+}

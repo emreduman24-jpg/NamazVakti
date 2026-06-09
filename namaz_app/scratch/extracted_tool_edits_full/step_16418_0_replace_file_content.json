@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Dispose _dualarSearchController inside dispose() to prevent leaks.\"",
+  "EndLine": "889",
+  "Instruction": "\"Add _dualarSearchController.dispose() to the dispose method.\"",
+  "ReplacementContent": "\"  @override\\n  void dispose() {\\n    _audioPlayer?.dispose();\\n    _duaNameController.dispose();\\n    _duaTextController.dispose();\\n    _questionNameController.dispose();\\n    _qaInputController.dispose();\\n    _chatInputController.dispose();\\n    _hadisSearchController.dispose();\\n    _dualarSearchController.dispose();\\n    _goldController.dispose();\\n    _cashController.dispose();\\n    _businessController.dispose();\\n    _debtsController.dispose();\\n    super.dispose();\\n  }\"",
+  "StartLine": "875",
+  "TargetContent": "\"  @override\\n  void dispose() {\\n    _audioPlayer?.dispose();\\n    _duaNameController.dispose();\\n    _duaTextController.dispose();\\n    _questionNameController.dispose();\\n    _qaInputController.dispose();\\n    _chatInputController.dispose();\\n    _hadisSearchController.dispose();\\n    _goldController.dispose();\\n    _cashController.dispose();\\n    _businessController.dispose();\\n    _debtsController.dispose();\\n    super.dispose();\\n  }\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Adding controller dispose to dispose in tool_detail_screen.dart\"",
+  "toolSummary": "\"Edit file\""
+}

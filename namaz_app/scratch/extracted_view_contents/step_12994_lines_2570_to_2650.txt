@@ -1,0 +1,89 @@
+Created At: 2026-06-01T11:56:16Z
+Completed At: 2026-06-01T11:56:16Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5894
+Total Bytes: 238386
+Showing lines 2570 to 2650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2570:             ],
+2571:           ),
+2572:         );
+2573:       },
+2574:     );
+2575:   }
+2576: 
+2577:   Widget _buildAylikNamazVakitleri() {
+2578:     final bool dark = _isDark;
+2579: 
+2580:     if (_loadingMonthlyTimes) {
+2581:       return Center(
+2582:         child: Column(
+2583:           mainAxisAlignment: MainAxisAlignment.center,
+2584:           children: [
+2585:             CircularProgressIndicator(
+2586:               valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
+2587:             ),
+2588:             const SizedBox(height: 16),
+2589:             Text(
+2590:               "Namaz Vakitleri Yükleniyor...",
+2591:               style: TextStyle(
+2592:                 fontSize: 14,
+2593:                 color: _textColor,
+2594:                 fontWeight: FontWeight.w500,
+2595:               ),
+2596:             ),
+2597:           ],
+2598:         ),
+2599:       );
+2600:     }
+2601: 
+2602:     if (_monthlyPrayerTimes.isEmpty) {
+2603:       return Center(
+2604:         child: Padding(
+2605:           padding: const EdgeInsets.all(24.0),
+2606:           child: Column(
+2607:             mainAxisAlignment: MainAxisAlignment.center,
+2608:             children: [
+2609:               const Icon(
+2610:                 Icons.cloud_off,
+2611:                 color: Colors.grey,
+2612:                 size: 64,
+2613:               ),
+2614:               const SizedBox(height: 16),
+2615:               Text(
+2616:                 "Namaz Vakitleri Alınamadı",
+2617:                 style: TextStyle(
+2618:                   fontSize: 16,
+2619:                   fontWeight: FontWeight.bold,
+2620:                   color: _textColor,
+2621:                 ),
+2622:               ),
+2623:               const SizedBox(height: 8),
+2624:               Text(
+2625:                 "Lütfen internet bağlantınızı kontrol edip tekrar deneyin veya konum ayarlarınızı güncelleyin.",
+2626:                 textAlign: TextAlign.center,
+2627:                 style: TextStyle(fontSize: 12.5, color: _subtitleColor, height: 1.4),
+2628:               ),
+2629:             ],
+2630:           ),
+2631:         ),
+2632:       );
+2633:     }
+2634: 
+2635:     // Get today's date formatted as dd.MM.yyyy
+2636:     final now = DateTime.now();
+2637:     final todayStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}";
+2638: 
+2639:     return Column(
+2640:       children: [
+2641:         // Premium Header Card showing selected location
+2642:         Container(
+2643:           width: double.infinity,
+2644:           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+2645:           margin: const EdgeInsets.only(bottom: 12),
+2646:           decoration: BoxDecoration(
+2647:             gradient: LinearGradient(
+2648:               colors: dark
+2649:                   ? [const Color(0xFF131D31), const Color(0xFF0F1B2A)]
+2650:                   : [Colors.white, const Color(0xFFF0F4F8)],
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

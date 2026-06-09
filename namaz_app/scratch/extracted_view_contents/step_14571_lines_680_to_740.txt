@@ -1,0 +1,69 @@
+Created At: 2026-06-03T05:01:29Z
+Completed At: 2026-06-03T05:01:29Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6363
+Total Bytes: 258283
+Showing lines 680 to 740
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+680:   int _kazaVitir = 0;
+681: 
+682:   // Sabah & Aksam Ezkari counts
+683:   final List<int> _sabahEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+684:   final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+685:   int _ezkarTab = 0;
+686: 
+687:   @override
+688:   void initState() {
+689:     super.initState();
+690:     _initMosques();
+691:     _loadLocationName();
+692:     if (widget.toolId == 'yakindaki-camiler' || widget.toolId == 'kible-bulucu') {
+693:       _getUserLocation();
+694:     }
+695:     if (widget.toolId == 'namaz-vakitleri-aylik') {
+696:       _loadMonthlyTimes();
+697:     }
+698:     _initAudio();
+699:     _loadZikirState();
+700:     _loadDuaList();
+701:     _loadQuestionList();
+702:     _loadKazaState();
+703:   }
+704: 
+705:   Future<void> _loadKazaState() async {
+706:     final prefs = await SharedPreferences.getInstance();
+707:     setState(() {
+708:       _kazaSabah = prefs.getInt('kaza_sabah') ?? 0;
+709:       _kazaOgle = prefs.getInt('kaza_ogle') ?? 0;
+710:       _kazaIkindi = prefs.getInt('kaza_ikindi') ?? 0;
+711:       _kazaAksam = prefs.getInt('kaza_aksam') ?? 0;
+712:       _kazaYatsi = prefs.getInt('kaza_yatsi') ?? 0;
+713:       _kazaVitir = prefs.getInt('kaza_vitir') ?? 0;
+714:     });
+715:   }
+716: 
+717:   Future<void> _updateKaza(String key, int delta) async {
+718:     final prefs = await SharedPreferences.getInstance();
+719:     int current = prefs.getInt(key) ?? 0;
+720:     int newValue = math.max(0, current + delta);
+721:     await prefs.setInt(key, newValue);
+722:     setState(() {
+723:       if (key == 'kaza_sabah') _kazaSabah = newValue;
+724:       if (key == 'kaza_ogle') _kazaOgle = newValue;
+725:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+726:       if (key == 'kaza_aksam') _kazaAksam = newValue;
+727:       if (key == 'kaza_yatsi') _kazaYatsi = newValue;
+728:       if (key == 'kaza_vitir') _kazaVitir = newValue;
+729:     });
+730:   }
+731: 
+732:   void _initAudio() {
+733:     _audioPlayer = AudioPlayer();
+734:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+735:       if (mounted) {
+736:         setState(() {
+737:           _playerState = state;
+738:         });
+739:       }
+740:     });
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

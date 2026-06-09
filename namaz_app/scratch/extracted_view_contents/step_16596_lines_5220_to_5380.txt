@@ -1,0 +1,100 @@
+Created At: 2026-06-03T13:10:42Z
+Completed At: 2026-06-03T13:10:43Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7690
+Total Bytes: 312474
+Showing lines 5220 to 5380
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5220:               ],
+5221:             ),
+5222:           ),
+5223:         ),
+5224:       );
+5225:     }
+5226: 
+5227:     final tabRow = Container(
+5228:       padding: const EdgeInsets.all(4),
+5229:       decoration: BoxDecoration(
+5230:         color: _isDark ? const Color(0xFF1E1613) : const Color(0xFFEDF2F0),
+5231:         borderRadius: BorderRadius.circular(16),
+5232:       ),
+5233:       child: Row(
+5234:         children: [
+5235:           buildSegmentButton(0, "Kur'an Duaları", totalKuran),
+5236:           buildSegmentButton(1, "Hadis Duaları", totalHadis),
+5237:         ],
+5238:       ),
+5239:     );
+5240: 
+5241:     List<Widget> items = [];
+5242:     bool hasAnyItems = false;
+5243:     for (var cat in categories) {
+5244:       final key = cat['key']!;
+5245:       final list = grouped[key] ?? [];
+5246:       if (list.isEmpty) continue;
+5247:       
+5248:       hasAnyItems = true;
+5249: 
+5250:       // Section Header
+5251:       items.add(
+5252:         Padding(
+5253:           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0, left: 4.0),
+5254:           child: Row(
+5255:             children: [
+5256:               Text(
+5257:                 "${cat['emoji']} ${cat['title']}",
+5258:                 style: const TextStyle(
+5259:                   fontSize: 14,
+5260:                   fontWeight: FontWeight.bold,
+5261:                   color: Color(0xFFC19E67),
+5262:                 ),
+5263:               ),
+5264:               const SizedBox(width: 8),
+5265:               Container(
+5266:                 padding: const EdgeInsets.
+<truncated 3041 bytes>
+         GestureDetector(
+5338:                       onTap: () {
+5339:                         if (url.isNotEmpty) {
+5340:                           _playAudio(url, title);
+5341:                         }
+5342:                       },
+5343:                       child: Container(
+5344:                         width: 38,
+5345:                         height: 38,
+5346:                         decoration: BoxDecoration(
+5347:                           shape: BoxShape.circle,
+5348:                           color: _isDark ? const Color(0xFF302820) : const Color(0xFFEAF7F1),
+5349:                         ),
+5350:                         child: Icon(
+5351:                           isPlaying(url)
+5352:                               ? Icons.pause
+5353:                               : Icons.play_arrow,
+5354:                           color: const Color(0xFFC19E67),
+5355:                           size: 20,
+5356:                         ),
+5357:                       ),
+5358:                     ),
+5359:                     const SizedBox(width: 8),
+5360:                     // Favorite Heart Button
+5361:                     GestureDetector(
+5362:                       onTap: () => _toggleFavoriteDua(id),
+5363:                       child: Container(
+5364:                         padding: const EdgeInsets.all(6.0),
+5365:                         child: Icon(
+5366:                           isFav ? Icons.favorite : Icons.favorite_border,
+5367:                           color: isFav ? Colors.red : (_isDark ? Colors.grey[400] : Colors.grey[600]),
+5368:                           size: 20,
+5369:                         ),
+5370:                       ),
+5371:                     ),
+5372:                   ],
+5373:                 ),
+5374:               ),
+5375:             ),
+5376:           ),
+5377:         );
+5378:       }
+5379:     }
+5380: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

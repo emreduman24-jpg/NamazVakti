@@ -1,0 +1,16 @@
+{
+  "step_index": 14337,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Add quranTab state variable to ToolDetailScreenState\"",
+    "EndLine": "92",
+    "Instruction": "\"Add int _quranTab = 0; to state variables of ToolDetailScreenState\"",
+    "ReplacementContent": "\"  String _currentAudioUrl = \\\"\\\";\\n  String _currentTrackName = \\\"\\\";\\n  int _quranTab = 0; // 0: Sureler, 1: Cüzler\"",
+    "StartLine": "88",
+    "TargetContent": "\"  String _currentAudioUrl = \\\"\\\";\\n  String _currentTrackName = \\\"\\\";\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding quranTab state variable\"",
+    "toolSummary": "\"Replace file content\""
+  }
+}

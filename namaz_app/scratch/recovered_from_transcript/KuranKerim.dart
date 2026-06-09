@@ -1,0 +1,72 @@
+Widget _buildKuranKerim() {
+1832:     final filteredSuras = QURAN_SURAHS.where((s) {
+1833:       final name = _normalize(s.name);
+1834:       final query = _normalize(_quranSearchQuery);
+1835:       return name.contains(query) || s.number.toString() == query;
+1836:     }).toList();
+1837: 
+1838:     final filteredJuzs = QURAN_JUZS.where((j) {
+1839:       final title = _normalize(j.title);
+1840:       final range = _normalize(j.range);
+1841:       final query = _normalize(_quranSearchQuery);
+1842:       return title.contains(query) || range.contains(query) || j.number.toString() == query;
+1843:     }).toList();
+1844: 
+1845:     return Column(
+1846:       children: [
+1847:         Padding(
+1848:           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+1849:           child: Column(
+1850:             children: [
+1851:               const SizedBox(height: 8),
+1852:               // Kald\u0131\u011f\u0131n Yer Card
+1853:               GestureDetector(
+1854:                 onTap: () {
+1855:                   final targetSurah = QURAN_SURAHS.firstWhere(
+1856:                     (s) => s.number == _lastSuraNo,
+1857:                     orElse: () => QURAN_SURAHS[0],
+1858:                   );
+1859:                   Navigator.push(
+1860:                     context,
+1861:                     MaterialPageRoute(
+1862:                       builder: (context) => QuranDetailScreen(
+1863:                         surah: targetSurah,
+1864:                         targetAyah: _lastAyahNo,
+1865:                       ),
+1866:                     ),
+1867:                   ).then((_) => _loadQuranLastRead());
+1868:                 },
+1869:                 child: Container(
+1870:                   width: double.infinity,
+1871:                   padding: const EdgeInsets.all(16),
+1872:                   decoration: BoxDecoration(
+1873:                     borderRadius: BorderRadius.circular(20),
+1874:                     gradient: const LinearGradient(
+1875:                       colors: [Color(0xFF163124), Color(0xFF0F2018)],
+1876:                       begin: Alignment.topLeft,
+1877:                       end: Alignment.bottomRight,
+1878:                     ),
+1879:                     border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.3)),
+1880:                     boxShadow: [
+1881:                       BoxShadow(
+1882:                         color: Colors.black.withOpacity(0.3),
+1883:                         blurRadius: 8,
+1884:                         offset: const Offset(0, 4),
+1885:                       ),
+1886:                     ],
+1887:                   ),
+1888:                   child: Column(
+1889:                     crossAxisAlignment: CrossAxisAlignment.start,
+1890:                     children: [
+1891:                       Row(
+1892:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+1893:                         children: [
+1894:                           Row(
+1895:                             children: [
+1896:                               const Icon(Icons.menu_book_rounded, color: Color(0xFFC5A059), size: 18),
+1897:                               const SizedBox(width: 6),
+1898:                               Text(
+1899:                                 "KALDI\u011eIN YER",
+1900:                                 style: TextStyle(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+"}

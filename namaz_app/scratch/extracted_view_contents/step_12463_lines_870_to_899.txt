@@ -1,0 +1,38 @@
+Created At: 2026-06-01T10:43:33Z
+Completed At: 2026-06-01T10:43:34Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5599
+Total Bytes: 233281
+Showing lines 870 to 899
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+870:       appBar: AppBar(
+871:         title: Text(
+872:           widget.toolTitle,
+873:           style: const TextStyle(
+874:             fontWeight: FontWeight.bold,
+875:             color: Colors.white,
+876:           ),
+877:         ),
+878:         backgroundColor: const Color(0xFF1E5E43),
+879:         elevation: 0,
+880:         iconTheme: const IconThemeData(color: Colors.white),
+881:       ),
+882:       body: SafeArea(
+883:         child: Padding(
+884:           padding: const EdgeInsets.all(16.0),
+885:           child: _buildToolBody(),
+886:         ),
+887:       ),
+888:     );
+889:   }
+890: 
+891:   Widget _buildToolBody() {
+892:     switch (widget.toolId) {
+893:       case 'namaz-vakitleri-aylik':
+894:         return _buildNamazVakitleriAylik();
+895:       case 'dini-gunler':
+896:         return _buildDiniGunler();
+897:       case 'dua-iste':
+898:         return _buildDuaIste();
+899:       case 'soru-cevap':
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

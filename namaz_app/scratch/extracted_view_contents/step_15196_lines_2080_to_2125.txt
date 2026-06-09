@@ -1,0 +1,54 @@
+Created At: 2026-06-03T06:21:16Z
+Completed At: 2026-06-03T06:21:16Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 2080 to 2125
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2080:               ? _buildSurelerList(filteredSuras)
+2081:               : _buildCuzlerList(filteredJuzs),
+2082:         ),
+2083:       ],
+2084:     );
+2085:   }
+2086: 
+2087:   Widget _buildSurelerList(List<QuranSurah> list) {
+2088:     if (list.isEmpty) {
+2089:       return Center(
+2090:         child: Text(
+2091:           "Sure bulunamadı.",
+2092:           style: TextStyle(color: _isDark ? Colors.white54 : Colors.black54, fontSize: 14),
+2093:         ),
+2094:       );
+2095:     }
+2096:     return ListView.builder(
+2097:       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+2098:       itemCount: list.length,
+2099:       itemBuilder: (context, index) {
+2100:         final surah = list[index];
+2101:         final isBookmarked = _quranBookmarks.contains(surah.number.toString());
+2102:         return Container(
+2103:           margin: const EdgeInsets.only(bottom: 8),
+2104:           decoration: BoxDecoration(
+2105:             color: _isDark ? const Color(0xFF131F35) : Colors.white,
+2106:             borderRadius: BorderRadius.circular(12),
+2107:             border: Border.all(color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0)),
+2108:             boxShadow: _isDark
+2109:                 ? null
+2110:                 : [
+2111:                     BoxShadow(
+2112:                       color: Colors.black.withOpacity(0.02),
+2113:                       blurRadius: 4,
+2114:                       offset: const Offset(0, 2),
+2115:                     ),
+2116:                   ],
+2117:           ),
+2118:           child: ListTile(
+2119:             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+2120:             onTap: () {
+2121:               Navigator.push(
+2122:                 context,
+2123:                 MaterialPageRoute(
+2124:                   builder: (context) => QuranDetailScreen(
+2125:                     surah: surah,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add the missing closing parenthesis for ElevatedButton in _buildCanliSohbet.\"",
+  "EndLine": "1869",
+  "Instruction": "\"Add closing parenthesis for ElevatedButton.\"",
+  "ReplacementContent": "\"                child: Text(\\n                  \\\"Geri Dön\\\",\\n                  style: TextStyle(\\n                    color: Colors.white,\\n                    fontWeight: FontWeight.bold,\\n                    fontSize: 13,\\n                  ),\\n                ),\\n              ),\\n            ],\"",
+  "StartLine": "1860",
+  "TargetContent": "\"                child: Text(\\n                  \\\"Geri Dön\\\",\\n                  style: TextStyle(\\n                    color: Colors.white,\\n                    fontWeight: FontWeight.bold,\\n                    fontSize: 13,\\n                  ),\\n                ),\\n            ],\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Adding closing parenthesis for ElevatedButton in _buildCanliSohbet\"",
+  "toolSummary": "\"Edit file\""
+}

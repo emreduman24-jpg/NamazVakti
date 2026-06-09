@@ -1,0 +1,74 @@
+Created At: 2026-06-03T13:36:02Z
+Completed At: 2026-06-03T13:36:03Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 615 to 680
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+615:   final TextEditingController _questionNameController = TextEditingController();
+616:   final TextEditingController _qaInputController = TextEditingController();
+617: 
+618:   // Canli Dini Sohbet State
+619:   final List<Map<String, String>> _chatMessages = [
+620:     {
+621:       'sender': 'other',
+622:       'user': 'Mehmet Kaya',
+623:       'text':
+624:           'Selamün Aleyküm muhterem kardeşlerim, gününüz bereketli geçsin inşallah.',
+625:     },
+626:     {
+627:       'sender': 'other',
+628:       'user': 'Fatma Şahin',
+629:       'text': 'Ve Aleyküm Selam. Hayırlı günler dilerim.',
+630:     },
+631:     {
+632:       'sender': 'other',
+633:       'user': 'Ömer Faruk',
+634:       'text': 'Rabbim namazlarımızı ve dualarımızı kabul eylesin.',
+635:     },
+636:   ];
+637:   final TextEditingController _chatInputController = TextEditingController();
+638:   final List<String> _chatUsers = [
+639:     "Ayşe Yılmaz",
+640:     "Mustafa Demir",
+641:     "Zeynep Çelik",
+642:     "Ahmet Yıldız",
+643:     "Emine Kaya",
+644:   ];
+645:   final List<String> _chatReplies = [
+646:     "Allah hepimizden razı olsun inşallah.",
+647:     "Rabbim bu güzel günün hürmetine dualarımızı kabul eylesin.",
+648:     "Birlik ve beraberliğimiz daim olsun.",
+649:     "Hayırlı, huzurlu vakitler dilerim.",
+650:     "Ve aleyküm selam ve rahmetullah.",
+651:   ];
+652: 
+653:   // 40 Hadis State
+654:   int _hadisIndex = 0;
+655:   final List<Map<String, dynamic>> _filteredHadisList = [...HADISLER_40];
+656:   final TextEditingController _hadisSearchController = TextEditingController();
+657: 
+658:   // Namaz Tesbihati State
+659:   int _tesbihStep = 0;
+660:   int _tesbihCount = 0;
+661: 
+662:   // Zekat Hesaplayici State
+663:   final TextEditingController _goldController = TextEditingController();
+664:   final TextEditingController _cashController = TextEditingController();
+665:   final TextEditingController _businessController = TextEditingController();
+666:   final TextEditingController _debtsController = TextEditingController();
+667:   String _zekatResult = "";
+668: 
+669:   // Date Converter State
+670:   DateTime _selectedDate = DateTime.now();
+671:   String _convertedDateResult = "";
+672:   bool _miladiToHicri = true;
+673: 
+674:   // Sahabe Hayatlari & Esmaül Hüsna Search State
+675:   String _esmaSearchQuery = "";
+676:   String _sahabeSearchQuery = "";
+677:   String _hadisSearchQuery = "";
+678: 
+679:   // Compass Manual Rotation Simulation (Fallback for Emulators)
+680:   double _manualCompassHeading = 0.0;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

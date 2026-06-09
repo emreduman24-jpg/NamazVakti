@@ -1,0 +1,16 @@
+{
+  "step_index": 12372,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Trigger _loadMonthlyPrayerTimes in initState when the active tool is 'namaz-vakitleri-aylik'.\"",
+    "EndLine": "642",
+    "Instruction": "\"Add conditional check for widget.toolId == 'namaz-vakitleri-aylik' calling _loadMonthlyPrayerTimes().\"",
+    "ReplacementContent": "\"  @override\\n  void initState() {\\n    super.initState();\\n    _initMosques();\\n    if (widget.toolId == 'yakindaki-camiler') {\\n      _getUserLocation();\\n    }\\n    if (widget.toolId == 'namaz-vakitleri-aylik') {\\n      _loadMonthlyPrayerTimes();\\n    }\\n    _initAudio();\"",
+    "StartLine": "630",
+    "TargetContent": "\"  @override\\n  void initState() {\\n    super.initState();\\n    _initMosques();\\n    if (widget.toolId == 'yakindaki-camiler') {\\n      _getUserLocation();\\n    }\\n    _initAudio();\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Editing initState\"",
+    "toolSummary": "\"Trigger loader in initState\""
+  }
+}

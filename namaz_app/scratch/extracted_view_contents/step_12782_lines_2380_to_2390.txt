@@ -1,0 +1,19 @@
+Created At: 2026-06-01T11:29:35Z
+Completed At: 2026-06-01T11:29:35Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 2380 to 2390
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2380:           ),
+2381:         );
+2382:       },
+2383:     );
+2384:   }
+2385: 
+2386:   Widget _buildZikirmatik() {
+2387:     final zikir = _zikirData[_selectedZikirId] ?? _zikirData['subhanallah']!;
+2388:     return SingleChildScrollView(
+2389:       child: Column(
+2390:         children: [
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

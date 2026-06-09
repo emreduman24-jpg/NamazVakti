@@ -1,0 +1,23 @@
+Created At: 2026-06-01T08:39:34Z
+Completed At: 2026-06-01T08:39:34Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart`
+Total Lines: 388
+Total Bytes: 10456
+Showing lines 1 to 15
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'package:flutter/material.dart';
+3: import 'data/prayer_repository.dart';
+4: import 'services/notification_service.dart';
+5: import 'screens/main_screen.dart';
+6: import 'screens/tools_screen.dart';
+7: import 'screens/settings_screen.dart';
+8: import 'screens/tool_detail_screen.dart';
+9: import 'screens/splash_screen.dart';
+10: 
+11: void main() async {
+12:   WidgetsFlutterBinding.ensureInitialized();
+13: 
+14:   // Initialize Notification Service
+15:   final notificationService = NotificationService();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

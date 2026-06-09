@@ -1,0 +1,59 @@
+Created At: 2026-06-03T05:51:36Z
+Completed At: 2026-06-03T05:51:36Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6956
+Total Bytes: 281899
+Showing lines 1950 to 2000
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1950:         ),
+1951:       ],
+1952:     );
+1953:   }
+1954: 
+1955:   // 6. Kuran-ı Kerim Player
+1956:   Widget _buildKuranKerim() {
+1957:     final filteredSuras = QURAN_SURAHS.where((s) {
+1958:       final name = _normalize(s.name);
+1959:       final query = _normalize(_quranSearchQuery);
+1960:       return name.contains(query) || s.number.toString() == query;
+1961:     }).toList();
+1962: 
+1963:     final filteredJuzs = QURAN_JUZS.where((j) {
+1964:       final title = _normalize(j.title);
+1965:       final range = _normalize(j.range);
+1966:       final query = _normalize(_quranSearchQuery);
+1967:       return title.contains(query) || range.contains(query) || j.number.toString() == query;
+1968:     }).toList();
+1969: 
+1970:     return Column(
+1971:       children: [
+1972:         Padding(
+1973:           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+1974:           child: Column(
+1975:             children: [
+1976:               const SizedBox(height: 8),
+1977:               // Kaldığın Yer Card
+1978:               GestureDetector(
+1979:                 onTap: () {
+1980:                   final targetSurah = QURAN_SURAHS.firstWhere(
+1981:                     (s) => s.number == _lastSuraNo,
+1982:                     orElse: () => QURAN_SURAHS[0],
+1983:                   );
+1984:                   Navigator.push(
+1985:                     context,
+1986:                     MaterialPageRoute(
+1987:                       builder: (context) => QuranDetailScreen(
+1988:                         surah: targetSurah,
+1989:                         targetAyah: _lastAyahNo,
+1990:                       ),
+1991:                     ),
+1992:                   ).then((_) => _loadQuranLastRead());
+1993:                 },
+1994:                 child: Container(
+1995:                   width: double.infinity,
+1996:                   padding: const EdgeInsets.all(16),
+1997:                   decoration: BoxDecoration(
+1998:                     borderRadius: BorderRadius.circular(20),
+1999:                     gradient: const LinearGradient(
+2000:                       colors: [Color(0xFF163124), Color(0xFF0F2018)],
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

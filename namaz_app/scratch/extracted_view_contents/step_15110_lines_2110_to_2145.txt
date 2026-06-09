@@ -1,0 +1,44 @@
+Created At: 2026-06-03T06:18:30Z
+Completed At: 2026-06-03T06:18:30Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 2110 to 2145
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2110:                 : [
+2111:                     BoxShadow(
+2112:                       color: Colors.black.withOpacity(0.02),
+2113:                       blurRadius: 4,
+2114:                       offset: const Offset(0, 2),
+2115:                     ),
+2116:                   ],
+2117:           ),
+2118:           child: ListTile(
+2119:             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+2120:             onTap: () {
+2121:               Navigator.push(
+2122:                 context,
+2123:                 MaterialPageRoute(
+2124:                   builder: (context) => QuranDetailScreen(
+2125:                     surah: surah,
+2126:                     targetAyah: 1,
+2127:                   ),
+2128:                 ),
+2129:               ).then((_) => _loadQuranLastRead());
+2130:             },
+2131:             leading: Container(
+2132:               width: 36,
+2133:               height: 36,
+2134:               decoration: BoxDecoration(
+2135:                 border: Border.all(color: const Color(0xFFC5A059), width: 1.5),
+2136:                 shape: BoxShape.circle,
+2137:               ),
+2138:               alignment: Alignment.center,
+2139:               child: Text(
+2140:                 surah.number.toString(),
+2141:                 style: const TextStyle(
+2142:                   color: Color(0xFFC5A059),
+2143:                   fontWeight: FontWeight.bold,
+2144:                   fontSize: 12,
+2145:                 ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

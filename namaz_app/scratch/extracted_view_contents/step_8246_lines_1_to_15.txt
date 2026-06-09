@@ -1,0 +1,23 @@
+Created At: 2026-05-28T14:27:33Z
+Completed At: 2026-05-28T14:27:33Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 15
+Total Bytes: 970
+Showing lines 1 to 15
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Task Checklist - Yakındaki Camiler Düzeltmeleri
+2: 
+3: - `[ ]` 81 İl Koordinat Eşlemesi ve Normalleştirme Metodu (Flutter)
+4:   - `[ ]` `CITY_COORDINATES` haritasını `tool_detail_screen.dart` dosyasına yerleştirme.
+5:   - `[ ]` `normalizeCityName` metodunun eklenmesi.
+6: - `[ ]` `_getUserLocation` Metodu Güncellemesi (Flutter)
+7:   - `[ ]` Sayfa ilk açıldığında (`forceRefresh` = false) kayıtlı şehri SharedPreferences'tan okuma.
+8:   - `[ ]` Şehir eşleşirse merkez koordinatlarını kullanma, aksi halde veya canlı yenilemede GPS'e bağlanma.
+9: - `[ ]` Web Uygulaması Entegrasyonu (`tools.js`)
+10:   - `[ ]` `CITY_COORDINATES` ve `normalizeCityName` yapılarının `tools.js` dosyasına eklenmesi.
+11:   - `[ ]` `renderYakindakiCamiler` fonksiyonunun `localStorage.user_location` verisini önceliklendirecek şekilde refaktör edilmesi.
+12: - `[ ]` Doğrulama ve Testler
+13:   - `[ ]` Flutter uygulamasında hot restart/reload testi.
+14:   - `[ ]` Web uygulamasında tarayıcı testi.
+15: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,39 @@
+Created At: 2026-06-03T11:07:42Z
+Completed At: 2026-06-03T11:07:43Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6928
+Total Bytes: 282313
+Showing lines 1980 to 2010
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1980:                             ),
+1981:                           ],
+1982:                         ),
+1983:                       ),
+1984:                     )
+1985:                   : GestureDetector(
+1986:                       onTap: () {
+1987:                         final targetJuz = QURAN_JUZS.firstWhere(
+1988:                           (j) => j.number == _lastJuzNo,
+1989:                           orElse: () => QURAN_JUZS[0],
+1990:                         );
+1991:                         Navigator.push(
+1992:                           context,
+1993:                           MaterialPageRoute(
+1994:                             builder: (context) => QuranDetailScreen(
+1995:                               juz: targetJuz,
+1996:                               targetAyah: _lastJuzAyahNo,
+1997:                               isJuz: true,
+1998:                             ),
+1999:                           ),
+2000:                         ).then((_) => _loadQuranLastRead());
+2001:                       },
+2002:                       child: Container(
+2003:                         width: double.infinity,
+2004:                         padding: const EdgeInsets.all(16),
+2005:                         decoration: BoxDecoration(
+2006:                           borderRadius: BorderRadius.circular(20),
+2007:                           gradient: const LinearGradient(
+2008:                             colors: [Color(0xFF162A31), Color(0xFF0F1C20)],
+2009:                             begin: Alignment.topLeft,
+2010:                             end: Alignment.bottomRight,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

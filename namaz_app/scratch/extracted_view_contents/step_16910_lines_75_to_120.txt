@@ -1,0 +1,54 @@
+Created At: 2026-06-03T13:57:30Z
+Completed At: 2026-06-03T13:57:31Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8272
+Total Bytes: 337530
+Showing lines 75 to 120
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+75:           _loadingMonthlyTimes = false;
+76:           _selectedCalendarDayIndex = todayIdx;
+77:         });
+78:       }
+79:     } catch (e) {
+80:       print('Error loading monthly prayer times: $e');
+81:       if (mounted) {
+82:         setState(() {
+83:           _loadingMonthlyTimes = false;
+84:         });
+85:       }
+86:     }
+87:   }
+88: 
+89:   AudioPlayer? _audioPlayer;
+90:   PlayerState _playerState = PlayerState.stopped;
+91:   String _currentAudioUrl = "";
+92:   String _currentTrackName = "";
+93:   int _quranTab = 0; // 0: Sureler, 1: Cüzler
+94:   int _lastSuraNo = 1;
+95:   String _lastSuraName = "Fâtiha";
+96:   int _lastAyahNo = 1;
+97:   int _lastTotalAyahs = 7;
+98:   int _lastPercent = 0;
+99:   int _lastJuzNo = 1;
+100:   String _lastJuzTitle = "1. Cüz";
+101:   String _lastJuzRange = "Fâtiha 1 - Bakara 141";
+102:   int _lastJuzSuraNo = 1;
+103:   int _lastJuzAyahNo = 1;
+104:   int _lastJuzPercent = 0;
+105:   List<String> _quranBookmarks = [];
+106:   String _quranSearchQuery = "";
+107: 
+108:   // Yakındaki Camiler (Location & GPS State)
+109:   Position? _currentPosition;
+110:   bool _loadingLocation = false;
+111:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+112: 
+113:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+114:     const r = 6371; // Earth radius in km
+115:     final dLat = _toRadians(lat2 - lat1);
+116:     final dLon = _toRadians(lon2 - lon1);
+117:     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+118:         math.cos(_toRadians(lat1)) * math.cos(_toRadians(lat2)) *
+119:         math.sin(dLon / 2) * math.sin(dLon / 2);
+120:     final c = 2 * math.asin(math.sqrt(a));
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,54 @@
+Created At: 2026-06-03T06:00:10Z
+Completed At: 2026-06-03T06:00:11Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 1820 to 1865
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1820:                   ],
+1821:                 ),
+1822:               ),
+1823:             ),
+1824:           ),
+1825:         ),
+1826:       ],
+1827:     );
+1828:   }
+1829: 
+1830:   // 6. Kuran-ı Kerim Player
+1831:   Widget _buildKuranKerim() {
+1832:     final filteredSuras = QURAN_SURAHS.where((s) {
+1833:       final name = _normalize(s.name);
+1834:       final query = _normalize(_quranSearchQuery);
+1835:       return name.contains(query) || s.number.toString() == query;
+1836:     }).toList();
+1837: 
+1838:     final filteredJuzs = QURAN_JUZS.where((j) {
+1839:       final title = _normalize(j.title);
+1840:       final range = _normalize(j.range);
+1841:       final query = _normalize(_quranSearchQuery);
+1842:       return title.contains(query) || range.contains(query) || j.number.toString() == query;
+1843:     }).toList();
+1844: 
+1845:     return Column(
+1846:       children: [
+1847:         Padding(
+1848:           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+1849:           child: Column(
+1850:             children: [
+1851:               const SizedBox(height: 8),
+1852:               // Kaldığın Yer Card
+1853:               GestureDetector(
+1854:                 onTap: () {
+1855:                   final targetSurah = QURAN_SURAHS.firstWhere(
+1856:                     (s) => s.number == _lastSuraNo,
+1857:                     orElse: () => QURAN_SURAHS[0],
+1858:                   );
+1859:                   Navigator.push(
+1860:                     context,
+1861:                     MaterialPageRoute(
+1862:                       builder: (context) => QuranDetailScreen(
+1863:                         surah: targetSurah,
+1864:                         targetAyah: _lastAyahNo,
+1865:                       ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

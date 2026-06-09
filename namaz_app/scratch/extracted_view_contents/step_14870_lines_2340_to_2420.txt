@@ -1,0 +1,89 @@
+Created At: 2026-06-03T05:52:47Z
+Completed At: 2026-06-03T05:52:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6920
+Total Bytes: 280899
+Showing lines 2340 to 2420
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2340:                     targetAyah: startInfo['ayah']!,
+2341:                   ),
+2342:                 ),
+2343:               ).then((_) => _loadQuranLastRead());
+2344:             },
+2345:             leading: Container(
+2346:               width: 36,
+2347:               height: 36,
+2348:               decoration: BoxDecoration(
+2349:                 border: Border.all(color: const Color(0xFFC5A059), width: 1.5),
+2350:                 shape: BoxShape.circle,
+2351:               ),
+2352:               alignment: Alignment.center,
+2353:               child: Text(
+2354:                 juz.number.toString(),
+2355:                 style: const TextStyle(
+2356:                   color: Color(0xFFC5A059),
+2357:                   fontWeight: FontWeight.bold,
+2358:                   fontSize: 12,
+2359:                 ),
+2360:               ),
+2361:             ),
+2362:             title: Text(
+2363:               juz.title,
+2364:               style: TextStyle(
+2365:                 color: _isDark ? Colors.white : Colors.black87,
+2366:                 fontWeight: FontWeight.bold,
+2367:                 fontSize: 15,
+2368:               ),
+2369:             ),
+2370:             subtitle: Text(
+2371:               juz.range,
+2372:               style: TextStyle(
+2373:                 color: _isDark ? Colors.white54 : Colors.black54,
+2374:                 fontSize: 12,
+2375:               ),
+2376:             ),
+2377:             trailing: Row(
+2378:               mainAxisSize: MainAxisSize.min,
+2379:               children: [
+2380:                 Text(
+2381:                   juz.arabicLabel,
+2382:                   style: const TextStyle(
+2383:                     color: Color(0xFF27A770),
+2384:                     fontFamily: 'Traditional Arabic',
+2385:                     fontSize: 18,
+2386:                     fontWeight: FontWeight.bold,
+2387:                   ),
+2388:                 ),
+2389:                 const SizedBox(width: 8),
+2390:                 Icon(
+2391:                   Icons.chevron_right_rounded,
+2392:                   color: _isDark ? Colors.white38 : Colors.black38,
+2393:                   size: 22,
+2394:                 ),
+2395:               ],
+2396:             ),
+2397:           ),
+2398:         );
+2399:       },
+2400:     );
+2401:   }             children: [
+2402:                 Text(
+2403:                   juz.arabicLabel,
+2404:                   style: const TextStyle(
+2405:                     color: Color(0xFF27A770),
+2406:                     fontFamily: 'Traditional Arabic',
+2407:                     fontSize: 18,
+2408:                     fontWeight: FontWeight.bold,
+2409:                   ),
+2410:                 ),
+2411:                 const SizedBox(width: 8),
+2412:                 const Icon(
+2413:                   Icons.chevron_right_rounded,
+2414:                   color: Colors.white38,
+2415:                   size: 22,
+2416:                 ),
+2417:               ],
+2418:             ),
+2419:           ),
+2420:         );
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

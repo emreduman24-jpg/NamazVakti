@@ -1,0 +1,86 @@
+Created At: 2026-05-23T14:12:19Z
+Completed At: 2026-05-23T14:12:19Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 801 to 1600
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+801:                         "Zekat, nisap miktarı (80.18 gr altın veya değerinde para) mala sahip olan kişilerin, varlıklarının yüzde 2.5'ini (1/40) yılda bir kez ihtiyaç sahiplerine vermesidir.";
+802:                   } else if (query.contains('selam') ||
+803:                       query.contains('merhaba')) {
+804:                     reply =
+805:                         "Ve Aleyküm Selam! Hoş geldiniz. Size dinimiz veya ibadetlerimizle ilgili nasıl yardımcı olabilirim?";
+806:                   }
+807:                   if (mounted) {
+808:                     setState(() {
+809:                       _qaMessages.add({'sender': 'bot', 'text': reply});
+810:                     });
+811:                   }
+812:                 });
+813:               },
+814:             ),
+815:           ],
+816:         ),
+817:       ],
+818:     );
+819:   }
+820: 
+821:   // 4. Canlı Sohbet
+822:   Widget _buildCanliSohbet() {
+823:     return Column(
+824:       children: [
+825:         Expanded(
+826:           child: ListView.builder(
+827:             itemCount: _chatMessages.length,
+828:             itemBuilder: (context, index) {
+829:               final msg = _chatMessages[index];
+830:               final isMe = msg['sender'] == 'me';
+831:               return Align(
+832:                 alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+833:                 child: Container(
+834:                   margin: const EdgeInsets.only(bottom: 10, left: 8, right: 8),
+835:                   padding: const EdgeInsets.all(12),
+836:                   
+<truncated 31224 bytes>
+SizedBox(height: 36),
+1561:               Text(
+1562:                 "Kıble Açısı: ${qiblaAngle.toInt()}° (İstanbul)",
+1563:                 style: const TextStyle(
+1564:                   fontWeight: FontWeight.bold,
+1565:                   fontSize: 16,
+1566:                   color: Color(0xFF1E5E43),
+1567:                 ),
+1568:               ),
+1569:               const SizedBox(height: 8),
+1570:               Text(
+1571:                 hasSensor
+1572:                     ? "Pusula Yönü: ${finalHeading.round()}°"
+1573:                     : "Simüle Yönü: ${finalHeading.round()}°",
+1574:                 style: const TextStyle(color: Colors.grey),
+1575:               ),
+1576:               const SizedBox(height: 16),
+1577:               Padding(
+1578:                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
+1579:                 child: SwitchListTile(
+1580:                   title: const Text(
+1581:                     "Simülasyon Modu",
+1582:                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+1583:                   ),
+1584:                   subtitle: const Text(
+1585:                     "Pusulayı el ile döndürmek için aktifleştirin",
+1586:                     style: TextStyle(fontSize: 12),
+1587:                   ),
+1588:                   value: _forceSimulation,
+1589:                   activeThumbColor: const Color(0xFF27A770),
+1590:                   onChanged: (val) {
+1591:                     setState(() {
+1592:                       _forceSimulation = val;
+1593:                     });
+1594:                   },
+1595:                 ),
+1596:               ),
+1597:               if (!hasSensor) ...[
+1598:                 const SizedBox(height: 8),
+1599:                 const Text(
+1600:                   "Sürgü ile pusula açısını döndürün:",
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

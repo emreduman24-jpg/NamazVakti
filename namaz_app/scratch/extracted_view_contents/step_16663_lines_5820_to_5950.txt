@@ -1,0 +1,101 @@
+Created At: 2026-06-03T13:37:01Z
+Completed At: 2026-06-03T13:37:01Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 5820 to 5950
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5820:   Widget _buildSahabeHayatlari() {
+5821:     final filtered = SAHABE_HAYATLARI.where((item) {
+5822:       final name = _normalize(item['ad'].toString());
+5823:       final summary = _normalize(item['ozet'].toString());
+5824:       final query = _normalize(_sahabeSearchQuery);
+5825:       return name.contains(query) || summary.contains(query);
+5826:     }).toList();
+5827: 
+5828:     return Column(
+5829:       children: [
+5830:         TextField(
+5831:           decoration: InputDecoration(
+5832:             hintText: "Sahabe ara...",
+5833:             prefixIcon: Icon(Icons.search, color: Color(0xFF27A770)),
+5834:             filled: true,
+5835:             fillColor: Colors.white,
+5836:             border: OutlineInputBorder(
+5837:               borderRadius: BorderRadius.circular(15),
+5838:               borderSide: BorderSide.none,
+5839:             ),
+5840:           ),
+5841:           onChanged: (val) {
+5842:             setState(() {
+5843:               _sahabeSearchQuery = val;
+5844:             });
+5845:           },
+5846:         ),
+5847:         SizedBox(height: 12),
+5848:         Expanded(
+5849:           child: ListView.builder(
+5850:             itemCount: filtered.length,
+5851:             itemBuilder: (context, index) {
+5852:               final item = filtered[index];
+5853:               return Card(
+5854:                 elevation: 1.5,
+5855:                 shape: RoundedRectangleBorder(
+5856:                   borderRadius: BorderRadius.circular(16),
+5857:                 ),
+5858:                 margin: EdgeInsets.only(bot
+<truncated 1990 bytes>
+tyle(
+5899:                           fontSize: 13,
+5900:                           height: 1.45,
+5901:                           color: _textColor,
+5902:                         ),
+5903:                       ),
+5904:                     ],
+5905:                   ),
+5906:                 ),
+5907:               );
+5908:             },
+5909:           ),
+5910:         ),
+5911:       ],
+5912:     );
+5913:   }
+5914: 
+5915:   // 20. İslam Tarihi
+5916:   Widget _buildIslamTarihi() {
+5917:     return Column(
+5918:       crossAxisAlignment: CrossAxisAlignment.start,
+5919:       children: [
+5920:         Text(
+5921:           "İslam Tarihi Önemli Dönemeçleri",
+5922:           style: TextStyle(
+5923:             fontWeight: FontWeight.bold,
+5924:             fontSize: 16,
+5925:             color: _greenColor,
+5926:           ),
+5927:         ),
+5928:         SizedBox(height: 12),
+5929:         Expanded(
+5930:           child: ListView.builder(
+5931:             itemCount: ISLAM_TARIHI.length,
+5932:             itemBuilder: (context, index) {
+5933:               final item = ISLAM_TARIHI[index];
+5934:               return Row(
+5935:                 crossAxisAlignment: CrossAxisAlignment.start,
+5936:                 children: [
+5937:                   Column(
+5938:                     children: [
+5939:                       Container(
+5940:                         width: 14,
+5941:                         height: 14,
+5942:                         decoration: BoxDecoration(
+5943:                           color: Color(0xFF27A770),
+5944:                           shape: BoxShape.circle,
+5945:                         ),
+5946:                       ),
+5947:                       if (index < ISLAM_TARIHI.length - 1)
+5948:                         Container(
+5949:                           width: 2,
+5950:                           height: 70,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -46,7 +46,7 @@ class _NotificationSettingsScreenState
       _ikindi = prefs.getBool('notification_prayer_ikindi') ?? true;
       _aksam = prefs.getBool('notification_prayer_aksam') ?? true;
       _yatsi = prefs.getBool('notification_prayer_yatsi') ?? true;
-      _soundEnabled = prefs.getBool('notification_sound_enabled') ?? false;
+      _soundEnabled = prefs.getBool('notification_sound_enabled') ?? true;
       _isLoading = false;
     });
   }

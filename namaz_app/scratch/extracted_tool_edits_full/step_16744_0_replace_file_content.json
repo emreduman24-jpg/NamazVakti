@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add switch case for 'dini-hoca' in _buildToolBody switch in tool_detail_screen.dart.\"",
+  "EndLine": "1156",
+  "Instruction": "\"Add case 'dini-hoca' to the switch.\"",
+  "ReplacementContent": "\"      case 'canli-sohbet':\\n        return _buildCanliSohbet();\\n      case 'dini-hoca':\\n        return _buildDiniHoca();\"",
+  "StartLine": "1153",
+  "TargetContent": "\"      case 'canli-sohbet':\\n        return _buildCanliSohbet();\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Adding switch case for Dini Hoca in tool_detail_screen.dart\"",
+  "toolSummary": "\"Edit file\""
+}

@@ -1,0 +1,93 @@
+Created At: 2026-05-26T05:27:47Z
+Completed At: 2026-05-26T05:27:47Z
+File Path: `file:///C:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4921
+Total Bytes: 198934
+Showing lines 2540 to 2650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2540:   Widget _buildYakindakiCamiler() {
+2541:     return Column(
+2542:       children: [
+2543:         // Hadith Card at the top
+2544:         Card(
+2545:           elevation: 1.5,
+2546:           shape: RoundedRectangleBorder(
+2547:             borderRadius: BorderRadius.circular(16),
+2548:           ),
+2549:           color: const Color(0xFFEAF7F1),
+2550:           child: Container(
+2551:             decoration: BoxDecoration(
+2552:               borderRadius: BorderRadius.circular(16),
+2553:               border: Border.all(
+2554:                 color: const Color(0xFF27A770).withOpacity(0.3),
+2555:                 width: 1,
+2556:               ),
+2557:             ),
+2558:             padding: const EdgeInsets.all(16.0),
+2559:             child: Column(
+2560:               crossAxisAlignment: CrossAxisAlignment.start,
+2561:               children: const [
+2562:                 Row(
+2563:                   children: [
+2564:                     Icon(
+2565:                       Icons.mosque,
+2566:                       color: Color(0xFF27A770),
+2567:                       size: 20,
+2568:                     ),
+2569:                     SizedBox(width: 8),
+2570:                     Text(
+2571:                       "Camide Namaz Kılmanın Fazileti",
+2572:                       style: TextStyle(
+2573:                         fontWeight: FontWeight.bold,
+2574:                         fontSize: 14,
+2575:                         color: Color(0xFF1E5E43),
+2576:                       ),
+2577:                     ),
+2578:                   ],
+2579: 
+<truncated 1109 bytes>
+07:         Row(
+2608:           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2609:           children: [
+2610:             Expanded(
+2611:               child: Text(
+2612:                 _currentPosition != null
+2613:                     ? "Konumunuza Göre Sıralanmış Camiler"
+2614:                     : "Konumunuza En Yakın Camiler (Fatih/İstanbul)",
+2615:                 style: const TextStyle(
+2616:                   fontWeight: FontWeight.bold,
+2617:                   color: Color(0xFF1E5E43),
+2618:                   fontSize: 13.5,
+2619:                 ),
+2620:               ),
+2621:             ),
+2622:             if (_loadingLocation)
+2623:               const SizedBox(
+2624:                 width: 20,
+2625:                 height: 20,
+2626:                 child: CircularProgressIndicator(
+2627:                   strokeWidth: 2,
+2628:                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF27A770)),
+2629:                 ),
+2630:               )
+2631:             else
+2632:               IconButton(
+2633:                 icon: const Icon(Icons.my_location, color: Color(0xFF27A770), size: 20),
+2634:                 onPressed: _getUserLocation,
+2635:                 tooltip: "Konumu Güncelle",
+2636:               ),
+2637:           ],
+2638:         ),
+2639:         const SizedBox(height: 8),
+2640:         Expanded(
+2641:           child: ListView.builder(
+2642:             itemCount: _dynamicMosquesList.length,
+2643:             itemBuilder: (context, index) {
+2644:               final camii = _dynamicMosquesList[index];
+2645:               return Card(
+2646:                 elevation: 1.5,
+2647:                 shape: RoundedRectangleBorder(
+2648:                   borderRadius: BorderRadius.circular(16),
+2649:                 ),
+2650:                 margin: const EdgeInsets.only(bottom: 12),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

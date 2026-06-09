@@ -1,0 +1,16 @@
+{
+  "step_index": 14335,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Add Quran data and screen imports to tool_detail_screen.dart\"",
+    "EndLine": "14",
+    "Instruction": "\"Add imports for quran_data.dart and quran_detail_screen.dart\"",
+    "ReplacementContent": "\"import '../data/prayer_data.dart';\\nimport '../data/prayer_repository.dart';\\nimport '../data/quran_data.dart';\\nimport 'quran_detail_screen.dart';\"",
+    "StartLine": "12",
+    "TargetContent": "\"import '../data/prayer_data.dart';\\nimport '../data/prayer_repository.dart';\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding Quran imports\"",
+    "toolSummary": "\"Replace file content\""
+  }
+}

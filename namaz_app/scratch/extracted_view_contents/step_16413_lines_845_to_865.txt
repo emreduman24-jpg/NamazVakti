@@ -1,0 +1,29 @@
+Created At: 2026-06-03T12:48:55Z
+Completed At: 2026-06-03T12:48:56Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7147
+Total Bytes: 290320
+Showing lines 845 to 865
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+845:       if (key == 'kaza_ogle') _kazaOgle = newValue;
+846:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+847:       if (key == 'kaza_aksam') _kazaAksam = newValue;
+848:       if (key == 'kaza_yatsi') _kazaYatsi = newValue;
+849:       if (key == 'kaza_vitir') _kazaVitir = newValue;
+850:     });
+851:   }
+852: 
+853:   void _initAudio() {
+854:     _audioPlayer = AudioPlayer();
+855:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+856:       if (mounted) {
+857:         setState(() {
+858:           _playerState = state;
+859:         });
+860:       }
+861:     });
+862:   }
+863: 
+864:   String _normalize(String text) {
+865:     return text
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

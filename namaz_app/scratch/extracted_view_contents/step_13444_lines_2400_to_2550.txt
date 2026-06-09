@@ -1,0 +1,67 @@
+Created At: 2026-06-01T18:22:16Z
+Completed At: 2026-06-01T18:22:16Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6358
+Total Bytes: 258018
+Showing lines 2400 to 2550
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2400:                             ],
+2401:                           ),
+2402:                         ),
+2403:                       ),
+2404:                     ),
+2405: 
+2406:                     // Rotating Qibla Needle pointing directly to Kaaba (needleRotation)
+2407:                     Transform.rotate(
+2408:                       angle: (needleRotation * math.pi / 180),
+2409:                       child: SizedBox(
+2410:                         width: 60,
+2411:                         height: 190,
+2412:                         child: Stack(
+2413:                           alignment: Alignment.center,
+2414:                           children: [
+2415:                             // Elegant Gold Pointer line
+2416:                             Positioned(
+2417:                               top: 24,
+2418:                               bottom: 95,
+2419:                               child: Container(
+2420:                                 width: 2.5,
+2421:                                 decoration: BoxDecoration(
+2422:                                   gradient: LinearGradient(
+2423:                                     begin: Alignment.bottomCenter,
+2424:                                     end: Alignment.topCenter,
+2425:                                     colors: [
+2426:                                       const Color(0xFFD4AF37).withOpacity(0.2),
+2427:                                       const Color(0xFFD4AF37),
+2428:                                     ],
+2429:                                   ),
+2430:                                   bo
+<truncated 4704 bytes>
+                     children: [
+2525:                         Text("Kıble Açısı:", style: TextStyle(fontSize: 13, color: dark ? Colors.white70 : Colors.grey[800])),
+2526:                         Text("${qiblaAngle.toInt()}° (${_currentLocationName.isNotEmpty ? _currentLocationName : 'İstanbul'})", 
+2527:                             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+2528:                       ],
+2529:                     ),
+2530:                     const SizedBox(height: 10),
+2531:                     Row(
+2532:                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2533:                       children: [
+2534:                         Text("Cihaz Yönü:", style: TextStyle(fontSize: 13, color: dark ? Colors.white70 : Colors.grey[800])),
+2535:                         Text("${currentHeading.round()}°", 
+2536:                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: dark ? Colors.white : Colors.black87)),
+2537:                       ],
+2538:                     ),
+2539:                     const SizedBox(height: 10),
+2540:                     Row(
+2541:                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2542:                       children: [
+2543:                         Text("Kabe'ye Uzaklık:", style: TextStyle(fontSize: 13, color: dark ? Colors.white70 : Colors.grey[800])),
+2544:                         Text("${meccaDistance.round()} km", 
+2545:                             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF27A770))),
+2546:                       ],
+2547:                     ),
+2548:                     const SizedBox(height: 10),
+2549:                     Row(
+2550:                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

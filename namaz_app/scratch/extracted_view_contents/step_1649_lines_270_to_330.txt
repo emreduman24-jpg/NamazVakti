@@ -1,0 +1,69 @@
+Created At: 2026-05-22T16:58:00Z
+Completed At: 2026-05-22T16:58:00Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 2010
+Total Bytes: 80335
+Showing lines 270 to 330
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+270:   }
+271: 
+272:   Widget _buildToolBody() {
+273:     switch (widget.toolId) {
+274:       case 'dini-gunler':
+275:         return _buildDiniGunler();
+276:       case 'dua-iste':
+277:         return _buildDuaIste();
+278:       case 'soru-cevap':
+279:         return _buildSoruCevap();
+280:       case 'canli-sohbet':
+281:         return _buildCanliSohbet();
+282:       case 'peygamber-hayati':
+283:         return _buildPeygamberHayati();
+284:       case 'kuran-kerim':
+285:         return _buildKuranKerim();
+286:       case 'esmaul-husna':
+287:         return _buildEsmaulHusna();
+288:       case 'ramazan-hakkinda':
+289:         return _buildRamazanHakkinda();
+290:       case 'oruc-rehberi':
+291:         return _buildOrucRehberi();
+292:       case 'kible-bulucu':
+293:         return _buildKibleBulucu();
+294:       case 'zikirmatik':
+295:         return _buildZikirmatik();
+296:       case 'miladi-hicri':
+297:         return _buildMiladiHicri();
+298:       case 'yasin-suresi':
+299:         return _buildYasinSuresi();
+300:       case 'yakindaki-camiler':
+301:         return _buildYakindakiCamiler();
+302:       case 'hadis-40':
+303:         return _buildHadis40();
+304:       case 'namaz-tesbihati':
+305:         return _buildNamazTesbihati();
+306:       case 'gunluk-dualar':
+307:         return _buildGunlukDualar();
+308:       case 'zekat-hesaplama':
+309:         return _buildZekatHesaplama();
+310:       case 'sahabe-hayatlari':
+311:         return _buildSahabeHayatlari();
+312:       case 'islam-tarihi':
+313:         return _buildIslamTarihi();
+314:       case 'namaz-kilma':
+315:         return _buildNamazKilma();
+316:       case 'vitir-namazi':
+317:         return _buildVitirNamazi();
+318:       default:
+319:         return const Center(child: Text("Bu özellik çok yakında eklenecektir."));
+320:     }
+321:   }
+322: 
+323:   // 1. Dini Günler
+324:   Widget _buildDiniGunler() {
+325:     return Column(
+326:       crossAxisAlignment: CrossAxisAlignment.start,
+327:       children: [
+328:         const Text(
+329:           "2026 Yılı Dini Günler Listesi",
+330:           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E5E43)),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

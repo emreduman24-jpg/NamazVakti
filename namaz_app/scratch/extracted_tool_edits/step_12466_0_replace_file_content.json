@@ -1,0 +1,16 @@
+{
+  "step_index": 12466,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Support dark mode Scaffold background and AppBar background in tool_detail_screen.dart.\"",
+    "EndLine": "879",
+    "Instruction": "\"Change hardcoded Scaffold and AppBar backgrounds in build method of tool_detail_screen.dart to support dark mode colors.\"",
+    "ReplacementContent": "\"  @override\\n  Widget build(BuildContext context) {\\n    final bool dark = Theme.of(context).brightness == Brightness.dark;\\n    return Scaffold(\\n      backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),\\n      appBar: AppBar(\\n        title: Text(\\n          widget.toolTitle,\\n          style: const TextStyle(\\n            fontWeight: FontWeight.bold,\\n            color: Colors.white,\\n          ),\\n        ),\\n        backgroundColor: dark ? const Color(0xFF131D31) : const Color(0xFF1E5E43),\"",
+    "StartLine": "866",
+    "TargetContent": "\"  @override\\n  Widget build(BuildContext context) {\\n    return Scaffold(\\n      backgroundColor: const Color(0xFFF3F8F5),\\n      appBar: AppBar(\\n        title: Text(\\n          widget.toolTitle,\\n          style: const TextStyle(\\n            fontWeight: FontWeight.bold,\\n            color: Colors.white,\\n          ),\\n        ),\\n        backgroundColor: const Color(0xFF1E5E43),\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Editing tool_detail_screen.dart Scaffold background\"",
+    "toolSummary": "\"Updating detail screen backgrounds\""
+  }
+}

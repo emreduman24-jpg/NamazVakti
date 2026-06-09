@@ -1,0 +1,70 @@
+Created At: 2026-06-03T11:37:35Z
+Completed At: 2026-06-03T11:37:36Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6934
+Total Bytes: 282658
+Showing lines 3721 to 4520
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3721:                     final isToday = dateStr == todayStr;
+3722:                     final isSelected = dayIndex == _selectedCalendarDayIndex;
+3723: 
+3724:                     // Extract day number (e.g. "21")
+3725:                     String dayNum = "";
+3726:                     final parts = dateStr.split('.');
+3727:                     if (parts.isNotEmpty) {
+3728:                       dayNum = int.parse(parts[0]).toString();
+3729:                     }
+3730: 
+3731:                     return GestureDetector(
+3732:                       onTap: () => setState(() => _selectedCalendarDayIndex = dayIndex),
+3733:                       child: Container(
+3734:                         decoration: BoxDecoration(
+3735:                           color: isToday
+3736:                               ? const Color(0xFF27A770).withOpacity(dark ? 0.18 : 0.08)
+3737:                               : (isSelected
+3738:                                   ? const Color(0xFFD4AF37).withOpacity(dark ? 0.15 : 0.08)
+3739:                                   : (dark ? const Color(0xFF0F1B2A).withOpacity(0.3) : const Color(0xFFF9FBF9))),
+3740:                           borderRadius: BorderRadius.circular(10),
+3741:                           border: Border.all(
+3742:                             color: isToday
+3743:                                 ? const Color(0xFF27A770)
+3744:                                 : (isSelected
+3745:                                     ? const Color(0xFFD4AF37)
+3746:                                     : (dark ? Colors.white.withOpacity(0.04) :
+<truncated 31938 bytes>
+ocation
+4487:               ? Center(
+4488:                   child: Column(
+4489:                     mainAxisAlignment: MainAxisAlignment.center,
+4490:                     children: [
+4491:                       CircularProgressIndicator(
+4492:                         valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF27A770)),
+4493:                       ),
+4494:                       SizedBox(height: 16),
+4495:                       Text(
+4496:                         "Konumunuza yakın camiler aranıyor...",
+4497:                         style: TextStyle(color: Colors.grey, fontSize: 13),
+4498:                       ),
+4499:                     ],
+4500:                   ),
+4501:                 )
+4502:               : _dynamicMosquesList.isEmpty
+4503:                   ? Center(
+4504:                       child: Column(
+4505:                         mainAxisAlignment: MainAxisAlignment.center,
+4506:                         children: [
+4507:                           Icon(Icons.mosque, size: 48, color: Colors.grey),
+4508:                           SizedBox(height: 12),
+4509:                           Text(
+4510:                             "Yakınınızda cami bulunamadı.",
+4511:                             style: TextStyle(fontSize: 14, color: Colors.grey),
+4512:                           ),
+4513:                           SizedBox(height: 8),
+4514:                           ElevatedButton.icon(
+4515:                             onPressed: () => _getUserLocation(forceRefresh: true),
+4516:                             icon: Icon(Icons.refresh, size: 18),
+4517:                             label: Text("Tekrar Dene"),
+4518:                             style: ElevatedButton.styleFrom(
+4519:                               backgroundColor: const Color(0xFF27A770),
+4520:                               foregroundColor: Colors.white,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

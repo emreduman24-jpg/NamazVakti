@@ -1,0 +1,90 @@
+Created At: 2026-06-01T11:28:17Z
+Completed At: 2026-06-01T11:28:17Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 2070 to 2400
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2070:                 ),
+2071:               )
+2072:               .toList(),
+2073:         ),
+2074:       ],
+2075:     );
+2076:   }
+2077: 
+2078:   // 10. Kıble Bulucu Compass
+2079:   Widget _buildKibleBulucu() {
+2080:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+2081: 
+2082:     return StreamBuilder<CompassEvent>(
+2083:       stream: FlutterCompass.events,
+2084:       builder: (context, snapshot) {
+2085:         double? heading = snapshot.data?.heading;
+2086:         
+2087:         final bool dark = _isDark;
+2088: 
+2089:         // If no sensor detected, display a beautiful fallback message (No Simulation slider/switch)
+2090:         if (heading == null) {
+2091:           return Center(
+2092:             child: Padding(
+2093:               padding: const EdgeInsets.all(24.0),
+2094:               child: Column(
+2095:                 mainAxisAlignment: MainAxisAlignment.center,
+2096:                 children: [
+2097:                   const Icon(
+2098:                     Icons.explore_off_outlined,
+2099:                     color: Colors.orange,
+2100:                     size: 64,
+2101:                   ),
+2102:                   const SizedBox(height: 16),
+2103:                   Text(
+2104:                     "Pusula Sensörü Bulunamadı",
+2105:                     style: TextStyle(
+2106:                       fontSize: 18,
+2107:                       fontWeight: FontWeight.bold,
+2108:                       color: dark ? Colors.white : Colors.black87,
+2109:                     ),
+2110:                   ),
+2111: 
+<truncated 12434 bytes>
+e(fontSize: 13, color: dark ? Colors.white70 : Colors.grey[800])),
+2363:                           Text("${meccaDistance.round()} km", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFFD4AF37))),
+2364:                         ],
+2365:                       ),
+2366:                       const SizedBox(height: 10),
+2367:                       Row(
+2368:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2369:                         children: [
+2370:                           Text("Konum:", style: TextStyle(fontSize: 13, color: dark ? Colors.white70 : Colors.grey[800])),
+2371:                           Text(_currentLocationName.isNotEmpty ? _currentLocationName : "İstanbul", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: dark ? Colors.white : Colors.black87)),
+2372:                         ],
+2373:                       ),
+2374:                     ],
+2375:                   ),
+2376:                 ),
+2377:               ),
+2378:               const SizedBox(height: 24),
+2379:             ],
+2380:           ),
+2381:         );
+2382:       },
+2383:     );
+2384:   }
+2385: 
+2386:   Widget _buildZikirmatik() {
+2387:     final zikir = _zikirData[_selectedZikirId] ?? _zikirData['subhanallah']!;
+2388:     return SingleChildScrollView(
+2389:       child: Column(
+2390:         children: [
+2391:           // Dhikr Selector Dropdown
+2392:           Container(
+2393:             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+2394:             decoration: BoxDecoration(
+2395:               color: Colors.white,
+2396:               borderRadius: BorderRadius.circular(12),
+2397:               border: Border.all(color: Colors.grey[200]!),
+2398:             ),
+2399:             child: Row(
+2400:               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

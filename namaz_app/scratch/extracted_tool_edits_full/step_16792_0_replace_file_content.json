@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Remove duplicate Dini Hoca state variables from tool_detail_screen.dart to resolve compile errors.\"",
+  "EndLine": "669",
+  "Instruction": "\"Remove duplicate Dini Hoca state variables.\"",
+  "ReplacementContent": "\"  // Dini Hoca State is defined above.\"",
+  "StartLine": "659",
+  "TargetContent": "\"  // Dini Hoca AI State\\n  final List<Map<String, String>> _diniHocaMessages = [\\n    {\\n      'sender': 'ai',\\n      'text': 'Selamün Aleyküm mümin kardeşim. Ben Dini Hoca Yapay Zeka Danışmanıyım. İslam fıkhı, inanç, ibadetler (abdest, namaz, zekat vb.), hadis-i şerifler veya ahlak adabı hakkında aklına takılan her soruyu bana sorabilirsin. Sana hayırla rehberlik etmek için buradayım.',\\n    }\\n  ];\\n  final TextEditingController _diniHocaInputController = TextEditingController();\\n  final ScrollController _diniHocaScrollController = ScrollController();\\n  bool _diniHocaIsTyping = false;\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Removing duplicate Dini Hoca variables from tool_detail_screen.dart\"",
+  "toolSummary": "\"Edit file\""
+}

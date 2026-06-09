@@ -1,0 +1,16 @@
+{
+  "step_index": 13523,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Unify ToolDetailScreen AppBar background color and centering to match prayer tracker standard.\"",
+    "EndLine": "938",
+    "Instruction": "\"Update AppBar properties to make it centerTitle: true and background color adaptive using the unified scheme.\"",
+    "ReplacementContent": "\"      appBar: AppBar(\\n        title: Text(\\n          widget.toolTitle,\\n          style: const TextStyle(\\n            fontWeight: FontWeight.bold,\\n            color: Colors.white,\\n            fontSize: 20,\\n          ),\\n        ),\\n        centerTitle: true,\\n        backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43),\\n        elevation: 0,\\n        iconTheme: const IconThemeData(color: Colors.white),\\n        automaticallyImplyLeading: !widget.isTab,\\n      ),\"",
+    "StartLine": "925",
+    "TargetContent": "\"      appBar: AppBar(\\n        title: Text(\\n          widget.toolTitle,\\n          style: TextStyle(\\n            fontWeight: FontWeight.bold,\\n            color: Colors.white,\\n          ),\\n        ),\\n        backgroundColor: _greenColor,\\n        elevation: 0,\\n        iconTheme: IconThemeData(color: Colors.white),\\n        automaticallyImplyLeading: !widget.isTab,\\n      ),\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Updating Tool Detail AppBar\"",
+    "toolSummary": "\"Updating Tool Detail AppBar\""
+  }
+}

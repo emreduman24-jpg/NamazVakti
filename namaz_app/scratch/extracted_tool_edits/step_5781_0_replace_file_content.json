@@ -1,0 +1,14 @@
+{
+  "step_index": 5781,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Insert the dynamic _buildYakindakiCamiler method into tool_detail_screen.dart\"",
+    "EndLine": "2542",
+    "StartLine": "2539",
+    "TargetContent": "\"  // 14. Yakındaki Camiler\\n\\n\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Inserting dynamic mosque list widget\"",
+    "toolSummary": "\"Insert mosque list widget\""
+  }
+}

@@ -1,0 +1,88 @@
+Created At: 2026-06-03T13:37:17Z
+Completed At: 2026-06-03T13:37:18Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 6413 to 6500
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+6413:   Widget _buildAbdestRehberi() {
+6414:     return _buildStepRehberi("Abdest Nasıl Alınır?", [
+6415:       {
+6416:         "baslik": "Niyet ve Besmele",
+6417:         "icerik":
+6418:             "Niyet ettim Allah rızası için abdest almaya denilerek Euzü-Besmele çekilir, eller bileklere kadar 3 defa yıkanır.",
+6419:       },
+6420:       {
+6421:         "baslik": "Ağıza Su Vermek (Mazmaza)",
+6422:         "icerik":
+6423:             "Sağ el ile ağıza 3 defa su verilerek ağız içi iyice çalkalanır ve temizlenir.",
+6424:       },
+6425:       {
+6426:         "baslik": "Burna Su Vermek (İstinsak)",
+6427:         "icerik":
+6428:             "Sağ el ile buruna 3 defa su çekilir, sol el ile burun sümkürülerek temizlenir.",
+6429:       },
+6430:       {
+6431:         "baslik": "Yüzü Yıkamak",
+6432:         "icerik":
+6433:             "Alın saç bitiminden çene altına ve kulak yumuşaklarına kadar tüm yüz 3 defa yıkanır.",
+6434:       },
+6435:       {
+6436:         "baslik": "Kolları Yıkamak",
+6437:         "icerik":
+6438:             "Önce sağ kol, sonra sol kol dirseklerle beraber 3 defa yıkanır. Kuru yer kalmamasına dikkat edilir.",
+6439:       },
+6440:       {
+6441:         "baslik": "Başı Meshetmek",
+6442:         "icerik":
+6443:             "Sağ el ıslatılarak başın en az dörtte biri (üst kısmı) bir defa meshedilir.",
+6444:       },
+6445:       {
+6446:         "baslik": "Kulakları Meshetmek",
+6447:         "icerik":
+6448:             "Eller tekrar ıslatılarak serçe parmaklarla kulak içi, b
+<truncated 425 bytes>
+rmak aralarından başlanarak topuklarla beraber 3 defa yıkanır.",
+6459:       },
+6460:     ]);
+6461:   }
+6462: 
+6463:   // 24. Gusül Rehberi
+6464:   Widget _buildGusulRehberi() {
+6465:     return _buildStepRehberi("Gusül Abdesti Nasıl Alınır?", [
+6466:       {
+6467:         "baslik": "Niyet ve Beden Temizliği",
+6468:         "icerik":
+6469:             "Niyet ettim Allah rızası için gusül abdesti almaya diyerek niyet edilir. Beden üzerindeki necaset ve kirler yıkanır.",
+6470:       },
+6471:       {
+6472:         "baslik": "Namaz Abdesti Almak",
+6473:         "icerik":
+6474:             "Gusle başlarken normal namaz abdesti gibi abdest alınır, ağız ve burun temizliği daha bol suyla yapılır.",
+6475:       },
+6476:       {
+6477:         "baslik": "Ağza Bolca Su Vermek (Farz)",
+6478:         "icerik":
+6479:             "Ağza 3 kere bolca su alınarak boğaza kadar çalkalanır (Gargara yapılır, oruçlu değilken).",
+6480:       },
+6481:       {
+6482:         "baslik": "Burna Bolca Su Vermek (Farz)",
+6483:         "icerik": "Buruna 3 kere genize kadar bolca su çekilir ve temizlenir.",
+6484:       },
+6485:       {
+6486:         "baslik": "Tüm Bedenin Yıkanması (Farz)",
+6487:         "icerik":
+6488:             "Önce başa, sonra sağ omuza ve sol omuza üçer defa su dökülerek tüm vücut iğne ucu kadar kuru yer kalmayacak şekilde yıkanır.",
+6489:       },
+6490:     ]);
+6491:   }
+6492: 
+6493:   // 25. Teyemmüm Rehberi
+6494:   Widget _buildTeyemmumRehberi() {
+6495:     return _buildStepRehberi("Teyemmüm Nasıl Yapılır?", [
+6496:       {
+6497:         "baslik": "Niyet Etmek",
+6498:         "icerik":
+6499:             "Su bulunmadığında veya kullanılamayacak durumda olduğunda temiz toprağa niyet edilerek yönelinir: Niyet ettim Allah rızası için teyemmüm abdesti almaya.",
+6500:       },
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

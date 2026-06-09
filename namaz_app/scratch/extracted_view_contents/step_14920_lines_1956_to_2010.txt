@@ -1,0 +1,63 @@
+Created At: 2026-06-03T05:59:59Z
+Completed At: 2026-06-03T05:59:59Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 1956 to 2010
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1956:                           Text(
+1957:                             "%$_lastPercent",
+1958:                             style: const TextStyle(
+1959:                               color: Color(0xFFC5A059),
+1960:                               fontWeight: FontWeight.bold,
+1961:                               fontSize: 12,
+1962:                             ),
+1963:                           ),
+1964:                         ],
+1965:                       ),
+1966:                     ],
+1967:                   ),
+1968:                 ),
+1969:               ),
+1970:               const SizedBox(height: 16),
+1971:               // Tabs: Sureler / Cüzler
+1972:               Container(
+1973:                 height: 44,
+1974:                 decoration: BoxDecoration(
+1975:                   color: _isDark ? const Color(0xFF131F35) : Colors.white,
+1976:                   borderRadius: BorderRadius.circular(12),
+1977:                   border: _isDark ? null : Border.all(color: const Color(0xFFE2E8F0)),
+1978:                 ),
+1979:                 padding: const EdgeInsets.all(4),
+1980:                 child: Row(
+1981:                   children: [
+1982:                     Expanded(
+1983:                       child: GestureDetector(
+1984:                         onTap: () {
+1985:                           setState(() {
+1986:                             _quranTab = 0;
+1987:                           });
+1988:                         },
+1989:                         child: Container(
+1990:                           decoration: BoxDecoration(
+1991:                             color: _quranTab == 0 ? const Color(0xFF27A770) : Colors.transparent,
+1992:                             borderRadius: BorderRadius.circular(8),
+1993:                           ),
+1994:                           alignment: Alignment.center,
+1995:                           child: Text(
+1996:                             "Sureler",
+1997:                             style: TextStyle(
+1998:                               color: _quranTab == 0 ? Colors.white : (_isDark ? Colors.white60 : Colors.black54),
+1999:                               fontWeight: FontWeight.bold,
+2000:                               fontSize: 14,
+2001:                             ),
+2002:                           ),
+2003:                         ),
+2004:                       ),
+2005:                     ),
+2006:                     Expanded(
+2007:                       child: GestureDetector(
+2008:                         onTap: () {
+2009:                           setState(() {
+2010:                             _quranTab = 1;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

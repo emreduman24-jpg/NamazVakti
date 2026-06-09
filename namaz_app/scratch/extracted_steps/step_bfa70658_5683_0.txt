@@ -1,0 +1,1 @@
+  // Soru Cevap State\n  List<Map<String, dynamic>> _questionList = [];\n  final TextEditingController _questionNameController = TextEditingController();\n  final TextEditingController _qaInputController = TextEditingController();

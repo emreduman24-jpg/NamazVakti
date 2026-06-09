@@ -1,0 +1,68 @@
+Created At: 2026-05-23T22:54:59Z
+Completed At: 2026-05-23T22:54:59Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4654
+Total Bytes: 189812
+Showing lines 1801 to 1860
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1801:               ),
+1802:               const SizedBox(height: 8),
+1803:               Text(
+1804:                 hasSensor
+1805:                     ? "Pusula Yönü: ${finalHeading.round()}°"
+1806:                     : "Simüle Yönü: ${finalHeading.round()}°",
+1807:                 style: const TextStyle(color: Colors.grey),
+1808:               ),
+1809:               const SizedBox(height: 16),
+1810:               Padding(
+1811:                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
+1812:                 child: SwitchListTile(
+1813:                   title: const Text(
+1814:                     "Simülasyon Modu",
+1815:                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+1816:                   ),
+1817:                   subtitle: const Text(
+1818:                     "Pusulayı el ile döndürmek için aktifleştirin",
+1819:                     style: TextStyle(fontSize: 12),
+1820:                   ),
+1821:                   value: _forceSimulation,
+1822:                   activeThumbColor: const Color(0xFF27A770),
+1823:                   onChanged: (val) {
+1824:                     setState(() {
+1825:                       _forceSimulation = val;
+1826:                     });
+1827:                   },
+1828:                 ),
+1829:               ),
+1830:               if (!hasSensor) ...[
+1831:                 const SizedBox(height: 8),
+1832:                 const Text(
+1833:                   "Sürgü ile pusula açısını döndürün:",
+1834:                   style: TextStyle(fontSize: 12, color: Colors.grey),
+1835:                 ),
+1836:                 Padding(
+1837:                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+1838:                   child: Slider(
+1839:                     value: _manualCompassHeading,
+1840:                     min: 0,
+1841:                     max: 360,
+1842:                     activeColor: const Color(0xFF27A770),
+1843:                     onChanged: (val) {
+1844:                       setState(() {
+1845:                         _manualCompassHeading = val;
+1846:                       });
+1847:                     },
+1848:                   ),
+1849:                 ),
+1850:               ],
+1851:               const SizedBox(height: 24),
+1852:             ],
+1853:           ),
+1854:         );
+1855:       },
+1856:     );
+1857:   }
+1858: 
+1859:   // 11. Zikirmatik
+1860:   Widget _buildZikirmatik() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,29 @@
+Created At: 2026-06-03T11:03:30Z
+Completed At: 2026-06-03T11:03:30Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 90 to 110
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+90:   PlayerState _playerState = PlayerState.stopped;
+91:   String _currentAudioUrl = "";
+92:   String _currentTrackName = "";
+93:   int _quranTab = 0; // 0: Sureler, 1: Cüzler
+94:   int _lastSuraNo = 1;
+95:   String _lastSuraName = "Fâtiha";
+96:   int _lastAyahNo = 1;
+97:   int _lastTotalAyahs = 7;
+98:   int _lastPercent = 0;
+99:   List<String> _quranBookmarks = [];
+100:   String _quranSearchQuery = "";
+101: 
+102:   // Yakındaki Camiler (Location & GPS State)
+103:   Position? _currentPosition;
+104:   bool _loadingLocation = false;
+105:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+106: 
+107:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+108:     const r = 6371; // Earth radius in km
+109:     final dLat = _toRadians(lat2 - lat1);
+110:     final dLon = _toRadians(lon2 - lon1);
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

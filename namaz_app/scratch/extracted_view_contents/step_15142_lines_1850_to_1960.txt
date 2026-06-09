@@ -1,0 +1,79 @@
+Created At: 2026-06-03T06:19:27Z
+Completed At: 2026-06-03T06:19:27Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 1850 to 1960
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1850:             children: [
+1851:               const SizedBox(height: 8),
+1852:               // Kaldığın Yer Card
+1853:               GestureDetector(
+1854:                 onTap: () {
+1855:                   final targetSurah = QURAN_SURAHS.firstWhere(
+1856:                     (s) => s.number == _lastSuraNo,
+1857:                     orElse: () => QURAN_SURAHS[0],
+1858:                   );
+1859:                   Navigator.push(
+1860:                     context,
+1861:                     MaterialPageRoute(
+1862:                       builder: (context) => QuranDetailScreen(
+1863:                         surah: targetSurah,
+1864:                         targetAyah: _lastAyahNo,
+1865:                       ),
+1866:                     ),
+1867:                   ).then((_) => _loadQuranLastRead());
+1868:                 },
+1869:                 child: Container(
+1870:                   width: double.infinity,
+1871:                   padding: const EdgeInsets.all(16),
+1872:                   decoration: BoxDecoration(
+1873:                     borderRadius: BorderRadius.circular(20),
+1874:                     gradient: const LinearGradient(
+1875:                       colors: [Color(0xFF163124), Color(0xFF0F2018)],
+1876:                       begin: Alignment.topLeft,
+1877:                       end: Alignment.bottomRight,
+1878:                     ),
+1879:                     border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.3)),
+1880:                     boxShadow: [
+1881:                       BoxShadow(
+1882:              
+<truncated 2156 bytes>
+,
+1925:                       Text(
+1926:                         _lastSuraName,
+1927:                         style: const TextStyle(
+1928:                           color: Colors.white,
+1929:                           fontWeight: FontWeight.bold,
+1930:                           fontSize: 22,
+1931:                         ),
+1932:                       ),
+1933:                       const SizedBox(height: 4),
+1934:                       Text(
+1935:                         "Ayet $_lastAyahNo / $_lastTotalAyahs",
+1936:                         style: const TextStyle(
+1937:                           color: Colors.white70,
+1938:                           fontSize: 13,
+1939:                         ),
+1940:                       ),
+1941:                       const SizedBox(height: 16),
+1942:                       Row(
+1943:                         children: [
+1944:                           Expanded(
+1945:                             child: ClipRRect(
+1946:                               borderRadius: BorderRadius.circular(4),
+1947:                               child: LinearProgressIndicator(
+1948:                                 value: _lastPercent / 100.0,
+1949:                                 backgroundColor: Colors.white.withOpacity(0.1),
+1950:                                 valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFC5A059)),
+1951:                                 minHeight: 4,
+1952:                               ),
+1953:                             ),
+1954:                           ),
+1955:                           const SizedBox(width: 12),
+1956:                           Text(
+1957:                             "%$_lastPercent",
+1958:                             style: const TextStyle(
+1959:                               color: Color(0xFFC5A059),
+1960:                               fontWeight: FontWeight.bold,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

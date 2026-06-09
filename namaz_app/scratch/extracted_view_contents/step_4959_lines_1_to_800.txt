@@ -1,0 +1,105 @@
+Created At: 2026-05-23T18:31:47Z
+Completed At: 2026-05-23T18:31:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187772
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import '../data/prayer_data.dart';
+9: import '../data/prayer_repository.dart';
+10: 
+11: class ToolDetailScreen extends StatefulWidget {
+12:   final String toolId;
+13:   final String toolTitle;
+14: 
+15:   const ToolDetailScreen({
+16:     super.key,
+17:     required this.toolId,
+18:     required this.toolTitle,
+19:   });
+20: 
+21:   @override
+22:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+23: }
+24: 
+25: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+26:   final PrayerRepository _repository = PrayerRepository();
+27:   AudioPlayer? _audioPlayer;
+28:   PlayerState _playerState = PlayerState.stopped;
+29:   String _currentAudioUrl = "";
+30:   String _currentTrackName = "";
+31: 
+32:   // Zikirmatik State
+33:   int _zikirCount = 0;
+34:   int _zikirTarget = 33;
+35:   bool _zikirSoundEnabled = true;
+36:   String _selectedZikirId = 'subhanallah';
+37: 
+38:   final Map<String, Map<String, dynamic>> _zikirData = {
+39:     'subhanallah': {
+40:       'ad': 'Sübhânallâh',
+41:       'arapca': 'سُبْحَانَ اللَّهِ',
+42:       'anlam': 'Allah noksan sıfatlardan uzaktır.',
+43:       'fazilet': 'Günde 100 defa okuyanın günahları deniz köpüğü kadar da olsa bağışlanır.',
+44:       'hedef': 33
+4
+<truncated 32609 bytes>
+                               fontWeight: FontWeight.bold,
+751:                               fontSize: 12,
+752:                             ),
+753:                           ),
+754:                         ),
+755:                       ),
+756:                     );
+757:                   }).toList(),
+758:                 ],
+759:               );
+760:             }).toList(),
+761:           ),
+762:         ),
+763:       ],
+764:     );
+765:   }
+766: 
+767:   // 2. Dua İste
+768:   Widget _buildDuaIste() {
+769:     return Column(
+770:       crossAxisAlignment: CrossAxisAlignment.start,
+771:       children: [
+772:         Card(
+773:           elevation: 2,
+774:           shape: RoundedRectangleBorder(
+775:             borderRadius: BorderRadius.circular(16),
+776:           ),
+777:           child: Padding(
+778:             padding: const EdgeInsets.all(14.0),
+779:             child: Column(
+780:               crossAxisAlignment: CrossAxisAlignment.start,
+781:               children: [
+782:                 const Text(
+783:                   "Dua Talebinde Bulun",
+784:                   style: TextStyle(
+785:                     fontWeight: FontWeight.bold,
+786:                     fontSize: 15,
+787:                     color: Color(0xFF1E5E43),
+788:                   ),
+789:                 ),
+790:                 const SizedBox(height: 8),
+791:                 TextField(
+792:                   controller: _duaNameController,
+793:                   decoration: InputDecoration(
+794:                     hintText: "İsminiz (İsteğe bağlı)",
+795:                     filled: true,
+796:                     fillColor: Colors.grey[50],
+797:                     border: OutlineInputBorder(
+798:                       borderRadius: BorderRadius.circular(10),
+799:                       borderSide: BorderSide.none,
+800:                     ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

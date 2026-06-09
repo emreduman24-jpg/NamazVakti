@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add forceSimulation state variable for testing Kıble Bulucu simulation\"",
+  "EndLine": "92",
+  "Instruction": "\"Add _forceSimulation boolean flag for manual compass simulation testing\"",
+  "ReplacementContent": "\"  // Compass Manual Rotation Simulation (Fallback for Emulators)\\n  double _manualCompassHeading = 0.0;\\n  bool _forceSimulation = false;\\n\"",
+  "StartLine": "89",
+  "TargetContent": "\"  // Compass Manual Rotation Simulation (Fallback for Emulators)\\n  double _manualCompassHeading = 0.0;\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Adding forceSimulation variable to State\"",
+  "toolSummary": "\"Add forceSimulation flag\""
+}

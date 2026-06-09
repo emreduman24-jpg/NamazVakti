@@ -1,0 +1,64 @@
+Created At: 2026-06-03T05:54:18Z
+Completed At: 2026-06-03T05:54:18Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6920
+Total Bytes: 280855
+Showing lines 810 to 865
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+810:                   const SizedBox(height: 20),
+811:                   Row(
+812:                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+813:                     children: [
+814:                       const Text(
+815:                         "Günlük Hedef:",
+816:                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+817:                       ),
+818:                       Container(
+819:                         padding: const EdgeInsets.symmetric(horizontal: 12),
+820:                         decoration: BoxDecoration(
+821:                           color: const Color(0xFF1E2D4A),
+822:                           borderRadius: BorderRadius.circular(10),
+823:                         ),
+824:                         child: DropdownButton<int>(
+825:                           value: selectedPages,
+826:                           dropdownColor: const Color(0xFF131F35),
+827:                           underline: const SizedBox(),
+828:                           icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+829:                           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+830:                           items: [2, 5, 10, 20].map((int val) {
+831:                             String label = "$val Sayfa";
+832:                             if (val == 20) label = "1 Cüz (20 Sayfa)";
+833:                             return DropdownMenuItem<int>(
+834:                               value: val,
+835:                               child: Text(label),
+836:                             );
+837:                           }).toList(),
+838:                           onChanged: (newVal) {
+839:                             if (newVal != null) {
+840:                               setDialogState(() {
+841:                                 selectedPages = newVal;
+842:                               });
+843:                             }
+844:                           },
+845:                         ),
+846:                       ),
+847:                     ],
+848:                   ),
+849:                   const SizedBox(height: 20),
+850:                   Container(
+851:                     width: double.infinity,
+852:                     padding: const EdgeInsets.all(12),
+853:                     decoration: BoxDecoration(
+854:                       color: const Color(0xFF27A770).withOpacity(0.1),
+855:                       borderRadius: BorderRadius.circular(12),
+856:                       border: Border.all(color: const Color(0xFF27A770).withOpacity(0.3)),
+857:                     ),
+858:                     child: Text(
+859:                       "Bu tempoda Kur'an-ı Kerim'i yaklaşık $days günde hatmedeceksiniz.",
+860:                       textAlign: TextAlign.center,
+861:                       style: const TextStyle(
+862:                         color: Color(0xFF27A770),
+863:                         fontWeight: FontWeight.bold,
+864:                         fontSize: 13,
+865:                         height: 1.3,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

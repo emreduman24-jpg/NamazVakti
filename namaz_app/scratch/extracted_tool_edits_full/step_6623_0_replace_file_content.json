@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Changing onPressed of the update location button to pass forceRefresh = true to guarantee a fresh GPS lock when triggered manually\"",
+  "EndLine": "2705",
+  "Instruction": "\"Update onPressed to trigger _getUserLocation with forceRefresh: true\"",
+  "ReplacementContent": "\"              IconButton(\\n                icon: const Icon(Icons.my_location, color: Color(0xFF27A770), size: 20),\\n                onPressed: () => _getUserLocation(forceRefresh: true),\\n                tooltip: \\\"Konumu Güncelle\\\",\\n              ),\"",
+  "StartLine": "2701",
+  "TargetContent": "\"              IconButton(\\n                icon: const Icon(Icons.my_location, color: Color(0xFF27A770), size: 20),\\n                onPressed: _getUserLocation,\\n                tooltip: \\\"Konumu Güncelle\\\",\\n              ),\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Updating update location button action in tool_detail_screen.dart\"",
+  "toolSummary": "\"Set update location button action\""
+}

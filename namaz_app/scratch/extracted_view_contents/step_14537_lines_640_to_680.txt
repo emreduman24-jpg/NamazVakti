@@ -1,0 +1,49 @@
+Created At: 2026-06-03T05:00:29Z
+Completed At: 2026-06-03T05:00:29Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6363
+Total Bytes: 258283
+Showing lines 640 to 680
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+640:   final List<Map<String, dynamic>> _filteredHadisList = [...HADISLER_40];
+641:   final TextEditingController _hadisSearchController = TextEditingController();
+642: 
+643:   // Namaz Tesbihati State
+644:   int _tesbihStep = 0;
+645:   int _tesbihCount = 0;
+646: 
+647:   // Zekat Hesaplayici State
+648:   final TextEditingController _goldController = TextEditingController();
+649:   final TextEditingController _cashController = TextEditingController();
+650:   final TextEditingController _businessController = TextEditingController();
+651:   final TextEditingController _debtsController = TextEditingController();
+652:   String _zekatResult = "";
+653: 
+654:   // Date Converter State
+655:   DateTime _selectedDate = DateTime.now();
+656:   String _convertedDateResult = "";
+657:   bool _miladiToHicri = true;
+658: 
+659:   // Sahabe Hayatlari & Esmaül Hüsna Search State
+660:   String _esmaSearchQuery = "";
+661:   String _sahabeSearchQuery = "";
+662:   String _hadisSearchQuery = "";
+663: 
+664:   // Compass Manual Rotation Simulation (Fallback for Emulators)
+665:   double _manualCompassHeading = 0.0;
+666:   bool _forceSimulation = true;
+667: 
+668:   // Prophet Life Tab
+669:   int _prophetLifeTab = 0;
+670: 
+671:   // Namaz Kilma Tab
+672:   bool _namazKilmaErkek = true;
+673: 
+674:   // Kaza Namazi State
+675:   int _kazaSabah = 0;
+676:   int _kazaOgle = 0;
+677:   int _kazaIkindi = 0;
+678:   int _kazaAksam = 0;
+679:   int _kazaYatsi = 0;
+680:   int _kazaVitir = 0;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

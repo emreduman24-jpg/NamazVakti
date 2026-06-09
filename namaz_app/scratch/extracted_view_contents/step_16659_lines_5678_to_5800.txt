@@ -1,0 +1,86 @@
+Created At: 2026-06-03T13:36:53Z
+Completed At: 2026-06-03T13:36:53Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 5678 to 5800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5678:   Widget _buildZekatHesaplama() {
+5679:     return SingleChildScrollView(
+5680:       child: Column(
+5681:         crossAxisAlignment: CrossAxisAlignment.start,
+5682:         children: [
+5683:           Text(
+5684:             "Dinen zengin sayılan kişilerin yılda bir kez vermesi gereken zekat miktarını hesaplayın.",
+5685:             style: TextStyle(color: Colors.grey, fontSize: 12),
+5686:           ),
+5687:           SizedBox(height: 12),
+5688:           TextField(
+5689:             controller: _goldController,
+5690:             keyboardType: TextInputType.number,
+5691:             decoration: InputDecoration(
+5692:               labelText: "Altın Miktarı (Gram)",
+5693:               filled: true,
+5694:               fillColor: Colors.white,
+5695:               border: OutlineInputBorder(
+5696:                 borderRadius: BorderRadius.circular(12),
+5697:                 borderSide: BorderSide.none,
+5698:               ),
+5699:             ),
+5700:           ),
+5701:           SizedBox(height: 8),
+5702:           TextField(
+5703:             controller: _cashController,
+5704:             keyboardType: TextInputType.number,
+5705:             decoration: InputDecoration(
+5706:               labelText: "Nakit Para (TL)",
+5707:               filled: true,
+5708:               fillColor: Colors.white,
+5709:               border: OutlineInputBorder(
+5710:                 borderRadius: BorderRadius.circular(12),
+5711:                 borderSide: BorderSide.none,
+5712:               ),
+5713:             ),
+5714:           ),
+5715:        
+<truncated 2133 bytes>
+ const double nisapLimit =
+5763:                     80.18 * goldPrice; // 80.18g Gold Nisap threshold
+5764: 
+5765:                 setState(() {
+5766:                   if (totalWealth <= 0) {
+5767:                     _zekatResult =
+5768:                         "Zekata tabi net varlığınız bulunmamaktadır.";
+5769:                   } else if (totalWealth < nisapLimit) {
+5770:                     _zekatResult =
+5771:                         "Toplam varlığınız (${totalWealth.toStringAsFixed(0)} TL), nisap sınırı olan ${nisapLimit.toStringAsFixed(0)} TL altındadır. Zekat düşmemektedir.";
+5772:                   } else {
+5773:                     final zekat = totalWealth / 40.0;
+5774:                     _zekatResult =
+5775:                         "Toplam Varlık: ${totalWealth.toStringAsFixed(0)} TL\n\nÖdemeniz Gereken Zekat (%2.5):\n${zekat.toStringAsFixed(0)} TL";
+5776:                   }
+5777:                 });
+5778:               },
+5779:               child: Text(
+5780:                 "Zekat Hesapla",
+5781:                 style: TextStyle(
+5782:                   color: Colors.white,
+5783:                   fontWeight: FontWeight.bold,
+5784:                 ),
+5785:               ),
+5786:             ),
+5787:           ),
+5788:           if (_zekatResult.isNotEmpty) ...[
+5789:             SizedBox(height: 20),
+5790:             Center(
+5791:               child: Container(
+5792:                 width: double.infinity,
+5793:                 padding: EdgeInsets.all(16),
+5794:                 decoration: BoxDecoration(
+5795:                   color: const Color(0xFFEAF7F1),
+5796:                   borderRadius: BorderRadius.circular(16),
+5797:                   border: Border.all(
+5798:                     color: const Color(0xFF27A770).withOpacity(0.3),
+5799:                   ),
+5800:                 ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

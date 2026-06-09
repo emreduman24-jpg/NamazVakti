@@ -1,0 +1,34 @@
+Created At: 2026-06-03T12:59:02Z
+Completed At: 2026-06-03T12:59:03Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7688
+Total Bytes: 312387
+Showing lines 5145 to 5170
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5145:       'yolculuk': [],
+5146:       'genel': [],
+5147:     };
+5148:     
+5149:     for (var dua in filteredList) {
+5150:       final cat = dua['kategori'] ?? 'genel';
+5151:       grouped[cat]?.add(dua);
+5152:     }
+5153: 
+5154:     final categories = [
+5155:       {'key': 'sabah_aksam', 'title': 'Sabah & Akşam Ezkarı', 'emoji': '☀️'},
+5156:       {'key': 'namaz', 'title': 'Namaz Duaları', 'emoji': '🕌'},
+5157:       {'key': 'uyku', 'title': 'Uyku Duaları', 'emoji': '🌙'},
+5158:       {'key': 'yolculuk', 'title': 'Yolculuk Duaları', 'emoji': '🚗'},
+5159:       {'key': 'genel', 'title': 'Genel Dualar', 'emoji': '✨'},
+5160:     ];
+5161: 
+5162:     bool isPlaying(String url) => _currentAudioUrl == url && _playerState == PlayerState.playing;
+5163: 
+5164:     Widget buildSegmentButton(int index, String label, int count) {
+5165:       final isSelected = _dualarTab == index;
+5166:       return Expanded(
+5167:         child: GestureDetector(
+5168:           onTap: () {
+5169:             setState(() {
+5170:               _dualarTab = index;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

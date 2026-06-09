@@ -1,0 +1,82 @@
+Created At: 2026-06-01T05:44:39Z
+Completed At: 2026-06-01T05:44:39Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5480
+Total Bytes: 225586
+Showing lines 1160 to 1250
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1160:                                 colors: [Color(0xFF1E5E43), Color(0xFF27A770)],
+1161:                                 begin: Alignment.topLeft,
+1162:                                 end: Alignment.bottomRight,
+1163:                               )
+1164:                             : null,
+1165:                         color: isSelected ? null : Colors.transparent,
+1166:                         borderRadius: BorderRadius.circular(12),
+1167:                         border: Border.all(
+1168:                           color: isSelected ? Colors.transparent : const Color(0xFFE2E8F0),
+1169:                           width: 1,
+1170:                         ),
+1171:                       ),
+1172:                       child: Text(
+1173:                         year,
+1174:                         style: TextStyle(
+1175:                           color: isSelected ? Colors.white : const Color(0xFF4A5568),
+1176:                           fontWeight: FontWeight.bold,
+1177:                           fontSize: 14,
+1178:                         ),
+1179:                       ),
+1180:                     ),
+1181:                   ),
+1182:                 );
+1183:               }).toList(),
+1184:             ),
+1185:           ),
+1186:         ),
+1187:         const SizedBox(height: 16),
+1188:         // Title banner
+1189:         Padding(
+1190:           padding: const EdgeInsets.symmetric(horizontal: 4.0),
+1191:           child: Row(
+1192:             children: [
+1193:               const Icon(Icons.info_outline, size: 16, color: Color(0xFF1E5E43)),
+1194:
+<truncated 745 bytes>
+:               final items = grouped[catName] ?? [];
+1214:               if (items.isEmpty) return const SizedBox.shrink();
+1215: 
+1216:               final style = categoryStyles[catName] ?? {
+1217:                 "icon": "📅",
+1218:                 "color": const Color(0xFF27A770),
+1219:                 "bgColor": const Color(0xFF27A770).withOpacity(0.08),
+1220:               };
+1221: 
+1222:               final Color themeColor = style["color"] as Color;
+1223:               final Color themeBgColor = style["bgColor"] as Color;
+1224:               final String catIcon = style["icon"] as String;
+1225: 
+1226:               return Column(
+1227:                 crossAxisAlignment: CrossAxisAlignment.start,
+1228:                 children: [
+1229:                   // Category Header
+1230:                   Container(
+1231:                     width: double.infinity,
+1232:                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+1233:                     margin: const EdgeInsets.only(top: 18, bottom: 10, left: 2, right: 2),
+1234:                     decoration: BoxDecoration(
+1235:                       color: themeBgColor,
+1236:                       borderRadius: BorderRadius.circular(12),
+1237:                       border: Border(
+1238:                         left: BorderSide(color: themeColor, width: 4),
+1239:                       ),
+1240:                     ),
+1241:                     child: Row(
+1242:                       children: [
+1243:                         Text(
+1244:                           catIcon,
+1245:                           style: const TextStyle(fontSize: 16),
+1246:                         ),
+1247:                         const SizedBox(width: 8),
+1248:                         Text(
+1249:                           catName,
+1250:                           style: TextStyle(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

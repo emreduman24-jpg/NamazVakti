@@ -1,0 +1,84 @@
+Created At: 2026-06-01T18:22:24Z
+Completed At: 2026-06-01T18:22:25Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6358
+Total Bytes: 258018
+Showing lines 6250 to 6358
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+6250:   // 70. Tecvid Kuralları
+6251:   Widget _buildTecvidKurallari() {
+6252:     return _buildListSection("Temel Tecvid Kuralları", [
+6253:       "Tecvid: Kuran-ı Kerim'i harflerin mahreçlerine (çıkış yerlerine) dikkat ederek, kurallarına uygun ve güzel okuma ilmidir.",
+6254:       "Med Harfleri (Uzatma): Elif (ا), Vav (و), Ya (ي) harfleridir. Önündeki harfi uzatarak okuturlar.",
+6255:       "Tenvin ve Sakin Nun Kuralları: Sakin nun (نْ) veya tenvin (ً ٍ ٌ) işaretlerinden sonra gelen harflere göre şekillenir.",
+6256:       "İzhar: Sakin nun veya tenvinden sonra boğaz harfleri (ء, هـ, ح, خ, ع, غ) gelirse, ses genizden getirilmeden açıkça okunur.",
+6257:       "İdgam-ı Mealgunne: Sakin nun veya tenvinden sonra (ي, م, ن, و) harfleri gelirse, ses burundan (genizden) verilerek şeddeli gibi okunur.",
+6258:       "İhfa: Sakin nun veya tenvinden sonra izhar ve idgam harfleri dışındaki 15 harf gelirse, nun sesi genizden gizlenerek okunur.",
+6259:       "Kalkale (Yankılama): (ق, ط, b, ج, د) harfleri sakin (cezimli) geldiğinde kuvvetli bir ses vurgusuyla yankılatılarak okunur.",
+6260:     ]);
+6261:   }
+6262: }
+6263: 
+6264: class _KibleSanatsalPusulaPainter extends CustomPainter {
+6265:   final bool isDark;
+6266:   final bool isAligned;
+6267: 
+6268:   _KibleSanatsalPusulaPainter({
+6269:     required this.isDark,
+6270:     required this.isAligned,
+6271:   });
+6272: 
+6273:   @override
+6274:   void paint(Canvas canvas, Size size) {
+6275:     final center = Offset(size.width / 2, size.height / 2);
+6276:    
+<truncated 1542 bytes>
+er.dx - diagonalRadius, center.dy + diagonalRadius);
+6312:     path.lineTo(center.dx - diagonalRadius, center.dy - diagonalRadius);
+6313:     path.lineTo(center.dx + diagonalRadius, center.dy - diagonalRadius);
+6314:     path.close();
+6315: 
+6316:     canvas.drawPath(path, starPaint);
+6317:     canvas.drawPath(path, starBorderPaint);
+6318: 
+6319:     // Draw small inner decorative circles
+6320:     canvas.drawCircle(center, starRadius * 0.4, starBorderPaint);
+6321:     canvas.drawCircle(center, starRadius * 0.2, starBorderPaint);
+6322: 
+6323:     // 3. Elegant Ticks (every 10 degrees)
+6324:     final tickPaint = Paint()
+6325:       ..style = PaintingStyle.stroke
+6326:       ..strokeCap = StrokeCap.round;
+6327: 
+6328:     for (int i = 0; i < 360; i += 10) {
+6329:       final double angle = i * math.pi / 180;
+6330:       final bool isMajor = i % 30 == 0;
+6331:       final bool isCardinal = i % 90 == 0;
+6332: 
+6333:       final double tickLength = isCardinal ? 12 : (isMajor ? 8 : 4);
+6334:       final double startR = radius - 16;
+6335:       final double endR = startR - tickLength;
+6336: 
+6337:       tickPaint.color = isCardinal 
+6338:           ? const Color(0xFFD4AF37)
+6339:           : (isDark ? Colors.white30 : Colors.black26);
+6340:       tickPaint.strokeWidth = isCardinal ? 2.0 : (isMajor ? 1.5 : 1.0);
+6341: 
+6342:       final Offset startPoint = Offset(
+6343:         center.dx + startR * math.cos(angle),
+6344:         center.dy + startR * math.sin(angle),
+6345:       );
+6346:       final Offset endPoint = Offset(
+6347:         center.dx + endR * math.cos(angle),
+6348:         center.dy + endR * math.sin(angle),
+6349:       );
+6350: 
+6351:       canvas.drawLine(startPoint, endPoint, tickPaint);
+6352:     }
+6353:   }
+6354: 
+6355:   @override
+6356:   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+6357: }
+6358: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

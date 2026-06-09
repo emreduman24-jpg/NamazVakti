@@ -1,0 +1,34 @@
+Created At: 2026-06-03T13:47:44Z
+Completed At: 2026-06-03T13:47:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8257
+Total Bytes: 337169
+Showing lines 1860 to 1885
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1860:                 child: Text(
+1861:                   "Geri Dön",
+1862:                   style: TextStyle(
+1863:                     color: Colors.white,
+1864:                     fontWeight: FontWeight.bold,
+1865:                     fontSize: 13,
+1866:                   ),
+1867:                 ),
+1868:               ),
+1869:             ],
+1870:           ),
+1871:         ),
+1872: 
+1873:         // Message List
+1874:         Expanded(
+1875:           child: ListView.builder(
+1876:             controller: _diniHocaScrollController,
+1877:             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+1878:             itemCount: _diniHocaMessages.length + (_diniHocaIsTyping ? 1 : 0),
+1879:             itemBuilder: (context, index) {
+1880:               if (index == _diniHocaMessages.length) {
+1881:                 // Typing indicator
+1882:                 return Padding(
+1883:                   padding: const EdgeInsets.symmetric(vertical: 8.0),
+1884:                   child: Row(
+1885:                     crossAxisAlignment: CrossAxisAlignment.start,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

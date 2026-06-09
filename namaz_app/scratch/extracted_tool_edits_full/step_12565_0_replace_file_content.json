@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add helper getters in _ToolDetailScreenState to determine text, subtitle, primary, and card background colors dynamically in dark mode.\"",
+  "EndLine": "32",
+  "Instruction": "\"Insert theme helper getters.\"",
+  "ReplacementContent": "\"class _ToolDetailScreenState extends State<ToolDetailScreen> {\\n  final PrayerRepository _repository = PrayerRepository();\\n\\n  bool get _isDark => Theme.of(context).brightness == Brightness.dark;\\n  Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xFF1E5E43);\\n  Color get _textColor => _isDark ? Colors.white : Colors.black87;\\n  Color get _subtitleColor => _isDark ? Colors.white70 : Colors.black54;\\n  Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;\"",
+  "StartLine": "26",
+  "TargetContent": "\"class _ToolDetailScreenState extends State<ToolDetailScreen> {\\n  final PrayerRepository _repository = PrayerRepository();\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Adding helper getters to tool detail screen\"",
+  "toolSummary": "\"File edit\""
+}

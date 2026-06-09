@@ -1,0 +1,88 @@
+Created At: 2026-05-22T16:56:41Z
+Completed At: 2026-05-22T16:56:41Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 2010
+Total Bytes: 80335
+Showing lines 1 to 600
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import '../data/prayer_data.dart';
+9: import '../data/prayer_repository.dart';
+10: 
+11: class ToolDetailScreen extends StatefulWidget {
+12:   final String toolId;
+13:   final String toolTitle;
+14: 
+15:   const ToolDetailScreen({Key? key, required this.toolId, required this.toolTitle}) : super(key: key);
+16: 
+17:   @override
+18:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+19: }
+20: 
+21: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+22:   final PrayerRepository _repository = PrayerRepository();
+23:   AudioPlayer? _audioPlayer;
+24:   PlayerState _playerState = PlayerState.stopped;
+25:   String _currentAudioUrl = "";
+26:   String _currentTrackName = "";
+27:   
+28:   // Zikirmatik State
+29:   int _zikirCount = 0;
+30:   int _zikirTarget = 33;
+31:   bool _zikirSoundEnabled = true;
+32: 
+33:   // Dua Iste State
+34:   List<Map<String, dynamic>> _duaList = [];
+35:   final TextEditingController _duaNameController = TextEditingController();
+36:   final TextEditingController _duaTextController = TextEditingController();
+37: 
+38:   // Soru Cevap State
+39:   final List<Map<String, String>> _qaMessages = [
+40:     {
+41:       'sender': 'bot',
+42:       'text': 'Selamün Aleyküm, ben yapay zeka dini danışmanınız.
+<truncated 21824 bytes>
+     alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+565:                 child: Container(
+566:                   margin: const EdgeInsets.only(bottom: 10, left: 8, right: 8),
+567:                   padding: const EdgeInsets.all(12),
+568:                   decoration: BoxDecoration(
+569:                     color: isMe ? const Color(0xFF27A770) : const Color(0xFFFBEAEA),
+570:                     borderRadius: BorderRadius.only(
+571:                       topLeft: const Radius.circular(14),
+572:                       topRight: const Radius.circular(14),
+573:                       bottomLeft: Radius.circular(isMe ? 14 : 0),
+574:                       bottomRight: Radius.circular(isMe ? 0 : 14),
+575:                     ),
+576:                   ),
+577:                   constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
+578:                   child: Column(
+579:                     crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+580:                     children: [
+581:                       if (!isMe)
+582:                         Text(
+583:                           msg['user'] ?? 'Anonim',
+584:                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Color(0xFF1E5E43)),
+585:                         ),
+586:                       if (!isMe) const SizedBox(height: 2),
+587:                       Text(
+588:                         msg['text'] ?? '',
+589:                         style: TextStyle(color: isMe ? Colors.white : Colors.black87, fontSize: 13, height: 1.35),
+590:                       ),
+591:                     ],
+592:                   ),
+593:                 ),
+594:               );
+595:             },
+596:           ),
+597:         ),
+598:         Row(
+599:           children: [
+600:             Expanded(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

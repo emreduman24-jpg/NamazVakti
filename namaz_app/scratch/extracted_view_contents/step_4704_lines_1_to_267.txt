@@ -1,0 +1,131 @@
+Created At: 2026-05-23T14:15:28Z
+Completed At: 2026-05-23T14:15:28Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart`
+Total Lines: 267
+Total Bytes: 6972
+Showing lines 1 to 267
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'package:flutter/material.dart';
+2: import 'data/prayer_repository.dart';
+3: import 'services/notification_service.dart';
+4: import 'screens/main_screen.dart';
+5: import 'screens/tools_screen.dart';
+6: import 'screens/settings_screen.dart';
+7: import 'screens/tool_detail_screen.dart';
+8: import 'screens/splash_screen.dart';
+9: 
+10: void main() async {
+11:   WidgetsFlutterBinding.ensureInitialized();
+12: 
+13:   // Initialize Notification Service
+14:   final notificationService = NotificationService();
+15:   await notificationService.init();
+16: 
+17:   runApp(const MyApp());
+18: }
+19: 
+20: class MyApp extends StatefulWidget {
+21:   const MyApp({super.key});
+22: 
+23:   @override
+24:   State<MyApp> createState() => _MyAppState();
+25: }
+26: 
+27: class _MyAppState extends State<MyApp> {
+28:   final PrayerRepository _repository = PrayerRepository();
+29:   ThemeMode _themeMode = ThemeMode.light;
+30:   bool _loading = true;
+31:   bool _locationSelected = false;
+32: 
+33:   @override
+34:   void initState() {
+35:     super.initState();
+36:     _initializeApp();
+37:   }
+38: 
+39:   Future<void> _initializeApp() async {
+40:     final themeStr = await _repository.getThemeMode();
+41:     final isLocSet = await _repository.isLocationSelected();
+42: 
+43:     setState(() {
+44:       _themeMode = _parseThemeMode(themeStr);
+45:       _locationSelected = isLocSet;
+46:       _loading = false;
+47:     });
+48:   }
+49: 
+50:   ThemeMode _parseThemeMode(String mode) {
+51:     switch (mode) {
+52:       case 'dark':
+53:         return ThemeMode.dark;
+54:       case 'system':
+55:         return Th
+<truncated 4632 bytes>
+ns = [
+202:       MainScreen(
+203:         onTabChange: (index) {
+204:           setState(() {
+205:             _currentIndex = index;
+206:           });
+207:         },
+208:         onOpenTool: _openToolDetail,
+209:       ),
+210:       ToolsScreen(
+211:         onOpenTool: _openToolDetail,
+212:         onClose: () {
+213:           setState(() {
+214:             _currentIndex = 0;
+215:           });
+216:         },
+217:       ),
+218:       SettingsScreen(
+219:         onThemeChanged: widget.onThemeChanged,
+220:         onLocationReset: widget.onLocationReset,
+221:       ),
+222:     ];
+223:   }
+224: 
+225:   void _openToolDetail(String toolId, String toolTitle) {
+226:     Navigator.push(
+227:       context,
+228:       MaterialPageRoute(
+229:         builder: (context) =>
+230:             ToolDetailScreen(toolId: toolId, toolTitle: toolTitle),
+231:       ),
+232:     );
+233:   }
+234: 
+235:   @override
+236:   Widget build(BuildContext context) {
+237:     return Scaffold(
+238:       body: IndexedStack(index: _currentIndex, children: _screens),
+239:       bottomNavigationBar: BottomNavigationBar(
+240:         currentIndex: _currentIndex,
+241:         onTap: (index) {
+242:           setState(() {
+243:             _currentIndex = index;
+244:           });
+245:         },
+246:         items: const [
+247:           BottomNavigationBarItem(
+248:             icon: Icon(Icons.home_outlined),
+249:             activeIcon: Icon(Icons.home),
+250:             label: 'Ana Sayfa',
+251:           ),
+252:           BottomNavigationBarItem(
+253:             icon: Icon(Icons.grid_view_outlined),
+254:             activeIcon: Icon(Icons.grid_view),
+255:             label: 'Araçlar',
+256:           ),
+257:           BottomNavigationBarItem(
+258:             icon: Icon(Icons.settings_outlined),
+259:             activeIcon: Icon(Icons.settings),
+260:             label: 'Ayarlar',
+261:           ),
+262:         ],
+263:       ),
+264:     );
+265:   }
+266: }
+267: 
+The above content shows the entire, complete file contents of the requested file.

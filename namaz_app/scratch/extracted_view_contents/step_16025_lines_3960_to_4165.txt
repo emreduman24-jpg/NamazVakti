@@ -1,0 +1,95 @@
+Created At: 2026-06-03T11:46:36Z
+Completed At: 2026-06-03T11:46:37Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7050
+Total Bytes: 287002
+Showing lines 3960 to 4165
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3960:     );
+3961:   }
+3962: 
+3963:   Widget _buildWeekViewChart() {
+3964:     final now = DateTime.now();
+3965:     final monday = now.subtract(Duration(days: now.weekday - 1));
+3966:     final dayNames = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+3967: 
+3968:     return Container(
+3969:       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+3970:       padding: const EdgeInsets.all(16),
+3971:       decoration: BoxDecoration(
+3972:         color: Colors.white,
+3973:         borderRadius: BorderRadius.circular(16),
+3974:         boxShadow: const [
+3975:           BoxShadow(
+3976:             color: Colors.black12,
+3977:             blurRadius: 10,
+3978:             offset: Offset(0, 2),
+3979:           ),
+3980:         ],
+3981:       ),
+3982:       child: Column(
+3983:         crossAxisAlignment: CrossAxisAlignment.start,
+3984:         children: [
+3985:           Row(
+3986:             children: [
+3987:               Icon(Icons.calendar_month, color: const Color(0xFF27A770), size: 20),
+3988:               SizedBox(width: 8),
+3989:               Text(
+3990:                 "Bu Haftanın Zikir Takibi",
+3991:                 style: TextStyle(
+3992:                   fontSize: 14,
+3993:                   fontWeight: FontWeight.bold,
+3994:                   color: _greenColor,
+3995:                 ),
+3996:               ),
+3997:             ],
+3998:           ),
+3999:           const SizedBox(height: 16),
+4000:           Row(
+4001:             mainAxisAlignment: MainAxisAlignment.spaceAround,
+4002:             children: List.g
+<truncated 5739 bytes>
+          style: TextStyle(
+4124:                       fontSize: 28,
+4125:                       fontWeight: FontWeight.bold,
+4126:                       color: _greenColor,
+4127:                       fontFamily: 'Traditional Arabic',
+4128:                     ),
+4129:                   ),
+4130:                   SizedBox(height: 8),
+4131:                   Text(
+4132:                     "“${zikir['anlam']}”",
+4133:                     textAlign: TextAlign.center,
+4134:                     style: TextStyle(
+4135:                       fontSize: 12.5,
+4136:                       fontStyle: FontStyle.italic,
+4137:                       color: _isDark ? Colors.white60 : Colors.grey[700],
+4138:                     ),
+4139:                   ),
+4140:                   SizedBox(height: 10),
+4141:                   Container(
+4142:                     padding: EdgeInsets.all(10),
+4143:                     decoration: BoxDecoration(
+4144:                       color: const Color(0xFFFFF7EA),
+4145:                       borderRadius: BorderRadius.circular(10),
+4146:                       border: Border.all(color: const Color(0xFFF9EDD4)),
+4147:                     ),
+4148:                     child: Text(
+4149:                       zikir['fazilet'] ?? '',
+4150:                       textAlign: TextAlign.center,
+4151:                       style: TextStyle(
+4152:                         fontSize: 11,
+4153:                         fontWeight: FontWeight.bold,
+4154:                         color: Colors.orange,
+4155:                         height: 1.35,
+4156:                       ),
+4157:                     ),
+4158:                   ),
+4159:                 ],
+4160:               ),
+4161:             ),
+4162:           ),
+4163:           SizedBox(height: 20),
+4164:           // Zikir circle button
+4165:           GestureDetector(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

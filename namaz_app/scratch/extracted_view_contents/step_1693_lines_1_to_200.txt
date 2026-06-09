@@ -1,0 +1,112 @@
+Created At: 2026-05-22T17:00:12Z
+Completed At: 2026-05-22T17:00:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 3222
+Total Bytes: 145979
+Showing lines 1 to 200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import '../data/prayer_data.dart';
+9: import '../data/prayer_repository.dart';
+10: 
+11: class ToolDetailScreen extends StatefulWidget {
+12:   final String toolId;
+13:   final String toolTitle;
+14: 
+15:   const ToolDetailScreen({Key? key, required this.toolId, required this.toolTitle}) : super(key: key);
+16: 
+17:   @override
+18:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+19: }
+20: 
+21: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+22:   final PrayerRepository _repository = PrayerRepository();
+23:   AudioPlayer? _audioPlayer;
+24:   PlayerState _playerState = PlayerState.stopped;
+25:   String _currentAudioUrl = "";
+26:   String _currentTrackName = "";
+27:   
+28:   // Zikirmatik State
+29:   int _zikirCount = 0;
+30:   int _zikirTarget = 33;
+31:   bool _zikirSoundEnabled = true;
+32: 
+33:   // Dua Iste State
+34:   List<Map<String, dynamic>> _duaList = [];
+35:   final TextEditingController _duaNameController = TextEditingController();
+36:   final TextEditingController _duaTextController = TextEditingController();
+37: 
+38:   // Soru Cevap State
+39:   final List<Map<String, String>> _qaMessages = [
+40:     {
+41:       'sender': 'bot',
+42:       'text': 'Selamün Aleyküm, ben yapay zeka dini danışmanınız
+<truncated 3912 bytes>
+e = newValue;
+141:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+142:       if (key == 'kaza_aksam') _kazaAksam = newValue;
+143:       if (key == 'kaza_yatsi') _kazaYatsi = newValue;
+144:       if (key == 'kaza_vitir') _kazaVitir = newValue;
+145:     });
+146:   }
+147: 
+148:   void _initAudio() {
+149:     _audioPlayer = AudioPlayer();
+150:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+151:       if (mounted) {
+152:         setState(() {
+153:           _playerState = state;
+154:         });
+155:       }
+156:     });
+157:   }
+158: 
+159:   String _normalize(String text) {
+160:     return text
+161:         .toLowerCase()
+162:         .replaceAll('ı', 'i')
+163:         .replaceAll('ğ', 'g')
+164:         .replaceAll('ü', 'u')
+165:         .replaceAll('ş', 's')
+166:         .replaceAll('ö', 'o')
+167:         .replaceAll('ç', 'c');
+168:   }
+169: 
+170:   @override
+171:   void dispose() {
+172:     _audioPlayer?.dispose();
+173:     _duaNameController.dispose();
+174:     _duaTextController.dispose();
+175:     _qaInputController.dispose();
+176:     _chatInputController.dispose();
+177:     _hadisSearchController.dispose();
+178:     _goldController.dispose();
+179:     _cashController.dispose();
+180:     _businessController.dispose();
+181:     _debtsController.dispose();
+182:     super.dispose();
+183:   }
+184: 
+185:   // Zikirmatik persistence
+186:   Future<void> _loadZikirState() async {
+187:     final count = await _repository.getZikirCount();
+188:     final target = await _repository.getZikirTarget();
+189:     setState(() {
+190:       _zikirCount = count;
+191:       _zikirTarget = target;
+192:     });
+193:   }
+194: 
+195:   Future<void> _incrementZikir() async {
+196:     HapticFeedback.lightImpact();
+197:     if (_zikirSoundEnabled) {
+198:       SystemSound.play(SystemSoundType.click);
+199:     }
+200:     setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

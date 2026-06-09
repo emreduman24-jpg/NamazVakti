@@ -1,0 +1,39 @@
+Created At: 2026-06-03T13:45:27Z
+Completed At: 2026-06-03T13:45:28Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7713
+Total Bytes: 313578
+Showing lines 1150 to 1180
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1150: 
+1151:   Widget _buildToolBody() {
+1152:     switch (widget.toolId) {
+1153:       case 'dini-gunler':
+1154:         return _buildDiniGunler();
+1155:       case 'dua-iste':
+1156:         return _buildDuaIste();
+1157:       case 'soru-cevap':
+1158:         return _buildSoruCevap();
+1159:       case 'canli-sohbet':
+1160:         return _buildCanliSohbet();
+1161:       case 'dini-hoca':
+1162:         return _buildDiniHoca();
+1163:       case 'peygamber-hayati':
+1164:         return _buildPeygamberHayati();
+1165:       case 'kuran-kerim':
+1166:         return _buildKuranKerim();
+1167:       case 'esmaul-husna':
+1168:         return _buildEsmaulHusna();
+1169:       case 'ramazan-hakkinda':
+1170:         return _buildRamazanHakkinda();
+1171:       case 'oruc-rehberi':
+1172:         return _buildOrucRehberi();
+1173:       case 'kible-bulucu':
+1174:         return _buildKibleBulucu();
+1175:       case 'namaz-vakitleri-aylik':
+1176:         return _buildAylikNamazVakitleri();
+1177:       case 'zikirmatik':
+1178:         return _buildZikirmatik();
+1179:       case 'miladi-hicri':
+1180:         return _buildMiladiHicri();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

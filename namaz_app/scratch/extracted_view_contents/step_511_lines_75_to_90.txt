@@ -1,0 +1,24 @@
+Created At: 2026-05-21T20:04:51Z
+Completed At: 2026-05-21T20:04:51Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 1974
+Total Bytes: 78784
+Showing lines 75 to 90
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+75:   final TextEditingController _businessController = TextEditingController();
+76:   final TextEditingController _debtsController = TextEditingController();
+77:   String _zekatResult = "";
+78: 
+79:   // Date Converter State
+80:   DateTime _selectedDate = DateTime.now();
+81:   String _convertedDateResult = "";
+82:   bool _miladiToHicri = true;
+83: 
+84:   // Sahabe Hayatlari & Esmaül Hüsna Search State
+85:   String _esmaSearchQuery = "";
+86:   String _sahabeSearchQuery = "";
+87: 
+88:   // Compass Manual Rotation Simulation (Fallback for Emulators)
+89:   double _manualCompassHeading = 0.0;
+90: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,80 @@
+Created At: 2026-06-01T11:28:21Z
+Completed At: 2026-06-01T11:28:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 5250 to 5393
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5250:     return _buildInfoSection(
+5251:       "Sadaka-i Cariye",
+5252:       "Ölümden sonra da sevabı devam eden yatırımlar",
+5253:       "Sadaka-i Cariye, etkisi ve faydası kalıcı olan sürekli iyiliklerdir. Kişi vefat etse dahi, geride bıraktığı bu hayırlı eserlerden insanlar faydalandığı sürece amel defterine sevap yazılmaya devam eder.\n\n"
+5254:           "Sadaka-i Cariye Örnekleri:\n"
+5255:           "• Çeşme, su kuyusu açtırmak veya su yolları yaptırmak.\n"
+5256:           "• Okul, cami, kütüphane, hastane veya aşevi yaptırmak veya yapımına destek olmak.\n"
+5257:           "• İnsanlığa faydalı bilimsel icatlar yapmak, kitaplar yazmak, faydalı dijital kaynaklar üretmek.\n"
+5258:           "• Yol kenarlarına, ormanlara ağaç dikmek.\n"
+5259:           "• Hayırlı bir evlat yetiştirmek (vefat eden ana-babasına dua eden evlat da sadaka-i cariye hükmündedir).",
+5260:     );
+5261:   }
+5262: 
+5263:   // 70. Tecvid Kuralları
+5264:   Widget _buildTecvidKurallari() {
+5265:     return _buildListSection("Temel Tecvid Kuralları", [
+5266:       "Tecvid: Kuran-ı Kerim'i harflerin mahreçlerine (çıkış yerlerine) dikkat ederek, kurallarına uygun ve güzel okuma ilmidir.",
+5267:       "Med Harfleri (Uzatma): Elif (ا), Vav (و), Ya (ي) harfleridir. Önündeki harfi uzatarak okuturlar.",
+5268:       "Tenvin ve Sakin Nun Kuralları: Sakin nun (نْ) veya tenvin (ً ٍ ٌ) işaretlerinden sonra gelen harflere göre şekillenir.",
+5269:       "İzhar: Sakin nun veya tenvinden sonra boğaz harfler
+<truncated 3310 bytes>
+ + startR * Math.cos(angle),
+5344:         center.dy + startR * Math.sin(angle),
+5345:       );
+5346:       final Offset endPoint = Offset(
+5347:         center.dx + endR * Math.cos(angle),
+5348:         center.dy + endR * Math.sin(angle),
+5349:       );
+5350: 
+5351:       canvas.drawLine(startPoint, endPoint, tickPaint);
+5352:     }
+5353: 
+5354:     // 5. Draw active radar scanning beam
+5355:     final double radAngle = (needleRotation - 90) * 3.141592653589793 / 180;
+5356:     
+5357:     final sweepPaint = Paint()
+5358:       ..color = isAligned 
+5359:           ? const Color(0xFF27A770).withOpacity(0.15) 
+5360:           : (isDark ? const Color(0xFFD4AF37).withOpacity(0.08) : const Color(0xFF27A770).withOpacity(0.08))
+5361:       ..style = PaintingStyle.fill;
+5362:     
+5363:     final sweepPath = Path()
+5364:       ..moveTo(center.dx, center.dy)
+5365:       ..arcTo(
+5366:         Rect.fromCircle(center: center, radius: radius),
+5367:         radAngle - 0.2, 
+5368:         0.4,
+5369:         false,
+5370:       )
+5371:       ..close();
+5372:     canvas.drawPath(sweepPath, sweepPaint);
+5373: 
+5374:     // 6. Draw outer target marker (red bracket at the top)
+5375:     final targetPaint = Paint()
+5376:       ..color = isAligned ? const Color(0xFF27A770) : Colors.redAccent
+5377:       ..style = PaintingStyle.stroke
+5378:       ..strokeWidth = 2.0;
+5379: 
+5380:     final double bracketW = 16;
+5381:     final double bracketH = 8;
+5382:     final bracketPath = Path()
+5383:       ..moveTo(center.dx - bracketW, bracketH)
+5384:       ..lineTo(center.dx - bracketW, 0)
+5385:       ..lineTo(center.dx + bracketW, 0)
+5386:       ..lineTo(center.dx + bracketW, bracketH);
+5387:     canvas.drawPath(bracketPath, targetPaint);
+5388:   }
+5389: 
+5390:   @override
+5391:   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+5392: }
+5393: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,76 @@
+Created At: 2026-06-01T11:56:21Z
+Completed At: 2026-06-01T11:56:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5894
+Total Bytes: 238386
+Showing lines 2750 to 2850
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2750:             borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+2751:             child: ListView.builder(
+2752:               itemCount: _monthlyPrayerTimes.length,
+2753:               itemBuilder: (context, index) {
+2754:                 final day = _monthlyPrayerTimes[index];
+2755:                 final String dateStr = day['MiladiTarihKisa'] ?? '';
+2756:                 final isToday = dateStr == todayStr;
+2757: 
+2758:                 // Format short date (e.g. "21 May Per")
+2759:                 final String dateUzun = day['MiladiTarihUzun'] ?? '';
+2760:                 final List<String> dateParts = dateUzun.split(' ');
+2761:                 String shortDate = dateStr;
+2762:                 if (dateParts.length >= 4) {
+2763:                   final String d = dateParts[0];
+2764:                   final String m = dateParts[1].substring(0, math.min(3, dateParts[1].length));
+2765:                   final String dayName = dateParts[3].substring(0, math.min(3, dateParts[3].length));
+2766:                   shortDate = "$d $m $dayName";
+2767:                 }
+2768: 
+2769:                 return Container(
+2770:                   padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+2771:                   decoration: BoxDecoration(
+2772:                     color: isToday
+2773:                         ? const Color(0xFF27A770).withOpacity(dark ? 0.15 : 0.08)
+2774:                         : (index % 2 == 0
+2775:                             ? (dark ? const Color(0xFF131D31).withOpacity(0.4) : Colors.white)
+27
+<truncated 1988 bytes>
+         ),
+2812:                                 child: const Text(
+2813:                                   "Bugün",
+2814:                                   style: TextStyle(
+2815:                                     fontSize: 8,
+2816:                                     fontWeight: FontWeight.bold,
+2817:                                     color: Colors.white,
+2818:                                   ),
+2819:                                 ),
+2820:                               ),
+2821:                             ],
+2822:                           ],
+2823:                         ),
+2824:                       ),
+2825:                       // Time values
+2826:                       Expanded(
+2827:                         flex: 1,
+2828:                         child: Text(
+2829:                           day['Imsak'] ?? '',
+2830:                           textAlign: TextAlign.center,
+2831:                           style: TextStyle(
+2832:                             fontSize: 11.5,
+2833:                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+2834:                             color: _textColor,
+2835:                           ),
+2836:                         ),
+2837:                       ),
+2838:                       Expanded(
+2839:                         flex: 1,
+2840:                         child: Text(
+2841:                           day['Gunes'] ?? '',
+2842:                           textAlign: TextAlign.center,
+2843:                           style: TextStyle(
+2844:                             fontSize: 11.5,
+2845:                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+2846:                             color: _textColor,
+2847:                           ),
+2848:                         ),
+2849:                       ),
+2850:                       Expanded(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

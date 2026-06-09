@@ -1,0 +1,16 @@
+{
+  "step_index": 16498,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Add 'yemek' category to grouped map and categories list in _buildGunlukDualar.\"",
+    "EndLine": "5161",
+    "Instruction": "\"Add yemek category support for Hadis prayers.\"",
+    "ReplacementContent": "\"    final Map<String, List<Map<String, String>>> grouped = {\\n      'sabah_aksam': [],\\n      'namaz': [],\\n      'yemek': [],\\n      'uyku': [],\\n      'yolculuk': [],\\n      'genel': [],\\n    };\\n    \\n    for (var dua in filteredList) {\\n      final cat = dua['kategori'] ?? 'genel';\\n      grouped[cat]?.add(dua);\\n    }\\n\\n    final categories = [\\n      {'key': 'sabah_aksam', 'title': 'Sabah & Akşam Ezkarı', 'emoji': '☀️'},\\n      {'key': 'namaz', 'title': 'Namaz Duaları', 'emoji': '🕌'},\\n      {'key': 'yemek', 'title': 'Yemek Duaları', 'emoji': '🍴'},\\n      {'key': 'uyku', 'title': 'Uyku Duaları', 'emoji': '🌙'},\\n      {'key': 'yolculuk', 'title': 'Yolculuk Duaları', 'emoji': '🚗'},\\n      {'key': 'genel', 'title': 'Genel Dualar', 'emoji': '✨'},\\n    ];\"",
+    "StartLine": "5140",
+    "TargetContent": "\"    final Map<String, List<Map<String, String>>> grouped = {\\n      'sabah_aksam': [],\\n      'namaz': [],\\n      'uyku': [],\\n      'yolculuk': [],\\n      'genel': [],\\n    };\\n    \\n    for (var dua in filteredList) {\\n      final cat = dua['kategori'] ?? 'genel';\\n      grouped[cat]?.add(dua);\\n    }\\n\\n    final categories = [\\n      {'key': 'sabah_aksam', 'title': 'Sabah & Akşam Ezkarı', 'emoji': '☀️'},\\n      {'key': 'namaz', 'title': 'Namaz Duaları', 'emoji': '🕌'},\\n      {'key': 'uyku', 'title': 'Uyku Duaları', 'emoji': '🌙'},\\n      {'key': 'yolculuk', 'title': 'Yolculuk Duaları', 'emoji': '🚗'},\\n      {'key': 'genel', 'title': 'Genel Dualar', 'emoji': '✨'},\\n    ];\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding yemek category to tool_detail_screen.dart\"",
+    "toolSummary": "\"Edit file\""
+  }
+}

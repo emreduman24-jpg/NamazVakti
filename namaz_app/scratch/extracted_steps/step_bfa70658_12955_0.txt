@@ -1,0 +1,1 @@
+      case 'kible-bulucu':\n        return _buildKibleBulucu();\n      case 'namaz-vakitleri-aylik':\n        return _buildAylikNamazVakitleri();\n      case 'zikirmatik':\n        return _buildZikirmatik();

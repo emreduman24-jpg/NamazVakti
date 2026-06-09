@@ -1,0 +1,29 @@
+Created At: 2026-06-03T05:05:33Z
+Completed At: 2026-06-03T05:05:33Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6956
+Total Bytes: 281899
+Showing lines 2130 to 2150
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2130:                             ),
+2131:                             SizedBox(height: 2),
+2132:                             Text(
+2133:                               "Günlük hedef belirle, Kur'an'ı hatmet",
+2134:                               style: TextStyle(
+2135:                                 color: Colors.white60,
+2136:                                 fontSize: 12,
+2137:                               ),
+2138:                             ),
+2139:                           ],
+2140:                         ),
+2141:                       ),
+2142:                       const Icon(Icons.chevron_right_rounded, color: Colors.white55),
+2143:                     ],
+2144:                   ),
+2145:                 ),
+2146:               ),
+2147:               const SizedBox(height: 16),
+2148:               
+2149:               // Tabs: Sureler / Cüzler
+2150:               Container(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

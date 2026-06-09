@@ -1,0 +1,103 @@
+Created At: 2026-06-03T06:18:19Z
+Completed At: 2026-06-03T06:18:19Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 700 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+700:       _getUserLocation();
+701:     }
+702:     if (widget.toolId == 'namaz-vakitleri-aylik') {
+703:       _loadMonthlyTimes();
+704:     }
+705:     _initAudio();
+706:     _loadZikirState();
+707:     _loadDuaList();
+708:     _loadQuestionList();
+709:     _loadKazaState();
+710:     _loadQuranLastRead();
+711:   }
+712: 
+713:   Future<void> _loadQuranLastRead() async {
+714:     final prefs = await SharedPreferences.getInstance();
+715:     if (mounted) {
+716:       setState(() {
+717:         _lastSuraNo = prefs.getInt('quran_last_sura_no') ?? 1;
+718:         _lastSuraName = prefs.getString('quran_last_sura_name') ?? "Fâtiha";
+719:         _lastAyahNo = prefs.getInt('quran_last_ayah_no') ?? 1;
+720:         _lastTotalAyahs = prefs.getInt('quran_last_total_ayahs') ?? 7;
+721:         _lastPercent = prefs.getInt('quran_last_percent') ?? 0;
+722:         _quranBookmarks = prefs.getStringList('quran_bookmarks') ?? [];
+723:       });
+724:     }
+725:   }
+726: 
+727:   Future<void> _toggleQuranBookmark(String suraNoStr) async {
+728:     final prefs = await SharedPreferences.getInstance();
+729:     setState(() {
+730:       if (_quranBookmarks.contains(suraNoStr)) {
+731:         _quranBookmarks.remove(suraNoStr);
+732:       } else {
+733:         _quranBookmarks.add(suraNoStr);
+734:       }
+735:     });
+736:     await prefs.setStringList('quran_bookmarks', _quranBookmarks);
+737:   }
+738: 
+739:   Map<String, int> _getJuzStartInfo(int juzNumber) {
+740:     final list = [
+741:       {'sura': 1, 'ayah': 1},
+742:       {'sura': 2, 'ayah': 142},
+743:       {'sura': 2, 'ay
+<truncated 284 bytes>
+ 9, 'ayah': 93},
+752:       {'sura': 11, 'ayah': 6},
+753:       {'sura': 12, 'ayah': 53},
+754:       {'sura': 15, 'ayah': 1},
+755:       {'sura': 17, 'ayah': 1},
+756:       {'sura': 18, 'ayah': 75},
+757:       {'sura': 21, 'ayah': 1},
+758:       {'sura': 23, 'ayah': 1},
+759:       {'sura': 25, 'ayah': 21},
+760:       {'sura': 27, 'ayah': 56},
+761:       {'sura': 29, 'ayah': 46},
+762:       {'sura': 33, 'ayah': 31},
+763:       {'sura': 36, 'ayah': 28},
+764:       {'sura': 39, 'ayah': 32},
+765:       {'sura': 41, 'ayah': 47},
+766:       {'sura': 46, 'ayah': 1},
+767:       {'sura': 51, 'ayah': 31},
+768:       {'sura': 57, 'ayah': 1},
+769:       {'sura': 67, 'ayah': 1},
+770:       {'sura': 78, 'ayah': 1},
+771:     ];
+772:     if (juzNumber >= 1 && juzNumber <= 30) {
+773:       return list[juzNumber - 1];
+774:     }
+775:     return {'sura': 1, 'ayah': 1};
+776:   }
+777: 
+778:   
+779: 
+780:   Future<void> _loadKazaState() async {
+781:     final prefs = await SharedPreferences.getInstance();
+782:     setState(() {
+783:       _kazaSabah = prefs.getInt('kaza_sabah') ?? 0;
+784:       _kazaOgle = prefs.getInt('kaza_ogle') ?? 0;
+785:       _kazaIkindi = prefs.getInt('kaza_ikindi') ?? 0;
+786:       _kazaAksam = prefs.getInt('kaza_aksam') ?? 0;
+787:       _kazaYatsi = prefs.getInt('kaza_yatsi') ?? 0;
+788:       _kazaVitir = prefs.getInt('kaza_vitir') ?? 0;
+789:     });
+790:   }
+791: 
+792:   Future<void> _updateKaza(String key, int delta) async {
+793:     final prefs = await SharedPreferences.getInstance();
+794:     int current = prefs.getInt(key) ?? 0;
+795:     int newValue = math.max(0, current + delta);
+796:     await prefs.setInt(key, newValue);
+797:     setState(() {
+798:       if (key == 'kaza_sabah') _kazaSabah = newValue;
+799:       if (key == 'kaza_ogle') _kazaOgle = newValue;
+800:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,103 @@
+Created At: 2026-05-23T13:51:36Z
+Completed At: 2026-05-23T13:51:36Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 1620 to 1820
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1620:           ),
+1621:         );
+1622:       },
+1623:     );
+1624:   }
+1625: 
+1626:   // 11. Zikirmatik
+1627:   Widget _buildZikirmatik() {
+1628:     return Column(
+1629:       mainAxisAlignment: MainAxisAlignment.center,
+1630:       children: [
+1631:         Row(
+1632:           mainAxisAlignment: MainAxisAlignment.center,
+1633:           children: [
+1634:             const Text(
+1635:               "Hedef Zikir: ",
+1636:               style: TextStyle(fontWeight: FontWeight.bold),
+1637:             ),
+1638:             DropdownButton<int>(
+1639:               value: _zikirTarget,
+1640:               items: const [
+1641:                 DropdownMenuItem(value: 33, child: Text("33")),
+1642:                 DropdownMenuItem(value: 99, child: Text("99")),
+1643:                 DropdownMenuItem(value: 100, child: Text("100")),
+1644:                 DropdownMenuItem(value: 1000, child: Text("1000")),
+1645:                 DropdownMenuItem(value: 9999, child: Text("Limitsiz")),
+1646:               ],
+1647:               onChanged: (val) {
+1648:                 if (val != null) {
+1649:                   setState(() {
+1650:                     _zikirTarget = val;
+1651:                     _zikirCount = 0;
+1652:                   });
+1653:                   _repository.setZikirTarget(val);
+1654:                   _repository.setZikirCount(0);
+1655:                 }
+1656:               },
+1657:             ),
+1658:           ],
+1659:         ),
+1660:         const SizedBox(height: 24),
+1661:         GestureDetector(
+1662:           onTap: _incrementZik
+<truncated 4228 bytes>
+onvertedDateResult = "";
+1771:                 });
+1772:               },
+1773:             ),
+1774:             const SizedBox(width: 8),
+1775:             ChoiceChip(
+1776:               label: const Text("Hicri -> Miladi"),
+1777:               selected: !_miladiToHicri,
+1778:               onSelected: (val) {
+1779:                 setState(() {
+1780:                   _miladiToHicri = false;
+1781:                   _convertedDateResult = "";
+1782:                 });
+1783:               },
+1784:             ),
+1785:           ],
+1786:         ),
+1787:         const SizedBox(height: 16),
+1788:         ListTile(
+1789:           title: const Text(
+1790:             "Tarih Seçin",
+1791:             style: TextStyle(fontWeight: FontWeight.bold),
+1792:           ),
+1793:           subtitle: Text(
+1794:             "${_selectedDate.day}.${_selectedDate.month}.${_selectedDate.year}",
+1795:           ),
+1796:           trailing: const Icon(Icons.calendar_month, color: Color(0xFF27A770)),
+1797:           onTap: () async {
+1798:             final picked = await showDatePicker(
+1799:               context: context,
+1800:               initialDate: _selectedDate,
+1801:               firstDate: DateTime(1900),
+1802:               lastDate: DateTime(2100),
+1803:             );
+1804:             if (picked != null) {
+1805:               setState(() {
+1806:                 _selectedDate = picked;
+1807:               });
+1808:             }
+1809:           },
+1810:         ),
+1811:         const SizedBox(height: 20),
+1812:         SizedBox(
+1813:           width: double.infinity,
+1814:           height: 48,
+1815:           child: ElevatedButton(
+1816:             style: ElevatedButton.styleFrom(
+1817:               backgroundColor: const Color(0xFF27A770),
+1818:             ),
+1819:             onPressed: () {
+1820:               setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

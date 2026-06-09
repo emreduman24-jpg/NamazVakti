@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Fix MainAxisAlignment enum value from between to spaceBetween.\"",
+  "EndLine": "5405",
+  "Instruction": "\"Change mainAxisAlignment to MainAxisAlignment.spaceBetween.\"",
+  "ReplacementContent": "\"              Row(\\n                mainAxisAlignment: MainAxisAlignment.spaceBetween,\\n                children: [\"",
+  "StartLine": "5401",
+  "TargetContent": "\"              Row(\\n                mainAxisAlignment: MainAxisAlignment.between,\\n                children: [\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Fixing alignment enum\"",
+  "toolSummary": "\"Fixing MainAxisAlignment value\""
+}

@@ -1,0 +1,29 @@
+Created At: 2026-06-01T11:04:56Z
+Completed At: 2026-06-01T11:04:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5606
+Total Bytes: 233401
+Showing lines 1160 to 1180
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1160:                         ),
+1161:                         subtitle: Text(
+1162:                           day['gun'] ?? '',
+1163:                           style: TextStyle(color: _isDark ? Colors.white60 : Colors.grey[600], fontSize: 12),
+1164:                         ),
+1165:                         trailing: Container(
+1166:                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+1167:                           decoration: BoxDecoration(
+1168:                             color: const Color(0xFF27A770).withOpacity(0.12),
+1169:                             borderRadius: BorderRadius.circular(20),
+1170:                           ),
+1171:                           child: Text(
+1172:                             day['tarih'] ?? '',
+1173:                             style: const TextStyle(
+1174:                               color: _greenColor,
+1175:                               fontWeight: FontWeight.bold,
+1176:                               fontSize: 12,
+1177:                             ),
+1178:                           ),
+1179:                         ),
+1180:                       ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

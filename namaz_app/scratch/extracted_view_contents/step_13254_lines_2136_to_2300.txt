@@ -1,0 +1,82 @@
+Created At: 2026-06-01T17:28:34Z
+Completed At: 2026-06-01T17:28:34Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6355
+Total Bytes: 257924
+Showing lines 2136 to 2300
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2136:   Widget _buildKibleBulucu() {
+2137:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+2138: 
+2139:     return StreamBuilder<CompassEvent>(
+2140:       stream: FlutterCompass.events,
+2141:       builder: (context, snapshot) {
+2142:         double? heading = snapshot.data?.heading;
+2143:         final bool sensorMissing = heading == null;
+2144:         
+2145:         // When there is no sensor (e.g. emulator), default to exactly qiblaAngle
+2146:         // so it defaults to the beautiful aligned state immediately!
+2147:         double currentHeading = heading ?? 137.0;
+2148:         
+2149:         final bool dark = _isDark;
+2150: 
+2151:         double needleRotation = qiblaAngle - currentHeading;
+2152:         double dialRotation = -currentHeading;
+2153: 
+2154:         // Calculate difference for direction instructions
+2155:         double diff = (qiblaAngle - currentHeading) % 360;
+2156:         if (diff > 180) diff -= 360;
+2157:         if (diff < -180) diff += 360;
+2158:         
+2159:         bool isAligned = diff.abs() < 3;
+2160: 
+2161:         // Distance to Kaaba from user's current GPS, fallback to Istanbul
+2162:         double meccaDistance = 2400.0;
+2163:         if (_currentPosition != null) {
+2164:           meccaDistance = _calculateDistance(_currentPosition!.latitude, _currentPosition!.longitude, 21.4225, 39.8262);
+2165:         }
+2166: 
+2167:         // Dynamic Aligned Status Banner
+2168:         Widget alignmentBanner;
+2169:         if (isAligned) {
+2170:           alignmentBanner = AnimatedContainer(
+2
+<truncated 4179 bytes>
+264:                       "Kıble-i Şerif Yönü",
+2265:                       style: TextStyle(
+2266:                         fontSize: 16,
+2267:                         fontWeight: FontWeight.bold,
+2268:                         color: dark ? Colors.white : const Color(0xFF1E5E43),
+2269:                       ),
+2270:                     ),
+2271:                     const SizedBox(height: 6),
+2272:                     Text(
+2273:                       "Cihazınızı düz bir zeminde yatay tutarak kendi etrafınızda dönün. Altın kadran üzerindeki Kabe sembolünü en üstteki mihrap kapısına getirin.",
+2274:                       textAlign: TextAlign.center,
+2275:                       style: TextStyle(
+2276:                         fontSize: 12,
+2277:                         color: dark ? Colors.white70 : Colors.black54,
+2278:                         height: 1.4,
+2279:                       ),
+2280:                     ),
+2281:                   ],
+2282:                 ),
+2283:               ),
+2284:               const SizedBox(height: 32),
+2285: 
+2286:               // Breathtaking Circular Islamic Compass Dial
+2287:               Center(
+2288:                 child: Stack(
+2289:                   alignment: Alignment.center,
+2290:                   children: [
+2291:                     // Outer glowing star border matching alignment state
+2292:                     AnimatedContainer(
+2293:                       duration: const Duration(milliseconds: 350),
+2294:                       width: 250,
+2295:                       height: 250,
+2296:                       decoration: BoxDecoration(
+2297:                         shape: BoxShape.circle,
+2298:                         border: Border.all(
+2299:                           color: isAligned 
+2300:                               ? const Color(0xFF27A770).withOpacity(0.8) 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

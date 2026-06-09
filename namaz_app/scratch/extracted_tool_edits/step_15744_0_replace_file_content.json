@@ -1,0 +1,16 @@
+{
+  "step_index": 15744,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Pass required surah parameter to QuranDetailScreen when launching from last read Juz card.\"",
+    "EndLine": "2001",
+    "Instruction": "\"Find the starting surah of the target Juz and pass it to QuranDetailScreen.\"",
+    "ReplacementContent": "\"                        final targetJuz = QURAN_JUZS.firstWhere(\\n                          (j) => j.number == _lastJuzNo,\\n                          orElse: () => QURAN_JUZS[0],\\n                        );\\n                        final startInfo = _getJuzStartInfo(targetJuz.number);\\n                        final targetSurah = QURAN_SURAHS.firstWhere(\\n                          (s) => s.number == startInfo['sura'],\\n                          orElse: () => QURAN_SURAHS[0],\\n                        );\\n                        Navigator.push(\\n                          context,\\n                          MaterialPageRoute(\\n                            builder: (context) => QuranDetailScreen(\\n                              surah: targetSurah,\\n                              juz: targetJuz,\\n                              targetAyah: _lastJuzAyahNo,\\n                              isJuz: true,\\n                            ),\\n                          ),\\n                        ).then((_) => _loadQuranLastRead());\"",
+    "StartLine": "1986",
+    "TargetContent": "\"                        final targetJuz = QURAN_JUZS.firstWhere(\\n                          (j) => j.number == _lastJuzNo,\\n                          orElse: () => QURAN_JUZS[0],\\n                        );\\n                        Navigator.push(\\n                          context,\\n                          MaterialPageRoute(\\n                            builder: (context) => QuranDetailScreen(\\n                              juz: targetJuz,\\n                              targetAyah: _lastJuzAyahNo,\\n                              isJuz: true,\\n                            ),\\n                          ),\\n                        ).then((_) => _loadQuranLastRead());\"",
+    "TargetFile": "\"c:/Users/kral_/Namaz vakitleri/namaz_app/lib/screens/tool_detail_screen.dart\"",
+    "toolAction": "\"Adding targetSurah parameter to QuranDetailScreen call in tool_detail_screen.dart\"",
+    "toolSummary": "\"Update tool_detail_screen.dart\""
+  }
+}

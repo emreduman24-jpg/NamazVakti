@@ -1,0 +1,39 @@
+Created At: 2026-06-03T13:58:45Z
+Completed At: 2026-06-03T13:58:45Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8650
+Total Bytes: 354635
+Showing lines 8620 to 8650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+8620:     )..repeat();
+8621:   }
+8622:   
+8623:   @override
+8624:   void dispose() {
+8625:     _controller.dispose();
+8626:     super.dispose();
+8627:   }
+8628:   
+8629:   @override
+8630:   Widget build(BuildContext context) {
+8631:     return AnimatedBuilder(
+8632:       animation: _controller,
+8633:       builder: (context, child) {
+8634:         String dots = ".";
+8635:         if (_controller.value > 0.33) dots = "..";
+8636:         if (_controller.value > 0.66) dots = "...";
+8637:         return Text(
+8638:           dots,
+8639:           style: TextStyle(
+8640:             color: widget.color,
+8641:             fontWeight: FontWeight.bold,
+8642:             fontSize: 14,
+8643:           ),
+8644:         );
+8645:       },
+8646:     );
+8647:   }
+8648: }
+8649: 
+8650: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

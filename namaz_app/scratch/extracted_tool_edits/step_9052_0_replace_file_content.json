@@ -1,0 +1,16 @@
+{
+  "step_index": 9052,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Import url_launcher package inside tool_detail_screen.dart\"",
+    "EndLine": "13",
+    "Instruction": "\"Add package:url_launcher/url_launcher.dart to the imports list\"",
+    "ReplacementContent": "\"import 'package:geolocator/geolocator.dart';\\nimport 'package:url_launcher/url_launcher.dart';\\nimport '../data/prayer_data.dart';\\nimport '../data/prayer_repository.dart';\"",
+    "StartLine": "10",
+    "TargetContent": "\"import 'package:geolocator/geolocator.dart';\\nimport '../data/prayer_data.dart';\\nimport '../data/prayer_repository.dart';\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding url_launcher import\"",
+    "toolSummary": "\"Replace imports in tool_detail_screen.dart\""
+  }
+}

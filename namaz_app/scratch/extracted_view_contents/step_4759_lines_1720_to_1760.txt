@@ -1,0 +1,49 @@
+Created At: 2026-05-23T14:17:44Z
+Completed At: 2026-05-23T14:17:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187769
+Showing lines 1720 to 1760
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1720:                             // Prayer rug (Seccade) rectangle pointing UP
+1721:                             Positioned(
+1722:                               top: 15,
+1723:                               child: Container(
+1724:                                 width: 36,
+1725:                                 height: 60,
+1726:                                 decoration: BoxDecoration(
+1727:                                   color: const Color(0xFF27A770),
+1728:                                   borderRadius: BorderRadius.circular(6),
+1729:                                   border: Border.all(
+1730:                                     color: const Color(0xFF1E5E43),
+1731:                                     width: 1.5,
+1732:                                   ),
+1733:                                   boxShadow: const [
+1734:                                     BoxShadow(
+1735:                                       color: Colors.black26,
+1736:                                       blurRadius: 4,
+1737:                                       offset: Offset(0, 2),
+1738:                                     ),
+1739:                                   ],
+1740:                                 ),
+1741:                                 child: const Center(
+1742:                                   child: Column(
+1743:                                     mainAxisAlignment: MainAxisAlignment.min,
+1744:                                     children: [
+1745:                                       Icon(
+1746:                                         Icons.arrow_upward,
+1747:                                         color: Colors.white,
+1748:                                         size: 16,
+1749:                                       ),
+1750:                                       Text(
+1751:                                         "🕌",
+1752:                                         style: TextStyle(fontSize: 16),
+1753:                                       ),
+1754:                                     ],
+1755:                                   ),
+1756:                                 ),
+1757:                               ),
+1758:                             ),
+1759:                             // Center dot
+1760:                             Container(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

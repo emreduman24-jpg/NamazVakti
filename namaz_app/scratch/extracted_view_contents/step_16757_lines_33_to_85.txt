@@ -1,0 +1,61 @@
+Created At: 2026-06-03T13:45:01Z
+Completed At: 2026-06-03T13:45:02Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7707
+Total Bytes: 313314
+Showing lines 33 to 85
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+33: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+34:   final PrayerRepository _repository = PrayerRepository();
+35:   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+36:   Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xff1e5e43);
+37:   Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000); // _textColor equivalent
+38:   Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000); // _subtitleColor equivalent
+39:   Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;
+40:   String _currentLocationName = "";
+41: 
+42:   Future<void> _loadLocationName() async {
+43:     final savedLoc = await _repository.getSavedLocation();
+44:     final savedCity = savedLoc['cityName'] ?? "İstanbul";
+45:     if (mounted) {
+46:       setState(() {
+47:         _currentLocationName = savedCity;
+48:       });
+49:     }
+50:   }
+51: 
+52:   List<Map<String, dynamic>> _monthlyPrayerTimes = [];
+53:   bool _loadingMonthlyTimes = true;
+54:   String _monthlyViewMode = 'liste'; // 'liste' or 'takvim'
+55:   int _selectedCalendarDayIndex = 0;
+56: 
+57:   Future<void> _loadMonthlyTimes() async {
+58:     try {
+59:       final savedLoc = await _repository.getSavedLocation();
+60:       final districtId = savedLoc['districtId'] ?? "9541";
+61:       final List<Map<String, dynamic>> times = await _repository.getPrayerTimes(districtId);
+62:       if (mounted) {
+63:         // Find today's index
+64:         final now = DateTime.now();
+65:         final todayStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}";
+66:         int todayIdx = 0;
+67:         for (int i = 0; i < times.length; i++) {
+68:           if (times[i]['MiladiTarihKisa'] == todayStr) {
+69:             todayIdx = i;
+70:             break;
+71:           }
+72:         }
+73:         setState(() {
+74:           _monthlyPrayerTimes = times;
+75:           _loadingMonthlyTimes = false;
+76:           _selectedCalendarDayIndex = todayIdx;
+77:         });
+78:       }
+79:     } catch (e) {
+80:       print('Error loading monthly prayer times: $e');
+81:       if (mounted) {
+82:         setState(() {
+83:           _loadingMonthlyTimes = false;
+84:         });
+85:       }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

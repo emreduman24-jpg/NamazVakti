@@ -1,0 +1,58 @@
+Created At: 2026-06-03T13:47:15Z
+Completed At: 2026-06-03T13:47:15Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8257
+Total Bytes: 337169
+Showing lines 1951 to 2000
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1951:                           color: Color(0xFFC5A059),
+1952:                           size: 18,
+1953:                         ),
+1954:                       ),
+1955:                       const SizedBox(width: 8),
+1956:                     ],
+1957:                     Flexible(
+1958:                       child: Container(
+1959:                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+1960:                         decoration: BoxDecoration(
+1961:                           color: isMe 
+1962:                               ? _greenColor 
+1963:                               : (_isDark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9)),
+1964:                           borderRadius: BorderRadius.only(
+1965:                             topLeft: const Radius.circular(16),
+1966:                             topRight: const Radius.circular(16),
+1967:                             bottomLeft: isMe ? const Radius.circular(16) : Radius.zero,
+1968:                             bottomRight: isMe ? Radius.zero : const Radius.circular(16),
+1969:                           ),
+1970:                         ),
+1971:                         child: _buildMessageText(text, isMe),
+1972:                       ),
+1973:                     ),
+1974:                     if (isMe) ...[
+1975:                       const SizedBox(width: 8),
+1976:                       Container(
+1977:                         width: 36,
+1978:                         height: 36,
+1979:                         decoration: BoxDecoration(
+1980:                           color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+1981:                           shape: BoxShape.circle,
+1982:                         ),
+1983:                         child: Icon(
+1984:                           Icons.person_rounded,
+1985:                           color: _isDark ? Colors.white70 : Colors.black54,
+1986:                           size: 18,
+1987:                         ),
+1988:                       ),
+1989:                     ],
+1990:                   ],
+1991:                 ),
+1992:               );
+1993:             },
+1994:           ),
+1995:         ),
+1996: 
+1997:         // Suggestion Chips
+1998:         Container(
+1999:           height: 44,
+2000:           padding: const EdgeInsets.symmetric(vertical: 4),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

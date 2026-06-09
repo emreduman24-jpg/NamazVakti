@@ -1,0 +1,19 @@
+Created At: 2026-06-03T13:12:34Z
+Completed At: 2026-06-03T13:12:35Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 18
+Total Bytes: 1085
+Showing lines 8 to 18
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+8: - [x] Arayüz Geliştirmeleri (`tool_detail_screen.dart`)
+9:   - [x] Kur'an ve Hadis Duaları sekmelerinin (Segmented Control) yapılması
+10:   - [x] Emojili ve adet sayılı kategori başlıklarının tasarlanması
+11:   - [x] Kart tasarımlarının ekran görüntüsüne uygun şekilde yenilenmesi
+12:   - [x] Play/Pause ses çalma mekanizmasının her dua kartı için entegrasyonu
+13:   - [x] Favori sisteminin SharedPreferences ile bağlanması ve filtreleme butonu
+14:   - [x] Karta tıklandığında detaylı okuma panelinin (showModalBottomSheet) yapılması
+15: - [/] Test ve Doğrulama
+16:   - [x] Uygulamanın derlenmesi
+17:   - [ ] Emülatörde manuel testlerin yapılması
+18: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

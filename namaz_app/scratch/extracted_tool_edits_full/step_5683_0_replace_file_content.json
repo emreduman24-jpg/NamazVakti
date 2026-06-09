@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Replace chatbot state variables with Q&A board state variables in tool_detail_screen.dart.\"",
+  "EndLine": "183",
+  "Instruction": "\"Change private chatbot variables to questionList and controllers.\"",
+  "ReplacementContent": "\"  // Soru Cevap State\\n  List<Map<String, dynamic>> _questionList = [];\\n  final TextEditingController _questionNameController = TextEditingController();\\n  final TextEditingController _qaInputController = TextEditingController();\"",
+  "StartLine": "174",
+  "TargetContent": "\"  // Soru Cevap State\\n  final List<Map<String, String>> _qaMessages = [\\n    {\\n      'sender': 'bot',\\n      'text':\\n          'Selamün Aleyküm, ben yapay zeka dini danışmanınız. Merak ettiğiniz fıkhi veya dini konuları sorabilirsiniz.',\\n    },\\n  ];\\n  final TextEditingController _qaInputController = TextEditingController();\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Updating Q&A board state\"",
+  "toolSummary": "\"Q&A state variables update\""
+}

@@ -1,0 +1,16 @@
+child: const Text("İptal", style: TextStyle(color: Colors.white54)),
+=== CHUNK ===
+const Icon(Icons.chevron_right_rounded, color: Colors.white54),
+=== CHUNK ===
+prefixIcon: const Icon(Icons.search_rounded, color: Colors.white54),
+                  suffixIcon: _quranSearchQuery.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, color: Colors.white54),
+=== CHUNK ===
+style: TextStyle(color: Colors.white54, fontSize: 14),
+=== CHUNK ===
+color: Colors.white54,
+=== CHUNK ===
+style: TextStyle(color: Colors.white54, fontSize: 14),
+=== CHUNK ===
+color: Colors.white54,

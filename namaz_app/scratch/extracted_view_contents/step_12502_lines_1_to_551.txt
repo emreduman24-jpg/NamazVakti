@@ -1,0 +1,118 @@
+Created At: 2026-06-01T11:01:47Z
+Completed At: 2026-06-01T11:01:48Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart`
+Total Lines: 551
+Total Bytes: 15513
+Showing lines 1 to 551
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'package:flutter/material.dart';
+3: import 'data/prayer_repository.dart';
+4: import 'services/notification_service.dart';
+5: import 'screens/main_screen.dart';
+6: import 'screens/prayer_tracker_screen.dart';
+7: import 'screens/tools_screen.dart';
+8: import 'screens/settings_screen.dart';
+9: import 'screens/tool_detail_screen.dart';
+10: import 'screens/splash_screen.dart';
+11: 
+12: void main() async {
+13:   WidgetsFlutterBinding.ensureInitialized();
+14: 
+15:   // Initialize Notification Service
+16:   final notificationService = NotificationService();
+17:   await notificationService.init();
+18: 
+19:   runApp(const MyApp());
+20: }
+21: 
+22: class MyApp extends StatefulWidget {
+23:   const MyApp({super.key});
+24: 
+25:   @override
+26:   State<MyApp> createState() => _MyAppState();
+27: }
+28: 
+29: class _MyAppState extends State<MyApp> {
+30:   final PrayerRepository _repository = PrayerRepository();
+31:   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+32:   ThemeMode _themeMode = ThemeMode.light;
+33:   bool _loading = true;
+34:   bool _locationSelected = false;
+35:   bool _isBlocked = false;
+36:   Timer? _blockTimer;
+37: 
+38:   @override
+39:   void initState() {
+40:     super.initState();
+41:     _initializeApp();
+42:     _startBlockCheckTimer();
+43:   }
+44: 
+45:   @override
+46:   void dispose() {
+47:     _blockTimer?.cancel();
+48:     super.dispose();
+49:   }
+50: 
+51:   void _startBlockCheckTimer() {
+52:     _blockTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+53:       _checkBlockStatus();
+54:     
+<truncated 14594 bytes>
+7:       // Draw the hanging line as a stroke cutout
+498:       final lampLinePaint = Paint()
+499:         ..color = const Color(0xFF000000)
+500:         ..style = PaintingStyle.stroke
+501:         ..strokeWidth = 1.0
+502:         ..blendMode = BlendMode.dstOut;
+503:       canvas.drawLine(const Offset(12.0, 8.5), const Offset(12.0, 11.5), lampLinePaint);
+504: 
+505:       canvas.restore();
+506:     } else {
+507:       // OUTLINE SECCADE DESIGN
+508:       final borderPaint = Paint()
+509:         ..color = color
+510:         ..style = PaintingStyle.stroke
+511:         ..strokeWidth = 1.5
+512:         ..strokeCap = StrokeCap.round;
+513: 
+514:       // Draw outer rug frame
+515:       canvas.drawRRect(rugRRect, borderPaint);
+516: 
+517:       // Draw inner border frame (lighter/semi-transparent)
+518:       final innerBorderPaint = Paint()
+519:         ..color = color.withOpacity(0.5)
+520:         ..style = PaintingStyle.stroke
+521:         ..strokeWidth = 0.8
+522:         ..strokeCap = StrokeCap.round;
+523:       canvas.drawRRect(innerRRect, innerBorderPaint);
+524: 
+525:       // Draw mihrab arch
+526:       final mihrabPaint = Paint()
+527:         ..color = color
+528:         ..style = PaintingStyle.stroke
+529:         ..strokeWidth = 1.2
+530:         ..strokeCap = StrokeCap.round
+531:         ..strokeJoin = StrokeJoin.round;
+532:       canvas.drawPath(mihrabPath, mihrabPaint);
+533: 
+534:       // Draw hanging lamp
+535:       final lampPaint = Paint()
+536:         ..color = color
+537:         ..style = PaintingStyle.fill;
+538:       canvas.drawPath(lampPath, lampPaint);
+539: 
+540:       final lampLinePaint = Paint()
+541:         ..color = color
+542:         ..style = PaintingStyle.stroke
+543:         ..strokeWidth = 1.0;
+544:       canvas.drawLine(const Offset(12.0, 8.5), const Offset(12.0, 11.5), lampLinePaint);
+545:     }
+546:   }
+547: 
+548:   @override
+549:   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+550: }
+551: 
+The above content shows the entire, complete file contents of the requested file.

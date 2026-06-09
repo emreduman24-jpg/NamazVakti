@@ -1,0 +1,1 @@
+      final pos = position!;\n      debugPrint('=== GPS POSITION: lat=${pos.latitude}, lon=${pos.longitude}, accuracy=${pos.accuracy} ===');\n      setState(() {

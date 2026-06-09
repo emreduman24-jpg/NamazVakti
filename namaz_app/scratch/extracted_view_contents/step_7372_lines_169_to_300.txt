@@ -1,0 +1,103 @@
+Created At: 2026-05-27T19:44:56Z
+Completed At: 2026-05-27T19:44:56Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5111
+Total Bytes: 206998
+Showing lines 169 to 300
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+169:   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+170:     setState(() {
+171:       _loadingLocation = true;
+172:     });
+173:     try {
+174:       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+175:       if (!serviceEnabled) {
+176:         setState(() {
+177:           _loadingLocation = false;
+178:         });
+179:         if (mounted) {
+180:           WidgetsBinding.instance.addPostFrameCallback((_) {
+181:             ScaffoldMessenger.of(context).showSnackBar(
+182:               const SnackBar(
+183:                 content: Text("Lütfen telefonunuzun konum servisini (GPS) açın."),
+184:                 backgroundColor: Colors.redAccent,
+185:               ),
+186:             );
+187:           });
+188:         }
+189:         return;
+190:       }
+191: 
+192:       LocationPermission permission = await Geolocator.checkPermission();
+193:       if (permission == LocationPermission.denied) {
+194:         permission = await Geolocator.requestPermission();
+195:         if (permission == LocationPermission.denied) {
+196:           setState(() {
+197:             _loadingLocation = false;
+198:           });
+199:           if (mounted) {
+200:             WidgetsBinding.instance.addPostFrameCallback((_) {
+201:               ScaffoldMessenger.of(context).showSnackBar(
+202:                 const SnackBar(
+203:                   content: Text("Yakındaki camileri görebilmek için konum izni vermeniz gerekmektedir."),
+204:                   backgroundColor: Colors.orangeAccent,
+205:                 ),
+206:           
+<truncated 1341 bytes>
+    if (position == null) {
+246:         try {
+247:           position = await Geolocator.getCurrentPosition(
+248:             desiredAccuracy: LocationAccuracy.medium, // Medium accuracy is much faster and highly reliable indoors
+249:             timeLimit: const Duration(seconds: 8), // 8 seconds timeout
+250:           );
+251:         } catch (e) {
+252:           debugPrint("getCurrentPosition error/timeout: $e");
+253:           
+254:           // Try a quick low-accuracy fallback before giving up
+255:           try {
+256:             position = await Geolocator.getCurrentPosition(
+257:               desiredAccuracy: LocationAccuracy.low,
+258:               timeLimit: const Duration(seconds: 4),
+259:             );
+260:           } catch (_) {}
+261:         }
+262:       }
+263: 
+264:       position ??= Position(
+265:         // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails
+266:         latitude: 41.0207,
+267:         longitude: 28.585,
+268:         timestamp: DateTime.now(),
+269:         accuracy: 0.0,
+270:         altitude: 0.0,
+271:         altitudeAccuracy: 0.0,
+272:         heading: 0.0,
+273:         headingAccuracy: 0.0,
+274:         speed: 0.0,
+275:         speedAccuracy: 0.0,
+276:       );
+277: 
+278:       final pos = position!;
+279:       setState(() {
+280:         _currentPosition = pos;
+281:       });
+282: 
+283:       // Fetch real nearby mosques from Overpass API
+284:       await _fetchNearbyMosques(pos.latitude, pos.longitude);
+285: 
+286:       if (mounted) {
+287:         setState(() {
+288:           _loadingLocation = false;
+289:         });
+290:       }
+291:     } catch (e) {
+292:       debugPrint("Location error: $e");
+293:       setState(() {
+294:         _loadingLocation = false;
+295:       });
+296:     }
+297:   }
+298: 
+299:   // Zikirmatik State
+300:   int _zikirCount = 0;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

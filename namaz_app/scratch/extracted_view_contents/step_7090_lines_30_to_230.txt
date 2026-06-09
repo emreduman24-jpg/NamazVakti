@@ -1,0 +1,103 @@
+Created At: 2026-05-26T18:30:36Z
+Completed At: 2026-05-26T18:30:36Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4996
+Total Bytes: 201666
+Showing lines 30 to 230
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+30:   String _currentAudioUrl = "";
+31:   String _currentTrackName = "";
+32: 
+33:   // Yakındaki Camiler (Location & GPS State)
+34:   Position? _currentPosition;
+35:   bool _loadingLocation = false;
+36:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+37: 
+38:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+39:     const r = 6371; // Earth radius in km
+40:     final dLat = _toRadians(lat2 - lat1);
+41:     final dLon = _toRadians(lon2 - lon1);
+42:     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+43:         math.cos(_toRadians(lat1)) * math.cos(_toRadians(lat2)) *
+44:         math.sin(dLon / 2) * math.sin(dLon / 2);
+45:     final c = 2 * math.asin(math.sqrt(a));
+46:     return r * c;
+47:   }
+48: 
+49:   double _toRadians(double degree) {
+50:     return degree * math.pi / 180;
+51:   }
+52: 
+53:   void _initMosques() {
+54:     _dynamicMosquesList = [
+55:       {
+56:         "ad": "Fatih Camii ve Külliyesi",
+57:         "adres": "Fatih, İstanbul",
+58:         "harita": "https://maps.google.com/?q=Fatih+Camii+Istanbul",
+59:         "lat": 41.0196,
+60:         "lon": 28.9498,
+61:         "mesafeVal": 0.4,
+62:         "mesafeText": "0.4 km"
+63:       },
+64:       {
+65:         "ad": "Süleymaniye Camii",
+66:         "adres": "Süleymaniye, Fatih/İstanbul",
+67:         "harita": "https://maps.google.com/?q=Suleymaniye+Camii+Istanbul",
+68:         "lat": 41.0163,
+69:         "lon": 28.9641,
+70:         "mesafeVal": 1.2,
+71:         "mesafeText": "1.2 km"
+72:       },
+73:       {
+74:         "ad": "Sultanahmet C
+<truncated 4001 bytes>
+curacy.medium, // Medium accuracy is much faster and highly reliable indoors
+183:             timeLimit: const Duration(seconds: 8), // 8 seconds timeout
+184:           );
+185:         } catch (e) {
+186:           debugPrint("getCurrentPosition error/timeout: $e");
+187:           
+188:           // Try a quick low-accuracy fallback before giving up
+189:           try {
+190:             position = await Geolocator.getCurrentPosition(
+191:               desiredAccuracy: LocationAccuracy.low,
+192:               timeLimit: const Duration(seconds: 4),
+193:             );
+194:           } catch (_) {}
+195:         }
+196:       }
+197: 
+198:       position ??= Position(
+199:         // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails
+200:         latitude: 41.0207,
+201:         longitude: 28.585,
+202:         timestamp: DateTime.now(),
+203:         accuracy: 0.0,
+204:         altitude: 0.0,
+205:         altitudeAccuracy: 0.0,
+206:         heading: 0.0,
+207:         headingAccuracy: 0.0,
+208:         speed: 0.0,
+209:         speedAccuracy: 0.0,
+210:       );
+211: 
+212:       final pos = position!;
+213:       setState(() {
+214:         _currentPosition = pos;
+215:         for (var mosque in _dynamicMosquesList) {
+216:           double dist = _calculateDistance(
+217:             pos.latitude,
+218:             pos.longitude,
+219:             mosque['lat'] as double,
+220:             mosque['lon'] as double,
+221:           );
+222:           mosque['mesafeVal'] = dist;
+223:           mosque['mesafeText'] = "${dist.toStringAsFixed(1)} km";
+224:         }
+225:         _dynamicMosquesList.sort((a, b) => (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+226:         _loadingLocation = false;
+227:       });
+228:     } catch (e) {
+229:       debugPrint("Location error: $e");
+230:       setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

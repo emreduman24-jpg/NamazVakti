@@ -1,0 +1,16 @@
+
+Timestamp: 2026-06-03T13:48:06Z
+Args keys: AllowMultiple,Description,EndLine,Instruction,ReplacementContent,StartLine,TargetContent,TargetFile,toolAction,toolSummary
+Arguments: {
+  "AllowMultiple": "false",
+  "Description": "\"Close _buildCanliSohbet properly and define _buildDiniHoca with suggestions to fix parser syntax errors.\"",
+  "EndLine": "1874",
+  "Instruction": "\"Close _buildCanliSohbet and define _buildDiniHoca.\"",
+  "ReplacementContent": "\"            ],\\n          ),\\n        ),\\n      ),\\n    );\\n  }\\n\\n  Widget _buildDiniHoca() {\\n    final List<String> suggestions = [\\n      \\\"Abdest nasıl alınır? 💧\\\",\\n      \\\"Namazın farzları nelerdir? 🕋\\\",\\n      \\\"Gusül abdesti farzları 🚿\\\",\\n      \\\"Sehiv secdesi nedir? 🙇\\\",\\n      \\\"Zekat kimlere verilir? 💰\\\",\\n      \\\"Orucu bozan şeyler 🍽️\\\",\\n    ];\\n\\n    return Column(\\n      children: [\\n        // Message List\\n        Expanded(\"",
+  "StartLine": "1869",
+  "TargetContent": "\"            ],\\n          ),\\n        ),\\n      20: \\n        // Message List\\n        Expanded(\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Closing _buildCanliSohbet and declaring _buildDiniHoca and suggestions list\"",
+  "toolSummary": "\"Edit file\""
+}
+

@@ -1,0 +1,16 @@
+{
+  "step_index": 5767,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Add location, mosque fields and calculation methods to _ToolDetailScreenState\"",
+    "EndLine": "32",
+    "Instruction": "\"Add dynamic mosque state and geolocation methods to class _ToolDetailScreenState\"",
+    "ReplacementContent": "\"class _ToolDetailScreenState extends State<ToolDetailScreen> {\\n  final PrayerRepository _repository = PrayerRepository();\\n  AudioPlayer? _audioPlayer;\\n  PlayerState _playerState = PlayerState.stopped;\\n  String _currentAudioUrl = \\\"\\\";\\n  String _currentTrackName = \\\"\\\";\\n\\n  // Yakındaki Camiler (Location & GPS State)\\n  Position? _currentPosition;\\n  bool _loadingLocation = false;\\n  List<Map<String, dynamic>> _dynamicMosquesList = [];\\n\\n  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {\\n    const r = 6371; // Earth radius in km\\n    final dLat = _toRadians(lat2 - lat1);\\n    final dLon = _toRadians(lon2 - lon1);\\n    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +\\n        math.cos(_toRadians(lat1)) * math.cos(_toRadians(lat2)) *\\n        math.sin(dLon / 2) * math.sin(dLon / 2);\\n    final c = 2 * math.asin(math.sqrt(a));\\n    return r * c;\\n  }\\n\\n  double _toRadians(double degree) {\\n    return degree * math.pi / 180;\\n  }\\n\\n  void _initMosques() {\\n    _dynamicMosquesList = [\\n      {\\n        \\\"ad\\\": \\\"Fatih Camii ve Külliyesi\\\",\\n        \\\"adres\\\": \\\"Fatih, İstanbul\\\",\\n        \\\"harita\\\": \\\"https://maps.google.com/?q=Fatih+Camii+Istanbul\\\",\\n        \\\"lat\\\": 41.0196,\\n        \\\"lon\\\": 28.9498,\\n        \\\"mesafeVal\\\": 0.4,\\n        \\\"mesafeText\\\": \\\"0.4 km\\\"\\n      },\\n      {\\n        \\\"ad\\\": \\\"Süleymaniye Camii\\\",\\n        \\\"adres\\\": \\\"Süleymaniye, Fatih/İstanbul\\\",\\n        \\\"harita\\\": \\\"https://maps.google.com/?q=Suleymaniye+Camii+Istanbul\\\",\\n        \\\"lat\\\": 41.0163,\\n        \\\"lon\\\": 28.9641,\\n        \\\"mesafeVal\\\": 1.2,\\n        \\\"mesafeText\\\": \\\"1.2 km\\\"\\n      },\\n      {\\n        \\\"ad\\\": \\\"Sultanahmet Camii\\\",\\n        \\\"adres\\\": \\\"Sultanahmet, Fatih/İstanbul\\\",\\n        \\\"harita\\\": \\\"https://maps.google.com/?q=Sultanahmet+Camii+Istanbul\\\",\\n        \\\"lat\\\": 41.0054,\\n        \\\"lon\\\": 28.9768,\\n        \\\"mesafeVal\\\": 2.5,\\n        \\\"mesafeText\\\": \\\"2.5 km\\\"\\n      },\\n      {\\n        \\\"ad\\\": \\\"Yavuz Selim Camii\\\",\\n        \\\"adres\\\": \\\"Balat, Fa\n<truncated 2257 bytes>",
+    "StartLine": "26",
+    "TargetContent": "\"class _ToolDetailScreenState extends State<ToolDetailScreen> {\\n  final PrayerRepository _repository = PrayerRepository();\\n  AudioPlayer? _audioPlayer;\\n  PlayerState _playerState = PlayerState.stopped;\\n  String _currentAudioUrl = \\\"\\\";\\n  String _currentTrackName = \\\"\\\";\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding location state variables\"",
+    "toolSummary": "\"Add location state variables\""
+  }
+}

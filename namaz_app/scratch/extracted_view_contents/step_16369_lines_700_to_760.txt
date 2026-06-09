@@ -1,0 +1,69 @@
+Created At: 2026-06-03T12:45:17Z
+Completed At: 2026-06-03T12:45:17Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7117
+Total Bytes: 289398
+Showing lines 700 to 760
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+700:   int _ezkarTab = 0;
+701: 
+702:   @override
+703:   void initState() {
+704:     super.initState();
+705:     _initMosques();
+706:     _loadLocationName();
+707:     if (widget.toolId == 'yakindaki-camiler' || widget.toolId == 'kible-bulucu') {
+708:       _getUserLocation();
+709:     }
+710:     if (widget.toolId == 'namaz-vakitleri-aylik') {
+711:       _loadMonthlyTimes();
+712:     }
+713:     _initAudio();
+714:     _loadZikirState();
+715:     _loadDuaList();
+716:     _loadQuestionList();
+717:     _loadKazaState();
+718:     _loadQuranLastRead();
+719:   }
+720: 
+721:   Future<void> _loadQuranLastRead() async {
+722:     final prefs = await SharedPreferences.getInstance();
+723:     if (mounted) {
+724:       setState(() {
+725:         _lastSuraNo = prefs.getInt('quran_last_sura_no') ?? 1;
+726:         _lastSuraName = prefs.getString('quran_last_sura_name') ?? "Fâtiha";
+727:         _lastAyahNo = prefs.getInt('quran_last_ayah_no') ?? 1;
+728:         _lastTotalAyahs = prefs.getInt('quran_last_total_ayahs') ?? 7;
+729:         _lastPercent = prefs.getInt('quran_last_percent') ?? 0;
+730: 
+731:         _lastJuzNo = prefs.getInt('quran_last_juz_no') ?? 1;
+732:         _lastJuzTitle = prefs.getString('quran_last_juz_title') ?? "1. Cüz";
+733:         _lastJuzRange = prefs.getString('quran_last_juz_range') ?? "Fâtiha 1 - Bakara 141";
+734:         _lastJuzSuraNo = prefs.getInt('quran_last_juz_sura_no') ?? 1;
+735:         _lastJuzAyahNo = prefs.getInt('quran_last_juz_ayah_no') ?? 1;
+736:         _lastJuzPercent = prefs.getInt('quran_last_juz_percent') ?? 0;
+737: 
+738:         _quranBookmarks = prefs.getStringList('quran_bookmarks') ?? [];
+739:       });
+740:     }
+741:   }
+742: 
+743:   Future<void> _toggleQuranBookmark(String suraNoStr) async {
+744:     final prefs = await SharedPreferences.getInstance();
+745:     setState(() {
+746:       if (_quranBookmarks.contains(suraNoStr)) {
+747:         _quranBookmarks.remove(suraNoStr);
+748:       } else {
+749:         _quranBookmarks.add(suraNoStr);
+750:       }
+751:     });
+752:     await prefs.setStringList('quran_bookmarks', _quranBookmarks);
+753:   }
+754: 
+755:   Map<String, int> _getJuzStartInfo(int juzNumber) {
+756:     final list = [
+757:       {'sura': 1, 'ayah': 1},
+758:       {'sura': 2, 'ayah': 142},
+759:       {'sura': 2, 'ayah': 253},
+760:       {'sura': 3, 'ayah': 93},
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

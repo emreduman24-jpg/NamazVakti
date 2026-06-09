@@ -1,0 +1,16 @@
+{
+  "step_index": 6495,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Updating emulator fallback coordinates to user's Büyükçekmece coordinates so that they can see real-time distance calculations from their actual location in the emulator\"",
+    "EndLine": "151",
+    "Instruction": "\"Change the fallback latitude and longitude to the user's Büyükçekmece coordinates\"",
+    "ReplacementContent": "\"      position ??= Position(\\n        // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails\\n        latitude: 41.0207,\\n        longitude: 28.585,\"",
+    "StartLine": "147",
+    "TargetContent": "\"      position ??= Position(\\n        // Fallback mock coordinates (Kadıköy, İstanbul) if GPS service hangs or fails\\n        latitude: 40.9901,\\n        longitude: 29.0234,\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Updating emulator GPS fallback coordinates\"",
+    "toolSummary": "\"Change fallback GPS coordinates\""
+  }
+}

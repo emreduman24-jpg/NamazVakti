@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Update initState to call _loadLocationName() and request GPS coordinates when opening the Qibla Finder tool.\"",
+  "EndLine": "654",
+  "Instruction": "\"Modify initState in tool_detail_screen.dart to load location and coordinate details for the compass.\"",
+  "ReplacementContent": "\"  @override\\n  void initState() {\\n    super.initState();\\n    _initMosques();\\n    _loadLocationName();\\n    if (widget.toolId == 'yakindaki-camiler' || widget.toolId == 'kible-bulucu') {\\n      _getUserLocation();\\n    }\\n    _initAudio();\\n    _loadZikirState();\\n    _loadDuaList();\\n    _loadQuestionList();\\n    _loadKazaState();\\n  }\"",
+  "StartLine": "642",
+  "TargetContent": "\"  @override\\n  void initState() {\\n    super.initState();\\n    _initMosques();\\n    if (widget.toolId == 'yakindaki-camiler') {\\n      _getUserLocation();\\n    }\\n    _initAudio();\\n    _loadZikirState();\\n    _loadDuaList();\\n    _loadQuestionList();\\n    _loadKazaState();\\n  }\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Modifying initState to initialize Qibla location details\"",
+  "toolSummary": "\"File replace\""
+}

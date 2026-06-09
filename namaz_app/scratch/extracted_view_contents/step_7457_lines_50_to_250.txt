@@ -1,0 +1,98 @@
+Created At: 2026-05-27T19:57:47Z
+Completed At: 2026-05-27T19:57:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208297
+Showing lines 50 to 250
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+50: 
+51:   double _toRadians(double degree) {
+52:     return degree * math.pi / 180;
+53:   }
+54: 
+55:   void _initMosques() {
+56:     _dynamicMosquesList = [];
+57:   }
+58: 
+59:   /// Fetches real nearby mosques from OpenStreetMap Overpass API
+60:   Future<void> _fetchNearbyMosques(double lat, double lon) async {
+61:     debugPrint('=== MOSQUE SEARCH: Searching near lat=$lat, lon=$lon ===');
+62:     // Try progressively larger radii until we find enough mosques
+63:     final radii = [3000, 5000, 10000]; // meters
+64:     
+65:     // Multiple Overpass API endpoints for reliability
+66:     final overpassEndpoints = [
+67:       'https://overpass.kumi.systems/api/interpreter',
+68:       'https://overpass-api.de/api/interpreter',
+69:       'https://maps.mail.ru/osm/tools/overpass/api/interpreter',
+70:     ];
+71: 
+72:     for (final radius in radii) {
+73:       for (final endpoint in overpassEndpoints) {
+74:         try {
+75:           // Overpass QL query: find nodes and ways tagged as mosque within radius
+76:           final query = '''
+77: [out:json][timeout:15];
+78: (
+79:   node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+80:   way["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lon);
+81:   node["building"="mosque"](around:$radius,$lat,$lon);
+82:   way["building"="mosque"](around:$radius,$lat,$lon);
+83: );
+84: out center body;
+85: ''';
+86: 
+87:           final encodedQuery = Uri.encodeComponent(query);
+88:           final url = Uri.parse('$endpoint?data=$encodedQuery');
+89:           final respon
+<truncated 4879 bytes>
+ance.addPostFrameCallback((_) {
+203:             ScaffoldMessenger.of(context).showSnackBar(
+204:               const SnackBar(
+205:                 content: Text("Lütfen telefonunuzun konum servisini (GPS) açın."),
+206:                 backgroundColor: Colors.redAccent,
+207:               ),
+208:             );
+209:           });
+210:         }
+211:         return;
+212:       }
+213: 
+214:       LocationPermission permission = await Geolocator.checkPermission();
+215:       if (permission == LocationPermission.denied) {
+216:         permission = await Geolocator.requestPermission();
+217:         if (permission == LocationPermission.denied) {
+218:           setState(() {
+219:             _loadingLocation = false;
+220:           });
+221:           if (mounted) {
+222:             WidgetsBinding.instance.addPostFrameCallback((_) {
+223:               ScaffoldMessenger.of(context).showSnackBar(
+224:                 const SnackBar(
+225:                   content: Text("Yakındaki camileri görebilmek için konum izni vermeniz gerekmektedir."),
+226:                   backgroundColor: Colors.orangeAccent,
+227:                 ),
+228:               );
+229:             });
+230:           }
+231:           return;
+232:         }
+233:       }
+234:       
+235:       if (permission == LocationPermission.deniedForever) {
+236:         setState(() {
+237:           _loadingLocation = false;
+238:         });
+239:         if (mounted) {
+240:           WidgetsBinding.instance.addPostFrameCallback((_) {
+241:             ScaffoldMessenger.of(context).showSnackBar(
+242:               const SnackBar(
+243:                 content: Text("Konum izni reddedildi. Lütfen ayarlardan izin verin."),
+244:                 backgroundColor: Colors.redAccent,
+245:               ),
+246:             );
+247:           });
+248:         }
+249:         return;
+250:       }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,20 @@
+Created At: 2026-05-24T09:08:24Z
+Completed At: 2026-05-24T09:08:24Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4767
+Total Bytes: 194197
+Showing lines 1 to 12
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import '../data/prayer_data.dart';
+9: import '../data/prayer_repository.dart';
+10: 
+11: class ToolDetailScreen extends StatefulWidget {
+12:   final String toolId;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,25 @@
+Created At: 2026-06-03T14:47:38Z
+Completed At: 2026-06-03T14:47:39Z
+File Path: `file:///c:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 62
+Total Bytes: 3351
+Showing lines 9 to 25
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+9: ## Open Questions
+10: > [!WARNING]
+11: > 1. Should we include interactive timeline navigation (horizontal scroll) or stick to vertical stepper?
+12: > 2. Preferred color palette for this tool (e.g., dark teal with gold accents, or existing theme)?
+13: > 3. Any specific multimedia (images, audio) to associate with each life event?
+14: > 4. Should we add a "favorites" feature for events?
+15: 
+16: ## Proposed Changes
+17: ---
+18: ### Data Model Enhancements (`lib/data/peygamber_data.dart`)
+19: - Create a new data structure `LifeEvent` with fields: `id`, `title`, `date`, `subtitle`, `description`, `imageUrl`, `audioUrl`.
+20: - Populate a list `PEYGEMBER_EVENTS` grouped by chronological phases (e.g., `Childhood`, `Prophethood`, `Hijra`, `Medina` etc.).
+21: - Update `peygamber_repository.dart` to expose this list.
+22: 
+23: ### UI Redesign (`lib/screens/tool_detail_screen.dart`)
+24: - Add a new widget `PeygamberLifeScreen` replacing the current case.
+25: - Implement a **horizontal timeline** at the top with animated indicator (glassmorphism pill) showing current phase.
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

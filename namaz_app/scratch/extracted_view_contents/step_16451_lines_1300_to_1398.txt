@@ -1,0 +1,44 @@
+Created At: 2026-06-03T12:50:38Z
+Completed At: 2026-06-03T12:50:39Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/.system_generated/tasks/task-16158.log`
+Total Lines: 1398
+Total Bytes: 129932
+Showing lines 1300 to 1398
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1300: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1301: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1302: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1303: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1304: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1305: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1306: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1307: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1308: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1309: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1310: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1311: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1312: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1313: I/flutter ( 6315): Error getting block status: TimeoutExcept
+<truncated 7288 bytes>
+lutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1379: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1380: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1381: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1382: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1383: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1384: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1385: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1386: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1387: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1388: 
+1389: Performing hot restart...                                       
+1390: lib/screens/tool_detail_screen.dart:5449:48: Error: Couldn't find constructor 'EdgeInsets.bottom'.
+1391:                       margin: const EdgeInsets.bottom(15),
+1392:                                                ^^^^^^
+1393: Restarted application in 652ms.
+1394: Try again after fixing the above error(s).
+1395: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1396: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1397: I/flutter ( 6315): Error getting block status: TimeoutException after 0:00:02.000000: Future not completed
+1398: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

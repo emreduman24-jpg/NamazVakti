@@ -1,0 +1,44 @@
+Created At: 2026-06-03T12:49:26Z
+Completed At: 2026-06-03T12:49:26Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7148
+Total Bytes: 290359
+Showing lines 1055 to 1090
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1055:     }
+1056:   }
+1057: 
+1058:   @override
+1059:   Widget build(BuildContext context) {
+1060:     final isQuran = widget.toolId == 'kuran-kerim';
+1061:     return Scaffold(
+1062:       backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5)),
+1063:       appBar: AppBar(
+1064:         title: Text(
+1065:           widget.toolTitle,
+1066:           style: const TextStyle(
+1067:             fontWeight: FontWeight.bold,
+1068:             color: Colors.white,
+1069:             fontSize: 20,
+1070:           ),
+1071:         ),
+1072:         centerTitle: true,
+1073:         backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43)),
+1074:         elevation: 0,
+1075:         iconTheme: const IconThemeData(color: Colors.white),
+1076:         automaticallyImplyLeading: !widget.isTab,
+1077:       ),
+1078:       body: SafeArea(
+1079:         child: isQuran
+1080:             ? _buildKuranKerim()
+1081:             : Padding(
+1082:                 padding: const EdgeInsets.all(16.0),
+1083:                 child: _buildToolBody(),
+1084:               ),
+1085:       ),
+1086:     );
+1087:   }
+1088: 
+1089:   Widget _buildToolBody() {
+1090:     switch (widget.toolId) {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

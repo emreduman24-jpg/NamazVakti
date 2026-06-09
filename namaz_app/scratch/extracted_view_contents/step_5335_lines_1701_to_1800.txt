@@ -1,0 +1,80 @@
+Created At: 2026-05-23T22:54:53Z
+Completed At: 2026-05-23T22:54:54Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4654
+Total Bytes: 189812
+Showing lines 1701 to 1800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1701:                                 child: Text(
+1702:                                   "B",
+1703:                                   style: TextStyle(
+1704:                                     fontWeight: FontWeight.bold,
+1705:                                     color: Colors.black54,
+1706:                                     fontSize: 15,
+1707:                                   ),
+1708:                                 ),
+1709:                               ),
+1710:                             ),
+1711:                             Align(
+1712:                               alignment: Alignment.centerRight,
+1713:                               child: Padding(
+1714:                                 padding: EdgeInsets.all(8.0),
+1715:                                 child: Text(
+1716:                                   "D",
+1717:                                   style: TextStyle(
+1718:                                     fontWeight: FontWeight.bold,
+1719:                                     color: Colors.black54,
+1720:                                     fontSize: 15,
+1721:                                   ),
+1722:                                 ),
+1723:                               ),
+1724:                             ),
+1725:                           ],
+1726:                         ),
+1727:                       ),
+1728:                     ),
+1729:                     // Compass Needle (Qibla pointer) pointing to 137° (Prayer rug Seccade)
+1730:                     Transform.rotate(
+1731:                       angle: (needleRotation * math.p
+<truncated 1632 bytes>
+                 mainAxisAlignment: MainAxisAlignment.center,
+1762:                                     children: [
+1763:                                       Icon(
+1764:                                         Icons.arrow_upward,
+1765:                                         color: Colors.white,
+1766:                                         size: 16,
+1767:                                       ),
+1768:                                       Text(
+1769:                                         "🕌",
+1770:                                         style: TextStyle(fontSize: 16),
+1771:                                       ),
+1772:                                     ],
+1773:                                   ),
+1774:                                 ),
+1775:                               ),
+1776:                             ),
+1777:                             // Center dot
+1778:                             Container(
+1779:                               width: 12,
+1780:                               height: 12,
+1781:                               decoration: const BoxDecoration(
+1782:                                 color: Color(0xFF1E5E43),
+1783:                                 shape: BoxShape.circle,
+1784:                               ),
+1785:                             ),
+1786:                           ],
+1787:                         ),
+1788:                       ),
+1789:                     ),
+1790:                   ],
+1791:                 ),
+1792:               ),
+1793:               const SizedBox(height: 36),
+1794:               Text(
+1795:                 "Kıble Açısı: ${qiblaAngle.toInt()}° (İstanbul)",
+1796:                 style: const TextStyle(
+1797:                   fontWeight: FontWeight.bold,
+1798:                   fontSize: 16,
+1799:                   color: Color(0xFF1E5E43),
+1800:                 ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

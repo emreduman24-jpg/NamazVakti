@@ -1,0 +1,24 @@
+Created At: 2026-05-28T14:23:24Z
+Completed At: 2026-05-28T14:23:24Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208297
+Showing lines 180 to 195
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+180:     }
+181: 
+182:     // If all radii failed, show a message
+183:     debugPrint('No mosques found from Overpass API');
+184:     if (mounted) {
+185:       setState(() {
+186:         _dynamicMosquesList = [];
+187:       });
+188:     }
+189:   }
+190: 
+191:   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+192:     setState(() {
+193:       _loadingLocation = true;
+194:     });
+195:     try {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

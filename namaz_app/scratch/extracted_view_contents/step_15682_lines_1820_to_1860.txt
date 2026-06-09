@@ -1,0 +1,49 @@
+Created At: 2026-06-03T11:05:16Z
+Completed At: 2026-06-03T11:05:17Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6809
+Total Bytes: 275793
+Showing lines 1820 to 1860
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1820:                         fontSize: 18,
+1821:                         fontWeight: FontWeight.bold,
+1822:                         color: _greenColor,
+1823:                       ),
+1824:                     ),
+1825:                     Divider(height: 24),
+1826:                     Text(
+1827:                       PEYGAMBER_HAYATI[_prophetLifeTab]['icerik'] ?? '',
+1828:                       style: TextStyle(
+1829:                         fontSize: 14,
+1830:                         height: 1.6,
+1831:                         color: _textColor,
+1832:                       ),
+1833:                     ),
+1834:                   ],
+1835:                 ),
+1836:               ),
+1837:             ),
+1838:           ),
+1839:         ),
+1840:       ],
+1841:     );
+1842:   }
+1843: 
+1844:   // 6. Kuran-ı Kerim Player
+1845:   Widget _buildKuranKerim() {
+1846:     final filteredSuras = QURAN_SURAHS.where((s) {
+1847:       final name = _normalize(s.name);
+1848:       final query = _normalize(_quranSearchQuery);
+1849:       return name.contains(query) || s.number.toString() == query;
+1850:     }).toList();
+1851: 
+1852:     final filteredJuzs = QURAN_JUZS.where((j) {
+1853:       final title = _normalize(j.title);
+1854:       final range = _normalize(j.range);
+1855:       final query = _normalize(_quranSearchQuery);
+1856:       return title.contains(query) || range.contains(query) || j.number.toString() == query;
+1857:     }).toList();
+1858: 
+1859:     return Column(
+1860:       children: [
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

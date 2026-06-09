@@ -1,0 +1,58 @@
+Created At: 2026-05-28T14:24:00Z
+Completed At: 2026-05-28T14:24:00Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208297
+Showing lines 190 to 239
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+190: 
+191:   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+192:     setState(() {
+193:       _loadingLocation = true;
+194:     });
+195:     try {
+196:       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+197:       if (!serviceEnabled) {
+198:         setState(() {
+199:           _loadingLocation = false;
+200:         });
+201:         if (mounted) {
+202:           WidgetsBinding.instance.addPostFrameCallback((_) {
+203:             ScaffoldMessenger.of(context).showSnackBar(
+204:               const SnackBar(
+205:                 content: Text("Lütfen telefonunuzun konum servisini (GPS) açın."),
+206:                 backgroundColor: Colors.redAccent,
+207:               ),
+208:             );
+209:           });
+210:         }
+211:         return;
+212:       }
+213: 
+214:       LocationPermission permission = await Geolocator.checkPermission();
+215:       if (permission == LocationPermission.denied) {
+216:         permission = await Geolocator.requestPermission();
+217:         if (permission == LocationPermission.denied) {
+218:           setState(() {
+219:             _loadingLocation = false;
+220:           });
+221:           if (mounted) {
+222:             WidgetsBinding.instance.addPostFrameCallback((_) {
+223:               ScaffoldMessenger.of(context).showSnackBar(
+224:                 const SnackBar(
+225:                   content: Text("Yakındaki camileri görebilmek için konum izni vermeniz gerekmektedir."),
+226:                   backgroundColor: Colors.orangeAccent,
+227:                 ),
+228:               );
+229:             });
+230:           }
+231:           return;
+232:         }
+233:       }
+234:       
+235:       if (permission == LocationPermission.deniedForever) {
+236:         setState(() {
+237:           _loadingLocation = false;
+238:         });
+239:         if (mounted) {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

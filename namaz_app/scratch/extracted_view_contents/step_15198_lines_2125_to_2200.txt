@@ -1,0 +1,84 @@
+Created At: 2026-06-03T06:21:19Z
+Completed At: 2026-06-03T06:21:20Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 2125 to 2200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2125:                     surah: surah,
+2126:                     targetAyah: 1,
+2127:                   ),
+2128:                 ),
+2129:               ).then((_) => _loadQuranLastRead());
+2130:             },
+2131:             leading: Container(
+2132:               width: 36,
+2133:               height: 36,
+2134:               decoration: BoxDecoration(
+2135:                 border: Border.all(color: const Color(0xFFC5A059), width: 1.5),
+2136:                 shape: BoxShape.circle,
+2137:               ),
+2138:               alignment: Alignment.center,
+2139:               child: Text(
+2140:                 surah.number.toString(),
+2141:                 style: const TextStyle(
+2142:                   color: Color(0xFFC5A059),
+2143:                   fontWeight: FontWeight.bold,
+2144:                   fontSize: 12,
+2145:                 ),
+2146:               ),
+2147:             ),
+2148:             title: Text(
+2149:               surah.name,
+2150:               style: TextStyle(
+2151:                 color: _isDark ? Colors.white : Colors.black87,
+2152:                 fontWeight: FontWeight.bold,
+2153:                 fontSize: 15,
+2154:               ),
+2155:             ),
+2156:             subtitle: Text(
+2157:               "${surah.versesCount} Ayet • ${surah.revelationPlace}",
+2158:               style: TextStyle(
+2159:                 color: _isDark ? Colors.white54 : Colors.black54,
+2160:                 fontSize: 12,
+2161:               ),
+2162:             ),
+2163:             trailing: Row(
+2164:               mainAxisSize: MainAxisSize.min,
+2165:               children: [
+2166:                 Text(
+2167:                   surah.arabicName,
+2168:                   style: const TextStyle(
+2169:                     color: Color(0xFF27A770),
+2170:                     fontFamily: 'Traditional Arabic',
+2171:                     fontSize: 18,
+2172:                     fontWeight: FontWeight.bold,
+2173:                   ),
+2174:                 ),
+2175:                 const SizedBox(width: 12),
+2176:                 IconButton(
+2177:                   icon: Icon(
+2178:                     isBookmarked ? Icons.star_rounded : Icons.star_outline_rounded,
+2179:                     color: isBookmarked ? const Color(0xFFC5A059) : (_isDark ? Colors.white38 : Colors.black26),
+2180:                     size: 22,
+2181:                   ),
+2182:                   onPressed: () => _toggleQuranBookmark(surah.number.toString()),
+2183:                 ),
+2184:               ],
+2185:             ),
+2186:           ),
+2187:         );
+2188:       },
+2189:     );
+2190:   }
+2191: 
+2192:   Widget _buildCuzlerList(List<QuranJuz> list) {
+2193:     if (list.isEmpty) {
+2194:       return Center(
+2195:         child: Text(
+2196:           "Cüz bulunamadı.",
+2197:           style: TextStyle(color: _isDark ? Colors.white54 : Colors.black54, fontSize: 14),
+2198:         ),
+2199:       );
+2200:     }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

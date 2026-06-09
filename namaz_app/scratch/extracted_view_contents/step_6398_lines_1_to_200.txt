@@ -1,0 +1,105 @@
+Created At: 2026-05-26T05:51:57Z
+Completed At: 2026-05-26T05:51:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4945
+Total Bytes: 199616
+Showing lines 1 to 200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import 'package:geolocator/geolocator.dart';
+9: import '../data/prayer_data.dart';
+10: import '../data/prayer_repository.dart';
+11: 
+12: class ToolDetailScreen extends StatefulWidget {
+13:   final String toolId;
+14:   final String toolTitle;
+15: 
+16:   const ToolDetailScreen({
+17:     super.key,
+18:     required this.toolId,
+19:     required this.toolTitle,
+20:   });
+21: 
+22:   @override
+23:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+24: }
+25: 
+26: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+27:   final PrayerRepository _repository = PrayerRepository();
+28:   AudioPlayer? _audioPlayer;
+29:   PlayerState _playerState = PlayerState.stopped;
+30:   String _currentAudioUrl = "";
+31:   String _currentTrackName = "";
+32: 
+33:   // Yakındaki Camiler (Location & GPS State)
+34:   Position? _currentPosition;
+35:   bool _loadingLocation = false;
+36:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+37: 
+38:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+39:     const r = 6371; // Earth radius in km
+40:     final dLat = _toRadians(lat2 - lat1);
+41:     final dLon = _toRadians(lon2 - lon1);
+42:     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+43:         math.cos
+<truncated 3437 bytes>
+oordinates (Kadıköy, İstanbul) if GPS service hangs or fails
+149:         latitude: 40.9901,
+150:         longitude: 29.0234,
+151:         timestamp: DateTime.now(),
+152:         accuracy: 0.0,
+153:         altitude: 0.0,
+154:         altitudeAccuracy: 0.0,
+155:         heading: 0.0,
+156:         headingAccuracy: 0.0,
+157:         speed: 0.0,
+158:         speedAccuracy: 0.0,
+159:       );
+160: 
+161:       final pos = position!;
+162:       setState(() {
+163:         _currentPosition = pos;
+164:         for (var mosque in _dynamicMosquesList) {
+165:           double dist = _calculateDistance(
+166:             pos.latitude,
+167:             pos.longitude,
+168:             mosque['lat'] as double,
+169:             mosque['lon'] as double,
+170:           );
+171:           mosque['mesafeVal'] = dist;
+172:           mosque['mesafeText'] = "${dist.toStringAsFixed(1)} km";
+173:         }
+174:         _dynamicMosquesList.sort((a, b) => (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+175:         _loadingLocation = false;
+176:       });
+177:     } catch (e) {
+178:       debugPrint("Location error: $e");
+179:       setState(() {
+180:         _loadingLocation = false;
+181:       });
+182:     }
+183:   }
+184: 
+185:   // Zikirmatik State
+186:   int _zikirCount = 0;
+187:   int _zikirTarget = 33;
+188:   bool _zikirSoundEnabled = true;
+189:   String _selectedZikirId = 'subhanallah';
+190: 
+191:   final Map<String, Map<String, dynamic>> _zikirData = {
+192:     'subhanallah': {
+193:       'ad': 'Sübhânallâh',
+194:       'arapca': 'سُبْحَانَ اللَّهِ',
+195:       'anlam': 'Allah noksan sıfatlardan uzaktır.',
+196:       'fazilet': 'Günde 100 defa okuyanın günahları deniz köpüğü kadar da olsa bağışlanır.',
+197:       'hedef': 33
+198:     },
+199:     'elhamdulillah': {
+200:       'ad': 'Elhamdülillâh',
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

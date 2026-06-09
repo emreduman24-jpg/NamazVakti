@@ -1,0 +1,6 @@
+{
+  "step_index": 515,
+  "tool": "replace_file_content",
+  "target": "c:/Users/kral_/Namaz vakitleri/namaz_app/lib/screens/tool_detail_screen.dart",
+  "content": "class ToolDetailScreen extends StatefulWidget {\\n  final String toolId;\\n  final String toolTitle;\\n  final bool isTab;\\n\\n  const ToolDetailScreen({\\n    super.key,\\n    required this.toolId,\\n    required this.toolTitle,\\n    this.isTab = false,\\n  });"
+}

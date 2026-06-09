@@ -1,0 +1,46 @@
+Created At: 2026-06-01T10:25:52Z
+Completed At: 2026-06-01T10:25:52Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5522
+Total Bytes: 227716
+Showing lines 1093 to 1130
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1093:   Widget _buildDiniGunler() {
+1094:     final list = _diniGunlerByYear[_selectedDiniGunlerYear] ?? [];
+1095:     final Map<String, List<Map<String, String>>> grouped = {};
+1096:     for (var item in list) {
+1097:       final cat = item['kat'] ?? 'Diğer';
+1098:       grouped.putIfAbsent(cat, () => []).add(item);
+1099:     }
+1100: 
+1101:     final categoryOrder = [
+1102:       "Kandil ve Mübarek Geceler",
+1103:       "Ramazan Bayramı",
+1104:       "Kurban Bayramı",
+1105:       "Hicri Yılbaşı ve Aşure"
+1106:     ];
+1107: 
+1108:     // Map each category to an elegant icon and themed colors
+1109:     final Map<String, Map<String, dynamic>> categoryStyles = {
+1110:       "Kandil ve Mübarek Geceler": {
+1111:         "icon": "🌙",
+1112:         "color": const Color(0xFF6B46C1), // Elegant deep purple
+1113:         "bgColor": const Color(0xFF6B46C1).withOpacity(0.08),
+1114:       },
+1115:       "Ramazan Bayramı": {
+1116:         "icon": "🍬",
+1117:         "color": const Color(0xFFD69E2E), // Warm golden amber
+1118:         "bgColor": const Color(0xFFD69E2E).withOpacity(0.08),
+1119:       },
+1120:       "Kurban Bayramı": {
+1121:         "icon": "🐑",
+1122:         "color": const Color(0xFF319795), // Deep teal
+1123:         "bgColor": const Color(0xFF319795).withOpacity(0.08),
+1124:       },
+1125:       "Hicri Yılbaşı ve Aşure": {
+1126:         "icon": "📅",
+1127:         "color": const Color(0xFF2B6CB0), // Safe blue
+1128:         "bgColor": const Color(0xFF2B6CB0).withOpacity(0.08),
+1129:       },
+1130:     };
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,29 @@
+Created At: 2026-05-26T18:30:54Z
+Completed At: 2026-05-26T18:30:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4996
+Total Bytes: 201666
+Showing lines 460 to 480
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+460:   int _kazaVitir = 0;
+461: 
+462:   // Sabah & Aksam Ezkari counts
+463:   final List<int> _sabahEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+464:   final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+465:   int _ezkarTab = 0;
+466: 
+467:   @override
+468:   void initState() {
+469:     super.initState();
+470:     _initMosques();
+471:     if (widget.toolId == 'yakindaki-camiler') {
+472:       _getUserLocation();
+473:     }
+474:     _initAudio();
+475:     _loadZikirState();
+476:     _loadDuaList();
+477:     _loadQuestionList();
+478:     _loadKazaState();
+479:   }
+480: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

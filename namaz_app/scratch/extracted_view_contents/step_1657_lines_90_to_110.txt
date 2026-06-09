@@ -1,0 +1,29 @@
+Created At: 2026-05-22T16:58:17Z
+Completed At: 2026-05-22T16:58:17Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 2106
+Total Bytes: 83464
+Showing lines 90 to 110
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+90:   double _manualCompassHeading = 0.0;
+91:   bool _forceSimulation = false;
+92: 
+93: 
+94:   // Prophet Life Tab
+95:   int _prophetLifeTab = 0;
+96: 
+97:   // Namaz Kilma Tab
+98:   bool _namazKilmaErkek = true;
+99: 
+100:   @override
+101:   void initState() {
+102:     super.initState();
+103:     _initAudio();
+104:     _loadZikirState();
+105:     _loadDuaList();
+106:   }
+107: 
+108:   void _initAudio() {
+109:     _audioPlayer = AudioPlayer();
+110:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

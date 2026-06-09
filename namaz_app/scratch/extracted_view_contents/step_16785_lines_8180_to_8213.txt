@@ -1,0 +1,42 @@
+Created At: 2026-06-03T13:46:47Z
+Completed At: 2026-06-03T13:46:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8213
+Total Bytes: 336267
+Showing lines 8180 to 8213
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+8180:       ..style = PaintingStyle.stroke
+8181:       ..strokeCap = StrokeCap.round;
+8182: 
+8183:     for (int i = 0; i < 360; i += 10) {
+8184:       final double angle = i * math.pi / 180;
+8185:       final bool isMajor = i % 30 == 0;
+8186:       final bool isCardinal = i % 90 == 0;
+8187: 
+8188:       final double tickLength = isCardinal ? 12 : (isMajor ? 8 : 4);
+8189:       final double startR = radius - 16;
+8190:       final double endR = startR - tickLength;
+8191: 
+8192:       tickPaint.color = isCardinal 
+8193:           ? const Color(0xFFD4AF37)
+8194:           : (isDark ? Colors.white30 : Colors.black26);
+8195:       tickPaint.strokeWidth = isCardinal ? 2.0 : (isMajor ? 1.5 : 1.0);
+8196: 
+8197:       final Offset startPoint = Offset(
+8198:         center.dx + startR * math.cos(angle),
+8199:         center.dy + startR * math.sin(angle),
+8200:       );
+8201:       final Offset endPoint = Offset(
+8202:         center.dx + endR * math.cos(angle),
+8203:         center.dy + endR * math.sin(angle),
+8204:       );
+8205: 
+8206:       canvas.drawLine(startPoint, endPoint, tickPaint);
+8207:     }
+8208:   }
+8209: 
+8210:   @override
+8211:   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+8212: }
+8213: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

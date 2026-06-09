@@ -1,0 +1,93 @@
+Created At: 2026-06-03T13:47:38Z
+Completed At: 2026-06-03T13:47:38Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8257
+Total Bytes: 337169
+Showing lines 2000 to 2115
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2000:           padding: const EdgeInsets.symmetric(vertical: 4),
+2001:           child: ListView.builder(
+2002:             scrollDirection: Axis.horizontal,
+2003:             padding: const EdgeInsets.symmetric(horizontal: 12),
+2004:             itemCount: suggestions.length,
+2005:             itemBuilder: (context, index) {
+2006:               return Padding(
+2007:                 padding: const EdgeInsets.only(right: 8.0),
+2008:                 child: ActionChip(
+2009:                   backgroundColor: _isDark ? const Color(0xFF1E2D4A) : Colors.white,
+2010:                   side: BorderSide(
+2011:                     color: _isDark ? const Color(0xFF2E3D5A) : const Color(0xFFCBD5E1),
+2012:                   ),
+2013:                   label: Text(
+2014:                     suggestions[index],
+2015:                     style: TextStyle(
+2016:                       fontSize: 12.5,
+2017:                       color: _isDark ? Colors.white70 : Colors.black87,
+2018:                     ),
+2019:                   ),
+2020:                   onPressed: () {
+2021:                     _handleDiniHocaSend(suggestions[index].replaceAll(RegExp(r'\s\S+$'), '')); // Strip emoji
+2022:                   },
+2023:                 ),
+2024:               );
+2025:             },
+2026:           ),
+2027:         ),
+2028: 
+2029:         // Input Field
+2030:         Container(
+2031:           padding: const EdgeInsets.all(12),
+2032:           decoration: BoxDecoration(
+2033:             color: _isDark ? const Color(0xFF0C1524) : Colors.grey[50],
+2034:             bor
+<truncated 1745 bytes>
+tAction.send,
+2068:                             onSubmitted: _handleDiniHocaSend,
+2069:                           ),
+2070:                         ),
+2071:                       ],
+2072:                     ),
+2073:                   ),
+2074:                 ),
+2075:                 const SizedBox(width: 8),
+2076:                 GestureDetector(
+2077:                   onTap: () => _handleDiniHocaSend(_diniHocaInputController.text),
+2078:                   child: Container(
+2079:                     padding: const EdgeInsets.all(12),
+2080:                     decoration: BoxDecoration(
+2081:                       color: _greenColor,
+2082:                       shape: BoxShape.circle,
+2083:                       boxShadow: [
+2084:                         BoxShadow(
+2085:                           color: _greenColor.withOpacity(0.3),
+2086:                           blurRadius: 8,
+2087:                           offset: const Offset(0, 3),
+2088:                         ),
+2089:                       ],
+2090:                     ),
+2091:                     child: const Icon(
+2092:                       Icons.send_rounded,
+2093:                       color: Colors.white,
+2094:                       size: 20,
+2095:                     ),
+2096:                   ),
+2097:                 ),
+2098:               ],
+2099:             ),
+2100:           ),
+2101:         ),
+2102:       ],
+2103:     );
+2104:   }
+2105: 
+2106:   Widget _buildMessageText(String text, bool isMe) {
+2107:     final List<TextSpan> spans = [];
+2108:     final RegExp regex = RegExp(r'\*\*(.*?)\*\*');
+2109:     int lastIndex = 0;
+2110:     
+2111:     for (final Match match in regex.allMatches(text)) {
+2112:       if (match.start > lastIndex) {
+2113:         spans.add(TextSpan(text: text.substring(lastIndex, match.start)));
+2114:       }
+2115:       spans.add(TextSpan(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,80 @@
+Created At: 2026-05-23T14:12:16Z
+Completed At: 2026-05-23T14:12:17Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import '../data/prayer_data.dart';
+9: import '../data/prayer_repository.dart';
+10: 
+11: class ToolDetailScreen extends StatefulWidget {
+12:   final String toolId;
+13:   final String toolTitle;
+14: 
+15:   const ToolDetailScreen({
+16:     super.key,
+17:     required this.toolId,
+18:     required this.toolTitle,
+19:   });
+20: 
+21:   @override
+22:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+23: }
+24: 
+25: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+26:   final PrayerRepository _repository = PrayerRepository();
+27:   AudioPlayer? _audioPlayer;
+28:   PlayerState _playerState = PlayerState.stopped;
+29:   String _currentAudioUrl = "";
+30:   String _currentTrackName = "";
+31: 
+32:   // Zikirmatik State
+33:   int _zikirCount = 0;
+34:   int _zikirTarget = 33;
+35:   bool _zikirSoundEnabled = true;
+36: 
+37:   // Dua Iste State
+38:   List<Map<String, dynamic>> _duaList = [];
+39:   final TextEditingController _duaNameController = TextEditingController();
+40:   final TextEditingController _duaTextController = TextEditingController();
+41: 
+42:   // Soru Cevap State
+43:   final List<Map<String, String>> _qaMessages = [
+44:     {
+45:       'sender': 'bot',
+46:       'text':
+47:           'Selamün Aleyküm, ben yapa
+<truncated 26991 bytes>
+text.isEmpty) return;
+778:                 setState(() {
+779:                   _qaMessages.add({'sender': 'user', 'text': text});
+780:                 });
+781:                 _qaInputController.clear();
+782: 
+783:                 // Simulated Bot Reply
+784:                 Timer(const Duration(seconds: 1), () {
+785:                   String reply =
+786:                       "Bu konuda net bir cevap verebilmek için Diyanet İşleri Başkanlığı fetvalarını incelemeniz veya en yakın müftülüğe danışmanız en doğrusu olacaktır. Ancak genel İslami görüş, ibadetlerin samimiyet ve özenle yapılması yönündedir.";
+787:                   final query = text.toLowerCase();
+788:                   if (query.contains('namaz') || query.contains('rekat')) {
+789:                     reply =
+790:                         "Namaz dinin direğidir. Günlük farz namazlar 5 vakittir: Sabah (2 rekat farz), Öğle (4 rekat farz), İkindi (4 rekat farz), Akşam (3 rekat farz) ve Yatsı (4 rekat farz) şeklindedir.";
+791:                   } else if (query.contains('oruç') ||
+792:                       query.contains('ramazan')) {
+793:                     reply =
+794:                         "Oruç, Ramazan ayında imsak vaktinden akşam ezanına kadar yeme, içme ve nefsi arzulardan uzak durarak yapılan bir ibadettir. Oruç tutmak sadece aç kalmak değil, ahlakı da güzelleştirmektir.";
+795:                   } else if (query.contains('abdest')) {
+796:                     reply =
+797:                         "Abdest alırken sırasıyla eller, ağız, burun yıkanır, yüz yıkanır, kollar yıkanır, baş mesh edilir, kulaklar ve boyun mesh edilir ve son olarak ayaklar yıkanır.";
+798:                   } else if (query.contains('zekat') ||
+799:                       query.contains('para')) {
+800:                     reply =
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

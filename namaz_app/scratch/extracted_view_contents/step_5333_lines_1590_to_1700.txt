@@ -1,0 +1,82 @@
+Created At: 2026-05-23T22:54:48Z
+Completed At: 2026-05-23T22:54:48Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4654
+Total Bytes: 189812
+Showing lines 1590 to 1700
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1590:     );
+1591:   }
+1592: 
+1593:   // 10. Kıble Bulucu Compass
+1594:   Widget _buildKibleBulucu() {
+1595:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+1596: 
+1597:     return StreamBuilder<CompassEvent>(
+1598:       stream: FlutterCompass.events,
+1599:       builder: (context, snapshot) {
+1600:         double? heading = snapshot.data?.heading;
+1601:         bool hasSensor = heading != null && !_forceSimulation;
+1602: 
+1603:         // Use manual rotation if no sensor is available or simulation is forced
+1604:         double finalHeading = hasSensor ? heading : _manualCompassHeading;
+1605:         double needleRotation = qiblaAngle - finalHeading;
+1606:         double dialRotation = -finalHeading;
+1607: 
+1608:         return SingleChildScrollView(
+1609:           child: Column(
+1610:             mainAxisAlignment: MainAxisAlignment.center,
+1611:             children: [
+1612:               const SizedBox(height: 8),
+1613:               const Card(
+1614:                 color: Color(0xFFFFF7EA),
+1615:                 elevation: 0,
+1616:                 shape: RoundedRectangleBorder(
+1617:                   borderRadius: BorderRadius.all(Radius.circular(12)),
+1618:                 ),
+1619:                 child: Padding(
+1620:                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+1621:                   child: Column(
+1622:                     children: [
+1623:                       Row(
+1624:                         mainAxisAlignment: MainAxisAlignment.center,
+1625:                         chi
+<truncated 2017 bytes>
+
+1665:                           ],
+1666:                         ),
+1667:                         child: const Stack(
+1668:                           children: [
+1669:                             Align(
+1670:                               alignment: Alignment.topCenter,
+1671:                               child: Padding(
+1672:                                 padding: EdgeInsets.all(8.0),
+1673:                                 child: Text(
+1674:                                   "K",
+1675:                                   style: TextStyle(
+1676:                                     fontWeight: FontWeight.bold,
+1677:                                     color: Colors.red,
+1678:                                     fontSize: 18,
+1679:                                   ),
+1680:                                 ),
+1681:                               ),
+1682:                             ),
+1683:                             Align(
+1684:                               alignment: Alignment.bottomCenter,
+1685:                               child: Padding(
+1686:                                 padding: EdgeInsets.all(8.0),
+1687:                                 child: Text(
+1688:                                   "G",
+1689:                                   style: TextStyle(
+1690:                                     fontWeight: FontWeight.bold,
+1691:                                     color: Colors.black54,
+1692:                                     fontSize: 15,
+1693:                                   ),
+1694:                                 ),
+1695:                               ),
+1696:                             ),
+1697:                             Align(
+1698:                               alignment: Alignment.centerLeft,
+1699:                               child: Padding(
+1700:                                 padding: EdgeInsets.all(8.0),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

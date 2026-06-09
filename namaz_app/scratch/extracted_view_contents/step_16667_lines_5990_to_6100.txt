@@ -1,0 +1,103 @@
+Created At: 2026-06-03T13:37:08Z
+Completed At: 2026-06-03T13:37:09Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 5990 to 6100
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5990:   Widget _buildNamazKilma() {
+5991:     final List<dynamic> steps =
+5992:         NAMAZ_KILMA_REHBERI[_namazKilmaErkek ? 'erkek' : 'kadin'];
+5993: 
+5994:     return Column(
+5995:       children: [
+5996:         Row(
+5997:           mainAxisAlignment: MainAxisAlignment.center,
+5998:           children: [
+5999:             ChoiceChip(
+6000:               label: Text("Erkek"),
+6001:               selected: _namazKilmaErkek,
+6002:               onSelected: (val) {
+6003:                 setState(() {
+6004:                   _namazKilmaErkek = true;
+6005:                 });
+6006:               },
+6007:             ),
+6008:             SizedBox(width: 12),
+6009:             ChoiceChip(
+6010:               label: Text("Kadın"),
+6011:               selected: !_namazKilmaErkek,
+6012:               onSelected: (val) {
+6013:                 setState(() {
+6014:                   _namazKilmaErkek = false;
+6015:                 });
+6016:               },
+6017:             ),
+6018:           ],
+6019:         ),
+6020:         SizedBox(height: 12),
+6021:         Expanded(
+6022:           child: ListView.builder(
+6023:             itemCount: steps.length,
+6024:             itemBuilder: (context, index) {
+6025:               final step = steps[index];
+6026:               return Card(
+6027:                 elevation: 1.5,
+6028:                 shape: RoundedRectangleBorder(
+6029:                   borderRadius: BorderRadius.circular(16),
+6030:                 ),
+6031:                 margin: EdgeInsets.only(bottom: 12),
+6032:                 child: Padding(
+60
+<truncated 935 bytes>
+51:                                 fontSize: 15,
+6052:                                 color: _greenColor,
+6053:                               ),
+6054:                             ),
+6055:                             SizedBox(height: 4),
+6056:                             Text(
+6057:                               step['aciklama'] ?? '',
+6058:                               style: TextStyle(
+6059:                                 fontSize: 13,
+6060:                                 height: 1.4,
+6061:                                 color: _textColor,
+6062:                               ),
+6063:                             ),
+6064:                           ],
+6065:                         ),
+6066:                       ),
+6067:                     ],
+6068:                   ),
+6069:                 ),
+6070:               );
+6071:             },
+6072:           ),
+6073:         ),
+6074:       ],
+6075:     );
+6076:   }
+6077: 
+6078:   // 22. Vitir Namazı
+6079:   Widget _buildVitirNamazi() {
+6080:     return SingleChildScrollView(
+6081:       child: Column(
+6082:         crossAxisAlignment: CrossAxisAlignment.start,
+6083:         children: [
+6084:           Card(
+6085:             elevation: 1.5,
+6086:             shape: RoundedRectangleBorder(
+6087:               borderRadius: BorderRadius.circular(16),
+6088:             ),
+6089:             child: Padding(
+6090:               padding: EdgeInsets.all(16.0),
+6091:               child: Column(
+6092:                 crossAxisAlignment: CrossAxisAlignment.start,
+6093:                 children: [
+6094:                   Text(
+6095:                     "Vitir Namazı Nedir?",
+6096:                     style: TextStyle(
+6097:                       fontWeight: FontWeight.bold,
+6098:                       fontSize: 16,
+6099:                       color: _greenColor,
+6100:                     ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

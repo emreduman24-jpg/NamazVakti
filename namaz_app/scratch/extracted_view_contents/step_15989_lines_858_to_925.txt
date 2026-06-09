@@ -1,0 +1,76 @@
+Created At: 2026-06-03T11:39:45Z
+Completed At: 2026-06-03T11:39:46Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6936
+Total Bytes: 282729
+Showing lines 858 to 925
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+858:     super.dispose();
+859:   }
+860: 
+861:   // Zikirmatik persistence
+862:   Future<void> _loadZikirState() async {
+863:     final count = await _repository.getZikirCount();
+864:     final target = await _repository.getZikirTarget();
+865:     final prefs = await SharedPreferences.getInstance();
+866:     setState(() {
+867:       _zikirCount = count;
+868:       _zikirTarget = target;
+869:       _selectedZikirId = prefs.getString('zikir_selected_id') ?? 'subhanallah';
+870:     });
+871:   }
+872: 
+873:   void _onZikirSelected(String? id) async {
+874:     if (id == null) return;
+875:     final prefs = await SharedPreferences.getInstance();
+876:     await prefs.setString('zikir_selected_id', id);
+877:     final target = _zikirData[id]?['hedef'] ?? 33;
+878:     setState(() {
+879:       _selectedZikirId = id;
+880:       _zikirTarget = target;
+881:       _zikirCount = 0;
+882:     });
+883:     await _repository.setZikirTarget(target);
+884:     await _repository.setZikirCount(0);
+885:   }
+886: 
+887:   Future<void> _incrementZikir() async {
+888:     HapticFeedback.lightImpact();
+889:     if (_zikirSoundEnabled) {
+890:       SystemSound.play(SystemSoundType.click);
+891:     }
+892:     setState(() {
+893:       _zikirCount++;
+894:     });
+895:     await _repository.setZikirCount(_zikirCount);
+896: 
+897:     if (_zikirTarget != 9999 && _zikirCount >= _zikirTarget) {
+898:       HapticFeedback.vibrate();
+899:       ScaffoldMessenger.of(context).showSnackBar(
+900:         SnackBar(
+901:           content: Text(
+902:             "Tebrikler! ${_zikirData[_selectedZikirId]?['ad'] ?? ''} zikrini tamamladınız!",
+903:           ),
+904:           backgroundColor: const Color(0xFF27A770),
+905:         ),
+906:       );
+907:       setState(() {
+908:         _zikirCount = 0;
+909:       });
+910:       await _repository.setZikirCount(0);
+911:     }
+912:   }
+913: 
+914:   Future<void> _resetZikir() async {
+915:     setState(() {
+916:       _zikirCount = 0;
+917:     });
+918:     await _repository.setZikirCount(0);
+919:   }
+920: 
+921:   // Dua list persist (approved only)
+922:   Future<void> _loadDuaList() async {
+923:     final list = await _repository.getDuaList();
+924:     if (mounted) {
+925:       setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

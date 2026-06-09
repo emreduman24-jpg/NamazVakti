@@ -1,0 +1,106 @@
+Created At: 2026-05-28T14:21:40Z
+Completed At: 2026-05-28T14:21:40Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5134
+Total Bytes: 208297
+Showing lines 170 to 320
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+170:             // This endpoint returned 200 but no mosques at this radius, try next radius
+171:             break; // break endpoint loop, try next radius
+172:           }
+173:           // Non-200 status, try next endpoint
+174:           debugPrint('Overpass endpoint returned ${response.statusCode}, trying next...');
+175:         } catch (e) {
+176:           debugPrint('Overpass API error ($endpoint, radius=$radius): $e');
+177:           // Try next endpoint
+178:         }
+179:       }
+180:     }
+181: 
+182:     // If all radii failed, show a message
+183:     debugPrint('No mosques found from Overpass API');
+184:     if (mounted) {
+185:       setState(() {
+186:         _dynamicMosquesList = [];
+187:       });
+188:     }
+189:   }
+190: 
+191:   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+192:     setState(() {
+193:       _loadingLocation = true;
+194:     });
+195:     try {
+196:       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+197:       if (!serviceEnabled) {
+198:         setState(() {
+199:           _loadingLocation = false;
+200:         });
+201:         if (mounted) {
+202:           WidgetsBinding.instance.addPostFrameCallback((_) {
+203:             ScaffoldMessenger.of(context).showSnackBar(
+204:               const SnackBar(
+205:                 content: Text("Lütfen telefonunuzun konum servisini (GPS) açın."),
+206:                 backgroundColor: Colors.redAccent,
+207:               ),
+208:             );
+209:           });
+210:         }
+211:         return;
+212:       }
+213: 
+214:       Locat
+<truncated 2144 bytes>
+       position = await Geolocator.getCurrentPosition(
+270:             desiredAccuracy: LocationAccuracy.medium, // Medium accuracy is much faster and highly reliable indoors
+271:             timeLimit: const Duration(seconds: 8), // 8 seconds timeout
+272:           );
+273:         } catch (e) {
+274:           debugPrint("getCurrentPosition error/timeout: $e");
+275:           
+276:           // Try a quick low-accuracy fallback before giving up
+277:           try {
+278:             position = await Geolocator.getCurrentPosition(
+279:               desiredAccuracy: LocationAccuracy.low,
+280:               timeLimit: const Duration(seconds: 4),
+281:             );
+282:           } catch (_) {}
+283:         }
+284:       }
+285: 
+286:       position ??= Position(
+287:         // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails
+288:         latitude: 41.0207,
+289:         longitude: 28.585,
+290:         timestamp: DateTime.now(),
+291:         accuracy: 0.0,
+292:         altitude: 0.0,
+293:         altitudeAccuracy: 0.0,
+294:         heading: 0.0,
+295:         headingAccuracy: 0.0,
+296:         speed: 0.0,
+297:         speedAccuracy: 0.0,
+298:       );
+299: 
+300:       final pos = position!;
+301:       debugPrint('=== GPS POSITION: lat=${pos.latitude}, lon=${pos.longitude}, accuracy=${pos.accuracy} ===');
+302:       setState(() {
+303:         _currentPosition = pos;
+304:       });
+305: 
+306:       // Fetch real nearby mosques from Overpass API
+307:       await _fetchNearbyMosques(pos.latitude, pos.longitude);
+308: 
+309:       if (mounted) {
+310:         setState(() {
+311:           _loadingLocation = false;
+312:         });
+313:       }
+314:     } catch (e) {
+315:       debugPrint("Location error: $e");
+316:       setState(() {
+317:         _loadingLocation = false;
+318:       });
+319:     }
+320:   }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,79 @@
+Created At: 2026-05-24T08:58:56Z
+Completed At: 2026-05-24T08:58:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4654
+Total Bytes: 189811
+Showing lines 260 to 330
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+260:   int _kazaYatsi = 0;
+261:   int _kazaVitir = 0;
+262: 
+263:   // Sabah & Aksam Ezkari counts
+264:   final List<int> _sabahEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+265:   final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+266:   int _ezkarTab = 0;
+267: 
+268:   @override
+269:   void initState() {
+270:     super.initState();
+271:     _initAudio();
+272:     _loadZikirState();
+273:     _loadDuaList();
+274:     _loadKazaState();
+275:   }
+276: 
+277:   Future<void> _loadKazaState() async {
+278:     final prefs = await SharedPreferences.getInstance();
+279:     setState(() {
+280:       _kazaSabah = prefs.getInt('kaza_sabah') ?? 0;
+281:       _kazaOgle = prefs.getInt('kaza_ogle') ?? 0;
+282:       _kazaIkindi = prefs.getInt('kaza_ikindi') ?? 0;
+283:       _kazaAksam = prefs.getInt('kaza_aksam') ?? 0;
+284:       _kazaYatsi = prefs.getInt('kaza_yatsi') ?? 0;
+285:       _kazaVitir = prefs.getInt('kaza_vitir') ?? 0;
+286:     });
+287:   }
+288: 
+289:   Future<void> _updateKaza(String key, int delta) async {
+290:     final prefs = await SharedPreferences.getInstance();
+291:     int current = prefs.getInt(key) ?? 0;
+292:     int newValue = math.max(0, current + delta);
+293:     await prefs.setInt(key, newValue);
+294:     setState(() {
+295:       if (key == 'kaza_sabah') _kazaSabah = newValue;
+296:       if (key == 'kaza_ogle') _kazaOgle = newValue;
+297:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+298:       if (key == 'kaza_aksam') _kazaAksam = newValue;
+299:       if (key == 'kaza_yatsi') _kazaYatsi = newValue;
+300:       if (key == 'kaza_vitir') _kazaVitir = newValue;
+301:     });
+302:   }
+303: 
+304:   void _initAudio() {
+305:     _audioPlayer = AudioPlayer();
+306:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+307:       if (mounted) {
+308:         setState(() {
+309:           _playerState = state;
+310:         });
+311:       }
+312:     });
+313:   }
+314: 
+315:   String _normalize(String text) {
+316:     return text
+317:         .toLowerCase()
+318:         .replaceAll('ı', 'i')
+319:         .replaceAll('ğ', 'g')
+320:         .replaceAll('ü', 'u')
+321:         .replaceAll('ş', 's')
+322:         .replaceAll('ö', 'o')
+323:         .replaceAll('ç', 'c');
+324:   }
+325: 
+326:   @override
+327:   void dispose() {
+328:     _audioPlayer?.dispose();
+329:     _duaNameController.dispose();
+330:     _duaTextController.dispose();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

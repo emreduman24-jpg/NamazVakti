@@ -1,0 +1,38 @@
+Created At: 2026-06-01T10:26:51Z
+Completed At: 2026-06-01T10:26:52Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5229
+Total Bytes: 219008
+Showing lines 5200 to 5229
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5200: 
+5201:   // 69. Sadaka-i Cariye
+5202:   Widget _buildSadakaICariye() {
+5203:     return _buildInfoSection(
+5204:       "Sadaka-i Cariye",
+5205:       "Ölümden sonra da sevabı devam eden yatırımlar",
+5206:       "Sadaka-i Cariye, etkisi ve faydası kalıcı olan sürekli iyiliklerdir. Kişi vefat etse dahi, geride bıraktığı bu hayırlı eserlerden insanlar faydalandığı sürece amel defterine sevap yazılmaya devam eder.\n\n"
+5207:           "Sadaka-i Cariye Örnekleri:\n"
+5208:           "• Çeşme, su kuyusu açtırmak veya su yolları yaptırmak.\n"
+5209:           "• Okul, cami, kütüphane, hastane veya aşevi yaptırmak veya yapımına destek olmak.\n"
+5210:           "• İnsanlığa faydalı bilimsel icatlar yapmak, kitaplar yazmak, faydalı dijital kaynaklar üretmek.\n"
+5211:           "• Yol kenarlarına, ormanlara ağaç dikmek.\n"
+5212:           "• Hayırlı bir evlat yetiştirmek (vefat eden ana-babasına dua eden evlat da sadaka-i cariye hükmündedir).",
+5213:     );
+5214:   }
+5215: 
+5216:   // 70. Tecvid Kuralları
+5217:   Widget _buildTecvidKurallari() {
+5218:     return _buildListSection("Temel Tecvid Kuralları", [
+5219:       "Tecvid: Kuran-ı Kerim'i harflerin mahreçlerine (çıkış yerlerine) dikkat ederek, kurallarına uygun ve güzel okuma ilmidir.",
+5220:       "Med Harfleri (Uzatma): Elif (ا), Vav (و), Ya (ي) harfleridir. Önündeki harfi uzatarak okuturlar.",
+5221:       "Tenvin ve Sakin Nun Kuralları: Sakin nun (نْ) veya tenvin (ً ٍ ٌ) işaretlerinden sonra gelen harflere göre şekillenir.",
+5222:       "İzhar: Sakin nun veya tenvinden sonra boğaz harfleri (ء, هـ, ح, خ, ع, غ) gelirse, ses genizden getirilmeden açıkça okunur.",
+5223:       "İdgam-ı Mealgunne: Sakin nun veya tenvinden sonra (ي, م, ن, و) harfleri gelirse, ses burundan (genizden) verilerek şeddeli gibi okunur.",
+5224:       "İhfa: Sakin nun veya tenvinden sonra izhar ve idgam harfleri dışındaki 15 harf gelirse, nun sesi genizden gizlenerek okunur.",
+5225:       "Kalkale (Yankılama): (ق, ط, b, ج, د) harfleri sakin (cezimli) geldiğinde kuvvetli bir ses vurgusuyla yankılatılarak okunur.",
+5226:     ]);
+5227:   }
+5228: }
+5229: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

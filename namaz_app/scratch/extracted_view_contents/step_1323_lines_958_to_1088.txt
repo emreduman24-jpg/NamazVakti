@@ -1,0 +1,88 @@
+Created At: 2026-05-22T16:09:58Z
+Completed At: 2026-05-22T16:09:58Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 1986
+Total Bytes: 79065
+Showing lines 958 to 1088
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+958:   Widget _buildKibleBulucu() {
+959:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+960:     
+961:     return StreamBuilder<CompassEvent>(
+962:       stream: FlutterCompass.events,
+963:       builder: (context, snapshot) {
+964:         double? heading = snapshot.data?.heading;
+965:         bool hasSensor = heading != null;
+966:         
+967:         // Use manual rotation if no sensor is available
+968:         double finalHeading = hasSensor ? heading! : _manualCompassHeading;
+969:         double needleRotation = qiblaAngle - finalHeading;
+970:         double dialRotation = -finalHeading;
+971: 
+972:         return Column(
+973:           mainAxisAlignment: MainAxisAlignment.center,
+974:           children: [
+975:             const Text(
+976:               "Cihazınızı düz zeminde tutarak yeşil ibreyi kabe resmine hizalayın.",
+977:               textAlign: TextAlign.center,
+978:               style: TextStyle(fontSize: 13, color: Colors.grey),
+979:             ),
+980:             const SizedBox(height: 32),
+981:             // Custom Visual Compass stack
+982:             Center(
+983:               child: Stack(
+984:                 alignment: Alignment.center,
+985:                 children: [
+986:                   // Compass Ring (Dial) rotated by DialRotation
+987:                   Transform.rotate(
+988:                     angle: (dialRotation * math.pi / 180),
+989:                     child: Container(
+990:                       width: 230,
+991:                       height: 230,
+992:                       decor
+<truncated 2979 bytes>
+5:                             height: 24,
+1046:                             decoration: const BoxDecoration(color: Colors.black87, shape: BoxShape.circle),
+1047:                             child: const Center(child: Text("🕌", style: TextStyle(fontSize: 11))),
+1048:                           ),
+1049:                         ],
+1050:                       ),
+1051:                     ),
+1052:                   ),
+1053:                 ],
+1054:               ),
+1055:             ),
+1056:             const SizedBox(height: 36),
+1057:             Text(
+1058:               "Kıble Açısı: ${qiblaAngle.toInt()}° (İstanbul)",
+1059:               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E5E43)),
+1060:             ),
+1061:             const SizedBox(height: 8),
+1062:             Text(
+1063:               hasSensor ? "Pusula Yönü: ${finalHeading.round()}°" : "Simüle Yönü: ${finalHeading.round()}°",
+1064:               style: const TextStyle(color: Colors.grey),
+1065:             ),
+1066:             if (!hasSensor) ...[
+1067:               const SizedBox(height: 20),
+1068:               const Text("Cihazda pusula sensörü yok. Aşağıdaki sürgü ile simüle edin:", style: TextStyle(fontSize: 12, color: Colors.grey)),
+1069:               Slider(
+1070:                 value: _manualCompassHeading,
+1071:                 min: 0,
+1072:                 max: 360,
+1073:                 activeColor: const Color(0xFF27A770),
+1074:                 onChanged: (val) {
+1075:                   setState(() {
+1076:                     _manualCompassHeading = val;
+1077:                   });
+1078:                 },
+1079:               )
+1080:             ]
+1081:           ],
+1082:         );
+1083:       },
+1084:     );
+1085:   }
+1086: 
+1087:   // 11. Zikirmatik
+1088:   Widget _buildZikirmatik() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

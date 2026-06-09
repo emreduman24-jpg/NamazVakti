@@ -1,0 +1,19 @@
+{
+  "step_index": 5741,
+  "source": "MODEL",
+  "type": "PLANNER_RESPONSE",
+  "status": "DONE",
+  "created_at": "2026-05-24T09:09:32Z",
+  "tool_calls": [
+    {
+      "name": "view_file",
+      "args": {
+        "AbsolutePath": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+        "EndLine": "2530",
+        "StartLine": "2400",
+        "toolAction": "\"Viewing build mosques widget\"",
+        "toolSummary": "\"View mosques widget\""
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Declare monthly prayer times state variables and _loadMonthlyTimes() method inside _ToolDetailScreenState.\"",
+  "EndLine": "48",
+  "Instruction": "\"Inject monthly prayer times variables and loading logic below _loadLocationName() in tool_detail_screen.dart.\"",
+  "ReplacementContent": "\"  String _currentLocationName = \\\"\\\";\\n\\n  Future<void> _loadLocationName() async {\\n    final savedLoc = await _repository.getSavedLocation();\\n    final savedCity = savedLoc['cityName'] ?? \\\"İstanbul\\\";\\n    if (mounted) {\\n      setState(() {\\n        _currentLocationName = savedCity;\\n      });\\n    }\\n  }\\n\\n  List<Map<String, dynamic>> _monthlyPrayerTimes = [];\\n  bool _loadingMonthlyTimes = true;\\n\\n  Future<void> _loadMonthlyTimes() async {\\n    try {\\n      final savedLoc = await _repository.getSavedLocation();\\n      final districtId = savedLoc['districtId'] ?? \\\"9541\\\";\\n      final List<Map<String, dynamic>> times = await _repository.getPrayerTimes(districtId);\\n      if (mounted) {\\n        setState(() {\\n          _monthlyPrayerTimes = times;\\n          _loadingMonthlyTimes = false;\\n        });\\n      }\\n    } catch (e) {\\n      print('Error loading monthly prayer times: $e');\\n      if (mounted) {\\n        setState(() {\\n          _loadingMonthlyTimes = false;\\n        });\\n      }\\n    }\\n  }\\n\\n  AudioPlayer? _audioPlayer;\"",
+  "StartLine": "36",
+  "TargetContent": "\"  String _currentLocationName = \\\"\\\";\\n\\n  Future<void> _loadLocationName() async {\\n    final savedLoc = await _repository.getSavedLocation();\\n    final savedCity = savedLoc['cityName'] ?? \\\"İstanbul\\\";\\n    if (mounted) {\\n      setState(() {\\n        _currentLocationName = savedCity;\\n      });\\n    }\\n  }\\n\\n  AudioPlayer? _audioPlayer;\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Injecting monthly prayer times state variables and loading method\"",
+  "toolSummary": "\"File replace\""
+}

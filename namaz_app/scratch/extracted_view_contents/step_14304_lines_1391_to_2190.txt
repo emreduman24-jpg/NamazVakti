@@ -1,0 +1,96 @@
+Created At: 2026-06-01T21:12:17Z
+Completed At: 2026-06-01T21:12:17Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6360
+Total Bytes: 258167
+Showing lines 1391 to 2190
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1391:                           ),
+1392:                         ],
+1393:                       ),
+1394:                     ],
+1395:                   ),
+1396:                 ),
+1397:               );
+1398:             },
+1399:           ),
+1400:         ),
+1401:       ],
+1402:     );
+1403:   }
+1404: 
+1405:   // 3. Soru Cevap
+1406:   Widget _buildSoruCevap() {
+1407:     return Column(
+1408:       crossAxisAlignment: CrossAxisAlignment.start,
+1409:       children: [
+1410:         // Ask Question Form Card
+1411:         Card(
+1412:           elevation: 2,
+1413:           shape: RoundedRectangleBorder(
+1414:             borderRadius: BorderRadius.circular(16),
+1415:           ),
+1416:           child: Padding(
+1417:             padding: EdgeInsets.all(14.0),
+1418:             child: Column(
+1419:               crossAxisAlignment: CrossAxisAlignment.start,
+1420:               children: [
+1421:                 Text(
+1422:                   "Soru Talebinde Bulun",
+1423:                   style: TextStyle(
+1424:                     fontWeight: FontWeight.bold,
+1425:                     fontSize: 15,
+1426:                     color: _greenColor,
+1427:                   ),
+1428:                 ),
+1429:                 SizedBox(height: 8),
+1430:                 TextField(
+1431:                   controller: _questionNameController,
+1432:                   decoration: InputDecoration(
+1433:                     hintText: "İsminiz (İsteğe bağlı)",
+1434:                     filled: true,
+1435:                     fillColor: Colors.grey[50],
+1436:       
+<truncated 30288 bytes>
+, default to exactly qiblaAngle
+2151:         // so it defaults to the beautiful aligned state immediately!
+2152:         double currentHeading = heading ?? 137.0;
+2153:         
+2154:         final bool dark = _isDark;
+2155: 
+2156:         double needleRotation = qiblaAngle - currentHeading;
+2157:         double dialRotation = -currentHeading;
+2158: 
+2159:         // Calculate difference for direction instructions
+2160:         double diff = (qiblaAngle - currentHeading) % 360;
+2161:         if (diff > 180) diff -= 360;
+2162:         if (diff < -180) diff += 360;
+2163:         
+2164:         bool isAligned = diff.abs() < 3;
+2165: 
+2166:         // Distance to Kaaba from user's current GPS, fallback to Istanbul
+2167:         double meccaDistance = 2400.0;
+2168:         if (_currentPosition != null) {
+2169:           meccaDistance = _calculateDistance(_currentPosition!.latitude, _currentPosition!.longitude, 21.4225, 39.8262);
+2170:         }
+2171: 
+2172:         // Dynamic Aligned Status Banner
+2173:         Widget alignmentBanner;
+2174:         if (isAligned) {
+2175:           alignmentBanner = AnimatedContainer(
+2176:             duration: const Duration(milliseconds: 300),
+2177:             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+2178:             decoration: BoxDecoration(
+2179:               color: const Color(0xFF27A770).withOpacity(0.12),
+2180:               borderRadius: BorderRadius.circular(30),
+2181:               border: Border.all(color: const Color(0xFF27A770), width: 2),
+2182:               boxShadow: [
+2183:                 BoxShadow(
+2184:                   color: const Color(0xFF27A770).withOpacity(0.2),
+2185:                   blurRadius: 12,
+2186:                   spreadRadius: 2,
+2187:                 ),
+2188:               ],
+2189:             ),
+2190:             child: const Row(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

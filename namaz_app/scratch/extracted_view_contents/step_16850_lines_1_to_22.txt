@@ -1,0 +1,30 @@
+Created At: 2026-06-03T13:49:01Z
+Completed At: 2026-06-03T13:49:01Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 22
+Total Bytes: 1865
+Showing lines 1 to 22
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Task Checklist - Araçlar Yenileme & Dini Hoca Yapay Zeka Entegrasyonu
+2: 
+3: - [x] Veri Katmanı Güncellemeleri (`prayer_data.dart` & `prayer_repository.dart`)
+4:   - [x] `defaultTools` listesinin temizlenmesi ve `dini-hoca` aracının eklenmesi
+5:   - [x] 40 Hadis listesinin genişletilmesi (40 adet detaylı hadis, arapça metin, meal, kaynak, dersler)
+6:   - [x] Diğer araçlar için veri içeriklerinin zenginleştirilmesi (Peygamberin hayatı, Sahabe hayatları vb.)
+7: - [ ] Arayüz Geliştirmeleri (`tool_detail_screen.dart`)
+8:   - [ ] **Canlı Kur'an Radyosu**: Mediatriple stream bağlantısı ve frekans/dalga görselleştirici tasarımı
+9:   - [ ] **Peygamberin Hayatı**: Modern yatay stepper ve "Önemli Dersler" bilgi kartı entegrasyonu
+10:   - [ ] **40 Hadis-i Şerif**: Kaydırılabilir/kart şeklinde Premium 40 Hadis destesi tasarımı
+11:   - [ ] **Zekat Hesaplama**: Nisap çizgili, altın/nakit/borç formlu modern zekat aracı tasarımı
+12:   - [ ] **Sahabe Hayatları**: Arama, profil resimli kart listesi ve detay paneli entegrasyonu
+13:   - [ ] **Namaz Kılma**: Adım adım duruş, dua, meal ve sık yapılan hataları gösteren yatay stepper
+14:   - [ ] **Abdest & Gusül Rehberi**: Farz ve sünnet göstergeli, adım adım ilerleyen yatay stepper
+15:   - [ ] **Sabah Akşam Ezkarı**: Dairesel ilerlemeli, ses/titreşim geri bildirimli gelişmiş zikirmatik tasarımı
+16:   - [ ] **Kazaya Kalan Namazlar**: Toplu giriş (diyalog) ve modern çetele göstergeli kaza takip ekranı
+17:   - [ ] **İslam'ın Şartları**: 5 şart için ikonlu modern grid kart tasarımı ve detay modalı
+18:   - [ ] **Dini Hoca AI Chat**: Yazıyor animasyonu, chatbot mesaj balonları ve yapay zeka cevap motoru entegrasyonu
+19: - [ ] Test ve Doğrulama
+20:   - [ ] `flutter analyze` ile derleme doğrulaması yapılması
+21:   - [ ] Emülatör üzerinde tüm güncellenmiş araçların manuel testlerinin yapılması
+22: 
+The above content shows the entire, complete file contents of the requested file.

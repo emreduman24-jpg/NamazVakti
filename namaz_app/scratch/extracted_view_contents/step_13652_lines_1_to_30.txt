@@ -1,0 +1,38 @@
+Created At: 2026-06-01T18:45:00Z
+Completed At: 2026-06-01T18:45:01Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart`
+Total Lines: 618
+Total Bytes: 17580
+Showing lines 1 to 30
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'package:flutter/material.dart';
+3: import 'data/prayer_repository.dart';
+4: import 'services/notification_service.dart';
+5: import 'screens/main_screen.dart';
+6: import 'screens/prayer_tracker_screen.dart';
+7: import 'screens/tools_screen.dart';
+8: import 'screens/settings_screen.dart';
+9: import 'screens/tool_detail_screen.dart';
+10: import 'screens/splash_screen.dart';
+11: 
+12: void main() async {
+13:   WidgetsFlutterBinding.ensureInitialized();
+14: 
+15:   // Initialize Notification Service
+16:   final notificationService = NotificationService();
+17:   await notificationService.init();
+18: 
+19:   runApp(const MyApp());
+20: }
+21: 
+22: class MyApp extends StatefulWidget {
+23:   const MyApp({super.key});
+24: 
+25:   @override
+26:   State<MyApp> createState() => _MyAppState();
+27: }
+28: 
+29: class _MyAppState extends State<MyApp> {
+30:   final PrayerRepository _repository = PrayerRepository();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

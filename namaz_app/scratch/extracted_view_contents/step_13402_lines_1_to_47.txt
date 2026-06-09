@@ -1,0 +1,56 @@
+Created At: 2026-06-01T17:41:01Z
+Completed At: 2026-06-01T17:41:01Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 47
+Total Bytes: 3439
+Showing lines 1 to 47
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Goal Description
+2: 
+3: The user wants to move the **Kıble Bulucu (Qibla Finder)** to the bottom navigation bar as a primary tab, exactly in the center (tam ortaya), and styled to be slightly larger than the other tabs (diğerlerinden biraz büyük).
+4: 
+5: To implement this premium feature, we will:
+6: 1. **Integrate Tab at Index 2:** Introduce a 5th item to the bottom navigation bar at the exact center (index 2).
+7: 2. **Implement Premium Stand-Out Icon:** Build a custom, larger circular icon widget (`QiblaBottomTabIcon`) featuring our signature gold/emerald gradient, custom borders, and a compass explore icon to give it a high-end web-app aesthetic.
+8: 3. **Handle Screen Flow:** Mount `ToolDetailScreen` in the bottom stack with its back button deactivated to prevent redundant navigation.
+9: 4. **Intercept Tool Clicks:** If Qibla Finder is selected from the tools list, intercept it and instantly flip to the centered bottom tab instead of pushing a redundant layout.
+10: 5. **Adjust Redirect Indices:** Update internal redirections from index 3 to index 4 to maintain absolute alignment.
+11: 
+12: ---
+13: 
+14: ## Proposed Changes
+15: 
+16: ### [MODIFY] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+17: - Add a new final boolean `isTab` (defaulting to `false`) to the `ToolDetailScreen` constructor.
+18: - Set `automaticallyImplyLeading: !widget.isTab` on `AppBar` to dynamically hide the back arrow when running as a bottom tab.
+19: 
+20: ### [MODIFY] [main_screen.dart](f
+<truncated 93 bytes>
+the missing location button redirect callback from `widget.onTabChange(3)` to `widget.onTabChange(4)` to point to the new shifted index of `SettingsScreen`.
+22: 
+23: ### [MODIFY] [main.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart)
+24: - Create a beautiful calligraphic-style `QiblaBottomTabIcon` class with custom sizing, gold astrolabe-style borders (`0xFFD4AF37`), floating shadow depth, and emerald highlights.
+25: - In `_MainAppContainerState`:
+26:   - Insert `ToolDetailScreen(toolId: 'kible-bulucu', toolTitle: 'Kıble Bulucu', isTab: true)` as the central screen in the list at index 2.
+27:   - Modify `_openToolDetail` callback: if `toolId == 'kible-bulucu'`, set `_currentIndex = 2` to trigger an immediate smooth tab transition rather than a screen push.
+28:   - Configure `BottomNavigationBar`:
+29:     - Enable `type: BottomNavigationBarType.fixed` to properly host 5 items without shifting animations.
+30:     - Inject the custom `QiblaBottomTabIcon` at item index 2 (active/inactive states passed dynamically).
+31: 
+32: ---
+33: 
+34: ## Verification Plan
+35: 
+36: ### Automated Tests
+37: - Run `flutter analyze lib` to verify zero compiler warnings, static analysis warnings, or deprecation issues.
+38: 
+39: ### Manual Verification
+40: - Deploy the update to the running background VM (`emulator-5554`).
+41: - Validate that:
+42:   - The bottom tab bar now displays 5 icons with the central "Kıble" icon positioned perfectly in the middle.
+43:   - The Qibla Finder bottom tab shows a beautiful large gold circle that pops out and fits the premium layout.
+44:   - Clicking the Qibla tab immediately loads the compass view with zero back buttons visible in the AppBar.
+45:   - Clicking the "Araçlar" tab and launching "Kıble Bulucu" triggers a smooth tab jump to index 2 instead of pushing a sub-route.
+46:   - Clicking the Settings redirect from the home screen correctly switches the view to the Settings tab (index 4).
+47: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,89 @@
+Created At: 2026-06-03T13:35:30Z
+Completed At: 2026-06-03T13:35:30Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 1150 to 1230
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1150:       case 'oruc-rehberi':
+1151:         return _buildOrucRehberi();
+1152:       case 'kible-bulucu':
+1153:         return _buildKibleBulucu();
+1154:       case 'namaz-vakitleri-aylik':
+1155:         return _buildAylikNamazVakitleri();
+1156:       case 'zikirmatik':
+1157:         return _buildZikirmatik();
+1158:       case 'miladi-hicri':
+1159:         return _buildMiladiHicri();
+1160:       case 'yasin-suresi':
+1161:         return _buildYasinSuresi();
+1162:       case 'yakindaki-camiler':
+1163:         return _buildYakindakiCamiler();
+1164:       case 'hadis-40':
+1165:         return _buildHadis40();
+1166:       case 'namaz-tesbihati':
+1167:         return _buildNamazTesbihati();
+1168:       case 'gunluk-dualar':
+1169:         return _buildGunlukDualar();
+1170:       case 'zekat-hesaplama':
+1171:         return _buildZekatHesaplama();
+1172:       case 'sahabe-hayatlari':
+1173:         return _buildSahabeHayatlari();
+1174:       case 'islam-tarihi':
+1175:         return _buildIslamTarihi();
+1176:       case 'namaz-kilma':
+1177:         return _buildNamazKilma();
+1178:       case 'vitir-namazi':
+1179:         return _buildVitirNamazi();
+1180:       case 'abdest-rehberi':
+1181:         return _buildAbdestRehberi();
+1182:       case 'gusul-rehberi':
+1183:       case 'gusul-abdesti':
+1184:         return _buildGusulRehberi();
+1185:       case 'teyemmum-rehberi':
+1186:       case 'teyemmum':
+1187:         return _buildTeyemmumRehberi();
+1188:       case 'cuma-namazi':
+1189:         return _buildCumaNamazi();
+1190:       case 'teravih-namazi':
+1191:         return _buildTeravihNamazi();
+1192:       case 'bayram-namazi':
+1193:         return _buildBayramNamazi();
+1194:       case 'cenaze-namazi':
+1195:         return _buildCenazeNamazi();
+1196:       case 'teheccud-namazi':
+1197:         return _buildTeheccudNamazi();
+1198:       case 'duha-namazi':
+1199:         return _buildDuhaNamazi();
+1200:       case 'evvabin-namazi':
+1201:         return _buildEvvabinNamazi();
+1202:       case 'hacet-namazi':
+1203:         return _buildHacetNamazi();
+1204:       case 'istihare-namazi':
+1205:         return _buildIstihareNamazi();
+1206:       case 'sehiv-secdesi':
+1207:       case 'secdei-sehiv':
+1208:         return _buildSehivSecdesi();
+1209:       case 'tilavet-secdesi':
+1210:       case 'secdei-tilavet':
+1211:         return _buildTilavetSecdesi();
+1212:       case 'kaza-namazi':
+1213:       case 'kaza-namazlari':
+1214:         return _buildKazaNamazi();
+1215:       case 'sabah-ezkari':
+1216:         return _buildSabahEzkari();
+1217:       case 'aksam-ezkari':
+1218:         return _buildAksamEzkari();
+1219:       case 'ezkar':
+1220:         return _buildEzkar();
+1221:       case 'kunut-duasi':
+1222:         return SingleChildScrollView(
+1223:           child: Column(
+1224:             children: [
+1225:               _buildKunutCard("Kunut Duası - 1", VITIR_NAMAZI['kunut1']),
+1226:               SizedBox(height: 16),
+1227:               _buildKunutCard("Kunut Duası - 2", VITIR_NAMAZI['kunut2']),
+1228:             ],
+1229:           ),
+1230:         );
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

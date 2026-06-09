@@ -1,0 +1,55 @@
+Created At: 2026-06-03T13:37:27Z
+Completed At: 2026-06-03T13:37:28Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 6214 to 6260
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+6214:   Widget _buildStepRehberi(String title, List<Map<String, String>> steps) {
+6215:     return Column(
+6216:       crossAxisAlignment: CrossAxisAlignment.start,
+6217:       children: [
+6218:         Text(
+6219:           title,
+6220:           style: TextStyle(
+6221:             fontSize: 16,
+6222:             fontWeight: FontWeight.bold,
+6223:             color: _greenColor,
+6224:           ),
+6225:         ),
+6226:         SizedBox(height: 12),
+6227:         Expanded(
+6228:           child: ListView.builder(
+6229:             itemCount: steps.length,
+6230:             itemBuilder: (context, index) {
+6231:               final step = steps[index];
+6232:               return Card(
+6233:                 elevation: 1,
+6234:                 shape: RoundedRectangleBorder(
+6235:                   borderRadius: BorderRadius.circular(14),
+6236:                 ),
+6237:                 margin: EdgeInsets.only(bottom: 10),
+6238:                 child: Padding(
+6239:                   padding: EdgeInsets.all(14.0),
+6240:                   child: Row(
+6241:                     crossAxisAlignment: CrossAxisAlignment.start,
+6242:                     children: [
+6243:                       CircleAvatar(
+6244:                         radius: 14,
+6245:                         backgroundColor: const Color(0xFF27A770),
+6246:                         foregroundColor: Colors.white,
+6247:                         child: Text(
+6248:                           "${index + 1}",
+6249:                           style: TextStyle(
+6250:                             fontSize: 12,
+6251:                             fontWeight: FontWeight.bold,
+6252:                           ),
+6253:                         ),
+6254:                       ),
+6255:                       SizedBox(width: 12),
+6256:                       Expanded(
+6257:                         child: Column(
+6258:                           crossAxisAlignment: CrossAxisAlignment.start,
+6259:                           children: [
+6260:                             if (step['baslik'] != null &&
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

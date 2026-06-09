@@ -1,0 +1,48 @@
+Created At: 2026-05-31T12:49:06Z
+Completed At: 2026-05-31T12:49:06Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5229
+Total Bytes: 213780
+Showing lines 141 to 180
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+141: 
+142:               final dist = _calculateDistance(lat, lon, mLat, mLon);
+143:               final encodedName = Uri.encodeComponent(name.toString());
+144: 
+145:               mosques.add({
+146:                 'ad': name.toString(),
+147:                 'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',
+148:                 'harita': 'https://www.google.com/maps/dir/?api=1&destination=$mLat,$mLon',
+149:                 'lat': mLat,
+150:                 'lon': mLon,
+151:                 'mesafeVal': dist,
+152:                 'mesafeText': dist < 1
+153:                     ? '${(dist * 1000).toInt()} m'
+154:                     : '${dist.toStringAsFixed(1)} km',
+155:               });
+156:             }
+157: 
+158:             // Sort by distance
+159:             mosques.sort((a, b) =>
+160:                 (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+161: 
+162:             if (mosques.isNotEmpty) {
+163:               if (mounted) {
+164:                 setState(() {
+165:                   _dynamicMosquesList = mosques;
+166:                 });
+167:               }
+168:               debugPrint('Found ${mosques.length} mosques within ${radius}m');
+169:               return; // success – stop expanding radius
+170:             }
+171:             // This endpoint returned 200 but no mosques at this radius, try next radius
+172:             break; // break endpoint loop, try next radius
+173:           }
+174:           // Non-200 status, try next endpoint
+175:           debugPrint('Overpass endpoint returned ${response.statusCode}, trying next...');
+176:         } catch (e) {
+177:           debugPrint('Overpass API error ($endpoint, radius=$radius): $e');
+178:           // Try next endpoint
+179:         }
+180:       }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

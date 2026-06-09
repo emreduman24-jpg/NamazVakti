@@ -1,0 +1,106 @@
+Created At: 2026-06-03T13:45:55Z
+Completed At: 2026-06-03T13:46:41Z
+The following changes were made by the replace_file_content tool to: c:\Users\kral_\Namaz vakitleri\namaz_app\lib\screens\tool_detail_screen.dart. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -1873,8 +1873,508 @@
+             ],
+           ),
+         ),
+-      ),
+-    );
++
++        // Message List
++        Expanded(
++          child: ListView.builder(
++            controller: _diniHocaScrollController,
++            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
++            itemCount: _diniHocaMessages.length + (_diniHocaIsTyping ? 1 : 0),
++            itemBuilder: (context, index) {
++              if (index == _diniHocaMessages.length) {
++                // Typing indicator
++                return Padding(
++                  padding: const EdgeInsets.symmetric(vertical: 8.0),
++                  child: Row(
++                    crossAxisAlignment: CrossAxisAlignment.start,
++                    children: [
++                      Container(
++                        width: 36,
++                        height: 36,
++                        decoration: const BoxDecoration(
++                          color: Color(0xFF1E5E43),
++                          shape: BoxShape.circle,
++                        ),
++                        child: const Icon(
++                          Icons.mosque_rounded,
++                          color: Color(0xFFC5A059),
++                          size: 18,
++                        ),
++                      ),
++                      const SizedBox(width: 8),
++                      Container(
++                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
++                        decoration: BoxDecoration(
++                          color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFF1F5F9),
++                          borderRadius: const BorderRadius.only(
++                            topRi
+<truncated 19933 bytes>
+iv secdesi, zekat verilecek kişiler, orucu bozan şeyler veya kaza namazları** gibi konularda doğrudan anahtar kelimeler kullanarak sorarsanız size çok daha detaylı bilgi aktarabilirim. 
++
++Fıkhi konulardaki en doğru ve kesin hükümler için Diyanet İşleri Başkanlığı'nın resmi fetvalarına veya muteber fıkıh kitaplarına başvurmanızı tavsiye ederim.""";
++  }
++
++  void _handleDiniHocaSend(String text) {
++    if (text.trim().isEmpty) return;
++    
++    final userMsg = text.trim();
++    _diniHocaInputController.clear();
++    
++    setState(() {
++      _diniHocaMessages.add({
++        'isMe': true,
++        'text': userMsg,
++        'time': DateTime.now(),
++      });
++      _diniHocaIsTyping = true;
++    });
++    
++    _scrollToBottomDiniHoca();
++    
++    Future.delayed(const Duration(milliseconds: 1200), () {
++      if (!mounted) return;
++      
++      final reply = _getDiniHocaResponse(userMsg);
++      setState(() {
++        _diniHocaIsTyping = false;
++        _diniHocaMessages.add({
++          'isMe': false,
++          'text': reply,
++          'time': DateTime.now(),
++        });
++      });
++      _scrollToBottomDiniHoca();
++    });
++  }
++
++  void _scrollToBottomDiniHoca() {
++    WidgetsBinding.instance.addPostFrameCallback((_) {
++      if (_diniHocaScrollController.hasClients) {
++        _diniHocaScrollController.animateTo(
++          _diniHocaScrollController.position.maxScrollExtent,
++          duration: const Duration(milliseconds: 300),
++          curve: Curves.easeOut,
++        );
++      }
++    });
++  }
++
++  Widget _buildMiniTypingIndicator() {
++    return _MiniDotAnimator(color: _subtitleColor);
+   }
+ 
+   // 5. Peygamberin Hayatı
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.
+
+We did our best to apply changes despite some inaccuracies. Double check if the edit applied is what you intended.

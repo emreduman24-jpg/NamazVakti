@@ -1,0 +1,19 @@
+{
+  "step_index": 14319,
+  "source": "MODEL",
+  "type": "PLANNER_RESPONSE",
+  "status": "DONE",
+  "created_at": "2026-06-01T21:13:17Z",
+  "tool_calls": [
+    {
+      "name": "view_file",
+      "args": {
+        "AbsolutePath": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+        "EndLine": "925",
+        "StartLine": "890",
+        "toolAction": "\"Viewing _playAudio method in tool_detail_screen.dart\"",
+        "toolSummary": "\"View file\""
+      }
+    }
+  ]
+}

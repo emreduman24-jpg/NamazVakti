@@ -1,0 +1,98 @@
+Created At: 2026-06-03T05:53:43Z
+Completed At: 2026-06-03T05:53:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6942
+Total Bytes: 281482
+Showing lines 2180 to 2430
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2180:                     borderRadius: BorderRadius.circular(12),
+2181:                     borderSide: BorderSide(color: _isDark ? const Color(0xFF233554) : const Color(0xFFE2E8F0)),
+2182:                   ),
+2183:                   enabledBorder: OutlineInputBorder(
+2184:                     borderRadius: BorderRadius.circular(12),
+2185:                     borderSide: BorderSide(color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0)),
+2186:                   ),
+2187:                   focusedBorder: OutlineInputBorder(
+2188:                     borderRadius: BorderRadius.circular(12),
+2189:                     borderSide: const BorderSide(color: Color(0xFF27A770)),
+2190:                   ),
+2191:                 ),
+2192:                 onChanged: (val) {
+2193:                   setState(() {
+2194:                     _quranSearchQuery = val;
+2195:                   });
+2196:                 },
+2197:               ),
+2198:               const SizedBox(height: 12),
+2199:             ],
+2200:           ),
+2201:         ),
+2202:         // Dynamic List Rows
+2203:         Expanded(
+2204:           child: _quranTab == 0
+2205:               ? _buildSurelerList(filteredSuras)
+2206:               : _buildCuzlerList(filteredJuzs),
+2207:         ),
+2208:       ],
+2209:     );
+2210:   }
+2211: 
+2212:   Widget _buildSurelerList(List<QuranSurah> list) {
+2213:     if (list.isEmpty) {
+2214:       return Center(
+2215:         child: Text(
+2216:           "Sure bulunamadı.",
+2217:           style: TextStyle(color: _isDark ? Colors.white54 : Color
+<truncated 6893 bytes>
+  fontSize: 12,
+2381:                 ),
+2382:               ),
+2383:             ),
+2384:             title: Text(
+2385:               juz.title,
+2386:               style: TextStyle(
+2387:                 color: _isDark ? Colors.white : Colors.black87,
+2388:                 fontWeight: FontWeight.bold,
+2389:                 fontSize: 15,
+2390:               ),
+2391:             ),
+2392:             subtitle: Text(
+2393:               juz.range,
+2394:               style: TextStyle(
+2395:                 color: _isDark ? Colors.white54 : Colors.black54,
+2396:                 fontSize: 12,
+2397:               ),
+2398:             ),
+2399:             trailing: Row(
+2400:               mainAxisSize: MainAxisSize.min,
+2401:               children: [
+2402:                 Text(
+2403:                   juz.arabicLabel,
+2404:                   style: const TextStyle(
+2405:                     color: Color(0xFF27A770),
+2406:                     fontFamily: 'Traditional Arabic',
+2407:                     fontSize: 18,
+2408:                     fontWeight: FontWeight.bold,
+2409:                   ),
+2410:                 ),
+2411:                 const SizedBox(width: 8),
+2412:                 Icon(
+2413:                   Icons.chevron_right_rounded,
+2414:                   color: _isDark ? Colors.white38 : Colors.black38,
+2415:                   size: 22,
+2416:                 ),
+2417:               ],
+2418:             ),
+2419:           ),
+2420:         );
+2421:       },
+2422:     );
+2423:   }             children: [
+2424:                 Text(
+2425:                   juz.arabicLabel,
+2426:                   style: const TextStyle(
+2427:                     color: Color(0xFF27A770),
+2428:                     fontFamily: 'Traditional Arabic',
+2429:                     fontSize: 18,
+2430:                     fontWeight: FontWeight.bold,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

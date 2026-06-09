@@ -1,0 +1,49 @@
+Created At: 2026-06-01T10:22:59Z
+Completed At: 2026-06-01T10:22:59Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5512
+Total Bytes: 227382
+Showing lines 1030 to 1070
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1030:       case 'selamlasma-adabi':
+1031:         return _buildSelamlasmaAdabi();
+1032:       case 'misafirlik-adabi':
+1033:         return _buildMisafirlikAdabi();
+1034:       case 'uc-aylar':
+1035:         return _buildUcAylar();
+1036:       case 'muharrem-asure':
+1037:         return _buildMuharremAsure();
+1038:       case 'zilhicce-arefe':
+1039:         return _buildZilhicceArefe();
+1040:       case 'islam-alimleri':
+1041:         return _buildIslamAlimleri();
+1042:       case 'islam-cografyasi':
+1043:         return _buildIslamCografyasi();
+1044:       case 'tevbe-istigfar':
+1045:         return _buildTevbeIstigfar();
+1046:       case 'sadaka-i-cariye':
+1047:         return _buildSadakaICariye();
+1048:       case 'tecvid-kurallari':
+1049:         return _buildTecvidKurallari();
+1050:       default:
+1051:         return const Center(
+1052:           child: Text("Bu özellik çok yakında eklenecektir."),
+1053:         );
+1054:     }
+1055:   }
+1056: 
+1057:   // Helper to parse "15 Ocak 2026" date format for the calendar badge
+1058:   Map<String, String> _parseDate(String dateStr) {
+1059:     final clean = dateStr.trim();
+1060:     final parts = clean.split(' ');
+1061:     String day = '';
+1062:     String month = '';
+1063:     String year = '';
+1064: 
+1065:     if (parts.isNotEmpty) {
+1066:       day = parts[0];
+1067:     }
+1068:     if (parts.length > 1) {
+1069:       month = parts[1];
+1070:     }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

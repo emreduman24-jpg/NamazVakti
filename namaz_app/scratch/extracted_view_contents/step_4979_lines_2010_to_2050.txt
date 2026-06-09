@@ -1,0 +1,49 @@
+Created At: 2026-05-23T18:32:18Z
+Completed At: 2026-05-23T18:32:18Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187772
+Showing lines 2010 to 2050
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2010:                           },
+2011:                           child: const Text("Evet"),
+2012:                         ),
+2013:                       ],
+2014:                     ),
+2015:                   );
+2016:                 },
+2017:                 child: const Text("Sıfırla", style: TextStyle(fontWeight: FontWeight.bold)),
+2018:               ),
+2019:               ElevatedButton(
+2020:                 style: ElevatedButton.styleFrom(
+2021:                   backgroundColor: _zikirSoundEnabled ? const Color(0xFF27A770) : Colors.grey,
+2022:                   foregroundColor: Colors.white,
+2023:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+2024:                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+2025:                   elevation: 0,
+2026:                 ),
+2027:                 onPressed: () {
+2028:                   setState(() {
+2029:                     _zikirSoundEnabled = !_zikirSoundEnabled;
+2030:                   });
+2031:                 },
+2032:                 child: Text(
+2033:                   _zikirSoundEnabled ? "Ses: Açık" : "Ses: Kapalı",
+2034:                   style: const TextStyle(fontWeight: FontWeight.bold),
+2035:                 ),
+2036:               ),
+2037:             ],
+2038:           ),
+2039:           const SizedBox(height: 16),
+2040:         ],
+2041:       ),
+2042:     );
+2043:   }
+2044: 
+2045:   // 12. Miladi - Hicri Çevirici
+2046:   Widget _buildMiladiHicri() {
+2047:     return Column(
+2048:       crossAxisAlignment: CrossAxisAlignment.start,
+2049:       children: [
+2050:         Row(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,1 @@
+  AudioPlayer? _audioPlayer;\n  PlayerState _playerState = PlayerState.stopped;\n  String _currentAudioUrl = \"\";\n  String _currentTrackName = \"\";\n  int _activeRadioIndex = 0;\n  double _radioVolume = 0.8;\n  int _quranTab = 0; // 0: Sureler, 1: Cüzler

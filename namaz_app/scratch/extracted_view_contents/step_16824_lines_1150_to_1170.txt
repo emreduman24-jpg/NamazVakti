@@ -1,0 +1,29 @@
+Created At: 2026-06-03T13:47:54Z
+Completed At: 2026-06-03T13:47:54Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8257
+Total Bytes: 337169
+Showing lines 1150 to 1170
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1150:         return _buildDiniGunler();
+1151:       case 'dua-iste':
+1152:         return _buildDuaIste();
+1153:       case 'soru-cevap':
+1154:         return _buildSoruCevap();
+1155:       case 'canli-sohbet':
+1156:         return _buildCanliSohbet();
+1157:       case 'dini-hoca':
+1158:         return _buildDiniHoca();
+1159:       case 'peygamber-hayati':
+1160:         return _buildPeygamberHayati();
+1161:       case 'kuran-kerim':
+1162:         return _buildKuranKerim();
+1163:       case 'esmaul-husna':
+1164:         return _buildEsmaulHusna();
+1165:       case 'ramazan-hakkinda':
+1166:         return _buildRamazanHakkinda();
+1167:       case 'oruc-rehberi':
+1168:         return _buildOrucRehberi();
+1169:       case 'kible-bulucu':
+1170:         return _buildKibleBulucu();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,28 @@
+Created At: 2026-06-03T11:46:46Z
+Completed At: 2026-06-03T11:46:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7050
+Total Bytes: 287002
+Showing lines 4236 to 4255
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+4236:                       ],
+4237:                     ),
+4238:                   );
+4239:                 },
+4240:                 child: Text("Sıfırla", style: TextStyle(fontWeight: FontWeight.bold)),
+4241:               ),
+4242:               ElevatedButton(
+4243:                 style: ElevatedButton.styleFrom(
+4244:                   backgroundColor: _zikirSoundEnabled ? const Color(0xFF27A770) : Colors.grey,
+4245:                   foregroundColor: Colors.white,
+4246:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+4247:                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+4248:                   elevation: 0,
+4249:                 ),
+4250:                 onPressed: () {
+4251:                   setState(() {
+4252:                     _zikirSoundEnabled = !_zikirSoundEnabled;
+4253:                   });
+4254:                 },
+4255:                 child: Text(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

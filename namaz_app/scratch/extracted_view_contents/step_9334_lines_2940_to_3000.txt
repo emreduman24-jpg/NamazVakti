@@ -1,0 +1,69 @@
+Created At: 2026-05-30T21:34:32Z
+Completed At: 2026-05-30T21:34:32Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5229
+Total Bytes: 213775
+Showing lines 2940 to 3000
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2940:                             ),
+2941:                             trailing: Column(
+2942:                               mainAxisAlignment: MainAxisAlignment.center,
+2943:                               children: [
+2944:                                 Text(
+2945:                                   camii['mesafeText'] ?? '',
+2946:                                   style: const TextStyle(
+2947:                                     fontWeight: FontWeight.bold,
+2948:                                     color: Color(0xFF27A770),
+2949:                                     fontSize: 13,
+2950:                                   ),
+2951:                                 ),
+2952:                                 const SizedBox(height: 2),
+2953:                                 const Icon(Icons.directions, size: 16, color: Color(0xFF27A770)),
+2954:                               ],
+2955:                             ),
+2956:                             onTap: () async {
+2957:                               final urlStr = camii['harita'] ?? '';
+2958:                               if (urlStr.isNotEmpty) {
+2959:                                 final uri = Uri.parse(urlStr);
+2960:                                 try {
+2961:                                   if (await canLaunchUrl(uri)) {
+2962:                                     await launchUrl(uri, mode: LaunchMode.externalApplication);
+2963:                                   } else {
+2964:                                     if (context.mounted) {
+2965:                                       ScaffoldMessenger.of(context).showSnackBar(
+2966:                                         const SnackBar(
+2967:                                           content: Text("Harita uygulaması açılamadı."),
+2968:                                           backgroundColor: Colors.red,
+2969:                                         ),
+2970:                                       );
+2971:                                     }
+2972:                                   }
+2973:                                 } catch (e) {
+2974:                                   debugPrint("Launch map error: $e");
+2975:                                   if (context.mounted) {
+2976:                                     ScaffoldMessenger.of(context).showSnackBar(
+2977:                                       const SnackBar(
+2978:                                         content: Text("Harita açılırken bir hata oluştu."),
+2979:                                         backgroundColor: Colors.red,
+2980:                                       ),
+2981:                                     );
+2982:                                   }
+2983:                                 }
+2984:                               }
+2985:                             },
+2986:                           ),
+2987:                         );
+2988:                       },
+2989:                     ),
+2990:         ),
+2991:       ],
+2992:     );
+2993:   }
+2994: 
+2995:   // 15. 40 Hadis
+2996:   Widget _buildHadis40() {
+2997:     final filtered = HADISLER_40.where((h) {
+2998:       final text = _normalize(h['metin'].toString());
+2999:       final source = _normalize(h['kaynak'].toString());
+3000:       final query = _normalize(_hadisSearchQuery);
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

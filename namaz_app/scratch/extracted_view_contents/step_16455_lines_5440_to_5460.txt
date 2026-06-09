@@ -1,0 +1,29 @@
+Created At: 2026-06-03T12:50:48Z
+Completed At: 2026-06-03T12:50:48Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7688
+Total Bytes: 312381
+Showing lines 5440 to 5460
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5440:               padding: const EdgeInsets.all(20),
+5441:               height: MediaQuery.of(context).size.height * 0.85,
+5442:               child: Column(
+5443:                 crossAxisAlignment: CrossAxisAlignment.start,
+5444:                 children: [
+5445:                   Center(
+5446:                     child: Container(
+5447:                       width: 40,
+5448:                       height: 5,
+5449:                       margin: const EdgeInsets.bottom(15),
+5450:                       decoration: BoxDecoration(
+5451:                         color: _isDark ? Colors.grey[700] : Colors.grey[300],
+5452:                         borderRadius: BorderRadius.circular(10),
+5453:                       ),
+5454:                     ),
+5455:                   ),
+5456:                   Row(
+5457:                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+5458:                     children: [
+5459:                       Expanded(
+5460:                         child: Column(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

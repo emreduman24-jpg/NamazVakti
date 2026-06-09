@@ -1,0 +1,1 @@
+  // Dini Gunler State\n  String _selectedDiniGunlerYear = \"2026\";\n  final Set<String> _expandedDiniGunlerCategories = {};\n  final Map<String, List<Map<String, String>>> _diniGunlerByYear = {

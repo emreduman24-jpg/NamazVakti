@@ -1,0 +1,1 @@
+                                color: isToday \n                                    ? const Color(0xFF27A770) \n                                    : (dark ? Colors.white.withOpacity(0.9) : Colors.black87),

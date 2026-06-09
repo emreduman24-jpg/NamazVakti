@@ -1,0 +1,27 @@
+Created At: 2026-06-01T12:00:36Z
+Completed At: 2026-06-01T12:00:37Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 19
+Total Bytes: 1154
+Showing lines 1 to 19
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Tasks Checklist - Premium Redeveloped Monthly Prayer Times
+2: 
+3: - [x] Modify `main_screen.dart` (Home Screen Cards & Content)
+4: - [x] Expand data in `prayer_data.dart` to 60 items
+5: - [x] Redesign `_buildKibleBulucu` to Spiritual Qibla Dial
+6: - [x] Modify `notification_settings_screen.dart`
+7: - [ ] Premium Monthly Prayer Times Redesign (`tool_detail_screen.dart`)
+8:   - [ ] Add state variables `_monthlyViewMode` and `_selectedCalendarDayIndex`
+9:   - [ ] Update `_loadMonthlyTimes()` to auto-focus today's date
+10:   - [ ] Re-engineer `_buildAylikNamazVakitleri()` with clean container logic
+11:   - [ ] Create prayer-specific styling & icon helper mappings
+12:   - [ ] Build sliding toggle selector bar (Liste / Takvim)
+13:   - [ ] Implement `_buildMonthlyListView()` (Spotlight Today Card + Aviation Grid Table)
+14:   - [ ] Implement `_buildMonthlyCalendarView()` (Interactive Grid Calendar Sheet + Dynamic Detail Badges)
+15: - [ ] Verification
+16:   - [ ] Run `flutter analyze lib/screens/tool_detail_screen.dart` to verify zero compile errors
+17:   - [ ] Send `R` key to background task to hot restart the emulator
+18:   - [ ] Verify visual correctness of the toggle, list view, and calendar sheet
+19: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,29 @@
+Created At: 2026-05-30T21:09:01Z
+Completed At: 2026-05-30T21:09:01Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5206
+Total Bytes: 212439
+Showing lines 2950 to 2970
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2950:                                   ),
+2951:                                 ),
+2952:                                 const SizedBox(height: 2),
+2953:                                 const Icon(Icons.directions, size: 16, color: Color(0xFF27A770)),
+2954:                               ],
+2955:                             ),
+2956:                             onTap: () {
+2957:                               final url = camii['harita'] ?? '';
+2958:                               if (url.isNotEmpty) {
+2959:                                 // Open Google Maps link
+2960:                                 debugPrint("Opening map: $url");
+2961:                               }
+2962:                             },
+2963:                           ),
+2964:                         );
+2965:                       },
+2966:                     ),
+2967:         ),
+2968:       ],
+2969:     );
+2970:   }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

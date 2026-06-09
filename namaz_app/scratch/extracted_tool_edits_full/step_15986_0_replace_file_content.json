@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add _zikirCompletedDates and _counterScale state variables to tool_detail_screen.dart for Zikirmatik redesign.\"",
+  "EndLine": "471",
+  "Instruction": "\"Add state variables for tracking completed zikir dates and the scale factor of the counter button.\"",
+  "ReplacementContent": "\"  // Zikirmatik State\\n  int _zikirCount = 0;\\n  int _zikirTarget = 33;\\n  bool _zikirSoundEnabled = true;\\n  String _selectedZikirId = 'subhanallah';\\n  Set<String> _zikirCompletedDates = {};\\n  double _counterScale = 1.0;\"",
+  "StartLine": "466",
+  "TargetContent": "\"  // Zikirmatik State\\n  int _zikirCount = 0;\\n  int _zikirTarget = 33;\\n  bool _zikirSoundEnabled = true;\\n  String _selectedZikirId = 'subhanallah';\"",
+  "TargetFile": "\"c:/Users/kral_/Namaz vakitleri/namaz_app/lib/screens/tool_detail_screen.dart\"",
+  "toolAction": "\"Replacing state variables block\"",
+  "toolSummary": "\"Edit tool_detail_screen.dart\""
+}

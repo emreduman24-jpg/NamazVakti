@@ -1,0 +1,1 @@
+  Widget _buildToolBody() {\n    switch (widget.toolId) {\n      case 'namaz-vakitleri-aylik':\n        return _buildNamazVakitleriAylik();\n      case 'dini-gunler':\n        return _buildDiniGunler();

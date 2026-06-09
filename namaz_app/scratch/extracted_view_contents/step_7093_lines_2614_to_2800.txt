@@ -1,0 +1,102 @@
+Created At: 2026-05-26T18:30:47Z
+Completed At: 2026-05-26T18:30:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4996
+Total Bytes: 201666
+Showing lines 2614 to 2800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2614:   // 14. Yakındaki Camiler
+2615:   Widget _buildYakindakiCamiler() {
+2616:     return Column(
+2617:       children: [
+2618:         // Hadith Card at the top
+2619:         Card(
+2620:           elevation: 1.5,
+2621:           shape: RoundedRectangleBorder(
+2622:             borderRadius: BorderRadius.circular(16),
+2623:           ),
+2624:           color: const Color(0xFFEAF7F1),
+2625:           child: Container(
+2626:             decoration: BoxDecoration(
+2627:               borderRadius: BorderRadius.circular(16),
+2628:               border: Border.all(
+2629:                 color: const Color(0xFF27A770).withOpacity(0.3),
+2630:                 width: 1,
+2631:               ),
+2632:             ),
+2633:             padding: const EdgeInsets.all(16.0),
+2634:             child: Column(
+2635:               crossAxisAlignment: CrossAxisAlignment.start,
+2636:               children: const [
+2637:                 Row(
+2638:                   children: [
+2639:                     Icon(
+2640:                       Icons.mosque,
+2641:                       color: Color(0xFF27A770),
+2642:                       size: 20,
+2643:                     ),
+2644:                     SizedBox(width: 8),
+2645:                     Text(
+2646:                       "Camide Namaz Kılmanın Fazileti",
+2647:                       style: TextStyle(
+2648:                         fontWeight: FontWeight.bold,
+2649:                         fontSize: 14,
+2650:                         color: Color(0xFF1E5E43),
+2651:                       ),
+2652:                     ),
+<truncated 4114 bytes>
+onst Text(
+2748:                         "mesafe",
+2749:                         style: TextStyle(fontSize: 10, color: Colors.grey),
+2750:                       ),
+2751:                     ],
+2752:                   ),
+2753:                 ),
+2754:               );
+2755:             },
+2756:           ),
+2757:         ),
+2758:       ],
+2759:     );
+2760:   }
+2761: 
+2762:   // 15. 40 Hadis
+2763:   Widget _buildHadis40() {
+2764:     final filtered = HADISLER_40.where((h) {
+2765:       final text = _normalize(h['metin'].toString());
+2766:       final source = _normalize(h['kaynak'].toString());
+2767:       final query = _normalize(_hadisSearchQuery);
+2768:       return text.contains(query) || source.contains(query);
+2769:     }).toList();
+2770: 
+2771:     return Column(
+2772:       children: [
+2773:         TextField(
+2774:           controller: _hadisSearchController,
+2775:           decoration: InputDecoration(
+2776:             hintText: "Hadislerde ara...",
+2777:             prefixIcon: const Icon(Icons.search, color: Color(0xFF27A770)),
+2778:             filled: true,
+2779:             fillColor: Colors.white,
+2780:             border: OutlineInputBorder(
+2781:               borderRadius: BorderRadius.circular(15),
+2782:               borderSide: BorderSide.none,
+2783:             ),
+2784:           ),
+2785:           onChanged: (val) {
+2786:             setState(() {
+2787:               _hadisSearchQuery = val;
+2788:               _hadisIndex = 0;
+2789:             });
+2790:           },
+2791:         ),
+2792:         const SizedBox(height: 16),
+2793:         if (filtered.isEmpty)
+2794:           const Expanded(
+2795:             child: Center(child: Text("Aranan kriterde hadis bulunamadı.")),
+2796:           )
+2797:         else ...[
+2798:           Expanded(
+2799:             child: Card(
+2800:               elevation: 2,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

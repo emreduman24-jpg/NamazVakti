@@ -1,0 +1,57 @@
+Created At: 2026-06-01T11:55:57Z
+Completed At: 2026-06-01T11:55:58Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 49
+Total Bytes: 2974
+Showing lines 1 to 49
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Goal Description
+2: 
+3: The user reported that the monthly prayer times screen ("Aylık Namaz Vakitleri") was showing empty (or defaulted to the blank "Bu özellik yakında eklenecektir" fallback screen).
+4: We will fully restore and enhance this screen by implementing a gorgeous, responsive **Aylık Namaz Vakitleri Table** inside `lib/screens/tool_detail_screen.dart`.
+5: 
+6: ## Proposed Design Concept: Premium Monthly Calendar Table
+7: 
+8: 1. **Aesthetic Spiritual Header:**
+9:    - Display a luxury header card with a gold calendar icon showing the active City and District name (e.g. `İstanbul / Fatih Aylık Vakitleri`) loaded dynamically from SQLite.
+10:    - Text explaining that the times are dynamically queried for the entire month.
+11: 
+12: 2. **Fully Responsive 7-Column Layout:**
+13:    - We will render a beautifully formatted table representing the 30-day prayer times cached in the app.
+14:    - To fit perfectly on mobile screens without overflowing, we will use a custom-designed flex row with precise flex factors:
+15:      - **Tarih (Date):** Flex 2 (e.g. `21 May Per`)
+16:      - **İmsak, Güneş, Öğle, İkindi, Akşam, Yatsı:** Flex 1 each
+17:      - Total Flex: 8
+18:    - Column headers are displayed in a sticky, high-contrast gold/emerald top card.
+19: 
+20: 3. **Wow-Factor Active Day Highlighting:**
+21:    - The current calendar day (matching today's date in `dd.MM.yyyy` format) is highlighted in a stunning glowing emerald card (`0xFF27A770` with 0.15 opacity, emerald borders) with a small **"Bugün"** gold badge, making it instantly recognizable.
+22: 
+23: 4. **Robust Database Integration:**
+24:    - We will load the 30-day list using `_repository.getPrayerTimes(districtId)` which gracefully handles both online API fetches and offline cached fallbacks.
+25: 
+26: ## Proposed Changes
+27: 
+28: ### [Component Name] UI Screens (namaz_app/lib/screens)
+29: 
+30: ---
+31: 
+32: #### [MODIFY] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+33: 
+34: - Define `_monthlyPrayerTimes` list and `_loadingMonthlyTimes` boolean state variables.
+35: - Implement `_loadMonthlyTimes()` method to retrieve stored location ID and load the 30-day prayer times list.
+36: - Update `initState()` to call `_loadMonthlyTimes()` if `widget.toolId == 'namaz-vakitleri-aylik'`.
+37: - Add case `'namaz-vakitleri-aylik'` inside the `_buildToolBody()` switch statement.
+38: - Implement `_buildAylikNamazVakitleri()` to render the premium monthly list/table with high-contrast, fully responsive, dark-mode adaptive layouts.
+39: 
+40: ## Verification Plan
+41: 
+42: ### Automated Tests
+43: - Run `dart analyze lib/screens/tool_detail_screen.dart` to verify zero compile or analyzer errors.
+44: 
+45: ### Manual Verification
+46: - Deploy to emulator `emulator-5554` via hot restart.
+47: - Click on "Aylık Namaz Vakitleri" on the home screen and verify that the magnificent monthly table renders immediately with today's date highlighted in a glowing emerald card.
+48: - Toggle between light and dark themes to ensure text readability is excellent and background contrast is high.
+49: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,87 @@
+Created At: 2026-06-01T18:22:19Z
+Completed At: 2026-06-01T18:22:19Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6358
+Total Bytes: 258018
+Showing lines 2550 to 2650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2550:                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2551:                       children: [
+2552:                         Text("Konum:", style: TextStyle(fontSize: 13, color: dark ? Colors.white70 : Colors.grey[800])),
+2553:                         Text(_currentLocationName.isNotEmpty ? _currentLocationName : "İstanbul", 
+2554:                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: dark ? Colors.white : Colors.black87)),
+2555:                       ],
+2556:                     ),
+2557:                   ],
+2558:                 ),
+2559:               ),
+2560:               const SizedBox(height: 16),
+2561: 
+2562:               // Clean elegant warning for emulators / missing sensors (NO simulator switches/sliders in UI)
+2563:               if (sensorMissing)
+2564:                 Container(
+2565:                   padding: const EdgeInsets.all(12),
+2566:                   decoration: BoxDecoration(
+2567:                     color: Colors.orange.withOpacity(0.08),
+2568:                     borderRadius: BorderRadius.circular(16),
+2569:                     border: Border.all(color: Colors.orange.withOpacity(0.3), width: 1),
+2570:                   ),
+2571:                   child: Row(
+2572:                     children: [
+2573:                       const Icon(Icons.info_outline_rounded, color: Colors.orange, size: 20),
+2574:                       const SizedBox(width: 10),
+2575:                       Expanded(
+2576:                         child: Text(
+2577:                       
+<truncated 1239 bytes>
+: Icons.wb_sunny_outlined, 'color': Color(0xFF8D6E63)},
+2602:     {'name': 'Akşam', 'key': 'Aksam', 'icon': Icons.flare, 'color': Color(0xFFFF7043)},
+2603:     {'name': 'Yatsı', 'key': 'Yatsi', 'icon': Icons.brightness_3, 'color': Color(0xFF3F51B5)},
+2604:   ];
+2605: 
+2606:   Widget _buildAylikNamazVakitleri() {
+2607:     final bool dark = _isDark;
+2608: 
+2609:     if (_loadingMonthlyTimes) {
+2610:       return Center(
+2611:         child: Column(
+2612:           mainAxisAlignment: MainAxisAlignment.center,
+2613:           children: [
+2614:             CircularProgressIndicator(
+2615:               valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
+2616:             ),
+2617:             const SizedBox(height: 16),
+2618:             Text(
+2619:               "Namaz Vakitleri Yükleniyor...",
+2620:               style: TextStyle(
+2621:                 fontSize: 14,
+2622:                 color: _textColor,
+2623:                 fontWeight: FontWeight.w500,
+2624:               ),
+2625:             ),
+2626:           ],
+2627:         ),
+2628:       );
+2629:     }
+2630: 
+2631:     if (_monthlyPrayerTimes.isEmpty) {
+2632:       return Center(
+2633:         child: Padding(
+2634:           padding: const EdgeInsets.all(24.0),
+2635:           child: Column(
+2636:             mainAxisAlignment: MainAxisAlignment.center,
+2637:             children: [
+2638:               const Icon(
+2639:                 Icons.cloud_off,
+2640:                 color: Colors.grey,
+2641:                 size: 64,
+2642:               ),
+2643:               const SizedBox(height: 16),
+2644:               Text(
+2645:                 "Namaz Vakitleri Alınamadı",
+2646:                 style: TextStyle(
+2647:                   fontSize: 16,
+2648:                   fontWeight: FontWeight.bold,
+2649:                   color: _textColor,
+2650:                 ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

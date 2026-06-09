@@ -1,0 +1,81 @@
+Created At: 2026-06-01T17:41:24Z
+Completed At: 2026-06-01T17:41:25Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6358
+Total Bytes: 258018
+Showing lines 2800 to 2950
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2800:                         children: [
+2801:                           Icon(
+2802:                             Icons.calendar_view_month,
+2803:                             size: 15,
+2804:                             color: _monthlyViewMode == 'takvim' ? Colors.white : (dark ? Colors.white70 : Colors.black54),
+2805:                           ),
+2806:                           const SizedBox(width: 6),
+2807:                           Text(
+2808:                             "Takvim Görünümü",
+2809:                             style: TextStyle(
+2810:                               fontSize: 12,
+2811:                               fontWeight: FontWeight.bold,
+2812:                               color: _monthlyViewMode == 'takvim' ? Colors.white : (dark ? Colors.white70 : Colors.black54),
+2813:                             ),
+2814:                           ),
+2815:                         ],
+2816:                       ),
+2817:                     ),
+2818:                   ),
+2819:                 ),
+2820:               ),
+2821:             ],
+2822:           ),
+2823:         ),
+2824: 
+2825:         // Body switcher
+2826:         if (_monthlyViewMode == 'liste')
+2827:           _buildMonthlyListView(dark, todayStr)
+2828:         else
+2829:           _buildMonthlyCalendarView(dark, todayStr)
+2830:       ],
+2831:     );
+2832:   }
+2833: 
+2834:   Widget _buildMonthlyListView(bool dark, String todayStr) {
+2835:     return Expanded(
+2836:       child: ListView(
+2837:         padding: EdgeInsets.zero,
+2838:         children: [
+2839:           Padding(
+2
+<truncated 3628 bytes>
+      final day = _monthlyPrayerTimes[index];
+2921:                 final String dateStr = day['MiladiTarihKisa'] ?? '';
+2922:                 final isToday = dateStr == todayStr;
+2923: 
+2924:                 // Format short date (e.g. "21 May Per")
+2925:                 final String dateUzun = day['MiladiTarihUzun'] ?? '';
+2926:                 final List<String> dateParts = dateUzun.split(' ');
+2927:                 String shortDate = dateStr;
+2928:                 if (dateParts.length >= 4) {
+2929:                   final String d = dateParts[0];
+2930:                   final String m = dateParts[1].substring(0, math.min(3, dateParts[1].length));
+2931:                   final String dayName = dateParts[3].substring(0, math.min(3, dateParts[3].length));
+2932:                   shortDate = "$d $m $dayName";
+2933:                 }
+2934: 
+2935:                 return Container(
+2936:                   padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
+2937:                   decoration: BoxDecoration(
+2938:                     color: isToday
+2939:                         ? const Color(0xFF27A770).withOpacity(dark ? 0.15 : 0.08)
+2940:                         : (index % 2 == 0
+2941:                             ? (dark ? const Color(0xFF131D31).withOpacity(0.4) : Colors.white)
+2942:                             : (dark ? const Color(0xFF0F1B2A).withOpacity(0.2) : const Color(0xFFF9FBF9))),
+2943:                     border: Border(
+2944:                       bottom: BorderSide(
+2945:                         color: dark ? Colors.white.withOpacity(0.04) : Colors.grey[200]!,
+2946:                         width: 1,
+2947:                       ),
+2948:                       left: isToday
+2949:                           ? const BorderSide(color: Color(0xFF27A770), width: 4.5)
+2950:                           : BorderSide.none,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

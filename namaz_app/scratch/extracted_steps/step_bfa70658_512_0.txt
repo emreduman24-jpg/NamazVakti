@@ -1,0 +1,1 @@
+  // Sahabe Hayatlari & Esmaül Hüsna Search State\n  String _esmaSearchQuery = \"\";\n  String _sahabeSearchQuery = \"\";\n  String _hadisSearchQuery = \"\";

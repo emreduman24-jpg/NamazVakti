@@ -1,0 +1,66 @@
+
+--- Line 16530 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (2015 chars):
+"  static const List<Map<String, dynamic>> defaultTools = [\n    { \"id\": \"dini-gunler\", \"title\": \"Dini Günler\", \"desc\": \"Kandiller ve bayramlar\", \"icon\": \"📅\", \"color\": \"0xFFEAF7F1\", \"sira\": 1, \"aktif\": true },\n    { \"id\": \"dua-iste\", \"title\": \"Dua İste\", \"desc\": \"Dualarınızı paylaşın\", \"icon\": \"🤲\", \"color\": \"0xFFEAF4FB\", \"sira\": 2, \"aktif\": true },\n    { \"id\": \"soru-cevap\", \"title\": \"Soru Cevap\", \"desc\": \"Dini danışmana soru sorun\", \"icon\": \"💬\", \"color\": \"0xFFFFF7EA\", \"sira\": 3, \"aktif\": true },\n    { \"id\": \"canli-sohbet\", \"title\": \"Canlı Kur'an Radyosu\", \"desc\": \"7/24 Kesintisiz Diyanet Kur'an Radyo\", \"icon\": \"🎧\", \"color\": \"0xFFFBEAEA\", \"sira\": 4, \"aktif\": true },\n    { \"id\": \"peygamber-hayati\", \"title\": \"Peygamberin Hayatı\", \"desc\": \"Hz. Muhammed'in yaşamı\", \"icon\": \"📖\", \"color\": \"0xFFEAF7F1\", \"sira\": 5, \"aktif\": true },\n    { \"id\": \"kuran-kerim\", \"title\": \"Kuran-ı Kerim\", \"desc\": \"30 cüz sesli okuma ve takip\", \"icon\": \"🕌\", \"color\": \"0xFFFFF7EA\", \"sira\": 6, \"aktif\": true },\n    { \"id\": \"esmaul-husna\", \"title\": \"Esmaül Hüsna\", \"desc\": \"Allah'ın 99 ismi\", \"icon\": \"✨\", \"color\": \"0xFFEAF4FB\", \"sira\": 7, \"aktif\": true },\n    { \"id\": \"kible-bulucu\", \"title\": \"Kıble Bulucu\", \"desc\": \"Dijital pusula ile yön\", \"icon\": \"🧭\", \"color\": \"0xFFFFF7EA\", \"sira\": 8, \"aktif\": true },\n    { \"id\": \"zikirmatik\", \"title\": \"Zikirmatik\", \"desc\": \"Dijital tesbih sayacı\", \"icon\": \"📿\", \"color\": \"0xFFEAF4FB\", \"sira\": 9, \"aktif\": true },\n    { \"id\": \"yakindaki-camiler\", \"title\": \"Yakındaki Camiler\", \"desc\": \"Konumunuza en yakın camiler\", \"icon\": \"📍\", \"color\": \"0xFFFFF7EA\", \"sira\": 10, \"aktif\": true },\n    { \"id\": \"hadis-40\", \"title\": \"40 Hadis-i Şerif\", \"desc\": \"40 Hadis meali ve dersler\", \"icon\": \"📜\", \"color\": \"0xFFEAF4FB
+<truncated 1937 bytes>
+
+--- Line 16531 (MODEL Tool Call) ---
+
+--- Line 16553 (MODEL Tool Call) ---
+
+--- Line 16562 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (648 chars):
+"    \"Ve aleyküm selam ve rahmetullah.\",\n  ];\n\n  // Dini Hoca AI State\n  final List<Map<String, String>> _diniHocaMessages = [\n    {\n      'sender': 'ai',\n      'text': 'Selamün Aleyküm mümin kardeşim. Ben Dini Hoca Yapay Zeka Danışmanıyım. İslam fıkhı, inanç, ibadetler (abdest, namaz, zekat vb.), hadis-i şerifler veya ahlak adabı hakkında aklına takılan her soruyu bana sorabilirsin. Sana hayırla rehberlik etmek için buradayım.',\n    }\n  ];\n  final TextEditingController _diniHocaInputController = TextEditingController();\n  final ScrollController _diniHocaScrollController = ScrollController();\n  bool _diniHocaIsTyping = false;"
+
+--- Line 16563 (MODEL Tool Call) ---
+
+--- Line 16566 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (567 chars):
+"  @override\n  void dispose() {\n    _audioPlayer?.dispose();\n    _duaNameController.dispose();\n    _duaTextController.dispose();\n    _questionNameController.dispose();\n    _qaInputController.dispose();\n    _chatInputController.dispose();\n    _diniHocaInputController.dispose();\n    _diniHocaScrollController.dispose();\n    _hadisSearchController.dispose();\n    _dualarSearchController.dispose();\n    _goldController.dispose();\n    _cashController.dispose();\n    _businessController.dispose();\n    _debtsController.dispose();\n    super.dispose();\n  }"
+
+--- Line 16572 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (124 chars):
+"      case 'canli-sohbet':\n        return _buildCanliSohbet();\n      case 'dini-hoca':\n        return _buildDiniHoca();"
+
+--- Line 16573 (MODEL Tool Call) ---
+
+--- Line 16590 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (198 chars):
+"  ];\n  final TextEditingController _chatInputController = TextEditingController();\n\n  // Dini Hoca State\n  List<Map<String, dynamic>> _diniHocaMessages = [];\n  bool _diniHocaIsTyping = false;"
+
+--- Line 16591 (MODEL Tool Call) ---
+
+--- Line 16594 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (268 chars):
+"  // Dini Hoca State\n  List<Map<String, dynamic>> _diniHocaMessages = [];\n  bool _diniHocaIsTyping = false;\n  final ScrollController _diniHocaScrollController = ScrollController();\n  final TextEditingController _diniHocaInputController = TextEditingController();"
+
+--- Line 16595 (MODEL Tool Call) ---
+
+--- Line 16608 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (2018 chars):
+"  }\n\n  // Dini Hoca Asistanı (Yapay Zeka)\n  void _initDiniHoca() {\n    if (_diniHocaMessages.isEmpty) {\n      _diniHocaMessages = [\n        {\n          'isMe': false,\n          'text': \"Selamün Aleyküm mümin kardeşim. Ben yapay zeka Dini Hoca asistanınızım. İslamiyet, ibadetler (namaz, abdest, gusül, oruç, zekat vb.), dualar ve sureler hakkında sormak istediğiniz soruları cevaplamaktan mutluluk duyarım. Nasıl yardımcı olabilirim?\",\n          'time': DateTime.now(),\n        }\n      ];\n    }\n  }\n\n  Widget _buildDiniHoca() {\n    _initDiniHoca();\n    \n    final suggestions = [\n      \"Abdest nasıl alınır? 💧\",\n      \"Guslün farzları nelerdir? 🚿\",\n      \"Namazın farzları nelerdir? 🕋\",\n      \"Orucu bozan şeyler nelerdir? 🌙\",\n      \"Zekat kimlere verilir? 💰\",\n      \"Sehiv secdesi nedir? 🙇\",\n      \"Kaza namazı nasıl kılınır? 🕰️\",\n    ];\n\n    return Column(\n      children: [\n        // AI Advisor Header Card\n        Container(\n          margin: const EdgeInsets.all(12),\n          padding: const EdgeInsets.all(12),\n          decoration: BoxDecoration(\n            color: _isDark ? const Color(0xFF131D31) : const Color(0xFFEBF5F0),\n            borderRadius: BorderRadius.circular(16),\n            border: Border.all(\n              color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFC2E3D2),\n            ),\n          ),\n          child: Row(\n            children: [\n              Container(\n                padding: const EdgeInsets.all(10),\n                decoration: BoxDecoration(\n                  color: _isDark ? const Color(0xFF1E2D4A) : Colors.white,\n                  shape: BoxShape.circle,\n                ),\n                child: const Icon(\n                  Icons.psychology_rounded,\n                  color: Color(0xFFC5A059),\n                  size: 28,\n                ),\n              ),\n              const SizedBox(width: 12),\n              Expanded(\n                child: Column(\n    
+<truncated 24225 bytes>
+
+--- Line 16609 (MODEL Tool Call) ---
+
+--- Line 16620 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (40 chars):
+"  // Dini Hoca State is defined above."
+
+--- Line 16621 (MODEL Tool Call) ---
+
+--- Line 16624 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (589 chars):
+"  // Dini Hoca State\n  List<Map<String, dynamic>> _diniHocaMessages = [\n    {\n      'sender': 'ai',\n      'text': 'Selamün Aleyküm mümin kardeşim. Ben Dini Hoca Yapay Zeka Danışmanıyım. İslam fıkhı, inanç, ibadetler (abdest, namaz, zekat vb.), hadis-i şerifler veya ahlak adabı hakkında aklına takılan her soruyu bana sorabilirsin. Sana hayırla rehberlik etmek için buradayım.',\n    }\n  ];\n  bool _diniHocaIsTyping = false;\n  final ScrollController _diniHocaScrollController = ScrollController();\n  final TextEditingController _diniHocaInputController = TextEditingController();"
+
+--- Line 16625 (MODEL Tool Call) ---
+
+--- Line 16657 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (448 chars):
+"            ],\n          ),\n        ),\n      ),\n    );\n  }\n\n  Widget _buildDiniHoca() {\n    final List<String> suggestions = [\n      \"Abdest nasıl alınır? 💧\",\n      \"Namazın farzları nelerdir? 🕋\",\n      \"Gusül abdesti farzları 🚿\",\n      \"Sehiv secdesi nedir? 🙇\",\n      \"Zekat kimlere verilir? 💰\",\n      \"Orucu bozan şeyler 🍽️\",\n    ];\n\n    return Column(\n      children: [\n        // Message List\n        Expanded("
+
+--- Line 16659 (MODEL Tool Call) ---
+REPLACEMENT CONTENT FOR CALL 0 (448 chars):
+"            ],\n          ),\n        ),\n      ),\n    );\n  }\n\n  Widget _buildDiniHoca() {\n    final List<String> suggestions = [\n      \"Abdest nasıl alınır? 💧\",\n      \"Namazın farzları nelerdir? 🕋\",\n      \"Gusül abdesti farzları 🚿\",\n      \"Sehiv secdesi nedir? 🙇\",\n      \"Zekat kimlere verilir? 💰\",\n      \"Orucu bozan şeyler 🍽️\",\n    ];\n\n    return Column(\n      children: [\n        // Message List\n        Expanded("
+
+--- Line 16660 (MODEL Tool Call) ---

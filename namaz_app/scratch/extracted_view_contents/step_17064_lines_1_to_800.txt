@@ -1,0 +1,94 @@
+Created At: 2026-06-03T14:12:52Z
+Completed At: 2026-06-03T14:12:52Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8789
+Total Bytes: 358430
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:convert';
+3: import 'dart:math' as math;
+4: import 'package:flutter/material.dart';
+5: import 'package:http/http.dart' as http;
+6: import 'package:flutter/services.dart';
+7: import 'package:flutter_compass/flutter_compass.dart';
+8: import 'package:audioplayers/audioplayers.dart';
+9: import 'package:shared_preferences/shared_preferences.dart';
+10: import 'package:geolocator/geolocator.dart';
+11: import 'package:url_launcher/url_launcher.dart';
+12: import '../data/prayer_data.dart';
+13: import '../data/prayer_repository.dart';
+14: import '../data/quran_data.dart';
+15: import 'quran_detail_screen.dart';
+16: 
+17: class ToolDetailScreen extends StatefulWidget {
+18:   final String toolId;
+19:   final String toolTitle;
+20:   final bool isTab;
+21: 
+22:   const ToolDetailScreen({
+23:     super.key,
+24:     required this.toolId,
+25:     required this.toolTitle,
+26:     this.isTab = false,
+27:   });
+28: 
+29:   @override
+30:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+31: }
+32: 
+33: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+34:   final PrayerRepository _repository = PrayerRepository();
+35:   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+36:   Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xff1e5e43);
+37:   Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000); // _textColor equivalent
+38:   Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000); // _subtitleColor equivalent
+39:   Color ge
+<truncated 36637 bytes>
+  _loadMonthlyTimes();
+756:     }
+757:     _initAudio();
+758:     _loadZikirState();
+759:     _loadDuaList();
+760:     _loadQuestionList();
+761:     _loadKazaState();
+762:     _loadQuranLastRead();
+763:     _loadFavoriteDualar();
+764:   }
+765: 
+766:   Future<void> _loadQuranLastRead() async {
+767:     final prefs = await SharedPreferences.getInstance();
+768:     if (mounted) {
+769:       setState(() {
+770:         _lastSuraNo = prefs.getInt('quran_last_sura_no') ?? 1;
+771:         _lastSuraName = prefs.getString('quran_last_sura_name') ?? "Fâtiha";
+772:         _lastAyahNo = prefs.getInt('quran_last_ayah_no') ?? 1;
+773:         _lastTotalAyahs = prefs.getInt('quran_last_total_ayahs') ?? 7;
+774:         _lastPercent = prefs.getInt('quran_last_percent') ?? 0;
+775: 
+776:         _lastJuzNo = prefs.getInt('quran_last_juz_no') ?? 1;
+777:         _lastJuzTitle = prefs.getString('quran_last_juz_title') ?? "1. Cüz";
+778:         _lastJuzRange = prefs.getString('quran_last_juz_range') ?? "Fâtiha 1 - Bakara 141";
+779:         _lastJuzSuraNo = prefs.getInt('quran_last_juz_sura_no') ?? 1;
+780:         _lastJuzAyahNo = prefs.getInt('quran_last_juz_ayah_no') ?? 1;
+781:         _lastJuzPercent = prefs.getInt('quran_last_juz_percent') ?? 0;
+782: 
+783:         _quranBookmarks = prefs.getStringList('quran_bookmarks') ?? [];
+784:       });
+785:     }
+786:   }
+787: 
+788:   Future<void> _toggleQuranBookmark(String suraNoStr) async {
+789:     final prefs = await SharedPreferences.getInstance();
+790:     setState(() {
+791:       if (_quranBookmarks.contains(suraNoStr)) {
+792:         _quranBookmarks.remove(suraNoStr);
+793:       } else {
+794:         _quranBookmarks.add(suraNoStr);
+795:       }
+796:     });
+797:     await prefs.setStringList('quran_bookmarks', _quranBookmarks);
+798:   }
+799: 
+800:   Map<String, int> _getJuzStartInfo(int juzNumber) {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

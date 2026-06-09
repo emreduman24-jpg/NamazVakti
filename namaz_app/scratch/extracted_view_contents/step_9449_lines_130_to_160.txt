@@ -1,0 +1,39 @@
+Created At: 2026-05-30T21:45:27Z
+Completed At: 2026-05-30T21:45:27Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5229
+Total Bytes: 213775
+Showing lines 130 to 160
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+130: 
+131:               // Build address from tags
+132:               final street = tags['addr:street'] ?? '';
+133:               final district = tags['addr:district'] ?? tags['addr:suburb'] ?? '';
+134:               final city = tags['addr:city'] ?? '';
+135:               String address = [street, district, city]
+136:                   .where((s) => s.toString().isNotEmpty)
+137:                   .join(', ');
+138:               if (address.isEmpty) {
+139:                 address = tags['addr:full']?.toString() ?? '';
+140:               }
+141: 
+142:               final dist = _calculateDistance(lat, lon, mLat, mLon);
+143:               final encodedName = Uri.encodeComponent(name.toString());
+144: 
+145:               mosques.add({
+146:                 'ad': name.toString(),
+147:                 'adres': address.isNotEmpty ? address : 'Konum: ${mLat.toStringAsFixed(4)}, ${mLon.toStringAsFixed(4)}',
+148:                 'harita': 'https://maps.google.com/?q=$mLat,$mLon&query=$encodedName',
+149:                 'lat': mLat,
+150:                 'lon': mLon,
+151:                 'mesafeVal': dist,
+152:                 'mesafeText': dist < 1
+153:                     ? '${(dist * 1000).toInt()} m'
+154:                     : '${dist.toStringAsFixed(1)} km',
+155:               });
+156:             }
+157: 
+158:             // Sort by distance
+159:             mosques.sort((a, b) =>
+160:                 (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

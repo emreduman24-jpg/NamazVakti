@@ -1,0 +1,38 @@
+Created At: 2026-06-01T11:29:19Z
+Completed At: 2026-06-01T11:29:19Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 30
+Total Bytes: 2002
+Showing lines 1 to 30
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Tasks Checklist - Dark Mode Visual Fixes
+2: 
+3: - [x] Modify `main_screen.dart` (Home Screen Cards)
+4:   - [x] Update `_buildDailyTextCard` (Verse and Hadith) to adapt to dark mode
+5:   - [x] Update `Günün İsim Önerileri` card to use a dark overlay & appropriate text colors
+6:   - [x] Update `Geliştirici Mesajı` banner card background & text colors
+7:   - [x] Update `_dayIndex` calculation formula to dynamically support all 60 items across months
+8: - [x] Expand data in `prayer_data.dart` to 60 items
+9:   - [x] Generate and write 60 unique authentic Quranic verses to `VAKTIN_AYETLERI`
+10:   - [x] Generate and write 60 unique authentic hadiths to `VAKTIN_HADISLERI`
+11:   - [x] Generate and write 60 unique beautiful baby name pairs to `GUNUN_ISIMLERI`
+12: - [ ] Redesign `_buildKibleBulucu` to Futuristic Qibla Radar (No Simulation)
+13:   - [ ] Implement `_KibleRadarPainter` class for futuristic radar grids and sweep cones
+14:   - [ ] Implement smart target lock HUD displaying directions (Turn Left/Right)
+15:   - [ ] Calculate actual distance to Mecca from GPS position dynamically
+16:   - [ ] Support clean fallback warning for devices without compass sensors (No Simulation controls)
+17: - [x] Modify `notification_settings_screen.dart`
+18:   - [x] Set `_buildPrayerTimesSection` card color dynamically
+19:   - [x] Set `_buildSoundSection` card color dynamically
+20:   - [x] Set text colors in `RadioListTile` & `CheckboxListTile` dynamically
+21: - [x] Modify `tool_detail_screen.dart`
+22:   - [x] Add dynamic helper getters (`_isDark`, `_greenColor`, `_textColor`, `_subtitleColor`, `_cardBgColor`)
+23:   - [x] Replace `Color(0xFF1E5E43)` references in tools with `_greenColor`
+24:   - [x] Replace `Colors.black87` references in tools with `_textColor`
+25:   - [x] Replace `Colors.black54` references in tools with `_subtitleColor`
+26:   - [x] Adapt custom card backgrounds & ChoiceChips `backgroundColor` dynamically
+27: - [x] Verification
+28:   - [x] Run `flutter analyze lib/` to verify zero compiler errors
+29:   - [x] Send `R` key to background task to hot restart the emulator
+30: 
+The above content shows the entire, complete file contents of the requested file.

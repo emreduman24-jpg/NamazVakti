@@ -1,0 +1,82 @@
+Created At: 2026-05-22T16:05:49Z
+Completed At: 2026-05-22T16:05:49Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 1975
+Total Bytes: 78817
+Showing lines 1600 to 1800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1600:                 const Divider(height: 12),
+1601:                 Align(
+1602:                   alignment: Alignment.centerRight,
+1603:                   child: Text(
+1604:                     dua['arapca'] ?? '',
+1605:                     style: const TextStyle(fontFamily: 'Traditional Arabic', fontSize: 18, height: 1.8, fontWeight: FontWeight.bold, color: Color(0xFF27A770)),
+1606:                     textAlign: TextAlign.right,
+1607:                   ),
+1608:                 ),
+1609:                 const SizedBox(height: 8),
+1610:                 Text("Anlamı: ${dua['anlam']}", style: const TextStyle(fontSize: 13, color: Colors.black87)),
+1611:               ],
+1612:             ),
+1613:           ),
+1614:         );
+1615:       },
+1616:     );
+1617:   }
+1618: 
+1619:   // 18. Zekat Hesaplayıcı
+1620:   Widget _buildZekatHesaplama() {
+1621:     return SingleChildScrollView(
+1622:       child: Column(
+1623:         crossAxisAlignment: CrossAxisAlignment.start,
+1624:         children: [
+1625:           const Text("Dinen zengin sayılan kişilerin yılda bir kez vermesi gereken zekat miktarını hesaplayın.", style: TextStyle(color: Colors.grey, fontSize: 12)),
+1626:           const SizedBox(height: 12),
+1627:           TextField(
+1628:             controller: _goldController,
+1629:             keyboardType: TextInputType.number,
+1630:             decoration: InputDecoration(
+1631:               labelText: "Altın Miktarı (Gram)",
+1632:               filled: true,
+1633:               fillColor: Colors.white,
+1634:               border: Ou
+<truncated 6263 bytes>
+                  children: [
+1764:                       Row(
+1765:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+1766:                         children: [
+1767:                           Text(item['ad'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E5E43))),
+1768:                           Container(
+1769:                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+1770:                             decoration: BoxDecoration(
+1771:                               color: const Color(0xFFFFD700).withOpacity(0.15),
+1772:                               borderRadius: BorderRadius.circular(12),
+1773:                             ),
+1774:                             child: Text(
+1775:                               item['unvan'] ?? '',
+1776:                               style: const TextStyle(color: Color(0xFFB8860B), fontSize: 11, fontWeight: FontWeight.bold),
+1777:                             ),
+1778:                           )
+1779:                         ],
+1780:                       ),
+1781:                       const Divider(height: 16),
+1782:                       Text(item['ozet'] ?? '', style: const TextStyle(fontSize: 13, height: 1.45, color: Colors.black87)),
+1783:                     ],
+1784:                   ),
+1785:                 ),
+1786:               );
+1787:             },
+1788:           ),
+1789:         )
+1790:       ],
+1791:     );
+1792:   }
+1793: 
+1794:   // 20. İslam Tarihi
+1795:   Widget _buildIslamTarihi() {
+1796:     return Column(
+1797:       crossAxisAlignment: CrossAxisAlignment.start,
+1798:       children: [
+1799:         const Text("İslam Tarihi Önemli Dönemeçleri", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E5E43))),
+1800:         const SizedBox(height: 12),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

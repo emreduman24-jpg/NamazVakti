@@ -1,0 +1,113 @@
+Created At: 2026-06-01T10:22:18Z
+Completed At: 2026-06-01T10:22:18Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5512
+Total Bytes: 227382
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:convert';
+3: import 'dart:math' as math;
+4: import 'package:flutter/material.dart';
+5: import 'package:http/http.dart' as http;
+6: import 'package:flutter/services.dart';
+7: import 'package:flutter_compass/flutter_compass.dart';
+8: import 'package:audioplayers/audioplayers.dart';
+9: import 'package:shared_preferences/shared_preferences.dart';
+10: import 'package:geolocator/geolocator.dart';
+11: import 'package:url_launcher/url_launcher.dart';
+12: import '../data/prayer_data.dart';
+13: import '../data/prayer_repository.dart';
+14: 
+15: class ToolDetailScreen extends StatefulWidget {
+16:   final String toolId;
+17:   final String toolTitle;
+18: 
+19:   const ToolDetailScreen({
+20:     super.key,
+21:     required this.toolId,
+22:     required this.toolTitle,
+23:   });
+24: 
+25:   @override
+26:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+27: }
+28: 
+29: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+30:   final PrayerRepository _repository = PrayerRepository();
+31:   AudioPlayer? _audioPlayer;
+32:   PlayerState _playerState = PlayerState.stopped;
+33:   String _currentAudioUrl = "";
+34:   String _currentTrackName = "";
+35: 
+36:   // Yakındaki Camiler (Location & GPS State)
+37:   Position? _currentPosition;
+38:   bool _loadingLocation = false;
+39:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+40: 
+41:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+42:     const r = 6371; // Earth radius in km
+43:     final dLat = _toRadians(lat2 - lat1);
+4
+<truncated 35461 bytes>
+temSound.play(SystemSoundType.click);
+742:     }
+743:     setState(() {
+744:       _zikirCount++;
+745:     });
+746:     await _repository.setZikirCount(_zikirCount);
+747: 
+748:     if (_zikirTarget != 9999 && _zikirCount >= _zikirTarget) {
+749:       HapticFeedback.vibrate();
+750:       ScaffoldMessenger.of(context).showSnackBar(
+751:         SnackBar(
+752:           content: Text(
+753:             "Tebrikler! ${_zikirData[_selectedZikirId]?['ad'] ?? ''} zikrini tamamladınız!",
+754:           ),
+755:           backgroundColor: const Color(0xFF27A770),
+756:         ),
+757:       );
+758:       setState(() {
+759:         _zikirCount = 0;
+760:       });
+761:       await _repository.setZikirCount(0);
+762:     }
+763:   }
+764: 
+765:   Future<void> _resetZikir() async {
+766:     setState(() {
+767:       _zikirCount = 0;
+768:     });
+769:     await _repository.setZikirCount(0);
+770:   }
+771: 
+772:   // Dua list persist (approved only)
+773:   Future<void> _loadDuaList() async {
+774:     final list = await _repository.getDuaList();
+775:     if (mounted) {
+776:       setState(() {
+777:         _duaList = list.where((d) => d['durum'] == 'yayinda').toList();
+778:       });
+779:     }
+780:   }
+781: 
+782:   Future<void> _addDua() async {
+783:     final name = _duaNameController.text.trim();
+784:     final text = _duaTextController.text.trim();
+785:     if (text.isEmpty) return;
+786: 
+787:     _duaNameController.clear();
+788:     _duaTextController.clear();
+789: 
+790:     await _repository.addDua(name.isEmpty ? "Anonim" : name, text);
+791:     await _loadDuaList();
+792: 
+793:     ScaffoldMessenger.of(context).showSnackBar(
+794:       const SnackBar(
+795:         content: Text("Dua talebiniz onay için gönderildi. Onaylandıktan sonra yayınlanacaktır."),
+796:         backgroundColor: Color(0xFF27A770),
+797:       ),
+798:     );
+799:   }
+800: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

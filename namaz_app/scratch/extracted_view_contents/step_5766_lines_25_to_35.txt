@@ -1,0 +1,19 @@
+Created At: 2026-05-24T09:10:20Z
+Completed At: 2026-05-24T09:10:20Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4768
+Total Bytes: 194242
+Showing lines 25 to 35
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+25: 
+26: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+27:   final PrayerRepository _repository = PrayerRepository();
+28:   AudioPlayer? _audioPlayer;
+29:   PlayerState _playerState = PlayerState.stopped;
+30:   String _currentAudioUrl = "";
+31:   String _currentTrackName = "";
+32: 
+33:   // Zikirmatik State
+34:   int _zikirCount = 0;
+35:   int _zikirTarget = 33;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

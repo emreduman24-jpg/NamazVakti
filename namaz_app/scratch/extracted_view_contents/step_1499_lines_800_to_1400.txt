@@ -1,0 +1,80 @@
+Created At: 2026-05-22T16:51:24Z
+Completed At: 2026-05-22T16:51:24Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 2010
+Total Bytes: 80335
+Showing lines 800 to 1400
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+800:       final meaning = _normalize(item['anlam'].toString());
+801:       final query = _normalize(_esmaSearchQuery);
+802:       return name.contains(query) || meaning.contains(query);
+803:     }).toList();
+804: 
+805:     return Column(
+806:       children: [
+807:         TextField(
+808:           decoration: InputDecoration(
+809:             hintText: "İsim ara (Örn: Rahman)...",
+810:             prefixIcon: const Icon(Icons.search, color: Color(0xFF27A770)),
+811:             filled: true,
+812:             fillColor: Colors.white,
+813:             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+814:           ),
+815:           onChanged: (val) {
+816:             setState(() {
+817:               _esmaSearchQuery = val;
+818:             });
+819:           },
+820:         ),
+821:         const SizedBox(height: 12),
+822:         Expanded(
+823:           child: ListView.builder(
+824:             itemCount: filtered.length,
+825:             itemBuilder: (context, index) {
+826:               final item = filtered[index];
+827:               return Card(
+828:                 elevation: 1.5,
+829:                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+830:                 margin: const EdgeInsets.only(bottom: 12),
+831:                 child: Padding(
+832:                   padding: const EdgeInsets.all(16.0),
+833:                   child: Column(
+834:                     crossAxisAlignment: CrossAxisAlignment.start,
+835:                     children: [
+836:                 
+<truncated 25615 bytes>
+:         ),
+1368:         const SizedBox(height: 8),
+1369:         Expanded(
+1370:           child: Container(
+1371:             padding: const EdgeInsets.all(16),
+1372:             decoration: BoxDecoration(
+1373:               color: Colors.white,
+1374:               borderRadius: BorderRadius.circular(16),
+1375:               border: Border.all(color: Colors.grey[200]!),
+1376:             ),
+1377:             child: const SingleChildScrollView(
+1378:               child: Text(
+1379:                 "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\n"
+1380:                 "يس ﴿١﴾ وَالْقُرْآنِ الْحَكِيمِ ﴿٢﴾ إِنَّكَ لَمِنَ الْمُرْسَلِينَ ﴿٣﴾ عَلَىٰ صِرَاطٍ مُسْتَقِيمٍ ﴿٤﴾ تَنْزِيلَ الْعَزِيزِ الرَّحِيمِ ﴿٥﴾ لِتُنْذِرَ قَوْمًا مَا أُنْdevİRİLMİŞTİR ﴿٦﴾ لَقَدْ حَقَّ الْقَوْلُ عَلَىٰ أَكْثَرِهِمْ فَهُمْ لَا يُؤْمِنُونَ ﴿٧﴾",
+1381:                 textAlign: TextAlign.right,
+1382:                 style: TextStyle(fontFamily: 'Traditional Arabic', fontSize: 20, height: 2.2, color: Colors.black87),
+1383:               ),
+1384:             ),
+1385:           ),
+1386:         )
+1387:       ],
+1388:     );
+1389:   }
+1390: 
+1391:   // 14. Yakındaki Camiler
+1392:   Widget _buildYakindakiCamiler() {
+1393:     return Column(
+1394:       children: [
+1395:         const Text("İstanbul Fatih bölgesine en yakın camiler listelenmektedir.", style: TextStyle(color: Colors.grey, fontSize: 13)),
+1396:         const SizedBox(height: 12),
+1397:         Expanded(
+1398:           child: ListView.builder(
+1399:             itemCount: MOCK_CAMILER.length,
+1400:             itemBuilder: (context, index) {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

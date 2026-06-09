@@ -1,0 +1,59 @@
+Created At: 2026-06-03T13:44:55Z
+Completed At: 2026-06-03T13:44:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7707
+Total Bytes: 313314
+Showing lines 800 to 850
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+800:       {'sura': 2, 'ayah': 253},
+801:       {'sura': 3, 'ayah': 93},
+802:       {'sura': 4, 'ayah': 24},
+803:       {'sura': 4, 'ayah': 148},
+804:       {'sura': 5, 'ayah': 82},
+805:       {'sura': 6, 'ayah': 111},
+806:       {'sura': 7, 'ayah': 88},
+807:       {'sura': 8, 'ayah': 41},
+808:       {'sura': 9, 'ayah': 93},
+809:       {'sura': 11, 'ayah': 6},
+810:       {'sura': 12, 'ayah': 53},
+811:       {'sura': 15, 'ayah': 1},
+812:       {'sura': 17, 'ayah': 1},
+813:       {'sura': 18, 'ayah': 75},
+814:       {'sura': 21, 'ayah': 1},
+815:       {'sura': 23, 'ayah': 1},
+816:       {'sura': 25, 'ayah': 21},
+817:       {'sura': 27, 'ayah': 56},
+818:       {'sura': 29, 'ayah': 46},
+819:       {'sura': 33, 'ayah': 31},
+820:       {'sura': 36, 'ayah': 28},
+821:       {'sura': 39, 'ayah': 32},
+822:       {'sura': 41, 'ayah': 47},
+823:       {'sura': 46, 'ayah': 1},
+824:       {'sura': 51, 'ayah': 31},
+825:       {'sura': 57, 'ayah': 1},
+826:       {'sura': 67, 'ayah': 1},
+827:       {'sura': 78, 'ayah': 1},
+828:     ];
+829:     if (juzNumber >= 1 && juzNumber <= 30) {
+830:       return list[juzNumber - 1];
+831:     }
+832:     return {'sura': 1, 'ayah': 1};
+833:   }
+834: 
+835:   
+836: 
+837:   Future<void> _loadKazaState() async {
+838:     final prefs = await SharedPreferences.getInstance();
+839:     setState(() {
+840:       _kazaSabah = prefs.getInt('kaza_sabah') ?? 0;
+841:       _kazaOgle = prefs.getInt('kaza_ogle') ?? 0;
+842:       _kazaIkindi = prefs.getInt('kaza_ikindi') ?? 0;
+843:       _kazaAksam = prefs.getInt('kaza_aksam') ?? 0;
+844:       _kazaYatsi = prefs.getInt('kaza_yatsi') ?? 0;
+845:       _kazaVitir = prefs.getInt('kaza_vitir') ?? 0;
+846:     });
+847:   }
+848: 
+849:   Future<void> _updateKaza(String key, int delta) async {
+850:     final prefs = await SharedPreferences.getInstance();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

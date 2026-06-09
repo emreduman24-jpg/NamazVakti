@@ -1,0 +1,76 @@
+Created At: 2026-05-24T09:07:48Z
+Completed At: 2026-05-24T09:07:48Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4678
+Total Bytes: 190751
+Showing lines 970 to 1080
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+970: 
+971:   // 3. Soru Cevap
+972:   Widget _buildSoruCevap() {
+973:     return Column(
+974:       children: [
+975:         Expanded(
+976:           child: ListView.builder(
+977:             itemCount: _qaMessages.length,
+978:             itemBuilder: (context, index) {
+979:               final msg = _qaMessages[index];
+980:               final isBot = msg['sender'] == 'bot';
+981:               return Align(
+982:                 alignment: isBot ? Alignment.centerLeft : Alignment.centerRight,
+983:                 child: Container(
+984:                   margin: const EdgeInsets.only(bottom: 10, left: 8, right: 8),
+985:                   padding: const EdgeInsets.all(12),
+986:                   decoration: BoxDecoration(
+987:                     color: isBot
+988:                         ? const Color(0xFFEAF7F1)
+989:                         : const Color(0xFF27A770),
+990:                     borderRadius: BorderRadius.only(
+991:                       topLeft: const Radius.circular(14),
+992:                       topRight: const Radius.circular(14),
+993:                       bottomLeft: Radius.circular(isBot ? 0 : 14),
+994:                       bottomRight: Radius.circular(isBot ? 14 : 0),
+995:                     ),
+996:                   ),
+997:                   constraints: BoxConstraints(
+998:                     maxWidth: MediaQuery.of(context).size.width * 0.75,
+999:                   ),
+1000:                   child: Text(
+1001:                     msg['text'] ?? '',
+1002:                     style: TextStyle(
+1003:                       co
+<truncated 2267 bytes>
+ Akşam (3 rekat farz) ve Yatsı (4 rekat farz) şeklindedir.";
+1049:                   } else if (query.contains('oruç') ||
+1050:                       query.contains('ramazan')) {
+1051:                     reply =
+1052:                         "Oruç, Ramazan ayında imsak vaktinden akşam ezanına kadar yeme, içme ve nefsi arzulardan uzak durarak yapılan bir ibadettir. Oruç tutmak sadece aç kalmak değil, ahlakı da güzelleştirmektir.";
+1053:                   } else if (query.contains('abdest')) {
+1054:                     reply =
+1055:                         "Abdest alırken sırasıyla eller, ağız, burun yıkanır, yüz yıkanır, kollar yıkanır, baş mesh edilir, kulaklar ve boyun mesh edilir ve son olarak ayaklar yıkanır.";
+1056:                   } else if (query.contains('zekat') ||
+1057:                       query.contains('para')) {
+1058:                     reply =
+1059:                         "Zekat, nisap miktarı (80.18 gr altın veya değerinde para) mala sahip olan kişilerin, varlıklarının yüzde 2.5'ini (1/40) yılda bir kez ihtiyaç sahiplerine vermesidir.";
+1060:                   } else if (query.contains('selam') ||
+1061:                       query.contains('merhaba')) {
+1062:                     reply =
+1063:                         "Ve Aleyküm Selam! Hoş geldiniz. Size dinimiz veya ibadetlerimizle ilgili nasıl yardımcı olabilirim?";
+1064:                   }
+1065:                   if (mounted) {
+1066:                     setState(() {
+1067:                       _qaMessages.add({'sender': 'bot', 'text': reply});
+1068:                     });
+1069:                   }
+1070:                 });
+1071:               },
+1072:             ),
+1073:           ],
+1074:         ),
+1075:       ],
+1076:     );
+1077:   }
+1078: 
+1079:   // 4. Canlı Sohbet
+1080:   Widget _buildCanliSohbet() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

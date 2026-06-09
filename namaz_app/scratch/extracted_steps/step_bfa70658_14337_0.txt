@@ -1,0 +1,1 @@
+  String _currentAudioUrl = \"\";\n  String _currentTrackName = \"\";\n  int _quranTab = 0; // 0: Sureler, 1: Cüzler

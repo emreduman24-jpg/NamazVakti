@@ -269,11 +269,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         Position? position;
         try {
           position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.medium,
-            timeLimit: const Duration(seconds: 4),
+            desiredAccuracy: LocationAccuracy.high,
+            timeLimit: const Duration(seconds: 10),
           );
         } catch (e) {
-          position = await Geolocator.getLastKnownPosition();
+          debugPrint("High accuracy location failed: $e");
+          // Retry with lower accuracy
+          try {
+            position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.low,
+              timeLimit: const Duration(seconds: 8),
+            );
+          } catch (e2) {
+            debugPrint("Low accuracy location failed: $e2");
+            position = await Geolocator.getLastKnownPosition();
+          }
         }
 
         if (position != null) {
@@ -390,7 +400,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   // Requests notification permission
   Future<void> _requestNotificationPermission() async {
     await _notificationService.init();
-    _showSnackBar("Bildirim izni başarıyla talep edildi.", success: true);
+    await _notificationService.requestPermissions();
+    _showSnackBar("Bildirim izni başarıyla alındı.", success: true);
     _goToNextPage();
   }
 

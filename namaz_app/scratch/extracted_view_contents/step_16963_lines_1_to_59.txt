@@ -1,0 +1,67 @@
+Created At: 2026-06-03T13:59:59Z
+Completed At: 2026-06-03T14:00:00Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/walkthrough.md`
+Total Lines: 59
+Total Bytes: 3060
+Showing lines 1 to 59
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Walkthrough: Dualar (Prayers) Tool Implementation
+2: 
+3: We have successfully rebuilt the "Günlük Dualar" tool inside the Flutter application, renaming it to simply **Dualar** and updating both the data structure and the screen layout to match a premium modern aesthetic.
+4: 
+5: ## Changes Made
+6: 
+7: ### 1. Repository Configuration
+8: - Updated [prayer_repository.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/repositories/prayer_repository.dart) to change the title of the tool from `"Günlük Dualar"` to `"Dualar"`.
+9: 
+10: ### 2. Expanded structured prayer data
+11: - Created a robust list of prayers in [prayer_data.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/data/prayer_data.dart) under two main categories:
+12:   1. **Kur'an Duaları** (Quranic Prayers)
+13:   2. **Hadis Duaları** (Hadith Prayers)
+14: - Grouped them under the requested subcategories:
+15:   - `sabah_aksam` ("☀️ Sabah & Akşam Ezkarı")
+16:   - `namaz` ("🕋 Namaz Duaları")
+17:   - `uyku` ("🛌 Uyku Duaları")
+18:   - `yolculuk` ("🚗 Yolculuk Duaları")
+19:   - `genel` ("🤲 Genel Dualar")
+20: - Every prayer contains:
+21:   - `id` for tracking and favorites
+22:   - `title`
+23:   - `subtitle` (source reference, e.g., Bakara 201, Tirmizi)
+24:   - `arabic` text
+25:   - `pronunciation` (transliteration)
+26:   - `translation` (Turkish meaning)
+27:   - `audioUrl` (direct streaming MP3 file)
+28: 
+29: ### 3. Modern Segmented UI
+30: - Redesigned `_buildGunlukDualar()` in [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart):
+31:   - Added a toggleable top segment bar with matching pill styles for "Kur'an Duaları" and "Hadis Duaları".
+32:   - Structured lists to display category headers with counts (e.g. `☀️ Sabah & Akşam Ezkarı 6`).
+33:   - Implemented card components matching the dark mode style of the screenshots:
+34:     - Left side: Circular audio play/pause button (dark fill with golden yellow icon).
+35:     - Middle: Title and reference/source subtitle.
+36:     - Right side: Heart toggle button for adding to Favorites.
+37:   - Tapping a card opens a modal bottom sheet displaying the prayer details:
+38:     - Beautiful Arabic text layout (large font with adjusted line heights).
+39:     - Latin pronunciation section with copy button.
+40:     - Turkish translation section with copy button.
+41:   - Linked audio playback to the `AudioPlayer` instance to stream audio urls properly and update UI states dynamically.
+42: 
+43: ### 4. Code Cleanup and Verification
+44: - Handled syntax issues to ensure `flutter analyze` runs clean.
+45: - Verified that all changes compile successfully without issues.
+46: 
+47: ---
+48: 
+49: ## Verification Plan
+50: 
+51: ### Manual Verification
+52: 1. Run the application on your active emulator (`emulator-5554`) or physical device.
+53: 2. Go to the "Araçlar" (Tools) tab.
+54: 3. Open the **Dualar** tool (which replaced "Günlük Dualar").
+55: 4. Toggle between the **Kur'an Duaları** and **Hadis Duaları** tabs.
+56: 5. Tap on the play icon of any card to play the audio file, and check the play/pause state toggle.
+57: 6. Tap on any card to open the translation and Arabic text view.
+58: 7. Click the heart icon to toggle favorites.
+59: 
+The above content shows the entire, complete file contents of the requested file.

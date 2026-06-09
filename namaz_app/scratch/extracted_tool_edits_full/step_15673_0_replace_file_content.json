@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Load both Surah and Juz last read bookmarks in tool_detail_screen.dart.\"",
+  "EndLine": "731",
+  "Instruction": "\"Update _loadQuranLastRead to retrieve Juz bookmarks alongside Surah bookmarks.\"",
+  "ReplacementContent": "\"  Future<void> _loadQuranLastRead() async {\\n    final prefs = await SharedPreferences.getInstance();\\n    if (mounted) {\\n      setState(() {\\n        _lastSuraNo = prefs.getInt('quran_last_sura_no') ?? 1;\\n        _lastSuraName = prefs.getString('quran_last_sura_name') ?? \\\"Fâtiha\\\";\\n        _lastAyahNo = prefs.getInt('quran_last_ayah_no') ?? 1;\\n        _lastTotalAyahs = prefs.getInt('quran_last_total_ayahs') ?? 7;\\n        _lastPercent = prefs.getInt('quran_last_percent') ?? 0;\\n\\n        _lastJuzNo = prefs.getInt('quran_last_juz_no') ?? 1;\\n        _lastJuzTitle = prefs.getString('quran_last_juz_title') ?? \\\"1. Cüz\\\";\\n        _lastJuzRange = prefs.getString('quran_last_juz_range') ?? \\\"Fâtiha 1 - Bakara 141\\\";\\n        _lastJuzSuraNo = prefs.getInt('quran_last_juz_sura_no') ?? 1;\\n        _lastJuzAyahNo = prefs.getInt('quran_last_juz_ayah_no') ?? 1;\\n        _lastJuzPercent = prefs.getInt('quran_last_juz_percent') ?? 0;\\n\\n        _quranBookmarks = prefs.getStringList('quran_bookmarks') ?? [];\\n      });\\n    }\\n  }\"",
+  "StartLine": "719",
+  "TargetContent": "\"  Future<void> _loadQuranLastRead() async {\\n    final prefs = await SharedPreferences.getInstance();\\n    if (mounted) {\\n      setState(() {\\n        _lastSuraNo = prefs.getInt('quran_last_sura_no') ?? 1;\\n        _lastSuraName = prefs.getString('quran_last_sura_name') ?? \\\"Fâtiha\\\";\\n        _lastAyahNo = prefs.getInt('quran_last_ayah_no') ?? 1;\\n        _lastTotalAyahs = prefs.getInt('quran_last_total_ayahs') ?? 7;\\n        _lastPercent = prefs.getInt('quran_last_percent') ?? 0;\\n        _quranBookmarks = prefs.getStringList('quran_bookmarks') ?? [];\\n      });\\n    }\\n  }\"",
+  "TargetFile": "\"c:/Users/kral_/Namaz vakitleri/namaz_app/lib/screens/tool_detail_screen.dart\"",
+  "toolAction": "\"Updating _loadQuranLastRead method\"",
+  "toolSummary": "\"Update tool_detail_screen.dart\""
+}

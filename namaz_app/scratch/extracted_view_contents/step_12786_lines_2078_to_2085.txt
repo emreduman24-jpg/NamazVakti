@@ -1,0 +1,16 @@
+Created At: 2026-06-01T11:29:45Z
+Completed At: 2026-06-01T11:29:45Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 2078 to 2085
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2078:   // 10. Kıble Bulucu Compass
+2079:   Widget _buildKibleBulucu() {
+2080:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+2081: 
+2082:     return StreamBuilder<CompassEvent>(
+2083:       stream: FlutterCompass.events,
+2084:       builder: (context, snapshot) {
+2085:         double? heading = snapshot.data?.heading;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

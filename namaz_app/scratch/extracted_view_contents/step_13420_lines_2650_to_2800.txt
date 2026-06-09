@@ -1,0 +1,81 @@
+Created At: 2026-06-01T17:41:22Z
+Completed At: 2026-06-01T17:41:22Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6358
+Total Bytes: 258018
+Showing lines 2650 to 2800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2650:                 ),
+2651:               ),
+2652:               const SizedBox(height: 8),
+2653:               Text(
+2654:                 "Lütfen internet bağlantınızı kontrol edip tekrar deneyin veya konum ayarlarınızı güncelleyin.",
+2655:                 textAlign: TextAlign.center,
+2656:                 style: TextStyle(fontSize: 12.5, color: _subtitleColor, height: 1.4),
+2657:               ),
+2658:             ],
+2659:           ),
+2660:         ),
+2661:       );
+2662:     }
+2663: 
+2664:     // Get today's date formatted as dd.MM.yyyy
+2665:     final now = DateTime.now();
+2666:     final todayStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}";
+2667: 
+2668:     return Column(
+2669:       children: [
+2670:         // Premium Header Card showing selected location
+2671:         Container(
+2672:           width: double.infinity,
+2673:           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+2674:           margin: const EdgeInsets.only(bottom: 12),
+2675:           decoration: BoxDecoration(
+2676:             gradient: LinearGradient(
+2677:               colors: dark
+2678:                   ? [const Color(0xFF131D31), const Color(0xFF0F1B2A)]
+2679:                   : [Colors.white, const Color(0xFFF0F4F8)],
+2680:               begin: Alignment.topLeft,
+2681:               end: Alignment.bottomRight,
+2682:             ),
+2683:             borderRadius: BorderRadius.circular(16),
+2684:             border: Border.all(
+2685:               color: dark ? const Color(0xFF27A
+<truncated 3529 bytes>
+             children: [
+2766:                           Icon(
+2767:                             Icons.format_list_bulleted,
+2768:                             size: 15,
+2769:                             color: _monthlyViewMode == 'liste' ? Colors.white : (dark ? Colors.white70 : Colors.black54),
+2770:                           ),
+2771:                           const SizedBox(width: 6),
+2772:                           Text(
+2773:                             "Liste Görünümü",
+2774:                             style: TextStyle(
+2775:                               fontSize: 12,
+2776:                               fontWeight: FontWeight.bold,
+2777:                               color: _monthlyViewMode == 'liste' ? Colors.white : (dark ? Colors.white70 : Colors.black54),
+2778:                             ),
+2779:                           ),
+2780:                         ],
+2781:                       ),
+2782:                     ),
+2783:                   ),
+2784:                 ),
+2785:               ),
+2786:               Expanded(
+2787:                 child: GestureDetector(
+2788:                   onTap: () => setState(() => _monthlyViewMode = 'takvim'),
+2789:                   child: Container(
+2790:                     padding: const EdgeInsets.symmetric(vertical: 9),
+2791:                     decoration: BoxDecoration(
+2792:                       gradient: _monthlyViewMode == 'takvim'
+2793:                           ? LinearGradient(colors: [const Color(0xFF27A770), const Color(0xFF1E5E43)])
+2794:                           : null,
+2795:                       borderRadius: BorderRadius.circular(26),
+2796:                     ),
+2797:                     child: Center(
+2798:                       child: Row(
+2799:                         mainAxisAlignment: MainAxisAlignment.center,
+2800:                         children: [
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

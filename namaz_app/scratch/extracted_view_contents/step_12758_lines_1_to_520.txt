@@ -1,0 +1,105 @@
+Created At: 2026-06-01T11:28:38Z
+Completed At: 2026-06-01T11:28:38Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/scratch/redesign_qibla.dart`
+Total Lines: 520
+Total Bytes: 21334
+Showing lines 1 to 520
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:io';
+2: 
+3: void main() {
+4:   final file = File('lib/screens/tool_detail_screen.dart');
+5:   if (!file.existsSync()) {
+6:     print('Error: lib/screens/tool_detail_screen.dart not found.');
+7:     exit(1);
+8:   }
+9: 
+10:   var content = file.readAsStringSync();
+11:   content = content.replaceAll('\r\n', '\n');
+12: 
+13:   // Find the boundaries of the original _buildKibleBulucu
+14:   final startKey = '  Widget _buildKibleBulucu() {';
+15:   final endKey = '  Widget _buildZikirmatik() {';
+16: 
+17:   final startIndex = content.indexOf(startKey);
+18:   final endIndex = content.indexOf(endKey);
+19: 
+20:   if (startIndex == -1 || endIndex == -1) {
+21:     print('Error: Could not locate Qibla Finder boundaries in file.');
+22:     exit(1);
+23:   }
+24: 
+25:   final newKibleBulucu = '''  Widget _buildKibleBulucu() {
+26:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+27: 
+28:     return StreamBuilder<CompassEvent>(
+29:       stream: FlutterCompass.events,
+30:       builder: (context, snapshot) {
+31:         double? heading = snapshot.data?.heading;
+32:         bool hasSensor = heading != null && !_forceSimulation;
+33: 
+34:         // Use manual rotation if no sensor is available or simulation is forced
+35:         double finalHeading = hasSensor ? heading : _manualCompassHeading;
+36:         double needleRotation = qiblaAngle - finalHeading;
+37:         double dialRotation = -finalHeading;
+38: 
+39:         // Calculate difference for direction instructions
+40:         double diff = (qiblaAngle - finalHeading) % 360;
+41:         i
+<truncated 20274 bytes>
+iagonalRadius);
+467:     path.lineTo(center.dx - diagonalRadius, center.dy + diagonalRadius);
+468:     path.lineTo(center.dx - diagonalRadius, center.dy - diagonalRadius);
+469:     path.lineTo(center.dx + diagonalRadius, center.dy - diagonalRadius);
+470:     path.close();
+471: 
+472:     canvas.drawPath(path, starPaint);
+473: 
+474:     // Draw small inner circle
+475:     canvas.drawCircle(center, starRadius * 0.4, starPaint);
+476: 
+477:     // 3. Paint Ticks (360 degrees)
+478:     final tickPaint = Paint()
+479:       ..style = PaintingStyle.stroke
+480:       ..strokeCap = StrokeCap.round;
+481: 
+482:     for (int i = 0; i < 360; i += 5) {
+483:       final double angle = i * 3.141592653589793 / 180;
+484:       final bool isMajor = i % 30 == 0;
+485:       final bool isCardinal = i % 90 == 0;
+486: 
+487:       final double tickLength = isCardinal ? 12 : (isMajor ? 8 : 4);
+488:       final double startR = radius - 8;
+489:       final double endR = startR - tickLength;
+490: 
+491:       tickPaint.color = isCardinal 
+492:           ? (isDark ? const Color(0xFFD4AF37) : const Color(0xFF27A770))
+493:           : (isDark ? Colors.white30 : Colors.black26);
+494:       tickPaint.strokeWidth = isCardinal ? 2.0 : (isMajor ? 1.5 : 1.0);
+495: 
+496:       final Offset startPoint = Offset(
+497:         center.dx + startR * math.cos(angle),
+498:         center.dy + startR * math.sin(angle),
+499:       );
+500:       final Offset endPoint = Offset(
+501:         center.dx + endR * math.cos(angle),
+502:         center.dy + endR * math.sin(angle),
+503:       );
+504: 
+505:       canvas.drawLine(startPoint, endPoint, tickPaint);
+506:     }
+507:   }
+508: 
+509:   @override
+510:   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+511: }
+512: ''';
+513: 
+514:   // Append painter at the end of the file
+515:   content += customPainterCode;
+516: 
+517:   file.writeAsStringSync(content);
+518:   print('Qibla Finder redesigned successfully!');
+519: }
+520: 
+The above content shows the entire, complete file contents of the requested file.

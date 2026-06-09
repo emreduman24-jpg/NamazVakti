@@ -1,0 +1,49 @@
+Created At: 2026-06-03T13:44:20Z
+Completed At: 2026-06-03T13:44:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7705
+Total Bytes: 313257
+Showing lines 1130 to 1170
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1130:                 ),
+1131:               ]
+1132:             : null,
+1133:       ),
+1134:       body: SafeArea(
+1135:         child: isQuran
+1136:             ? _buildKuranKerim()
+1137:             : Padding(
+1138:                 padding: const EdgeInsets.all(16.0),
+1139:                 child: _buildToolBody(),
+1140:               ),
+1141:       ),
+1142:     );
+1143:   }
+1144: 
+1145:   Widget _buildToolBody() {
+1146:     switch (widget.toolId) {
+1147:       case 'dini-gunler':
+1148:         return _buildDiniGunler();
+1149:       case 'dua-iste':
+1150:         return _buildDuaIste();
+1151:       case 'soru-cevap':
+1152:         return _buildSoruCevap();
+1153:       case 'canli-sohbet':
+1154:         return _buildCanliSohbet();
+1155:       case 'peygamber-hayati':
+1156:         return _buildPeygamberHayati();
+1157:       case 'kuran-kerim':
+1158:         return _buildKuranKerim();
+1159:       case 'esmaul-husna':
+1160:         return _buildEsmaulHusna();
+1161:       case 'ramazan-hakkinda':
+1162:         return _buildRamazanHakkinda();
+1163:       case 'oruc-rehberi':
+1164:         return _buildOrucRehberi();
+1165:       case 'kible-bulucu':
+1166:         return _buildKibleBulucu();
+1167:       case 'namaz-vakitleri-aylik':
+1168:         return _buildAylikNamazVakitleri();
+1169:       case 'zikirmatik':
+1170:         return _buildZikirmatik();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

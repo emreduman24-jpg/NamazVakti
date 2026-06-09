@@ -1,0 +1,53 @@
+Created At: 2026-05-24T09:07:21Z
+Completed At: 2026-05-24T09:07:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4651
+Total Bytes: 189770
+Showing lines 397 to 441
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+397: 
+398:   // Dua list persist
+399:   Future<void> _loadDuaList() async {
+400:     final list = await _repository.getDuaList();
+401:     setState(() {
+402:       _duaList = list;
+403:     });
+404:   }
+405: 
+406:   Future<void> _addDua() async {
+407:     final name = _duaNameController.text.trim();
+408:     final text = _duaTextController.text.trim();
+409:     if (text.isEmpty) return;
+410: 
+411:     final newDua = {
+412:       "id": DateTime.now().millisecondsSinceEpoch,
+413:       "yazar": name.isEmpty ? "Anonim" : name,
+414:       "dua": text,
+415:       "amin": 0,
+416:     };
+417: 
+418:     setState(() {
+419:       _duaList.insert(0, newDua);
+420:     });
+421: 
+422:     _duaNameController.clear();
+423:     _duaTextController.clear();
+424:     await _repository.saveDuaList(_duaList);
+425: 
+426:     ScaffoldMessenger.of(context).showSnackBar(
+427:       const SnackBar(
+428:         content: Text("Dua talebiniz paylaşıldı."),
+429:         backgroundColor: Color(0xFF27A770),
+430:       ),
+431:     );
+432:   }
+433: 
+434:   Future<void> _aminDua(int index) async {
+435:     HapticFeedback.lightImpact();
+436:     setState(() {
+437:       _duaList[index]['amin'] = (_duaList[index]['amin'] ?? 0) + 1;
+438:     });
+439:     await _repository.saveDuaList(_duaList);
+440:   }
+441: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

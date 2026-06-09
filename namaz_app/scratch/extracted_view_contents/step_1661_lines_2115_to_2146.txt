@@ -1,0 +1,40 @@
+Created At: 2026-05-22T16:58:23Z
+Completed At: 2026-05-22T16:58:23Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 2146
+Total Bytes: 84826
+Showing lines 2115 to 2146
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2115:   }
+2116: 
+2117:   Widget _buildKunutCard(String title, Map<String, dynamic> kunut) {
+2118:     return Card(
+2119:       elevation: 1.5,
+2120:       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+2121:       child: Padding(
+2122:         padding: const EdgeInsets.all(16.0),
+2123:         child: Column(
+2124:           crossAxisAlignment: CrossAxisAlignment.start,
+2125:           children: [
+2126:             Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1E5E43))),
+2127:             const Divider(height: 12),
+2128:             Align(
+2129:               alignment: Alignment.centerRight,
+2130:               child: Text(
+2131:                 kunut['arapca'] ?? '',
+2132:                 style: const TextStyle(fontFamily: 'Traditional Arabic', fontSize: 18, height: 1.8, fontWeight: FontWeight.bold, color: Color(0xFF27A770)),
+2133:                 textAlign: TextAlign.right,
+2134:               ),
+2135:             ),
+2136:             const SizedBox(height: 8),
+2137:             Text(kunut['okunus'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+2138:             const SizedBox(height: 6),
+2139:             Text("Meali: ${kunut['anlam']}", style: const TextStyle(fontSize: 12, color: Colors.black54)),
+2140:           ],
+2141:         ),
+2142:       ),
+2143:     );
+2144:   }
+2145: }
+2146: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

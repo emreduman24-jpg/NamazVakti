@@ -1,0 +1,39 @@
+Created At: 2026-06-01T11:05:02Z
+Completed At: 2026-06-01T11:05:02Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5606
+Total Bytes: 233401
+Showing lines 2790 to 2820
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2790:   Widget _buildYakindakiCamiler() {
+2791:     return Column(
+2792:       children: [
+2793:         // Hadith Card at the top
+2794:         Card(
+2795:           elevation: 1.5,
+2796:           shape: RoundedRectangleBorder(
+2797:             borderRadius: BorderRadius.circular(16),
+2798:           ),
+2799:           color: const Color(0xFFEAF7F1),
+2800:           child: Container(
+2801:             decoration: BoxDecoration(
+2802:               borderRadius: BorderRadius.circular(16),
+2803:               border: Border.all(
+2804:                 color: const Color(0xFF27A770).withOpacity(0.3),
+2805:                 width: 1,
+2806:               ),
+2807:             ),
+2808:             padding: const EdgeInsets.all(16.0),
+2809:             child: Column(
+2810:               crossAxisAlignment: CrossAxisAlignment.start,
+2811:               children: const [
+2812:                 Row(
+2813:                   children: [
+2814:                     Icon(
+2815:                       Icons.mosque,
+2816:                       color: Color(0xFF27A770),
+2817:                       size: 20,
+2818:                     ),
+2819:                     SizedBox(width: 8),
+2820:                     Text(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

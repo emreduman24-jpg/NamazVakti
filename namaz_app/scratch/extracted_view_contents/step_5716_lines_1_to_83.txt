@@ -1,0 +1,55 @@
+Created At: 2026-05-24T09:09:03Z
+Completed At: 2026-05-24T09:09:03Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 83
+Total Bytes: 6508
+Showing lines 1 to 83
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Implementation Plan - APK Parity, Approval Synchronization, and Visual Polish
+2: 
+3: We will implement five primary enhancements to align the application closely with the reference APK's functionality and visual assets, ensuring rigorous data synchronization with the administrative panel.
+4: 
+5: ---
+6: 
+7: ## Proposed Changes
+8: 
+9: ### 1. Dua approval flow
+10: #### [MODIFY] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+11: - Update `_addDua()`:
+12:   - Submit the newly drafted Dua directly to the database server via `_repository.addDua(author, text)` with default status `durum: "bekliyor"`.
+13:   - Clear text inputs and show a success SnackBar: `"Dua talebiniz alındı. Yetkililer tarafından onaylandıktan sonra yayınlanacaktır."`
+14: - Update `_loadDuaList()`:
+15:   - Filter the loaded lists so that the app **only shows approved Duas** (`durum == 'yayinda'`).
+16:   - This ensures that a new user request will only appear on the mobile interface *after* the administrator clicks "Onayla" (Approve) in the Admin Panel (`admin.html`), guaranteeing full real-time database synchronization.
+17: 
+18: ### 2. Q&A Board re-architecting
+19: #### [MODIFY] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+20: - Redesign the **Soru Cevap** tool from a private AI chatbot into a **public Q&A board**.
+21: - Add variables:
+22:   - `List<Map<String, dynamic>> _questionList = []` to store Q&A board entries.
+23:   - `f
+<truncated 3306 bytes>
+ildirimleri"):
+62:   - Semi-transparent white card background (`Colors.white.withOpacity(0.15)`) with white text and icons.
+63: - Add background decorations:
+64:   - Render an abstract light gold geometric islamic pattern/mandala dynamically using a modified custom painter (`SubtleMandalaPainter`), producing maximum visual depth.
+65: - Incorporate premium illustrative assets (`assets/muslim_boy_heart.png`, `assets/bebekler.png`) into cards as backgrounds or side graphics.
+66: 
+67: ### 5. APK Feature Parity & Complete Alignment
+68: - Perform continuous cross-verification of colors, layout sizing, and typography across both standard light and dark themes to capture the identical feeling of the past production release.
+69: 
+70: ---
+71: 
+72: ## Verification Plan
+73: 
+74: ### Automated Tests
+75: - Run `flutter analyze` inside `namaz_app/` to check for zero compile/lint issues.
+76: - Compile and install on the emulator: `flutter run -d emulator-5554`.
+77: 
+78: ### Manual Verification
+79: 1.  **Dua Sync Test**: Submit a dua. Confirm it does *not* appear in the app's scrollable list. Open `admin.html` in browser, verify it lists in "Dua İstekleri" (Pending), click "Onayla", then pull to refresh the app's Tools grid and verify the new approved dua displays.
+80: 2.  **Q&A Board Test**: Submit a question in the app. Confirm it lists under Pending Questions in `admin.html`. Answer the question in the admin panel and click "Onayla". Verify the question and answer populate in the app's Q&A board.
+81: 3.  **Mosque Distance GPS Test**: Launch AVD, toggle GPS coordinates in extended controls (e.g. from Fatih coordinates to Kadıköy), reload the app, and verify that distances update and list order adjusts dynamically based on your simulated GPS coordinates.
+82: 4.  **Aesthetic Verification**: Take a screenshot and compare it with the reference to verify that the home screen no longer looks too white, and features premium high-contrast colors.
+83: 
+The above content shows the entire, complete file contents of the requested file.

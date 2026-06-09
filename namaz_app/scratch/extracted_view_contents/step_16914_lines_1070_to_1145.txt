@@ -1,0 +1,84 @@
+Created At: 2026-06-03T13:57:43Z
+Completed At: 2026-06-03T13:57:44Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8272
+Total Bytes: 337530
+Showing lines 1070 to 1145
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1070:     }
+1071:   }
+1072: 
+1073:   @override
+1074:   Widget build(BuildContext context) {
+1075:     final isQuran = widget.toolId == 'kuran-kerim';
+1076:     return Scaffold(
+1077:       backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5)),
+1078:       appBar: AppBar(
+1079:         title: widget.toolId == 'gunluk-dualar' && _isSearchingDualar
+1080:             ? TextField(
+1081:                 controller: _dualarSearchController,
+1082:                 autofocus: true,
+1083:                 style: const TextStyle(color: Colors.white),
+1084:                 decoration: const InputDecoration(
+1085:                   hintText: 'Dua ara...',
+1086:                   hintStyle: TextStyle(color: Colors.white60),
+1087:                   border: InputBorder.none,
+1088:                 ),
+1089:                 onChanged: (val) {
+1090:                   setState(() {
+1091:                     _dualarSearchQuery = val;
+1092:                   });
+1093:                 },
+1094:               )
+1095:             : Text(
+1096:                 widget.toolTitle == 'Günlük Dualar' ? 'Dualar' : widget.toolTitle,
+1097:                 style: const TextStyle(
+1098:                   fontWeight: FontWeight.bold,
+1099:                   color: Colors.white,
+1100:                   fontSize: 20,
+1101:                 ),
+1102:               ),
+1103:         centerTitle: true,
+1104:         backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43)),
+1105:         elevation: 0,
+1106:         iconTheme: const IconThemeData(color: Colors.white),
+1107:         automaticallyImplyLeading: !widget.isTab,
+1108:         actions: widget.toolId == 'gunluk-dualar'
+1109:             ? [
+1110:                 IconButton(
+1111:                   icon: Icon(_isSearchingDualar ? Icons.close : Icons.search),
+1112:                   onPressed: () {
+1113:                     setState(() {
+1114:                       _isSearchingDualar = !_isSearchingDualar;
+1115:                       if (!_isSearchingDualar) {
+1116:                         _dualarSearchQuery = "";
+1117:                         _dualarSearchController.clear();
+1118:                       }
+1119:                     });
+1120:                   },
+1121:                 ),
+1122:                 IconButton(
+1123:                   icon: Icon(
+1124:                     _showOnlyFavorites ? Icons.favorite : Icons.favorite_border,
+1125:                     color: _showOnlyFavorites ? Colors.red : Colors.white,
+1126:                   ),
+1127:                   onPressed: () {
+1128:                     setState(() {
+1129:                       _showOnlyFavorites = !_showOnlyFavorites;
+1130:                     });
+1131:                   },
+1132:                 ),
+1133:               ]
+1134:             : null,
+1135:       ),
+1136:       body: SafeArea(
+1137:         child: isQuran
+1138:             ? _buildKuranKerim()
+1139:             : Padding(
+1140:                 padding: const EdgeInsets.all(16.0),
+1141:                 child: _buildToolBody(),
+1142:               ),
+1143:       ),
+1144:     );
+1145:   }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

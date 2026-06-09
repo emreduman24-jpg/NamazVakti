@@ -1,0 +1,29 @@
+Created At: 2026-06-01T11:05:32Z
+Completed At: 2026-06-01T11:05:32Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5235
+Total Bytes: 211718
+Showing lines 2165 to 2185
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2165:                                 ),
+2166:                               ),
+2167:                             ),
+2168:                             Align(
+2169:                               alignment: Alignment.bottomCenter,
+2170:                               child: Padding(
+2171:                                 padding: EdgeInsets.all(8.0),
+2172:                                 child: Text(
+2173:                                   "G",
+2174:                                   style: TextStyle(
+2175:                                     fontWeight: FontWeight.bold,
+2176:                                     color: _subtitleColor,
+2177:                                     fontSize: 15,
+2178:                                   ),
+2179:                                 ),
+2180:                               ),
+2181:                             ),
+2182:                             Align(
+2183:                               alignment: Alignment.centerLeft,
+2184:                               child: Padding(
+2185:                                 padding: EdgeInsets.all(8.0),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

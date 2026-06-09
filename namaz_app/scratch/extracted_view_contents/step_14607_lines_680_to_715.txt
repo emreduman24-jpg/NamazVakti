@@ -1,0 +1,44 @@
+Created At: 2026-06-03T05:03:02Z
+Completed At: 2026-06-03T05:03:02Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6370
+Total Bytes: 258486
+Showing lines 680 to 715
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+680: 
+681:   // Kaza Namazi State
+682:   int _kazaSabah = 0;
+683:   int _kazaOgle = 0;
+684:   int _kazaIkindi = 0;
+685:   int _kazaAksam = 0;
+686:   int _kazaYatsi = 0;
+687:   int _kazaVitir = 0;
+688: 
+689:   // Sabah & Aksam Ezkari counts
+690:   final List<int> _sabahEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+691:   final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+692:   int _ezkarTab = 0;
+693: 
+694:   @override
+695:   void initState() {
+696:     super.initState();
+697:     _initMosques();
+698:     _loadLocationName();
+699:     if (widget.toolId == 'yakindaki-camiler' || widget.toolId == 'kible-bulucu') {
+700:       _getUserLocation();
+701:     }
+702:     if (widget.toolId == 'namaz-vakitleri-aylik') {
+703:       _loadMonthlyTimes();
+704:     }
+705:     _initAudio();
+706:     _loadZikirState();
+707:     _loadDuaList();
+708:     _loadQuestionList();
+709:     _loadKazaState();
+710:   }
+711: 
+712:   Future<void> _loadKazaState() async {
+713:     final prefs = await SharedPreferences.getInstance();
+714:     setState(() {
+715:       _kazaSabah = prefs.getInt('kaza_sabah') ?? 0;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

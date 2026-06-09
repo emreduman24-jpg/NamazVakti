@@ -1,0 +1,19 @@
+Created At: 2026-06-01T11:27:20Z
+Completed At: 2026-06-01T11:27:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 2365 to 2375
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2365:                       ),
+2366:                       const SizedBox(height: 10),
+2367:                       Row(
+2368:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2369:                         children: [
+2370:                           Text("Konum:", style: TextStyle(fontSize: 13, color: dark ? Colors.white70 : Colors.grey[800])),
+2371:                           Text(_currentLocationName.isNotEmpty ? _currentLocationName : "İstanbul", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: dark ? Colors.white : Colors.black87)),
+2372:                         ],
+2373:                       ),
+2374:                     ],
+2375:                   ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

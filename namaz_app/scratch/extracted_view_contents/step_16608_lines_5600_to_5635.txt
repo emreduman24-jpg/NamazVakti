@@ -1,0 +1,44 @@
+Created At: 2026-06-03T13:11:09Z
+Completed At: 2026-06-03T13:11:10Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7691
+Total Bytes: 312553
+Showing lines 5600 to 5635
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5600:                           ],
+5601:                         ],
+5602:                       ),
+5603:                     ),
+5604:                   ),
+5605:                   const Divider(height: 20),
+5606:                   if (url.isNotEmpty)
+5607:                     Container(
+5608:                       padding: const EdgeInsets.symmetric(vertical: 8),
+5609:                       child: Row(
+5610:                         mainAxisAlignment: MainAxisAlignment.center,
+5611:                         children: [
+5612:                           GestureDetector(
+5613:                             onTap: () async {
+5614:                               await _playAudio(url, title);
+5615:                               setModalState(() {});
+5616:                             },
+5617:                             child: Container(
+5618:                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+5619:                               decoration: BoxDecoration(
+5620:                                 color: const Color(0xFFC19E67),
+5621:                                 borderRadius: BorderRadius.circular(30),
+5622:                               ),
+5623:                               child: Row(
+5624:                                 mainAxisSize: MainAxisSize.min,
+5625:                                 children: [
+5626:                                   Icon(
+5627:                                     isPlaying() ? Icons.pause : Icons.play_arrow,
+5628:                                     color: Colors.white,
+5629:                                     size: 20,
+5630:                                   ),
+5631:                                   const SizedBox(width: 8),
+5632:                                   Text(
+5633:                                     isPlaying() ? "Durdur" : "Dinle",
+5634:                                     style: const TextStyle(
+5635:                                       color: Colors.white,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

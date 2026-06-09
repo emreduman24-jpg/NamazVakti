@@ -1,0 +1,69 @@
+Created At: 2026-05-23T18:32:15Z
+Completed At: 2026-05-23T18:32:15Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187772
+Showing lines 1950 to 2010
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1950:               decoration: BoxDecoration(
+1951:                 color: Colors.white,
+1952:                 shape: BoxShape.circle,
+1953:                 border: Border.all(color: const Color(0xFF27A770), width: 8),
+1954:                 boxShadow: const [
+1955:                   BoxShadow(color: Colors.black12, blurRadius: 15, offset: Offset(0, 4)),
+1956:                 ],
+1957:               ),
+1958:               child: Center(
+1959:                 child: Column(
+1960:                   mainAxisSize: MainAxisSize.min,
+1961:                   children: [
+1962:                     Text(
+1963:                       "$_zikirCount",
+1964:                       style: const TextStyle(
+1965:                         fontSize: 48,
+1966:                         fontWeight: FontWeight.bold,
+1967:                         color: Color(0xFF1E5E43),
+1968:                       ),
+1969:                     ),
+1970:                     Text(
+1971:                       _zikirTarget == 9999 ? "/ ∞" : "/ $_zikirTarget",
+1972:                       style: const TextStyle(fontSize: 13, color: Colors.grey),
+1973:                     ),
+1974:                   ],
+1975:                 ),
+1976:               ),
+1977:             ),
+1978:           ),
+1979:           const SizedBox(height: 24),
+1980:           // Zikir actions
+1981:           Row(
+1982:             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+1983:             children: [
+1984:               ElevatedButton(
+1985:                 style: ElevatedButton.styleFrom(
+1986:                   backgroundColor: Colors.white,
+1987:                   foregroundColor: Colors.red,
+1988:                   side: const BorderSide(color: Colors.red, width: 1),
+1989:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+1990:                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+1991:                   elevation: 0,
+1992:                 ),
+1993:                 onPressed: () {
+1994:                   showDialog(
+1995:                     context: context,
+1996:                     builder: (context) => AlertDialog(
+1997:                       title: const Text("Sıfırla"),
+1998:                       content: const Text(
+1999:                         "Sayacı sıfırlamak istediğinize emin misiniz?",
+2000:                       ),
+2001:                       actions: [
+2002:                         TextButton(
+2003:                           onPressed: () => Navigator.pop(context),
+2004:                           child: const Text("İptal"),
+2005:                         ),
+2006:                         TextButton(
+2007:                           onPressed: () {
+2008:                             _resetZikir();
+2009:                             Navigator.pop(context);
+2010:                           },
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

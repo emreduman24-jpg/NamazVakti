@@ -1,0 +1,102 @@
+Created At: 2026-05-26T05:27:36Z
+Completed At: 2026-05-26T05:27:36Z
+File Path: `file:///C:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4921
+Total Bytes: 198934
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import 'package:geolocator/geolocator.dart';
+9: import '../data/prayer_data.dart';
+10: import '../data/prayer_repository.dart';
+11: 
+12: class ToolDetailScreen extends StatefulWidget {
+13:   final String toolId;
+14:   final String toolTitle;
+15: 
+16:   const ToolDetailScreen({
+17:     super.key,
+18:     required this.toolId,
+19:     required this.toolTitle,
+20:   });
+21: 
+22:   @override
+23:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+24: }
+25: 
+26: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+27:   final PrayerRepository _repository = PrayerRepository();
+28:   AudioPlayer? _audioPlayer;
+29:   PlayerState _playerState = PlayerState.stopped;
+30:   String _currentAudioUrl = "";
+31:   String _currentTrackName = "";
+32: 
+33:   // Yakındaki Camiler (Location & GPS State)
+34:   Position? _currentPosition;
+35:   bool _loadingLocation = false;
+36:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+37: 
+38:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+39:     const r = 6371; // Earth radius in km
+40:     final dLat = _toRadians(lat2 - lat1);
+41:     final dLon = _toRadians(lon2 - lon1);
+42:     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+43:         math.cos
+<truncated 31678 bytes>
+  case 'koruyucu-dualar':
+752:         return _buildKoruyucuDualar();
+753:       case 'sikinti-borc-duasi':
+754:         return _buildSikintiBorcDuasi();
+755:       case 'rabbena-dualar':
+756:         return _buildRabbenaDualar();
+757:       case 'hac-umre':
+758:         return _buildHacUmre();
+759:       case 'kurban-rehberi':
+760:         return _buildKurbanRehberi();
+761:       case 'sadaka-bilgileri':
+762:         return _buildSadakaBilgileri();
+763:       case 'islamin-sartlari':
+764:         return _buildIslaminSartlari();
+765:       case 'imanin-sartlari':
+766:         return _buildImaninSartlari();
+767:       case 'farz-32':
+768:         return _buildFarz32();
+769:       case 'farz-54':
+770:         return _buildFarz54();
+771:       case 'buyuk-gunahlar':
+772:         return _buildBuyukGunahlar();
+773:       case 'helal-haram':
+774:         return _buildHelalHaram();
+775:       case 'aile-ahlaki':
+776:         return _buildAileAhlaki();
+777:       case 'ticaret-fikhi':
+778:         return _buildTicaretFikhi();
+779:       case 'miras-fikhi':
+780:         return _buildMirasFikhi();
+781:       case 'anne-baba-haklari':
+782:         return _buildAnneBabaHaklari();
+783:       case 'kul-hakki':
+784:         return _buildKulHakki();
+785:       case 'komsu-haklari':
+786:         return _buildKomsuHaklari();
+787:       case 'cocuk-egitimi':
+788:         return _buildCocukEgitimi();
+789:       case 'selamlasma-adabi':
+790:         return _buildSelamlasmaAdabi();
+791:       case 'misafirlik-adabi':
+792:         return _buildMisafirlikAdabi();
+793:       case 'uc-aylar':
+794:         return _buildUcAylar();
+795:       case 'muharrem-asure':
+796:         return _buildMuharremAsure();
+797:       case 'zilhicce-arefe':
+798:         return _buildZilhicceArefe();
+799:       case 'islam-alimleri':
+800:         return _buildIslamAlimleri();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

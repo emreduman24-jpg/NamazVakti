@@ -1,0 +1,14 @@
+Created At: 2026-06-03T12:13:14Z
+Completed At: 2026-06-03T12:13:14Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 6
+Total Bytes: 386
+Showing lines 1 to 6
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: - [x] Create week tracker UI helper `_buildWeekViewChart()` in `tool_detail_screen.dart`
+2: - [x] Add persistence for completed zikir dates using SharedPreferences (`_zikirCompletedDates`)
+3: - [x] Integrate tracker view inside the Zikirmatik screen column layout
+4: - [x] Update dhikr completion state logic during count increment
+5: - [x] Build and verify Flutter application builds successfully
+6: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,80 @@
+Created At: 2026-06-03T05:51:16Z
+Completed At: 2026-06-03T05:51:16Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6956
+Total Bytes: 281899
+Showing lines 2110 to 2260
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2110:                       Container(
+2111:                         padding: const EdgeInsets.all(8),
+2112:                         decoration: BoxDecoration(
+2113:                           color: const Color(0xFF27A770).withOpacity(0.1),
+2114:                           shape: BoxShape.circle,
+2115:                         ),
+2116:                         child: const Icon(Icons.bookmark_added_rounded, color: Color(0xFF27A770), size: 24),
+2117:                       ),
+2118:                       const SizedBox(width: 12),
+2119:                       const Expanded(
+2120:                         child: Column(
+2121:                           crossAxisAlignment: CrossAxisAlignment.start,
+2122:                           children: [
+2123:                             Text(
+2124:                               "Hatim Başlat",
+2125:                               style: TextStyle(
+2126:                                 color: Colors.white,
+2127:                                 fontWeight: FontWeight.bold,
+2128:                                 fontSize: 15,
+2129:                               ),
+2130:                             ),
+2131:                             SizedBox(height: 2),
+2132:                             Text(
+2133:                               "Günlük hedef belirle, Kur'an'ı hatmet",
+2134:                               style: TextStyle(
+2135:                                 color: Colors.white60,
+2136:                                 fontSize: 12,
+2137:                               ),
+2138:                             ),
+2139:       
+<truncated 3839 bytes>
+      ? IconButton(
+2221:                           icon: const Icon(Icons.clear_rounded, color: Colors.white54),
+2222:                           onPressed: () {
+2223:                             setState(() {
+2224:                               _quranSearchQuery = "";
+2225:                             });
+2226:                           },
+2227:                         )
+2228:                       : null,
+2229:                   filled: true,
+2230:                   fillColor: const Color(0xFF131F35),
+2231:                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+2232:                   border: OutlineInputBorder(
+2233:                     borderRadius: BorderRadius.circular(12),
+2234:                     borderSide: const BorderSide(color: Color(0xFF233554)),
+2235:                   ),
+2236:                   enabledBorder: OutlineInputBorder(
+2237:                     borderRadius: BorderRadius.circular(12),
+2238:                     borderSide: const BorderSide(color: Color(0xFF1E2D4A)),
+2239:                   ),
+2240:                   focusedBorder: OutlineInputBorder(
+2241:                     borderRadius: BorderRadius.circular(12),
+2242:                     borderSide: const BorderSide(color: Color(0xFF27A770)),
+2243:                   ),
+2244:                 ),
+2245:                 onChanged: (val) {
+2246:                   setState(() {
+2247:                     _quranSearchQuery = val;
+2248:                   });
+2249:                 },
+2250:               ),
+2251:               const SizedBox(height: 12),
+2252:             ],
+2253:           ),
+2254:         ),
+2255:         
+2256:         // Dynamic List Rows
+2257:         Expanded(
+2258:           child: _quranTab == 0
+2259:               ? _buildSurelerList(filteredSuras)
+2260:               : _buildCuzlerList(filteredJuzs),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

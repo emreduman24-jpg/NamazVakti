@@ -1,0 +1,73 @@
+Created At: 2026-06-03T13:03:24Z
+Completed At: 2026-06-03T13:03:25Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/walkthrough.md`
+Total Lines: 65
+Total Bytes: 3181
+Showing lines 1 to 65
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Walkthrough - Redesigned "Dualar" Tool
+2: 
+3: We have fully redesigned and rebuilt the "Günlük Dualar" tool inside the Flutter application, renaming it to **"Dualar"** and implementing the visual aesthetics, layout, audio playing capabilities, and accessibility features requested.
+4: 
+5: ## 🛠️ Changes Implemented
+6: 
+7: ### 1. Database & Models (`prayer_data.dart`)
+8: - Created two separate collections: `KURAN_DUALARI` and `HADIS_DUALARI`.
+9: - Populated each prayer with:
+10:   - `id`: Unique identifier.
+11:   - `kategori`: Category grouping (e.g., `sabah_aksam`, `namaz`, `uyku`, `yolculuk`, `genel`).
+12:   - `ad`: Title of the prayer.
+13:   - `sure`: Reference/source description.
+14:   - `arapca`: Arabic script of the prayer.
+15:   - `okunus`: Latin transliteration.
+16:   - `anlam`: Turkish translation.
+17:   - `ses`: Audio track URL (hosted on high-reliability servers).
+18: - Changed the ordering and shuffled the prayers relative to the screenshot reference.
+19: 
+20: ### 2. AppBar & Search Actions (`tool_detail_screen.dart`)
+21: - Replaced the simple static app bar with a dynamic one for the `"gunluk-dualar"` tool.
+22: - Added a **Search button** which toggles a search input, filtering prayers by title, source, or meaning.
+23: - Added a **Favorites heart button** which filters the prayer list to only show favorited items.
+24: 
+25: ### 3. Segmented Navigation Tab
+26: - Implemented the top rounded segment bar switcher for **Kur'an Duaları** and **Hadis Duaları**.
+27: - Added badge counts displaying the total number of prayers in each segment.
+28: 
+29: ### 4. Categorized Prayer List Cards
+30: - Grouped prayers dynamically into 5 distinct categories:
+31:   - ☀️ Sabah & Akşam Ezkarı
+32:   - 🕌 Namaz Duaları
+33:   - 🌙 Uyku Duaları
+34:   - 🚗 Yolculuk Duaları
+35:   - ✨ Genel Dualar
+36: - Rendered sections with emojis and item counts.
+37: - Designed prayer cards containing:
+38:   - Prayer Title.
+39:   - Source Reference.
+40:   - Circular **Play/Pause button** with a gold play icon.
+41:   - **Favorite heart button** (filled red if favorited, bordered grey if not).
+42: 
+43: ### 5. Detailed Reader & Accessibility Sheet
+44: - Tapping on a card opens a modal bottom sheet containing:
+45:   - Title and Reference info.
+46:   - **Text size slider** (allowing users to scale font sizes dynamically between 16px and 36px).
+47:   - Arabic verse block in a premium card background with correct RTL alignment.
+48:   - Pronunciation guide in italics.
+49:   - Turkish meaning translation.
+50:   - Bottom action bar containing the favorite heart toggle and a larger **Play / Pause (Durdur/Dinle)** button.
+51: 
+52: ---
+53: 
+54: ## 🔍 Verification & Testing
+55: 
+56: 1. **Static Analysis**: Run `flutter analyze` — verified to compile with **zero issues found!**
+57: 2. **App Execution**: The app was hot-restarted on the active Android Emulator `emulator-5554` without any errors.
+58: 3. **Interactive Testing**:
+59:    - Open the app on the emulator.
+60:    - Go to "Araçlar" (Tools) and open the **"Dualar"** tool.
+61:    - Switch between **Kur'an Duaları** and **Hadis Duaları** tabs.
+62:    - Try the search bar or favorites toggle in the AppBar.
+63:    - Click the play/pause button on any card to test the audio player.
+64:    - Click a card to open the bottom sheet, drag the slider to verify dynamic font resizing, and test audio controls inside the bottom sheet.
+65: 
+The above content shows the entire, complete file contents of the requested file.

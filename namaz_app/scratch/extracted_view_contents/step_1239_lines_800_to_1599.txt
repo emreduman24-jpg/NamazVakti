@@ -1,0 +1,84 @@
+Created At: 2026-05-22T16:05:11Z
+Completed At: 2026-05-22T16:05:11Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 1975
+Total Bytes: 78817
+Showing lines 800 to 1599
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+800:             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+801:           ),
+802:           onChanged: (val) {
+803:             setState(() {
+804:               _esmaSearchQuery = val;
+805:             });
+806:           },
+807:         ),
+808:         const SizedBox(height: 12),
+809:         Expanded(
+810:           child: ListView.builder(
+811:             itemCount: filtered.length,
+812:             itemBuilder: (context, index) {
+813:               final item = filtered[index];
+814:               return Card(
+815:                 elevation: 1.5,
+816:                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+817:                 margin: const EdgeInsets.only(bottom: 12),
+818:                 child: Padding(
+819:                   padding: const EdgeInsets.all(16.0),
+820:                   child: Column(
+821:                     crossAxisAlignment: CrossAxisAlignment.start,
+822:                     children: [
+823:                       Row(
+824:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+825:                         children: [
+826:                           Text("#${item['no']} ${item['ad']}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1E5E43))),
+827:                           Text(item['arapca'] ?? '', style: const TextStyle(fontFamily: 'Traditional Arabic', fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF27A770))),
+828:                         ],
+829:                       ),
+
+<truncated 34521 bytes>
+                        } else {
+1557:                             _tesbihStep = 0;
+1558:                           }
+1559:                         });
+1560:                       }
+1561:                     },
+1562:                     child: Container(
+1563:                       width: 130,
+1564:                       height: 130,
+1565:                       decoration: BoxDecoration(
+1566:                         color: const Color(0xFFEAF7F1),
+1567:                         shape: BoxShape.circle,
+1568:                         border: Border.all(color: const Color(0xFF27A770), width: 4),
+1569:                       ),
+1570:                       child: Center(
+1571:                         child: Text("$_tesbihCount / $target", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1E5E43))),
+1572:                       ),
+1573:                     ),
+1574:                   ),
+1575:                 ],
+1576:               ),
+1577:             ),
+1578:           ),
+1579:         ),
+1580:       ],
+1581:     );
+1582:   }
+1583: 
+1584:   // 17. Günlük Dualar
+1585:   Widget _buildGunlukDualar() {
+1586:     return ListView.builder(
+1587:       itemCount: DUALAR.length,
+1588:       itemBuilder: (context, index) {
+1589:         final dua = DUALAR[index];
+1590:         return Card(
+1591:           elevation: 1.5,
+1592:           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+1593:           margin: const EdgeInsets.only(bottom: 12),
+1594:           child: Padding(
+1595:             padding: const EdgeInsets.all(16.0),
+1596:             child: Column(
+1597:               crossAxisAlignment: CrossAxisAlignment.start,
+1598:               children: [
+1599:                 Text(dua['ad'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1E5E43))),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

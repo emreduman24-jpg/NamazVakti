@@ -1,0 +1,1 @@
+  // Zikirmatik State\n  int _zikirCount = 0;\n  int _zikirTarget = 33;\n  bool _zikirSoundEnabled = true;\n  String _selectedZikirId = 'subhanallah';\n  Set<String> _zikirCompletedDates = {};\n  double _counterScale = 1.0;

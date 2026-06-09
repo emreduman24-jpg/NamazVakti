@@ -1,0 +1,102 @@
+Created At: 2026-06-03T10:56:37Z
+Completed At: 2026-06-03T10:56:38Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 1781 to 2580
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1781:                     setState(() {
+1782:                       _prophetLifeTab = index;
+1783:                     });
+1784:                   },
+1785:                 ),
+1786:               );
+1787:             },
+1788:           ),
+1789:         ),
+1790:         SizedBox(height: 16),
+1791:         Expanded(
+1792:           child: Card(
+1793:             elevation: 2,
+1794:             shape: RoundedRectangleBorder(
+1795:               borderRadius: BorderRadius.circular(16),
+1796:             ),
+1797:             child: Padding(
+1798:               padding: EdgeInsets.all(20.0),
+1799:               child: SingleChildScrollView(
+1800:                 child: Column(
+1801:                   crossAxisAlignment: CrossAxisAlignment.start,
+1802:                   children: [
+1803:                     Text(
+1804:                       PEYGAMBER_HAYATI[_prophetLifeTab]['baslik'] ?? '',
+1805:                       style: TextStyle(
+1806:                         fontSize: 18,
+1807:                         fontWeight: FontWeight.bold,
+1808:                         color: _greenColor,
+1809:                       ),
+1810:                     ),
+1811:                     Divider(height: 24),
+1812:                     Text(
+1813:                       PEYGAMBER_HAYATI[_prophetLifeTab]['icerik'] ?? '',
+1814:                       style: TextStyle(
+1815:                         fontSize: 14,
+1816:                         height: 1.6,
+1817:                         color: _textColor,
+1818:                       ),
+1819:                     ),
+1820:             
+<truncated 30928 bytes>
+     ),
+2529:           leading: Icon(Icons.check_circle, color: Colors.green),
+2530:           children: bozmayanlar
+2531:               .map(
+2532:                 (item) => ListTile(
+2533:                   title: Text(item, style: TextStyle(fontSize: 13)),
+2534:                   leading: Icon(
+2535:                     Icons.circle,
+2536:                     size: 6,
+2537:                     color: Colors.grey,
+2538:                   ),
+2539:                 ),
+2540:               )
+2541:               .toList(),
+2542:         ),
+2543:         SizedBox(height: 8),
+2544:         ExpansionTile(
+2545:           title: Text(
+2546:             "Oruç Çeşitleri",
+2547:             style: TextStyle(
+2548:               fontWeight: FontWeight.bold,
+2549:               color: _greenColor,
+2550:             ),
+2551:           ),
+2552:           leading: Icon(Icons.menu_book, color: Color(0xFF27A770)),
+2553:           children: cesitler
+2554:               .map(
+2555:                 (item) => ListTile(
+2556:                   title: Text(
+2557:                     item['ad'] ?? '',
+2558:                     style: TextStyle(
+2559:                       fontWeight: FontWeight.bold,
+2560:                       fontSize: 13,
+2561:                     ),
+2562:                   ),
+2563:                   subtitle: Text(
+2564:                     item['aciklama'] ?? '',
+2565:                     style: TextStyle(fontSize: 12),
+2566:                   ),
+2567:                 ),
+2568:               )
+2569:               .toList(),
+2570:         ),
+2571:       ],
+2572:     );
+2573:   }
+2574: 
+2575:   // 10. Kıble Bulucu Compass
+2576:   Widget _buildKibleBulucu() {
+2577:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+2578: 
+2579:     return StreamBuilder<CompassEvent>(
+2580:       stream: FlutterCompass.events,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

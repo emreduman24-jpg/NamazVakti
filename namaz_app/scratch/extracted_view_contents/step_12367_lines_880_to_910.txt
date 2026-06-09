@@ -1,0 +1,39 @@
+Created At: 2026-06-01T10:28:11Z
+Completed At: 2026-06-01T10:28:11Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5589
+Total Bytes: 232932
+Showing lines 880 to 910
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+880:     );
+881:   }
+882: 
+883:   Widget _buildToolBody() {
+884:     switch (widget.toolId) {
+885:       case 'dini-gunler':
+886:         return _buildDiniGunler();
+887:       case 'dua-iste':
+888:         return _buildDuaIste();
+889:       case 'soru-cevap':
+890:         return _buildSoruCevap();
+891:       case 'canli-sohbet':
+892:         return _buildCanliSohbet();
+893:       case 'peygamber-hayati':
+894:         return _buildPeygamberHayati();
+895:       case 'kuran-kerim':
+896:         return _buildKuranKerim();
+897:       case 'esmaul-husna':
+898:         return _buildEsmaulHusna();
+899:       case 'ramazan-hakkinda':
+900:         return _buildRamazanHakkinda();
+901:       case 'oruc-rehberi':
+902:         return _buildOrucRehberi();
+903:       case 'kible-bulucu':
+904:         return _buildKibleBulucu();
+905:       case 'zikirmatik':
+906:         return _buildZikirmatik();
+907:       case 'miladi-hicri':
+908:         return _buildMiladiHicri();
+909:       case 'yasin-suresi':
+910:         return _buildYasinSuresi();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

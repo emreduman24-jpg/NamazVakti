@@ -1,0 +1,95 @@
+Created At: 2026-06-03T12:44:13Z
+Completed At: 2026-06-03T12:44:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7117
+Total Bytes: 289398
+Showing lines 5040 to 5150
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5040:                 ],
+5041:               ),
+5042:             ),
+5043:           ),
+5044:         ),
+5045:       ],
+5046:     );
+5047:   }
+5048: 
+5049:   // 17. Günlük Dualar
+5050:   Widget _buildGunlukDualar() {
+5051:     return ListView.builder(
+5052:       itemCount: DUALAR.length,
+5053:       itemBuilder: (context, index) {
+5054:         final dua = DUALAR[index];
+5055:         return Card(
+5056:           elevation: 1.5,
+5057:           shape: RoundedRectangleBorder(
+5058:             borderRadius: BorderRadius.circular(16),
+5059:           ),
+5060:           margin: EdgeInsets.only(bottom: 12),
+5061:           child: Padding(
+5062:             padding: EdgeInsets.all(16.0),
+5063:             child: Column(
+5064:               crossAxisAlignment: CrossAxisAlignment.start,
+5065:               children: [
+5066:                 Text(
+5067:                   dua['ad'] ?? '',
+5068:                   style: TextStyle(
+5069:                     fontWeight: FontWeight.bold,
+5070:                     fontSize: 15,
+5071:                     color: _greenColor,
+5072:                   ),
+5073:                 ),
+5074:                 Divider(height: 12),
+5075:                 Align(
+5076:                   alignment: Alignment.centerRight,
+5077:                   child: Text(
+5078:                     dua['arapca'] ?? '',
+5079:                     style: TextStyle(
+5080:                       fontFamily: 'Traditional Arabic',
+5081:                       fontSize: 18,
+5082:                       height: 1.8,
+5083:                       fontWeight: 
+<truncated 808 bytes>
+:             "Dinen zengin sayılan kişilerin yılda bir kez vermesi gereken zekat miktarını hesaplayın.",
+5110:             style: TextStyle(color: Colors.grey, fontSize: 12),
+5111:           ),
+5112:           SizedBox(height: 12),
+5113:           TextField(
+5114:             controller: _goldController,
+5115:             keyboardType: TextInputType.number,
+5116:             decoration: InputDecoration(
+5117:               labelText: "Altın Miktarı (Gram)",
+5118:               filled: true,
+5119:               fillColor: Colors.white,
+5120:               border: OutlineInputBorder(
+5121:                 borderRadius: BorderRadius.circular(12),
+5122:                 borderSide: BorderSide.none,
+5123:               ),
+5124:             ),
+5125:           ),
+5126:           SizedBox(height: 8),
+5127:           TextField(
+5128:             controller: _cashController,
+5129:             keyboardType: TextInputType.number,
+5130:             decoration: InputDecoration(
+5131:               labelText: "Nakit Para (TL)",
+5132:               filled: true,
+5133:               fillColor: Colors.white,
+5134:               border: OutlineInputBorder(
+5135:                 borderRadius: BorderRadius.circular(12),
+5136:                 borderSide: BorderSide.none,
+5137:               ),
+5138:             ),
+5139:           ),
+5140:           SizedBox(height: 8),
+5141:           TextField(
+5142:             controller: _businessController,
+5143:             keyboardType: TextInputType.number,
+5144:             decoration: InputDecoration(
+5145:               labelText: "Ticari Mal ve Varlıklar (TL)",
+5146:               filled: true,
+5147:               fillColor: Colors.white,
+5148:               border: OutlineInputBorder(
+5149:                 borderRadius: BorderRadius.circular(12),
+5150:                 borderSide: BorderSide.none,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

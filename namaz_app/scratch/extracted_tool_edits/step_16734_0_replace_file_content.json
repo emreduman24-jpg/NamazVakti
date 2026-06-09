@@ -1,0 +1,16 @@
+{
+  "step_index": 16734,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Add the Dini Hoca chatbot state and text controllers in tool_detail_screen.dart.\"",
+    "EndLine": "652",
+    "Instruction": "\"Add Dini Hoca state variables.\"",
+    "ReplacementContent": "\"    \\\"Ve aleyküm selam ve rahmetullah.\\\",\\n  ];\\n\\n  // Dini Hoca AI State\\n  final List<Map<String, String>> _diniHocaMessages = [\\n    {\\n      'sender': 'ai',\\n      'text': 'Selamün Aleyküm mümin kardeşim. Ben Dini Hoca Yapay Zeka Danışmanıyım. İslam fıkhı, inanç, ibadetler (abdest, namaz, zekat vb.), hadis-i şerifler veya ahlak adabı hakkında aklına takılan her soruyu bana sorabilirsin. Sana hayırla rehberlik etmek için buradayım.',\\n    }\\n  ];\\n  final TextEditingController _diniHocaInputController = TextEditingController();\\n  final ScrollController _diniHocaScrollController = ScrollController();\\n  bool _diniHocaIsTyping = false;\"",
+    "StartLine": "650",
+    "TargetContent": "\"    \\\"Ve aleyküm selam ve rahmetullah.\\\",\\n  ];\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding Dini Hoca state variables in tool_detail_screen.dart\"",
+    "toolSummary": "\"Edit file\""
+  }
+}

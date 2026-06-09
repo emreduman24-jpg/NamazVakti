@@ -1,0 +1,77 @@
+Created At: 2026-05-22T16:17:16Z
+Completed At: 2026-05-22T16:17:16Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 2010
+Total Bytes: 80335
+Showing lines 301 to 450
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+301:         return _buildYakindakiCamiler();
+302:       case 'hadis-40':
+303:         return _buildHadis40();
+304:       case 'namaz-tesbihati':
+305:         return _buildNamazTesbihati();
+306:       case 'gunluk-dualar':
+307:         return _buildGunlukDualar();
+308:       case 'zekat-hesaplama':
+309:         return _buildZekatHesaplama();
+310:       case 'sahabe-hayatlari':
+311:         return _buildSahabeHayatlari();
+312:       case 'islam-tarihi':
+313:         return _buildIslamTarihi();
+314:       case 'namaz-kilma':
+315:         return _buildNamazKilma();
+316:       case 'vitir-namazi':
+317:         return _buildVitirNamazi();
+318:       default:
+319:         return const Center(child: Text("Bu özellik çok yakında eklenecektir."));
+320:     }
+321:   }
+322: 
+323:   // 1. Dini Günler
+324:   Widget _buildDiniGunler() {
+325:     return Column(
+326:       crossAxisAlignment: CrossAxisAlignment.start,
+327:       children: [
+328:         const Text(
+329:           "2026 Yılı Dini Günler Listesi",
+330:           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E5E43)),
+331:         ),
+332:         const SizedBox(height: 12),
+333:         Expanded(
+334:           child: ListView.builder(
+335:             itemCount: DINI_GUNLER.length,
+336:             itemBuilder: (context, index) {
+337:               final day = DINI_GUNLER[index];
+338:               return Card(
+339:                 elevation: 1,
+340:                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+341:                 margin
+<truncated 3884 bytes>
+ return Card(
+425:                 elevation: 1.5,
+426:                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+427:                 margin: const EdgeInsets.only(bottom: 10),
+428:                 child: Padding(
+429:                   padding: const EdgeInsets.all(12.0),
+430:                   child: Column(
+431:                     crossAxisAlignment: CrossAxisAlignment.start,
+432:                     children: [
+433:                       Text(item['yazar'] ?? 'Anonim', style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF27A770))),
+434:                       const SizedBox(height: 4),
+435:                       Text(item['dua'] ?? '', style: const TextStyle(fontSize: 13, height: 1.35)),
+436:                       const SizedBox(height: 8),
+437:                       Row(
+438:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+439:                         children: [
+440:                           Text("${item['amin'] ?? 0} kişi Amin dedi", style: const TextStyle(color: Colors.grey, fontSize: 12)),
+441:                           ElevatedButton.icon(
+442:                             onPressed: () => _aminDua(index),
+443:                             icon: const Icon(Icons.favorite, size: 14, color: Colors.red),
+444:                             label: const Text("Amin de", style: TextStyle(fontSize: 11, color: Color(0xFF1E5E43))),
+445:                             style: ElevatedButton.styleFrom(
+446:                               backgroundColor: const Color(0xFFEAF4FB),
+447:                               elevation: 0,
+448:                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+449:                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+450:                             ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

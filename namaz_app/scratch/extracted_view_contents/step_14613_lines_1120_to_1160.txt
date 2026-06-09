@@ -1,0 +1,49 @@
+Created At: 2026-06-03T05:03:13Z
+Completed At: 2026-06-03T05:03:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6563
+Total Bytes: 266302
+Showing lines 1120 to 1160
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1120:       ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+1121:     }
+1122:   }
+1123: 
+1124:   @override
+1125:   Widget build(BuildContext context) {
+1126:     return Scaffold(
+1127:       backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
+1128:       appBar: AppBar(
+1129:         title: Text(
+1130:           widget.toolTitle,
+1131:           style: const TextStyle(
+1132:             fontWeight: FontWeight.bold,
+1133:             color: Colors.white,
+1134:             fontSize: 20,
+1135:           ),
+1136:         ),
+1137:         centerTitle: true,
+1138:         backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43),
+1139:         elevation: 0,
+1140:         iconTheme: const IconThemeData(color: Colors.white),
+1141:         automaticallyImplyLeading: !widget.isTab,
+1142:       ),
+1143:       body: SafeArea(
+1144:         child: Padding(
+1145:           padding: EdgeInsets.all(16.0),
+1146:           child: _buildToolBody(),
+1147:         ),
+1148:       ),
+1149:     );
+1150:   }
+1151: 
+1152:   Widget _buildToolBody() {
+1153:     switch (widget.toolId) {
+1154:       case 'dini-gunler':
+1155:         return _buildDiniGunler();
+1156:       case 'dua-iste':
+1157:         return _buildDuaIste();
+1158:       case 'soru-cevap':
+1159:         return _buildSoruCevap();
+1160:       case 'canli-sohbet':
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

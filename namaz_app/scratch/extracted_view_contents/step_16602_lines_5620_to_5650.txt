@@ -1,0 +1,39 @@
+Created At: 2026-06-03T13:10:55Z
+Completed At: 2026-06-03T13:10:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7690
+Total Bytes: 312474
+Showing lines 5620 to 5650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5620:                                 borderRadius: BorderRadius.circular(30),
+5621:                               ),
+5622:                               child: Row(
+5623:                                 mainAxisSize: MainAxisSize.min,
+5624:                                 children: [
+5625:                                   Icon(
+5626:                                     isPlaying() ? Icons.pause : Icons.play_arrow,
+5627:                                     color: Colors.white,
+5628:                                     size: 20,
+5629:                                   ),
+5630:                                   const SizedBox(width: 8),
+5631:                                   Text(
+5632:                                     isPlaying() ? "Durdur" : "Dinle",
+5633:                                     style: const TextStyle(
+5634:                                       color: Colors.white,
+5635:                                       fontWeight: FontWeight.bold,
+5636:                                       fontSize: 14,
+5637:                                     ),
+5638:                                   ),
+5639:                                 ],
+5640:                               ),
+5641:                             ),
+5642:                           ),
+5643:                           const SizedBox(width: 16),
+5644:                           StatefulBuilder(
+5645:                             builder: (context, setFavState) {
+5646:                               final isFav = _favoriteDualar.contains(id);
+5647:                               return IconButton(
+5648:                                 icon: Icon(
+5649:                                   isFav ? Icons.favorite : Icons.favorite_border,
+5650:                                   color: isFav ? Colors.red : (_isDark ? Colors.white70 : Colors.black54),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

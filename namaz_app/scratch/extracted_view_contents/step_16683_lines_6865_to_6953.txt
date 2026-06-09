@@ -1,0 +1,90 @@
+Created At: 2026-06-03T13:37:41Z
+Completed At: 2026-06-03T13:37:42Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 6865 to 6953
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+6865:   Widget _buildSabahEzkari() {
+6866:     final List<Map<String, dynamic>> ezkar = [
+6867:       {
+6868:         "dua": "Ayetel Kürsi",
+6869:         "arapca": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱlْحَىُّ ٱlْقَيُّومُ",
+6870:         "anlam": "Evden çıkarken, sabah ve akşam korunmak için okunur.",
+6871:         "hedef": 1,
+6872:       },
+6873:       {
+6874:         "dua": "İhlas, Felak, Nas sureleri",
+6875:         "arapca": "قُلْ هُوَ ٱlلَّهُ أَحَدٌ ...",
+6876:         "anlam": "Her türlü şerden, büyüden ve nazardan korunmak için okunur.",
+6877:         "hedef": 3,
+6878:       },
+6879:       {
+6880:         "dua": "Bismillahillezi La Yedurru",
+6881:         "arapca": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ",
+6882:         "anlam":
+6883:             "İsmiyle yerde ve gökte hiçbir şeyin zarar veremeyeceği Allah'ın adıyla.",
+6884:         "hedef": 3,
+6885:       },
+6886:       {
+6887:         "dua": "Sübhanallahi ve Bihamdihi",
+6888:         "arapca": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+6889:         "anlam":
+6890:             "Allah'ı noksan sıfatlardan tenzih eder, O'na hamd ederim. Günahları siler.",
+6891:         "hedef": 100,
+6892:       },
+6893:       {
+6894:         "dua": "Seyyidül İstiğfar",
+6895:         "arapca":
+6896:             "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي",
+6897:        
+<truncated 285 bytes>
+hEzkarCounts,
+6907:     );
+6908:   }
+6909: 
+6910:   // 39. Akşam Ezkarı
+6911:   Widget _buildAksamEzkari() {
+6912:     final List<Map<String, dynamic>> ezkar = [
+6913:       {
+6914:         "dua": "Amenerrasulü",
+6915:         "arapca": "آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ",
+6916:         "anlam": "Gece okuyana her türlü musibetten korunmak için kafi gelir.",
+6917:         "hedef": 1,
+6918:       },
+6919:       {
+6920:         "dua": "Hasbiyallahü la ilahe illa hu",
+6921:         "arapca": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ",
+6922:         "anlam":
+6923:             "Allah bana kafidir, O'ndan başka ilah yoktur. Dünya ve ahiret işlerine kafi gelir.",
+6924:         "hedef": 7,
+6925:       },
+6926:       {
+6927:         "dua": "Euzü bikelimatillahittammati",
+6928:         "arapca": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ",
+6929:         "anlam":
+6930:             "Yarattığı şeylerin şerrinden Allah'ın kusursuz kelimelerine sığınırım.",
+6931:         "hedef": 3,
+6932:       },
+6933:       {
+6934:         "dua": "Estağfirullah el-Azim",
+6935:         "arapca": "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ",
+6936:         "anlam": "Bağışlanma ve tövbe dilemek için okunur.",
+6937:         "hedef": 100,
+6938:       },
+6939:       {
+6940:         "dua": "Salavat-ı Şerife",
+6941:         "arapca": "اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ",
+6942:         "anlam": "Peygamber Efendimize salat ve selam getirmek.",
+6943:         "hedef": 100,
+6944:       },
+6945:     ];
+6946: 
+6947:     return _buildEzkarInteractive(
+6948:       "Akşam Zikirleri ve Duaları",
+6949:       ezkar,
+6950:       _aksamEzkarCounts,
+6951:     );
+6952:   }
+6953: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

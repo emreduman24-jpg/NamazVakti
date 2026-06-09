@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Add _buildEzkar method to support general ezkar ID\"",
+  "EndLine": "3994",
+  "Instruction": "\"Insert _buildEzkar method between _buildAksamEzkari and _buildEzkarInteractive\"",
+  "ReplacementContent": "\"  }\\n\\n  Widget _buildEzkar() {\\n    return Column(\\n      children: [\\n        Row(\\n          children: [\\n            Expanded(\\n              child: ElevatedButton(\\n                style: ElevatedButton.styleFrom(\\n                  backgroundColor: _ezkarTab == 0 ? const Color(0xFF27A770) : Colors.white,\\n                  foregroundColor: _ezkarTab == 0 ? Colors.white : const Color(0xFF1E5E43),\\n                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),\\n                  elevation: 1,\\n                ),\\n                onPressed: () => setState(() => _ezkarTab = 0),\\n                child: const Text(\\\"Sabah Zikirleri\\\"),\\n              ),\\n            ),\\n            const SizedBox(width: 8),\\n            Expanded(\\n              child: ElevatedButton(\\n                style: ElevatedButton.styleFrom(\\n                  backgroundColor: _ezkarTab == 1 ? const Color(0xFF27A770) : Colors.white,\\n                  foregroundColor: _ezkarTab == 1 ? Colors.white : const Color(0xFF1E5E43),\\n                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),\\n                  elevation: 1,\\n                ),\\n                onPressed: () => setState(() => _ezkarTab = 1),\\n                child: const Text(\\\"Akşam Zikirleri\\\"),\\n              ),\\n            ),\\n          ],\\n        ),\\n        const SizedBox(height: 12),\\n        Expanded(\\n          child: _ezkarTab == 0 ? _buildSabahEzkari() : _buildAksamEzkari(),\\n        ),\\n      ],\\n    );\\n  }\\n\\n  Widget _buildEzkarInteractive(\"",
+  "StartLine": "3991",
+  "TargetContent": "\"  }\\n\\n  Widget _buildEzkarInteractive(\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Modifying tool_detail_screen.dart to add _buildEzkar method\"",
+  "toolSummary": "\"Add _buildEzkar\""
+}

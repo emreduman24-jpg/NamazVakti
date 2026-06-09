@@ -1,0 +1,79 @@
+Created At: 2026-06-03T13:35:53Z
+Completed At: 2026-06-03T13:35:53Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 1230 to 1300
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1230:         );
+1231:       case 'yemek-duasi':
+1232:         return _buildYemekDuasi();
+1233:       case 'sifa-duasi':
+1234:         return _buildSifaDuasi();
+1235:       case 'koruyucu-dualar':
+1236:         return _buildKoruyucuDualar();
+1237:       case 'sikinti-borc-duasi':
+1238:         return _buildSikintiBorcDuasi();
+1239:       case 'rabbena-dualar':
+1240:         return _buildRabbenaDualar();
+1241:       case 'hac-umre':
+1242:         return _buildHacUmre();
+1243:       case 'kurban-rehberi':
+1244:         return _buildKurbanRehberi();
+1245:       case 'sadaka-bilgileri':
+1246:         return _buildSadakaBilgileri();
+1247:       case 'islamin-sartlari':
+1248:         return _buildIslaminSartlari();
+1249:       case 'imanin-sartlari':
+1250:         return _buildImaninSartlari();
+1251:       case 'farz-32':
+1252:         return _buildFarz32();
+1253:       case 'farz-54':
+1254:         return _buildFarz54();
+1255:       case 'buyuk-gunahlar':
+1256:         return _buildBuyukGunahlar();
+1257:       case 'helal-haram':
+1258:         return _buildHelalHaram();
+1259:       case 'aile-ahlaki':
+1260:         return _buildAileAhlaki();
+1261:       case 'ticaret-fikhi':
+1262:         return _buildTicaretFikhi();
+1263:       case 'miras-fikhi':
+1264:         return _buildMirasFikhi();
+1265:       case 'anne-baba-haklari':
+1266:         return _buildAnneBabaHaklari();
+1267:       case 'kul-hakki':
+1268:         return _buildKulHakki();
+1269:       case 'komsu-haklari':
+1270:         return _buildKomsuHaklari();
+1271:       case 'cocuk-egitimi':
+1272:         return _buildCocukEgitimi();
+1273:       case 'selamlasma-adabi':
+1274:         return _buildSelamlasmaAdabi();
+1275:       case 'misafirlik-adabi':
+1276:         return _buildMisafirlikAdabi();
+1277:       case 'uc-aylar':
+1278:         return _buildUcAylar();
+1279:       case 'muharrem-asure':
+1280:         return _buildMuharremAsure();
+1281:       case 'zilhicce-arefe':
+1282:         return _buildZilhicceArefe();
+1283:       case 'islam-alimleri':
+1284:         return _buildIslamAlimleri();
+1285:       case 'islam-cografyasi':
+1286:         return _buildIslamCografyasi();
+1287:       case 'tevbe-istigfar':
+1288:         return _buildTevbeIstigfar();
+1289:       case 'sadaka-i-cariye':
+1290:         return _buildSadakaICariye();
+1291:       case 'tecvid-kurallari':
+1292:         return _buildTecvidKurallari();
+1293:       default:
+1294:         return Center(
+1295:           child: Text("Bu özellik çok yakında eklenecektir."),
+1296:         );
+1297:     }
+1298:   }
+1299: 
+1300:   // 1. Dini Günler
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

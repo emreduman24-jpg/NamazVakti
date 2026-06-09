@@ -1,0 +1,69 @@
+Created At: 2026-06-01T17:28:08Z
+Completed At: 2026-06-01T17:28:09Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6355
+Total Bytes: 257924
+Showing lines 915 to 975
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+915:       ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+916:     }
+917:   }
+918: 
+919:   @override
+920:   Widget build(BuildContext context) {
+921:     return Scaffold(
+922:       backgroundColor: const Color(0xFFF3F8F5),
+923:       appBar: AppBar(
+924:         title: Text(
+925:           widget.toolTitle,
+926:           style: TextStyle(
+927:             fontWeight: FontWeight.bold,
+928:             color: Colors.white,
+929:           ),
+930:         ),
+931:         backgroundColor: _greenColor,
+932:         elevation: 0,
+933:         iconTheme: IconThemeData(color: Colors.white),
+934:       ),
+935:       body: SafeArea(
+936:         child: Padding(
+937:           padding: EdgeInsets.all(16.0),
+938:           child: _buildToolBody(),
+939:         ),
+940:       ),
+941:     );
+942:   }
+943: 
+944:   Widget _buildToolBody() {
+945:     switch (widget.toolId) {
+946:       case 'dini-gunler':
+947:         return _buildDiniGunler();
+948:       case 'dua-iste':
+949:         return _buildDuaIste();
+950:       case 'soru-cevap':
+951:         return _buildSoruCevap();
+952:       case 'canli-sohbet':
+953:         return _buildCanliSohbet();
+954:       case 'peygamber-hayati':
+955:         return _buildPeygamberHayati();
+956:       case 'kuran-kerim':
+957:         return _buildKuranKerim();
+958:       case 'esmaul-husna':
+959:         return _buildEsmaulHusna();
+960:       case 'ramazan-hakkinda':
+961:         return _buildRamazanHakkinda();
+962:       case 'oruc-rehberi':
+963:         return _buildOrucRehberi();
+964:       case 'kible-bulucu':
+965:         return _buildKibleBulucu();
+966:       case 'namaz-vakitleri-aylik':
+967:         return _buildAylikNamazVakitleri();
+968:       case 'zikirmatik':
+969:         return _buildZikirmatik();
+970:       case 'miladi-hicri':
+971:         return _buildMiladiHicri();
+972:       case 'yasin-suresi':
+973:         return _buildYasinSuresi();
+974:       case 'yakindaki-camiler':
+975:         return _buildYakindakiCamiler();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

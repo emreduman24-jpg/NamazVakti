@@ -1,0 +1,88 @@
+Created At: 2026-06-03T05:00:13Z
+Completed At: 2026-06-03T05:00:14Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6363
+Total Bytes: 258283
+Showing lines 1750 to 1950
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1750:   }
+1751: 
+1752:   // 6. Kuran-ı Kerim Player
+1753:   Widget _buildKuranKerim() {
+1754:     return Column(
+1755:       children: [
+1756:         Container(
+1757:           padding: EdgeInsets.all(16),
+1758:           decoration: BoxDecoration(
+1759:             color: const Color(0xFFEAF7F1),
+1760:             borderRadius: BorderRadius.circular(16),
+1761:             border: Border.all(color: const Color(0xFF27A770).withOpacity(0.3)),
+1762:           ),
+1763:           child: Column(
+1764:             children: [
+1765:               Icon(Icons.music_note, color: Color(0xFF27A770), size: 36),
+1766:               SizedBox(height: 8),
+1767:               Text(
+1768:                 _currentTrackName.isEmpty
+1769:                     ? "Cüz seçin ve oynatın"
+1770:                     : _currentTrackName,
+1771:                 textAlign: TextAlign.center,
+1772:                 style: TextStyle(
+1773:                   fontWeight: FontWeight.bold,
+1774:                   fontSize: 15,
+1775:                   color: _greenColor,
+1776:                 ),
+1777:               ),
+1778:               SizedBox(height: 12),
+1779:               Row(
+1780:                 mainAxisAlignment: MainAxisAlignment.center,
+1781:                 children: [
+1782:                   IconButton(
+1783:                     iconSize: 40,
+1784:                     icon: Icon(
+1785:                       _playerState == PlayerState.playing
+1786:                           ? Icons.pause_circle_filled
+1787:                           : Icons.play_circle_filled,
+1788:     
+<truncated 4957 bytes>
+rt,
+1912:                     children: [
+1913:                       Row(
+1914:                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+1915:                         children: [
+1916:                           Text(
+1917:                             "#${item['no']} ${item['ad']}",
+1918:                             style: TextStyle(
+1919:                               fontWeight: FontWeight.bold,
+1920:                               fontSize: 16,
+1921:                               color: _greenColor,
+1922:                             ),
+1923:                           ),
+1924:                           Text(
+1925:                             item['arapca'] ?? '',
+1926:                             style: TextStyle(
+1927:                               fontFamily: 'Traditional Arabic',
+1928:                               fontSize: 22,
+1929:                               fontWeight: FontWeight.bold,
+1930:                               color: Color(0xFF27A770),
+1931:                             ),
+1932:                           ),
+1933:                         ],
+1934:                       ),
+1935:                       Divider(height: 16),
+1936:                       Text(
+1937:                         "Anlamı: ${item['anlam']}",
+1938:                         style: TextStyle(
+1939:                           fontSize: 13,
+1940:                           color: _textColor,
+1941:                         ),
+1942:                       ),
+1943:                       SizedBox(height: 4),
+1944:                       Text(
+1945:                         "Fazileti: ${item['fazilet']}",
+1946:                         style: TextStyle(
+1947:                           fontSize: 13,
+1948:                           fontStyle: FontStyle.italic,
+1949:                           color: Colors.grey,
+1950:                         ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,54 @@
+Created At: 2026-05-21T20:04:38Z
+Completed At: 2026-05-21T20:04:38Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 1974
+Total Bytes: 78784
+Showing lines 1380 to 1425
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1380:                     ],
+1381:                   ),
+1382:                 ),
+1383:               );
+1384:             },
+1385:           ),
+1386:         )
+1387:       ],
+1388:     );
+1389:   }
+1390: 
+1391:   // 15. 40 Hadis
+1392:   Widget _buildHadis40() {
+1393:     final filtered = HADISLER_40.where((h) {
+1394:       final text = h['metin'].toString().toLowerCase();
+1395:       final source = h['kaynak'].toString().toLowerCase();
+1396:       final query = _hadisSearchQuery.toLowerCase();
+1397:       return text.contains(query) || source.contains(query);
+1398:     }).toList();
+1399: 
+1400:     return Column(
+1401:       children: [
+1402:         TextField(
+1403:           controller: _hadisSearchController,
+1404:           decoration: InputDecoration(
+1405:             hintText: "Hadislerde ara...",
+1406:             prefixIcon: const Icon(Icons.search, color: Color(0xFF27A770)),
+1407:             filled: true,
+1408:             fillColor: Colors.white,
+1409:             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+1410:           ),
+1411:           onChanged: (val) {
+1412:             setState(() {
+1413:               _hadisSearchQuery = val;
+1414:               _hadisIndex = 0;
+1415:             });
+1416:           },
+1417:         ),
+1418:         const SizedBox(height: 16),
+1419:         if (filtered.isEmpty)
+1420:           const Expanded(child: Center(child: Text("Aranan kriterde hadis bulunamadı.")))
+1421:         else ...[
+1422:           Expanded(
+1423:             child: Card(
+1424:               elevation: 2,
+1425:               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

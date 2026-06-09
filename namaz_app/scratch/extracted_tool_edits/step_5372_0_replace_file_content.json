@@ -1,0 +1,16 @@
+{
+  "step_index": 5372,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Set _forceSimulation to true by default for easier sensorless emulator testing of Kıble compass rotation.\"",
+    "EndLine": "252",
+    "Instruction": "\"Change the default value of _forceSimulation from false to true in tool_detail_screen.dart.\"",
+    "ReplacementContent": "\"  bool _forceSimulation = true;\"",
+    "StartLine": "244",
+    "TargetContent": "\"  bool _forceSimulation = false;\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Editing tool_detail_screen.dart to enable Kible simulation by default\"",
+    "toolSummary": "\"Enable Kible simulation default\""
+  }
+}

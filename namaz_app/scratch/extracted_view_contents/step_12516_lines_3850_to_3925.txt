@@ -1,0 +1,84 @@
+Created At: 2026-06-01T11:02:07Z
+Completed At: 2026-06-01T11:02:08Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5600
+Total Bytes: 233419
+Showing lines 3850 to 3925
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3850:             ],
+3851:           ),
+3852:         ),
+3853:       ),
+3854:     );
+3855:   }
+3856: 
+3857:   Widget _buildStepRehberi(String title, List<Map<String, String>> steps) {
+3858:     return Column(
+3859:       crossAxisAlignment: CrossAxisAlignment.start,
+3860:       children: [
+3861:         Text(
+3862:           title,
+3863:           style: const TextStyle(
+3864:             fontSize: 16,
+3865:             fontWeight: FontWeight.bold,
+3866:             color: Color(0xFF1E5E43),
+3867:           ),
+3868:         ),
+3869:         const SizedBox(height: 12),
+3870:         Expanded(
+3871:           child: ListView.builder(
+3872:             itemCount: steps.length,
+3873:             itemBuilder: (context, index) {
+3874:               final step = steps[index];
+3875:               return Card(
+3876:                 elevation: 1,
+3877:                 shape: RoundedRectangleBorder(
+3878:                   borderRadius: BorderRadius.circular(14),
+3879:                 ),
+3880:                 margin: const EdgeInsets.only(bottom: 10),
+3881:                 child: Padding(
+3882:                   padding: const EdgeInsets.all(14.0),
+3883:                   child: Row(
+3884:                     crossAxisAlignment: CrossAxisAlignment.start,
+3885:                     children: [
+3886:                       CircleAvatar(
+3887:                         radius: 14,
+3888:                         backgroundColor: const Color(0xFF27A770),
+3889:                         foregroundColor: Colors.white,
+3890:                         child: Text(
+3891:                           "${index + 1}",
+3892:                           style: const TextStyle(
+3893:                             fontSize: 12,
+3894:                             fontWeight: FontWeight.bold,
+3895:                           ),
+3896:                         ),
+3897:                       ),
+3898:                       const SizedBox(width: 12),
+3899:                       Expanded(
+3900:                         child: Column(
+3901:                           crossAxisAlignment: CrossAxisAlignment.start,
+3902:                           children: [
+3903:                             if (step['baslik'] != null &&
+3904:                                 step['baslik']!.isNotEmpty)
+3905:                               Text(
+3906:                                 step['baslik']!,
+3907:                                 style: const TextStyle(
+3908:                                   fontWeight: FontWeight.bold,
+3909:                                   fontSize: 14,
+3910:                                   color: Color(0xFF1E5E43),
+3911:                                 ),
+3912:                               ),
+3913:                             const SizedBox(height: 2),
+3914:                             Text(
+3915:                               step['icerik']!,
+3916:                               style: const TextStyle(
+3917:                                 fontSize: 12.5,
+3918:                                 height: 1.35,
+3919:                                 color: Colors.black87,
+3920:                               ),
+3921:                             ),
+3922:                           ],
+3923:                         ),
+3924:                       ),
+3925:                     ],
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

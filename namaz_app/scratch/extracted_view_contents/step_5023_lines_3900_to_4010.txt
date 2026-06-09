@@ -1,0 +1,96 @@
+Created At: 2026-05-23T22:30:03Z
+Completed At: 2026-05-23T22:30:03Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4596
+Total Bytes: 187772
+Showing lines 3900 to 4010
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3900:     );
+3901:   }
+3902: 
+3903:   // 38. Sabah Ezkarı
+3904:   Widget _buildSabahEzkari() {
+3905:     final List<Map<String, dynamic>> ezkar = [
+3906:       {
+3907:         "dua": "Ayetel Kürsi",
+3908:         "arapca": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱlْحَىُّ ٱlْقَيُّومُ",
+3909:         "anlam": "Evden çıkarken, sabah ve akşam korunmak için okunur.",
+3910:         "hedef": 1,
+3911:       },
+3912:       {
+3913:         "dua": "İhlas, Felak, Nas sureleri",
+3914:         "arapca": "قُلْ هُوَ ٱlلَّهُ أَحَدٌ ...",
+3915:         "anlam": "Her türlü şerden, büyüden ve nazardan korunmak için okunur.",
+3916:         "hedef": 3,
+3917:       },
+3918:       {
+3919:         "dua": "Bismillahillezi La Yedurru",
+3920:         "arapca": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ",
+3921:         "anlam":
+3922:             "İsmiyle yerde ve gökte hiçbir şeyin zarar veremeyeceği Allah'ın adıyla.",
+3923:         "hedef": 3,
+3924:       },
+3925:       {
+3926:         "dua": "Sübhanallahi ve Bihamdihi",
+3927:         "arapca": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+3928:         "anlam":
+3929:             "Allah'ı noksan sıfatlardan tenzih eder, O'na hamd ederim. Günahları siler.",
+3930:         "hedef": 100,
+3931:       },
+3932:       {
+3933:         "dua": "Seyyidül İstiğfar",
+3934:         "arapca":
+3935:             "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِ
+<truncated 912 bytes>
+َّهُ لَا إِلَهَ إِلَّا هُوَ",
+3961:         "anlam":
+3962:             "Allah bana kafidir, O'ndan başka ilah yoktur. Dünya ve ahiret işlerine kafi gelir.",
+3963:         "hedef": 7,
+3964:       },
+3965:       {
+3966:         "dua": "Euzü bikelimatillahittammati",
+3967:         "arapca": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ",
+3968:         "anlam":
+3969:             "Yarattığı şeylerin şerrinden Allah'ın kusursuz kelimelerine sığınırım.",
+3970:         "hedef": 3,
+3971:       },
+3972:       {
+3973:         "dua": "Estağfirullah el-Azim",
+3974:         "arapca": "أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ",
+3975:         "anlam": "Bağışlanma ve tövbe dilemek için okunur.",
+3976:         "hedef": 100,
+3977:       },
+3978:       {
+3979:         "dua": "Salavat-ı Şerife",
+3980:         "arapca": "اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ",
+3981:         "anlam": "Peygamber Efendimize salat ve selam getirmek.",
+3982:         "hedef": 100,
+3983:       },
+3984:     ];
+3985: 
+3986:     return _buildEzkarInteractive(
+3987:       "Akşam Zikirleri ve Duaları",
+3988:       ezkar,
+3989:       _aksamEzkarCounts,
+3990:     );
+3991:   }
+3992: 
+3993:   Widget _buildEzkarInteractive(
+3994:     String title,
+3995:     List<Map<String, dynamic>> ezkar,
+3996:     List<int> countList,
+3997:   ) {
+3998:     return Column(
+3999:       crossAxisAlignment: CrossAxisAlignment.start,
+4000:       children: [
+4001:         Text(
+4002:           title,
+4003:           style: const TextStyle(
+4004:             fontSize: 16,
+4005:             fontWeight: FontWeight.bold,
+4006:             color: Color(0xFF1E5E43),
+4007:           ),
+4008:         ),
+4009:         const SizedBox(height: 4),
+4010:         const Text(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

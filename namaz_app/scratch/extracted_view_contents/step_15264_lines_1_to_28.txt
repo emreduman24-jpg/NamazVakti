@@ -1,0 +1,36 @@
+Created At: 2026-06-03T06:24:49Z
+Completed At: 2026-06-03T06:24:50Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 28
+Total Bytes: 1738
+Showing lines 1 to 28
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Quran Reader Refinements Task List
+2: 
+3: - [ ] 1. Theme Configuration
+4:   - [ ] Make the Quran List screen (`tool_detail_screen.dart`) support light theme colors when the app is in light mode.
+5:   - [ ] Make the Quran Detail screen (`quran_detail_screen.dart`) adapt fully to dark mode (background, cards, dividers, text, switches, buttons, and slider).
+6: 
+7: - [ ] 2. Bookmark / Memory ("Kaldığın Yer") Correction
+8:   - [ ] Add `_isScrollListenerEnabled` flag in `quran_detail_screen.dart` and prevent initial scroll animation from overwriting the last-read index.
+9:   - [ ] Implement manual bookmark setting: Add a bookmark icon to each verse card. Tapping it explicitly bookmarks that verse as the last read.
+10:   - [ ] Highlight the currently bookmarked verse card with a green border or indicator.
+11: 
+12: - [ ] 3. Remove "Hatim Başlat" Card
+13:   - [ ] Remove the "Hatim Başlat" card from `tool_detail_screen.dart`.
+14:   - [ ] Remove unused `_showHatimDialog` method.
+15: 
+16: - [ ] 4. Sura Download & Delete Popups
+17:   - [ ] Track download status using `SharedPreferences` (`quran_downloaded_${surah.number}`).
+18:   - [ ] Create a bottom sheet popup for downloading (title, description, İndir/İptal buttons).
+19:   - [ ] Create a bottom sheet popup for deleting (title, description, Sil/Vazgeç buttons).
+20:   - [ ] Update the App Bar download action to reflect the state (green check vs. outline icon).
+21: 
+22: - [ ] 5. Simplified Font Sizing Controls
+23:   - [ ] Modify the control bar layout in `quran_detail_screen.dart` to show a clean `A` and `A` buttons instead of `Tt Aa Tt`.
+24: 
+25: - [ ] 6. Verification
+26:   - [ ] Run `flutter analyze lib/` to ensure clean compilation.
+27:   - [ ] Hot reload/restart and test navigation, themes, bookmarks, download popups, and text sizing on the emulator.
+28: 
+The above content shows the entire, complete file contents of the requested file.

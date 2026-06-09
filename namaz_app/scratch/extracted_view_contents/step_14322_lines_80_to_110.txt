@@ -1,0 +1,39 @@
+Created At: 2026-06-01T21:13:32Z
+Completed At: 2026-06-01T21:13:32Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6360
+Total Bytes: 258167
+Showing lines 80 to 110
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+80:         setState(() {
+81:           _loadingMonthlyTimes = false;
+82:         });
+83:       }
+84:     }
+85:   }
+86: 
+87:   AudioPlayer? _audioPlayer;
+88:   PlayerState _playerState = PlayerState.stopped;
+89:   String _currentAudioUrl = "";
+90:   String _currentTrackName = "";
+91: 
+92:   // Yakındaki Camiler (Location & GPS State)
+93:   Position? _currentPosition;
+94:   bool _loadingLocation = false;
+95:   List<Map<String, dynamic>> _dynamicMosquesList = [];
+96: 
+97:   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+98:     const r = 6371; // Earth radius in km
+99:     final dLat = _toRadians(lat2 - lat1);
+100:     final dLon = _toRadians(lon2 - lon1);
+101:     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+102:         math.cos(_toRadians(lat1)) * math.cos(_toRadians(lat2)) *
+103:         math.sin(dLon / 2) * math.sin(dLon / 2);
+104:     final c = 2 * math.asin(math.sqrt(a));
+105:     return r * c;
+106:   }
+107: 
+108:   double _toRadians(double degree) {
+109:     return degree * math.pi / 180;
+110:   }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

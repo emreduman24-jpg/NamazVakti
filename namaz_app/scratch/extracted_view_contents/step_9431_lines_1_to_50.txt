@@ -1,0 +1,58 @@
+Created At: 2026-05-30T21:39:30Z
+Completed At: 2026-05-30T21:39:31Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/walkthrough.md`
+Total Lines: 50
+Total Bytes: 3137
+Showing lines 1 to 50
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Walkthrough - Automatic Location & High-Accuracy Nearby Mosques
+2: 
+3: We have successfully resolved both user requests by fixing the location detection logic on Flutter and Web apps, correcting Dart's Turkish uppercase-lowercase combining dot issue, and prioritizing fresh highly accurate live GPS requests.
+4: 
+5: ---
+6: 
+7: ## Changes Implemented
+8: 
+9: ### 1. Flutter Mobile App Location Improvements
+10: 
+11: - **Turkish Casing Bug Fix (`normalizeString`):** In `main_screen.dart`, `onboarding_screen.dart`, and `settings_screen.dart`, we fixed Dart's `.toLowerCase()` issue with Turkish uppercase letters (**İ** and **I**). We now convert these uppercase letters *before* executing `.toLowerCase()`, ensuring 100% accurate matches for cities and districts.
+12: - **Fresh High-Accuracy GPS Precedence:** In all three location-fetching screens, we replaced `getLastKnownPosition` checks with direct `getCurrentPosition(desiredAccuracy: LocationAccuracy.high)` calls to obtain live street-level accuracy. We fall back to cached positions only if the fresh GPS query fails or times out.
+13: - **Nearby Mosques Custom Fallback:** In `tool_detail_screen.dart`, we ensured the "Yakındaki Camiler" tool requests highly accurate live GPS and falls back gracefully to manual city-center coordinates if GPS is disabled. Stale cached position overrides are eliminated.
+14: 
+15: ### 2. Web App Geolocation Upgrades
+16: 
+17: - **High-Accuracy Web Request:** In `tools.js` (for "Yakındaki Camiler") and `app.js` (for the home screen), we updated all calls to `navigator.geolocation.getCurrentPosition` to specify `{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }`, instructing the browser to obtain exact GPS coordinates down to the street level.
+18: - **Turkish Casing Fix in JS:** Updated `normalizeString` and `normalizeCityName` in Javascript to replace Turkish uppercase characters prior to `.toLowerCase()`.
+19: 
+20: ---
+21: 
+22: ## Verification & Test Results
+23: 
+24: ### Mobile App Verification (Android Emulator)
+25: 
+26: 1. **Mock GPS Coordinate Set:** Simulated coordinates for central Ankara (39.9333983, 32.8596983) via ADB.
+27: 2. **Automatic Location Run:**
+28:    - Navigated to `Lokasyonu Değiştir` -> `Cihaz Konumunu Kullan (Otomatik)`.
+29:    - Log output verified fresh GPS capture:
+30:      ```
+31:      I/flutter ( 7456): Attempting to get fresh live GPS location...
+32:      I/flutter ( 7456): Successfully fetched live high-accuracy GPS: 39.9333983, 32.8596983
+33:      ```
+34:    - UI successfully matched, resolved, and updated the location to `ANKARA / ANKARA`!
+35: 3. **Yakındaki Camiler Tool Run:**
+36:    - Opened the tool from the `Araçlar` tab.
+37:    - Successfully queried Overpass API and parsed the nearest mosques:
+38:      ```
+39:      I/flutter ( 7456): === MOSQUE SEARCH: Searching near lat=39.9333983, lon=32.8596983 ===
+40:      I/flutter ( 7456): Found 65 mosques within 3000m
+41:      ```
+42:    - Verified that the UI displays mosques beautifully, sorted precisely by distance:
+43:      - **Hacı İlyas Camii** (214 m)
+44:      - **Leblebicioğlu Cami** (286 m)
+45:      - **Kurşunlu Camii** (291 m)
+46:      - **Hacı Musa Camii** (348 m)
+47:      - **Celal Kaddani Camii** (380 m)
+48:      - **Hacı Ayvaz Cami** (393 m)
+49:      - **Ahi Elvan Camii** (445 m)
+50: 
+The above content shows the entire, complete file contents of the requested file.

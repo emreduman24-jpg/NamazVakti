@@ -1,0 +1,21 @@
+Created At: 2026-06-01T11:30:40Z
+Completed At: 2026-06-01T11:30:40Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5521
+Total Bytes: 224345
+Showing lines 30 to 42
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+30:   final PrayerRepository _repository = PrayerRepository();
+31:   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+32:   Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xff1e5e43);
+33:   Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000); // _textColor equivalent
+34:   Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000); // _subtitleColor equivalent
+35:   Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;
+36: 
+37:   AudioPlayer? _audioPlayer;
+38:   PlayerState _playerState = PlayerState.stopped;
+39:   String _currentAudioUrl = "";
+40:   String _currentTrackName = "";
+41: 
+42:   // Yakındaki Camiler (Location & GPS State)
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,16 @@
+{
+  "step_index": 16456,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Fix compile error: change EdgeInsets.bottom to EdgeInsets.only(bottom: 15) in bottom sheet drag handle.\"",
+    "EndLine": "5455",
+    "Instruction": "\"Fix margin layout on bottom sheet drag handle.\"",
+    "ReplacementContent": "\"                  Center(\\n                    child: Container(\\n                      width: 40,\\n                      height: 5,\\n                      margin: const EdgeInsets.only(bottom: 15),\\n                      decoration: BoxDecoration(\\n                        color: _isDark ? Colors.grey[700] : Colors.grey[300],\\n                        borderRadius: BorderRadius.circular(10),\\n                      ),\\n                    ),\\n                  ),\"",
+    "StartLine": "5445",
+    "TargetContent": "\"                  Center(\\n                    child: Container(\\n                      width: 40,\\n                      height: 5,\\n                      margin: const EdgeInsets.bottom(15),\\n                      decoration: BoxDecoration(\\n                        color: _isDark ? Colors.grey[700] : Colors.grey[300],\\n                        borderRadius: BorderRadius.circular(10),\\n                      ),\\n                    ),\\n                  ),\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Fixing margin layout in tool_detail_screen.dart\"",
+    "toolSummary": "\"Edit file\""
+  }
+}

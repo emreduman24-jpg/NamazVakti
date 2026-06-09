@@ -1,0 +1,1 @@
+    return Scaffold(\n      backgroundColor: _isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),

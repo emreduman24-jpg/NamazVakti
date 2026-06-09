@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Dispose _questionNameController in dispose().\"",
+  "EndLine": "328",
+  "Instruction": "\"Add _questionNameController.dispose() in dispose method.\"",
+  "ReplacementContent": "\"  @override\\n  void dispose() {\\n    _audioPlayer?.dispose();\\n    _duaNameController.dispose();\\n    _duaTextController.dispose();\\n    _questionNameController.dispose();\\n    _qaInputController.dispose();\\n    _chatInputController.dispose();\"",
+  "StartLine": "321",
+  "TargetContent": "\"  @override\\n  void dispose() {\\n    _audioPlayer?.dispose();\\n    _duaNameController.dispose();\\n    _duaTextController.dispose();\\n    _qaInputController.dispose();\\n    _chatInputController.dispose();\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Updating dispose method\"",
+  "toolSummary": "\"dispose cleanup update\""
+}

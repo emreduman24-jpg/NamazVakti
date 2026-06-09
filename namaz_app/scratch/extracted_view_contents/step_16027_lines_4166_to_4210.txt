@@ -1,0 +1,53 @@
+Created At: 2026-06-03T11:46:40Z
+Completed At: 2026-06-03T11:46:40Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7050
+Total Bytes: 287002
+Showing lines 4166 to 4210
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+4166:             onTap: _incrementZikir,
+4167:             child: Container(
+4168:               width: 170,
+4169:               height: 170,
+4170:               decoration: BoxDecoration(
+4171:                 color: Colors.white,
+4172:                 shape: BoxShape.circle,
+4173:                 border: Border.all(color: const Color(0xFF27A770), width: 8),
+4174:                 boxShadow: const [
+4175:                   BoxShadow(color: Colors.black12, blurRadius: 15, offset: Offset(0, 4)),
+4176:                 ],
+4177:               ),
+4178:               child: Center(
+4179:                 child: Column(
+4180:                   mainAxisSize: MainAxisSize.min,
+4181:                   children: [
+4182:                     Text(
+4183:                       "$_zikirCount",
+4184:                       style: TextStyle(
+4185:                         fontSize: 48,
+4186:                         fontWeight: FontWeight.bold,
+4187:                         color: _greenColor,
+4188:                       ),
+4189:                     ),
+4190:                     Text(
+4191:                       _zikirTarget == 9999 ? "/ ∞" : "/ $_zikirTarget",
+4192:                       style: TextStyle(fontSize: 13, color: Colors.grey,
+4193:                       ),
+4194:                     ),
+4195:                   ],
+4196:                 ),
+4197:               ),
+4198:             ),
+4199:           ),
+4200:           SizedBox(height: 16),
+4201:           _buildWeekViewChart(),
+4202:           SizedBox(height: 16),
+4203:           // Zikir actions
+4204:           Row(
+4205:             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+4206:             children: [
+4207:               ElevatedButton(
+4208:                 style: ElevatedButton.styleFrom(
+4209:                   backgroundColor: _cardBgColor,
+4210:                   foregroundColor: Colors.red,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

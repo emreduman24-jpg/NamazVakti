@@ -1,0 +1,65 @@
+Created At: 2026-06-03T13:38:05Z
+Completed At: 2026-06-03T13:38:05Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 7274 to 7340
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+7274:   Widget _buildIslaminSartlari() {
+7275:     return _buildListSection("İslam'ın 5 Temel Şartı", [
+7276:       "1. Kelime-i Şehadet Getirmek: 'Eşhedü en lâ ilâhe illallah ve eşhedü enne Muhammeden abdühû ve resûlüh' diyerek Allah'ın birliğini ve Hz. Muhammed'in O'nun elçisi olduğunu kalben onaylayıp dil ile ikrar etmek.",
+7277:       "2. Namaz Kılmak: Günde 5 vakit namazı vaktinde ve şartlarına uygun olarak kılmak.",
+7278:       "3. Zekat Vermek: Dinen zengin sayılan kişilerin yılda bir kez mallarının %2.5'ini yoksul Müslümanlara vermesi.",
+7279:       "4. Oruç Tutmak: Ramazan ayında imsak vaktinden akşam vaktine kadar ibadet niyetiyle yemekten, içmekten ve nefsani arzulardan uzak durmak.",
+7280:       "5. Hacca Gitmek: Maddi ve fiziki durumu yeten Müslümanların ömründe bir kez Mekke'deki Kabe'yi ve kutsal mekanları ziyaret etmesi.",
+7281:     ]);
+7282:   }
+7283: 
+7284:   // 49. İmanın Şartları
+7285:   Widget _buildImaninSartlari() {
+7286:     return _buildListSection("İmanın 6 Temel Şartı", [
+7287:       "1. Allah'ın Varlığına ve Birliğine İnanmak: Allah'ın eşi, benzeri ve ortağı olmadığına, her şeyi O'nun yarattığına inanmak.",
+7288:       "2. Allah's Meleklerine İnanmak: Nurdan yaratılmış, günahsız ve gözle görülmeyen nurani varlıkların varlığına inanmak.",
+7289:       "3. Allah'ın Kitaplarına İnanmak: Allah'ın peygamberlerine gönderdiği ilahi kitaplara (Tevrat, Zebur, İncil ve son kitap Kuran-ı Kerim'e) inanmak.",
+7290:       "4. Allah'ın Peygamberl
+<truncated 894 bytes>
+arzları (Rükünleri): 6 Farz\n(İftitah tekbiri, Kıyam, Kıraat, Rüku, Secde, Ka'de-i ahire)",
+7303:       "Abdestin Farzları: 4 Farz\n(Yüzü yıkamak, Kolları yıkamak, Başın 1/4'ünü meshetmek, Ayakları yıkamak)",
+7304:       "Guslün Farzları: 3 Farz\n(Ağza su vermek, Burna su vermek, Bütün bedeni yıkamak)",
+7305:       "Teyemmümün Farzları: 2 Farz\n(Niyet etmek, İki defa elleri toprağa vurup yüzü ve kolları meshetmek)",
+7306:     ]);
+7307:   }
+7308: 
+7309:   // 51. 54 Farz
+7310:   Widget _buildFarz54() {
+7311:     return _buildListSection("İslam Ahlakının Temeli: 54 Farz", [
+7312:       "1. Allah'ı bir bilip zikretmek",
+7313:       "2. Helal yemek ve içmek",
+7314:       "3. Abdest almak",
+7315:       "4. Beş vakit namaz kılmak",
+7316:       "5. Cünüplükten gusletmek",
+7317:       "6. Rızkın Allah'tan olduğuna inanmak",
+7318:       "7. Helalinden temiz elbise giymek",
+7319:       "8. Tevekkül etmek (Allah'a güvenmek)",
+7320:       "9. Kanaat etmek",
+7321:       "10. Nimetlere şükretmek",
+7322:       "11. Kaza ve kadere rıza göstermek",
+7323:       "12. Belalara sabretmek",
+7324:       "13. Günahlardan tövbe etmek",
+7325:       "14. İhlasla ibadet etmek",
+7326:       "15. Şeytanı düşman bilmek",
+7327:       "16. Kuran-ı Kerim'i düstur edinmek",
+7328:       "17. Ölüme hazırlanmak",
+7329:       "18. İyiliği emredip kötülükten sakındırmak (Emr-i bi'l-ma'rûf)",
+7330:       "19. Gıybet etmemek",
+7331:       "20. Anne ve babaya itaat etmek",
+7332:       "21. Akrabayı ziyaret etmek (Sıla-i rahim)",
+7333:       "22. Emanete hıyanet etmemek",
+7334:       "23. Kul hakkı yememek ve adil olmak",
+7335:     ]);
+7336:   }
+7337: 
+7338:   // 52. Büyük Günahlar
+7339:   Widget _buildBuyukGunahlar() {
+7340:     return _buildListSection("İslam'da Büyük Günahlar (Kebair)", [
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

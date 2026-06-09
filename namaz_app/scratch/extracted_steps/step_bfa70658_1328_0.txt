@@ -1,0 +1,1 @@
+  // Compass Manual Rotation Simulation (Fallback for Emulators)\n  double _manualCompassHeading = 0.0;\n  bool _forceSimulation = false;\n

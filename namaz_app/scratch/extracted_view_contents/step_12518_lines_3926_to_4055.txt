@@ -1,0 +1,103 @@
+Created At: 2026-06-01T11:02:10Z
+Completed At: 2026-06-01T11:02:10Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5600
+Total Bytes: 233419
+Showing lines 3926 to 4055
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+3926:                   ),
+3927:                 ),
+3928:               );
+3929:             },
+3930:           ),
+3931:         ),
+3932:       ],
+3933:     );
+3934:   }
+3935: 
+3936:   Widget _buildListSection(String title, List<String> items) {
+3937:     return SingleChildScrollView(
+3938:       child: Card(
+3939:         elevation: 1.5,
+3940:         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+3941:         child: Padding(
+3942:           padding: const EdgeInsets.all(16.0),
+3943:           child: Column(
+3944:             crossAxisAlignment: CrossAxisAlignment.start,
+3945:             children: [
+3946:               Text(
+3947:                 title,
+3948:                 style: const TextStyle(
+3949:                   fontWeight: FontWeight.bold,
+3950:                   fontSize: 16,
+3951:                   color: Color(0xFF1E5E43),
+3952:                 ),
+3953:               ),
+3954:               const Divider(height: 16),
+3955:               ...items.map(
+3956:                 (item) => Padding(
+3957:                   padding: const EdgeInsets.symmetric(vertical: 4.0),
+3958:                   child: Row(
+3959:                     crossAxisAlignment: CrossAxisAlignment.start,
+3960:                     children: [
+3961:                       const Text(
+3962:                         "• ",
+3963:                         style: TextStyle(
+3964:                           color: Color(0xFF27A770),
+3965:                           fontWeight: FontWeight.bold,
+3966:              
+<truncated 1224 bytes>
+ children: [
+4004:             Text(
+4005:               name,
+4006:               style: const TextStyle(
+4007:                 fontWeight: FontWeight.bold,
+4008:                 fontSize: 15,
+4009:                 color: Color(0xFF1E5E43),
+4010:               ),
+4011:             ),
+4012:             const Divider(height: 12),
+4013:             if (arabic.isNotEmpty) ...[
+4014:               Align(
+4015:                 alignment: Alignment.centerRight,
+4016:                 child: Text(
+4017:                   arabic,
+4018:                   style: const TextStyle(
+4019:                     fontFamily: 'Traditional Arabic',
+4020:                     fontSize: 18,
+4021:                     height: 1.8,
+4022:                     fontWeight: FontWeight.bold,
+4023:                     color: Color(0xFF27A770),
+4024:                   ),
+4025:                   textAlign: TextAlign.right,
+4026:                 ),
+4027:               ),
+4028:               const SizedBox(height: 8),
+4029:             ],
+4030:             if (okunus.isNotEmpty) ...[
+4031:               Text(
+4032:                 "Okunuşu: $okunus",
+4033:                 style: const TextStyle(
+4034:                   fontWeight: FontWeight.bold,
+4035:                   fontSize: 13,
+4036:                   color: Colors.black87,
+4037:                 ),
+4038:               ),
+4039:               const SizedBox(height: 6),
+4040:             ],
+4041:             Text(
+4042:               "Meali: $meal",
+4043:               style: const TextStyle(
+4044:                 fontSize: 12.5,
+4045:                 color: Colors.black54,
+4046:                 height: 1.35,
+4047:               ),
+4048:             ),
+4049:           ],
+4050:         ),
+4051:       ),
+4052:     );
+4053:   }
+4054: 
+4055:   // 23. Abdest Rehberi
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

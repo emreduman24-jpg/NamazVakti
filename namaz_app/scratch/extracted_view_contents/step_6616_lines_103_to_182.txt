@@ -1,0 +1,88 @@
+Created At: 2026-05-26T14:50:03Z
+Completed At: 2026-05-26T14:50:03Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4944
+Total Bytes: 199651
+Showing lines 103 to 182
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+103:   Future<void> _getUserLocation() async {
+104:     setState(() {
+105:       _loadingLocation = true;
+106:     });
+107:     try {
+108:       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+109:       if (!serviceEnabled) {
+110:         setState(() {
+111:           _loadingLocation = false;
+112:         });
+113:         return;
+114:       }
+115: 
+116:       LocationPermission permission = await Geolocator.checkPermission();
+117:       if (permission == LocationPermission.denied) {
+118:         permission = await Geolocator.requestPermission();
+119:         if (permission == LocationPermission.denied) {
+120:           setState(() {
+121:             _loadingLocation = false;
+122:           });
+123:           return;
+124:         }
+125:       }
+126:       
+127:       if (permission == LocationPermission.deniedForever) {
+128:         setState(() {
+129:           _loadingLocation = false;
+130:         });
+131:         return;
+132:       }
+133: 
+134:       Position? position;
+135:       try {
+136:         position = await Geolocator.getCurrentPosition(
+137:           desiredAccuracy: LocationAccuracy.high,
+138:           timeLimit: const Duration(seconds: 4),
+139:         );
+140:       } catch (e) {
+141:         debugPrint("getCurrentPosition error/timeout: $e");
+142:         // Bypass getLastKnownPosition on emulator timeout to ensure fallback mock coordinates are used
+143:         position = null;
+144:       }
+145: 
+146:       position ??= Position(
+147:         // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails
+148:         latitude: 41.0207,
+149:         longitude: 28.585,
+150:         timestamp: DateTime.now(),
+151:         accuracy: 0.0,
+152:         altitude: 0.0,
+153:         altitudeAccuracy: 0.0,
+154:         heading: 0.0,
+155:         headingAccuracy: 0.0,
+156:         speed: 0.0,
+157:         speedAccuracy: 0.0,
+158:       );
+159: 
+160:       final pos = position!;
+161:       setState(() {
+162:         _currentPosition = pos;
+163:         for (var mosque in _dynamicMosquesList) {
+164:           double dist = _calculateDistance(
+165:             pos.latitude,
+166:             pos.longitude,
+167:             mosque['lat'] as double,
+168:             mosque['lon'] as double,
+169:           );
+170:           mosque['mesafeVal'] = dist;
+171:           mosque['mesafeText'] = "${dist.toStringAsFixed(1)} km";
+172:         }
+173:         _dynamicMosquesList.sort((a, b) => (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+174:         _loadingLocation = false;
+175:       });
+176:     } catch (e) {
+177:       debugPrint("Location error: $e");
+178:       setState(() {
+179:         _loadingLocation = false;
+180:       });
+181:     }
+182:   }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

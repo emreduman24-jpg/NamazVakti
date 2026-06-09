@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Dispose of Dini Hoca controllers in the dispose method.\"",
+  "EndLine": "901",
+  "Instruction": "\"Dispose of Dini Hoca input and scroll controllers.\"",
+  "ReplacementContent": "\"  @override\\n  void dispose() {\\n    _audioPlayer?.dispose();\\n    _duaNameController.dispose();\\n    _duaTextController.dispose();\\n    _questionNameController.dispose();\\n    _qaInputController.dispose();\\n    _chatInputController.dispose();\\n    _diniHocaInputController.dispose();\\n    _diniHocaScrollController.dispose();\\n    _hadisSearchController.dispose();\\n    _dualarSearchController.dispose();\\n    _goldController.dispose();\\n    _cashController.dispose();\\n    _businessController.dispose();\\n    _debtsController.dispose();\\n    super.dispose();\\n  }\"",
+  "StartLine": "886",
+  "TargetContent": "\"  @override\\n  void dispose() {\\n    _audioPlayer?.dispose();\\n    _duaNameController.dispose();\\n    _duaTextController.dispose();\\n    _questionNameController.dispose();\\n    _qaInputController.dispose();\\n    _chatInputController.dispose();\\n    _hadisSearchController.dispose();\\n    _dualarSearchController.dispose();\\n    _goldController.dispose();\\n    _cashController.dispose();\\n    _businessController.dispose();\\n    _debtsController.dispose();\\n    super.dispose();\\n  }\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Disposing Dini Hoca controllers in tool_detail_screen.dart\"",
+  "toolSummary": "\"Edit file\""
+}

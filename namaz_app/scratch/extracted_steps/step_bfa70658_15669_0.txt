@@ -1,0 +1,1 @@
+  int _lastSuraNo = 1;\n  String _lastSuraName = \"Fâtiha\";\n  int _lastAyahNo = 1;\n  int _lastTotalAyahs = 7;\n  int _lastPercent = 0;\n  int _lastJuzNo = 1;\n  String _lastJuzTitle = \"1. Cüz\";\n  String _lastJuzRange = \"Fâtiha 1 - Bakara 141\";\n  int _lastJuzSuraNo = 1;\n  int _lastJuzAyahNo = 1;\n  int _lastJuzPercent = 0;\n  List<String> _quranBookmarks = [];

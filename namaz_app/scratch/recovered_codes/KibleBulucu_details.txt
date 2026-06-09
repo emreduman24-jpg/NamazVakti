@@ -1,0 +1,7 @@
+=== KibleBulucu (Step 12955) ===
+Tool: replace_file_content
+Instruction: "Inject namaz-vakitleri-aylik case inside _buildToolBody switch cases."
+Description: "Add the 'namaz-vakitleri-aylik' case block to _buildToolBody() switch statement."
+
+--- Replacement Content ---
+"      case 'kible-bulucu':\n        return _buildKibleBulucu();\n      case 'namaz-vakitleri-aylik':\n        return _buildAylikNamazVakitleri();\n      case 'zikirmatik':\n        return _buildZikirmatik();"

@@ -1,0 +1,17 @@
+Created At: 2026-05-30T21:08:57Z
+Completed At: 2026-05-30T21:08:57Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5205
+Total Bytes: 212390
+Showing lines 8 to 16
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+8: import 'package:audioplayers/audioplayers.dart';
+9: import 'package:shared_preferences/shared_preferences.dart';
+10: import 'package:geolocator/geolocator.dart';
+11: import '../data/prayer_data.dart';
+12: import '../data/prayer_repository.dart';
+13: 
+14: class ToolDetailScreen extends StatefulWidget {
+15:   final String toolId;
+16:   final String toolTitle;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

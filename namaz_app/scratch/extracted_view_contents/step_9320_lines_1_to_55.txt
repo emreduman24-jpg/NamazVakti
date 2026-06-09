@@ -1,0 +1,54 @@
+Created At: 2026-05-30T21:34:09Z
+Completed At: 2026-05-30T21:34:09Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 55
+Total Bytes: 4150
+Showing lines 1 to 55
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Implementation Plan - Fix Automatic Location & Accurate Nearby Mosques
+2: 
+3: This plan addresses two user requests:
+4: 1. **Automatic location detection is not working (`otomatik konum bulma çalışmıyor`):** In all Flutter screens (`main_screen.dart`, `onboarding_screen.dart`, `settings_screen.dart`), the app was querying `Geolocator.getLastKnownPosition()` first. If a cached location (like Gaziantep) existed, it was immediately used and the app never requested a fresh GPS coordinate. Additionally, Dart's `.toLowerCase()` has a known bug in Turkish where `'İ'.toLowerCase()` produces a combining dot character (`i\u0307`), preventing correct city matching.
+5: 2. **Exact location down to the street (`tam konumunu alsın sokağına kadar`):** We must ensure both Flutter and Web apps request fresh high-accuracy live GPS data and use that to query and sort nearby mosques from the Overpass API.
+6: 
+7: ---
+8: 
+9: ## Proposed Changes
+10: 
+11: ### Component 1: Flutter Mobile App Location Fixes
+12: 
+13: We will modify three screens to always request a fresh live GPS position using `LocationAccuracy.high` and a 7-second time limit, falling back to the cached position and then manual location only if that fails. We will also correct `normalizeString` to handle the Turkish `İ` and `I` uppercase casing issue.
+14: 
+15: #### [MODIFY] [main_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/main_screen.dart)
+16: - Update `normalizeString` to replace `'İ'` with `'i'` and `'I'` with `'ı'` before calling `.toLowerCase
+<truncated 836 bytes>
+] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+28: - Ensure the GPS fetching logic is highly robust and clean: first try fresh highly accurate GPS, then fallback to cached position, then manual local storage city center coordinates.
+29: 
+30: ---
+31: 
+32: ### Component 2: Web App Location & Mosque Fixes
+33: 
+34: We will modify `tools.js` and `app.js` to ensure the web client requests high accuracy when calling browser Geolocation APIs and properly matches Turkish cities.
+35: 
+36: #### [MODIFY] [tools.js](file:///c:/Users/kral_/Namaz%20vakitleri/tools.js)
+37: - Update `renderYakindakiCamiler` call to `navigator.geolocation.getCurrentPosition` to include high-accuracy options: `{ enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }`.
+38: 
+39: #### [MODIFY] [app.js](file:///c:/Users/kral_/Namaz%20vakitleri/app.js)
+40: - Update `btn-gps` click handler's `navigator.geolocation.getCurrentPosition` call to pass `{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }`.
+41: - Ensure city and district name normalization matches cleanly.
+42: 
+43: ---
+44: 
+45: ## Verification Plan
+46: 
+47: ### Automated Verification
+48: - We will trigger hot restarts / hot reloads of the Flutter application.
+49: - We will monitor ADB logs using logcat or command stdout to ensure `getCurrentPosition` is queried and successfully fetches coordinates.
+50: - We will check Vite console logs and verify browser behavior.
+51: 
+52: ### Manual Verification
+53: - Go to "Konum Seç" on Main Screen -> Click "Cihaz Konumunu Kullan (Otomatik)". Confirm the loading dialog appears, queries live GPS, reverse geocodes via BigDataCloud, and successfully matches and updates the city to the emulator's current location (mocked to Muğla/Fethiye or Gaziantep).
+54: - Open the "Yakındaki Camiler" tool. Verify it asks for high-accuracy live location and fetches exact street-level mosques from Overpass API.
+55: 
+The above content shows the entire, complete file contents of the requested file.

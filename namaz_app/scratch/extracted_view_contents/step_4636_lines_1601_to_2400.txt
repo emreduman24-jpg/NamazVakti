@@ -1,0 +1,94 @@
+Created At: 2026-05-23T14:12:26Z
+Completed At: 2026-05-23T14:12:26Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 1601 to 2400
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1601:                   style: TextStyle(fontSize: 12, color: Colors.grey),
+1602:                 ),
+1603:                 Padding(
+1604:                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
+1605:                   child: Slider(
+1606:                     value: _manualCompassHeading,
+1607:                     min: 0,
+1608:                     max: 360,
+1609:                     activeColor: const Color(0xFF27A770),
+1610:                     onChanged: (val) {
+1611:                       setState(() {
+1612:                         _manualCompassHeading = val;
+1613:                       });
+1614:                     },
+1615:                   ),
+1616:                 ),
+1617:               ],
+1618:               const SizedBox(height: 24),
+1619:             ],
+1620:           ),
+1621:         );
+1622:       },
+1623:     );
+1624:   }
+1625: 
+1626:   // 11. Zikirmatik
+1627:   Widget _buildZikirmatik() {
+1628:     return Column(
+1629:       mainAxisAlignment: MainAxisAlignment.center,
+1630:       children: [
+1631:         Row(
+1632:           mainAxisAlignment: MainAxisAlignment.center,
+1633:           children: [
+1634:             const Text(
+1635:               "Hedef Zikir: ",
+1636:               style: TextStyle(fontWeight: FontWeight.bold),
+1637:             ),
+1638:             DropdownButton<int>(
+1639:               value: _zikirTarget,
+1640:               items: const [
+1641:                 DropdownMenuItem(value: 33, child: Text("33")),
+1642:                 DropdownMenuItem(value: 99, child: Text("99")),
+1643:          
+<truncated 29185 bytes>
+en zengin sayılan kişilerin yılda bir kez vermesi gereken zekat miktarını hesaplayın.",
+2360:             style: TextStyle(color: Colors.grey, fontSize: 12),
+2361:           ),
+2362:           const SizedBox(height: 12),
+2363:           TextField(
+2364:             controller: _goldController,
+2365:             keyboardType: TextInputType.number,
+2366:             decoration: InputDecoration(
+2367:               labelText: "Altın Miktarı (Gram)",
+2368:               filled: true,
+2369:               fillColor: Colors.white,
+2370:               border: OutlineInputBorder(
+2371:                 borderRadius: BorderRadius.circular(12),
+2372:                 borderSide: BorderSide.none,
+2373:               ),
+2374:             ),
+2375:           ),
+2376:           const SizedBox(height: 8),
+2377:           TextField(
+2378:             controller: _cashController,
+2379:             keyboardType: TextInputType.number,
+2380:             decoration: InputDecoration(
+2381:               labelText: "Nakit Para (TL)",
+2382:               filled: true,
+2383:               fillColor: Colors.white,
+2384:               border: OutlineInputBorder(
+2385:                 borderRadius: BorderRadius.circular(12),
+2386:                 borderSide: BorderSide.none,
+2387:               ),
+2388:             ),
+2389:           ),
+2390:           const SizedBox(height: 8),
+2391:           TextField(
+2392:             controller: _businessController,
+2393:             keyboardType: TextInputType.number,
+2394:             decoration: InputDecoration(
+2395:               labelText: "Ticari Mal ve Varlıklar (TL)",
+2396:               filled: true,
+2397:               fillColor: Colors.white,
+2398:               border: OutlineInputBorder(
+2399:                 borderRadius: BorderRadius.circular(12),
+2400:                 borderSide: BorderSide.none,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

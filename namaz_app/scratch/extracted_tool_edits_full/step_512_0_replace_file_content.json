@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Added missing _hadisSearchQuery field to _ToolDetailScreenState class.\"",
+  "EndLine": "87",
+  "Instruction": "\"Add the String _hadisSearchQuery = \\\"\\\"; field to the search fields in tool_detail_screen.dart.\"",
+  "ReplacementContent": "\"  // Sahabe Hayatlari & Esmaül Hüsna Search State\\n  String _esmaSearchQuery = \\\"\\\";\\n  String _sahabeSearchQuery = \\\"\\\";\\n  String _hadisSearchQuery = \\\"\\\";\"",
+  "StartLine": "84",
+  "TargetContent": "\"  // Sahabe Hayatlari & Esmaül Hüsna Search State\\n  String _esmaSearchQuery = \\\"\\\";\\n  String _sahabeSearchQuery = \\\"\\\";\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Adding _hadisSearchQuery state field\"",
+  "toolSummary": "\"Editing file\""
+}

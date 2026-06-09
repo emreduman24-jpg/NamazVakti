@@ -1,0 +1,83 @@
+Created At: 2026-06-03T11:07:37Z
+Completed At: 2026-06-03T11:07:37Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6928
+Total Bytes: 282313
+Showing lines 1591 to 2390
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1591:                   ),
+1592:                 )
+1593:               : ListView.builder(
+1594:                   itemCount: _questionList.length,
+1595:                   itemBuilder: (context, index) {
+1596:                     final item = _questionList[index];
+1597:                     return Card(
+1598:                       elevation: 1.5,
+1599:                       shape: RoundedRectangleBorder(
+1600:                         borderRadius: BorderRadius.circular(16),
+1601:                       ),
+1602:                       margin: EdgeInsets.only(bottom: 12),
+1603:                       clipBehavior: Clip.antiAlias,
+1604:                       child: IntrinsicHeight(
+1605:                         child: Row(
+1606:                           crossAxisAlignment: CrossAxisAlignment.stretch,
+1607:                           children: [
+1608:                             // Left border line indicator
+1609:                             Container(
+1610:                               width: 4,
+1611:                               color: const Color(0xFF27A770),
+1612:                             ),
+1613:                             Expanded(
+1614:                               child: Padding(
+1615:                                 padding: EdgeInsets.all(14.0),
+1616:                                 child: Column(
+1617:                                   crossAxisAlignment: CrossAxisAlignment.start,
+1618:                                   children: [
+1619:                                     // Soru header (Writer & Date)
+1620:                             
+<truncated 34965 bytes>
+          : [
+2348:                     BoxShadow(
+2349:                       color: Colors.black.withOpacity(0.02),
+2350:                       blurRadius: 4,
+2351:                       offset: const Offset(0, 2),
+2352:                     ),
+2353:                   ],
+2354:           ),
+2355:           child: ListTile(
+2356:             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+2357:             onTap: () {
+2358:               final startInfo = _getJuzStartInfo(juz.number);
+2359:               final targetSurah = QURAN_SURAHS.firstWhere(
+2360:                 (s) => s.number == startInfo['sura'],
+2361:                 orElse: () => QURAN_SURAHS[0],
+2362:               );
+2363:               Navigator.push(
+2364:                 context,
+2365:                 MaterialPageRoute(
+2366:                   builder: (context) => QuranDetailScreen(
+2367:                     surah: targetSurah,
+2368:                     isJuz: true,
+2369:                     juz: juz,
+2370:                     targetAyah: startInfo['ayah']!,
+2371:                   ),
+2372:                 ),
+2373:               ).then((_) => _loadQuranLastRead());
+2374:             },
+2375:             leading: Container(
+2376:               width: 36,
+2377:               height: 36,
+2378:               decoration: BoxDecoration(
+2379:                 border: Border.all(color: const Color(0xFFC5A059), width: 1.5),
+2380:                 shape: BoxShape.circle,
+2381:               ),
+2382:               alignment: Alignment.center,
+2383:               child: Text(
+2384:                 juz.number.toString(),
+2385:                 style: const TextStyle(
+2386:                   color: Color(0xFFC5A059),
+2387:                   fontWeight: FontWeight.bold,
+2388:                   fontSize: 12,
+2389:                 ),
+2390:               ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

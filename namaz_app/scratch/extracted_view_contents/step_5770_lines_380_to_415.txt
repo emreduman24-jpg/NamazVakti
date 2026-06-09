@@ -1,0 +1,44 @@
+Created At: 2026-05-24T09:10:33Z
+Completed At: 2026-05-24T09:10:33Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4896
+Total Bytes: 198029
+Showing lines 380 to 415
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+380:   int _kazaSabah = 0;
+381:   int _kazaOgle = 0;
+382:   int _kazaIkindi = 0;
+383:   int _kazaAksam = 0;
+384:   int _kazaYatsi = 0;
+385:   int _kazaVitir = 0;
+386: 
+387:   // Sabah & Aksam Ezkari counts
+388:   final List<int> _sabahEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+389:   final List<int> _aksamEzkarCounts = [0, 0, 0, 0, 0, 0, 0];
+390:   int _ezkarTab = 0;
+391: 
+392:   @override
+393:   void initState() {
+394:     super.initState();
+395:     _initAudio();
+396:     _loadZikirState();
+397:     _loadDuaList();
+398:     _loadQuestionList();
+399:     _loadKazaState();
+400:   }
+401: 
+402:   Future<void> _loadKazaState() async {
+403:     final prefs = await SharedPreferences.getInstance();
+404:     setState(() {
+405:       _kazaSabah = prefs.getInt('kaza_sabah') ?? 0;
+406:       _kazaOgle = prefs.getInt('kaza_ogle') ?? 0;
+407:       _kazaIkindi = prefs.getInt('kaza_ikindi') ?? 0;
+408:       _kazaAksam = prefs.getInt('kaza_aksam') ?? 0;
+409:       _kazaYatsi = prefs.getInt('kaza_yatsi') ?? 0;
+410:       _kazaVitir = prefs.getInt('kaza_vitir') ?? 0;
+411:     });
+412:   }
+413: 
+414:   Future<void> _updateKaza(String key, int delta) async {
+415:     final prefs = await SharedPreferences.getInstance();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,1 @@
+class ToolDetailScreen extends StatefulWidget {\n  final String toolId;\n  final String toolTitle;\n  final bool isTab;\n\n  const ToolDetailScreen({\n    super.key,\n    required this.toolId,\n    required this.toolTitle,\n    this.isTab = false,\n  });

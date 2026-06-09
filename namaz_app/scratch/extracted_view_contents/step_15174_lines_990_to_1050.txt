@@ -1,0 +1,69 @@
+Created At: 2026-06-03T06:20:35Z
+Completed At: 2026-06-03T06:20:35Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 990 to 1050
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+990:         await _audioPlayer!.play(UrlSource(url));
+991:       }
+992:     } catch (e) {
+993:       ScaffoldMessenger.of(
+994:         context,
+995:       ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+996:     }
+997:   }
+998: 
+999:   @override
+1000:   Widget build(BuildContext context) {
+1001:     final isQuran = widget.toolId == 'kuran-kerim';
+1002:     return Scaffold(
+1003:       backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5)),
+1004:       appBar: AppBar(
+1005:         title: Text(
+1006:           widget.toolTitle,
+1007:           style: const TextStyle(
+1008:             fontWeight: FontWeight.bold,
+1009:             color: Colors.white,
+1010:             fontSize: 20,
+1011:           ),
+1012:         ),
+1013:         centerTitle: true,
+1014:         backgroundColor: isQuran ? const Color(0xFF0C1524) : (_isDark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43)),
+1015:         elevation: 0,
+1016:         iconTheme: const IconThemeData(color: Colors.white),
+1017:         automaticallyImplyLeading: !widget.isTab,
+1018:       ),
+1019:       body: SafeArea(
+1020:         child: isQuran
+1021:             ? _buildKuranKerim()
+1022:             : Padding(
+1023:                 padding: const EdgeInsets.all(16.0),
+1024:                 child: _buildToolBody(),
+1025:               ),
+1026:       ),
+1027:     );
+1028:   }
+1029: 
+1030:   Widget _buildToolBody() {
+1031:     switch (widget.toolId) {
+1032:       case 'dini-gunler':
+1033:         return _buildDiniGunler();
+1034:       case 'dua-iste':
+1035:         return _buildDuaIste();
+1036:       case 'soru-cevap':
+1037:         return _buildSoruCevap();
+1038:       case 'canli-sohbet':
+1039:         return _buildCanliSohbet();
+1040:       case 'peygamber-hayati':
+1041:         return _buildPeygamberHayati();
+1042:       case 'kuran-kerim':
+1043:         return _buildKuranKerim();
+1044:       case 'esmaul-husna':
+1045:         return _buildEsmaulHusna();
+1046:       case 'ramazan-hakkinda':
+1047:         return _buildRamazanHakkinda();
+1048:       case 'oruc-rehberi':
+1049:         return _buildOrucRehberi();
+1050:       case 'kible-bulucu':
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

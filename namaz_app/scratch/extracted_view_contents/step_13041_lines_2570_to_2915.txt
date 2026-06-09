@@ -1,0 +1,92 @@
+Created At: 2026-06-01T11:59:38Z
+Completed At: 2026-06-01T11:59:38Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5907
+Total Bytes: 238914
+Showing lines 2570 to 2915
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2570:                         child: Text(
+2571:                           "Cihazınızda pusula sensörü bulunmamaktadır. Kıble yönü İstanbul referans alınarak (137°) gösterilmektedir. Gerçek sensörlü cihazlarda yönünüz dinamik olarak güncellenir.",
+2572:                           style: TextStyle(
+2573:                             fontSize: 11,
+2574:                             color: dark ? Colors.white70 : Colors.grey[800],
+2575:                             height: 1.4,
+2576:                           ),
+2577:                         ),
+2578:                       ),
+2579:                     ],
+2580:                   ),
+2581:                 ),
+2582:               const SizedBox(height: 24),
+2583:             ],
+2584:           ),
+2585:         );
+2586:       },
+2587:     );
+2588:   }
+2589: 
+2590:   Widget _buildAylikNamazVakitleri() {
+2591:     final bool dark = _isDark;
+2592: 
+2593:     if (_loadingMonthlyTimes) {
+2594:       return Center(
+2595:         child: Column(
+2596:           mainAxisAlignment: MainAxisAlignment.center,
+2597:           children: [
+2598:             CircularProgressIndicator(
+2599:               valueColor: AlwaysStoppedAnimation<Color>(_greenColor),
+2600:             ),
+2601:             const SizedBox(height: 16),
+2602:             Text(
+2603:               "Namaz Vakitleri Yükleniyor...",
+2604:               style: TextStyle(
+2605:                 fontSize: 14,
+2606:                 color: _textColor,
+2607:                 fontWeight: FontWeight.w500,
+2608:               ),
+2609:             ),
+
+<truncated 12131 bytes>
+,
+2875:                       Expanded(
+2876:                         flex: 1,
+2877:                         child: Text(
+2878:                           day['Ikindi'] ?? '',
+2879:                           textAlign: TextAlign.center,
+2880:                           style: TextStyle(
+2881:                             fontSize: 11.5,
+2882:                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+2883:                             color: _textColor,
+2884:                           ),
+2885:                         ),
+2886:                       ),
+2887:                       Expanded(
+2888:                         flex: 1,
+2889:                         child: Text(
+2890:                           day['Aksam'] ?? '',
+2891:                           textAlign: TextAlign.center,
+2892:                           style: TextStyle(
+2893:                             fontSize: 11.5,
+2894:                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+2895:                             color: _textColor,
+2896:                           ),
+2897:                         ),
+2898:                       ),
+2899:                       Expanded(
+2900:                         flex: 1,
+2901:                         child: Text(
+2902:                           day['Yatsi'] ?? '',
+2903:                           textAlign: TextAlign.center,
+2904:                           style: TextStyle(
+2905:                             fontSize: 11.5,
+2906:                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+2907:                             color: _textColor,
+2908:                           ),
+2909:                         ),
+2910:                       ),
+2911:                     ],
+2912:                   ),
+2913:                 );
+2914:               },
+2915:             ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

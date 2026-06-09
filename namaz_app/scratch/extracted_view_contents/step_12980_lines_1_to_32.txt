@@ -1,0 +1,40 @@
+Created At: 2026-06-01T11:56:00Z
+Completed At: 2026-06-01T11:56:00Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 32
+Total Bytes: 2391
+Showing lines 1 to 32
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Tasks Checklist - Spiritual Qibla Finder & Monthly Prayer Times
+2: 
+3: - [x] Modify `main_screen.dart` (Home Screen Cards)
+4:   - [x] Update `_buildDailyTextCard` (Verse and Hadith) to adapt to dark mode
+5:   - [x] Update `Günün İsim Önerileri` card to use a dark overlay & appropriate text colors
+6:   - [x] Update `Geliştirici Mesajı` banner card background & text colors
+7:   - [x] Update `_dayIndex` calculation formula to dynamically support all 60 items across months
+8: - [x] Expand data in `prayer_data.dart` to 60 items
+9:   - [x] Generate and write 60 unique authentic Quranic verses to `VAKTIN_AYETLERI`
+10:   - [x] Generate and write 60 unique authentic hadiths to `VAKTIN_HADISLERI`
+11:   - [x] Generate and write 60 unique beautiful baby name pairs to `GUNUN_ISIMLERI`
+12: - [x] Redesign `_buildKibleBulucu` to Spiritual Qibla Dial (No Simulation)
+13:   - [x] Remove old radar codes (`_KibleRadarPainter`, radar custom paint, etc.)
+14:   - [x] Implement `_KibleSanatsalPusulaPainter` class for an exquisite antique gold brass plate, Seljuk 8-Pointed Star patterns, and a classic needle
+15:   - [x] Build the dynamic Mihrab Arch glow effect and alignment feedback
+16:   - [x] Gracefully default heading to `137.0°` (Istanbul standard) when sensor is missing to show the full beauty of the aligned state on emulators
+17:   - [x] Remove all debug simulation slider, switch, or button elements from UI
+18: - [x] Modify `notification_settings_screen.dart`
+19:   - [x] Set `_buildPrayerTimesSection` card color dynamically
+20:   - [x] Set `_buildSoundSection` card color dynamically
+21:   - [x] Set text colors in `RadioListTile` & `CheckboxListTile` dynamically
+22: - [/] Restore and Enhance "Aylık Namaz Vakitleri" Table (`tool_detail_screen.dart`)
+23:   - [ ] Add `_monthlyPrayerTimes` and `_loadingMonthlyTimes` state variables
+24:   - [ ] Implement `_loadMonthlyTimes()` method using district location ID
+25:   - [ ] Update `initState()` to fetch monthly times when `toolId == 'namaz-vakitleri-aylik'`
+26:   - [ ] Add case `'namaz-vakitleri-aylik'` to `_buildToolBody()`
+27:   - [ ] Implement `_buildAylikNamazVakitleri()` displaying a highly responsive, premium monthly table with today highlighted
+28: - [/] Verification
+29:   - [ ] Run `dart analyze lib/screens/tool_detail_screen.dart` to verify zero compiler errors
+30:   - [ ] Send `R` key to background task to hot restart the emulator
+31:   - [ ] Take screenshots/logs of the completed screen to verify visual correctness
+32: 
+The above content shows the entire, complete file contents of the requested file.

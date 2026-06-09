@@ -1,0 +1,79 @@
+Created At: 2026-06-03T13:37:35Z
+Completed At: 2026-06-03T13:37:35Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 6954 to 7100
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+6954:   Widget _buildEzkar() {
+6955:     return Column(
+6956:       children: [
+6957:         Row(
+6958:           children: [
+6959:             Expanded(
+6960:               child: ElevatedButton(
+6961:                 style: ElevatedButton.styleFrom(
+6962:                   backgroundColor: _ezkarTab == 0 ? const Color(0xFF27A770) : Colors.white,
+6963:                   foregroundColor: _ezkarTab == 0 ? Colors.white : _greenColor,
+6964:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+6965:                   elevation: 1,
+6966:                 ),
+6967:                 onPressed: () => setState(() => _ezkarTab = 0),
+6968:                 child: Text("Sabah Zikirleri"),
+6969:               ),
+6970:             ),
+6971:             SizedBox(width: 8),
+6972:             Expanded(
+6973:               child: ElevatedButton(
+6974:                 style: ElevatedButton.styleFrom(
+6975:                   backgroundColor: _ezkarTab == 1 ? const Color(0xFF27A770) : Colors.white,
+6976:                   foregroundColor: _ezkarTab == 1 ? Colors.white : _greenColor,
+6977:                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+6978:                   elevation: 1,
+6979:                 ),
+6980:                 onPressed: () => setState(() => _ezkarTab = 1),
+6981:                 child: Text("Akşam Zikirleri"),
+6982:               ),
+6983:             ),
+6984:           ],
+6985:         ),
+6986:         SizedBox(height: 12),
+6987:         Expanded(
+6988:           child: _ezkarTab == 0
+<truncated 3294 bytes>
+                       style: TextStyle(
+7067:                                   fontWeight: FontWeight.bold,
+7068:                                   fontSize: 14,
+7069:                                   color: _greenColor,
+7070:                                 ),
+7071:                               ),
+7072:                             ),
+7073:                             Container(
+7074:                               padding: EdgeInsets.symmetric(
+7075:                                 horizontal: 10,
+7076:                                 vertical: 4,
+7077:                               ),
+7078:                               decoration: BoxDecoration(
+7079:                                 color: currentCount >= hedef
+7080:                                     ? const Color(0xFF27A770)
+7081:                                     : const Color(0xFF27A770).withOpacity(0.1),
+7082:                                 borderRadius: BorderRadius.circular(12),
+7083:                               ),
+7084:                               child: Text(
+7085:                                 "$currentCount / $hedef",
+7086:                                 style: TextStyle(
+7087:                                   fontSize: 12,
+7088:                                   fontWeight: FontWeight.bold,
+7089:                                   color: currentCount >= hedef
+7090:                                       ? Colors.white
+7091:                                       : _greenColor,
+7092:                                 ),
+7093:                               ),
+7094:                             ),
+7095:                           ],
+7096:                         ),
+7097:                         SizedBox(height: 8),
+7098:                         Align(
+7099:                           alignment: Alignment.centerRight,
+7100:                           child: Text(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

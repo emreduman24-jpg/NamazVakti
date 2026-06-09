@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Switching from POST to GET for Overpass API calls and adding a proper User-Agent header. The 406 error from overpass-api.de is caused by missing/blocked User-Agent. GET requests with URL-encoded query strings are more reliable across Overpass API servers.\\\"\"",
+  "EndLine": "95",
+  "Instruction": "\"Replace POST request with GET request using URL-encoded query, add User-Agent header\"",
+  "ReplacementContent": "\"          final encodedQuery = Uri.encodeComponent(query);\\n          final url = Uri.parse('$endpoint?data=$encodedQuery');\\n          final response = await http.get(\\n            url,\\n            headers: {\\n              'Accept': '*/*',\\n              'User-Agent': 'NamazVakitleri/1.0',\\n            },\\n          ).timeout(const Duration(seconds: 20));\"",
+  "StartLine": "87",
+  "TargetContent": "\"          final url = Uri.parse(endpoint);\\n          final response = await http.post(\\n            url,\\n            headers: {\\n              'Content-Type': 'application/x-www-form-urlencoded',\\n              'Accept': 'application/json',\\n            },\\n            body: {'data': query},\\n          ).timeout(const Duration(seconds: 20));\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Switching to GET request\"",
+  "toolSummary": "\"Fix API request\""
+}

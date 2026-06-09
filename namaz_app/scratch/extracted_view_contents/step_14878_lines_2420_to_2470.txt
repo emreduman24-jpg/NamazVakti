@@ -1,0 +1,59 @@
+Created At: 2026-06-03T05:53:55Z
+Completed At: 2026-06-03T05:53:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6942
+Total Bytes: 281482
+Showing lines 2420 to 2470
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2420:         );
+2421:       },
+2422:     );
+2423:   }             children: [
+2424:                 Text(
+2425:                   juz.arabicLabel,
+2426:                   style: const TextStyle(
+2427:                     color: Color(0xFF27A770),
+2428:                     fontFamily: 'Traditional Arabic',
+2429:                     fontSize: 18,
+2430:                     fontWeight: FontWeight.bold,
+2431:                   ),
+2432:                 ),
+2433:                 const SizedBox(width: 8),
+2434:                 const Icon(
+2435:                   Icons.chevron_right_rounded,
+2436:                   color: Colors.white38,
+2437:                   size: 22,
+2438:                 ),
+2439:               ],
+2440:             ),
+2441:           ),
+2442:         );
+2443:       },
+2444:     );
+2445:   }
+2446: 
+2447:   // 7. Esmaül Hüsna
+2448:   Widget _buildEsmaulHusna() {
+2449:     final filtered = ESMAUL_HUSNA.where((item) {
+2450:       final name = _normalize(item['ad'].toString());
+2451:       final meaning = _normalize(item['anlam'].toString());
+2452:       final query = _normalize(_esmaSearchQuery);
+2453:       return name.contains(query) || meaning.contains(query);
+2454:     }).toList();
+2455: 
+2456:     return Column(
+2457:       children: [
+2458:         TextField(
+2459:           decoration: InputDecoration(
+2460:             hintText: "İsim ara (Örn: Rahman)...",
+2461:             prefixIcon: Icon(Icons.search, color: Color(0xFF27A770)),
+2462:             filled: true,
+2463:             fillColor: Colors.white,
+2464:             border: OutlineInputBorder(
+2465:               borderRadius: BorderRadius.circular(15),
+2466:               borderSide: BorderSide.none,
+2467:             ),
+2468:           ),
+2469:           onChanged: (val) {
+2470:             setState(() {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

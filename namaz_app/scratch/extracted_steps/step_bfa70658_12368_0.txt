@@ -1,0 +1,1 @@
+  // Yakındaki Camiler (Location & GPS State)\n  Position? _currentPosition;\n  bool _loadingLocation = false;\n  List<Map<String, dynamic>> _dynamicMosquesList = [];\n\n  // Aylık Namaz Vakitleri State\n  List<Map<String, dynamic>> _monthlyPrayerTimes = [];\n  bool _loadingMonthlyTimes = false;\n  String _currentLocationName = \"\";

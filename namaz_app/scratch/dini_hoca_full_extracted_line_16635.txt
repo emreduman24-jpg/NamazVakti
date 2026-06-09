@@ -1,0 +1,59 @@
+Created At: 2026-06-03T13:47:21Z
+Completed At: 2026-06-03T13:47:21Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8257
+Total Bytes: 337169
+Showing lines 2320 to 2370
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2320:     return """Değerli mümin kardeşim, sorduğunuz konuyu tam olarak anlayamadım veya kelime haznemde yer almıyor olabilir. 
+2321: 
+2322: Lütfen sorunuzu daha açık kelimelerle sorunuz. Örneğin; **abdest alışı, guslün farzları, namazın farzları, sehiv secdesi, zekat verilecek kişiler, orucu bozan şeyler veya kaza namazları** gibi konularda doğrudan anahtar kelimeler kullanarak sorarsanız size çok daha detaylı bilgi aktarabilirim. 
+2323: 
+2324: Fıkhi konulardaki en doğru ve kesin hükümler için Diyanet İşleri Başkanlığı'nın resmi fetvalarına veya muteber fıkıh kitaplarına başvurmanızı tavsiye ederim.""";
+2325:   }
+2326: 
+2327:   void _handleDiniHocaSend(String text) {
+2328:     if (text.trim().isEmpty) return;
+2329:     
+2330:     final userMsg = text.trim();
+2331:     _diniHocaInputController.clear();
+2332:     
+2333:     setState(() {
+2334:       _diniHocaMessages.add({
+2335:         'isMe': true,
+2336:         'text': userMsg,
+2337:         'time': DateTime.now(),
+2338:       });
+2339:       _diniHocaIsTyping = true;
+2340:     });
+2341:     
+2342:     _scrollToBottomDiniHoca();
+2343:     
+2344:     Future.delayed(const Duration(milliseconds: 1200), () {
+2345:       if (!mounted) return;
+2346:       
+2347:       final reply = _getDiniHocaResponse(userMsg);
+2348:       setState(() {
+2349:         _diniHocaIsTyping = false;
+2350:         _diniHocaMessages.add({
+2351:           'isMe': false,
+2352:           'text': reply,
+2353:           'time': DateTime.now(),
+2354:         });
+2355:       });
+2356:       _scrollToBottomDiniHoca();
+2357:     });
+2358:   }
+2359: 
+2360:   void _scrollToBottomDiniHoca() {
+2361:     WidgetsBinding.instance.addPostFrameCallback((_) {
+2362:       if (_diniHocaScrollController.hasClients) {
+2363:         _diniHocaScrollController.animateTo(
+2364:           _diniHocaScrollController.position.maxScrollExtent,
+2365:           duration: const Duration(milliseconds: 300),
+2366:           curve: Curves.easeOut,
+2367:         );
+2368:       }
+2369:     });
+2370:   }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

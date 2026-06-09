@@ -1,0 +1,78 @@
+Created At: 2026-06-01T18:22:13Z
+Completed At: 2026-06-01T18:22:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6358
+Total Bytes: 258018
+Showing lines 2139 to 2400
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2139:   Widget _buildKibleBulucu() {
+2140:     const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
+2141: 
+2142:     return StreamBuilder<CompassEvent>(
+2143:       stream: FlutterCompass.events,
+2144:       builder: (context, snapshot) {
+2145:         double? heading = snapshot.data?.heading;
+2146:         final bool sensorMissing = heading == null;
+2147:         
+2148:         // When there is no sensor (e.g. emulator), default to exactly qiblaAngle
+2149:         // so it defaults to the beautiful aligned state immediately!
+2150:         double currentHeading = heading ?? 137.0;
+2151:         
+2152:         final bool dark = _isDark;
+2153: 
+2154:         double needleRotation = qiblaAngle - currentHeading;
+2155:         double dialRotation = -currentHeading;
+2156: 
+2157:         // Calculate difference for direction instructions
+2158:         double diff = (qiblaAngle - currentHeading) % 360;
+2159:         if (diff > 180) diff -= 360;
+2160:         if (diff < -180) diff += 360;
+2161:         
+2162:         bool isAligned = diff.abs() < 3;
+2163: 
+2164:         // Distance to Kaaba from user's current GPS, fallback to Istanbul
+2165:         double meccaDistance = 2400.0;
+2166:         if (_currentPosition != null) {
+2167:           meccaDistance = _calculateDistance(_currentPosition!.latitude, _currentPosition!.longitude, 21.4225, 39.8262);
+2168:         }
+2169: 
+2170:         // Dynamic Aligned Status Banner
+2171:         Widget alignmentBanner;
+2172:         if (isAligned) {
+2173:           alignmentBanner = AnimatedContainer(
+2
+<truncated 9498 bytes>
+                                 ),
+2369:                               ),
+2370:                               // B (Batı - West) at left (270°)
+2371:                               Align(
+2372:                                 alignment: Alignment.centerLeft,
+2373:                                 child: Padding(
+2374:                                   padding: const EdgeInsets.only(left: 12.0),
+2375:                                   child: Text(
+2376:                                     "B",
+2377:                                     style: TextStyle(
+2378:                                       fontWeight: FontWeight.bold,
+2379:                                       color: dark ? Colors.white70 : Colors.black54,
+2380:                                       fontSize: 13,
+2381:                                     ),
+2382:                                   ),
+2383:                                 ),
+2384:                               ),
+2385:                               // D (Doğu - East) at right (90°)
+2386:                               Align(
+2387:                                 alignment: Alignment.centerRight,
+2388:                                 child: Padding(
+2389:                                   padding: const EdgeInsets.only(right: 12.0),
+2390:                                   child: Text(
+2391:                                     "D",
+2392:                                     style: TextStyle(
+2393:                                       fontWeight: FontWeight.bold,
+2394:                                       color: dark ? Colors.white70 : Colors.black54,
+2395:                                       fontSize: 13,
+2396:                                     ),
+2397:                                   ),
+2398:                                 ),
+2399:                               ),
+2400:                             ],
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

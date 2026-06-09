@@ -89,7 +89,7 @@ class NotificationService {
     final bool ikindiEnabled = prefs.getBool('notification_prayer_ikindi') ?? true;
     final bool aksamEnabled = prefs.getBool('notification_prayer_aksam') ?? true;
     final bool yatsiEnabled = prefs.getBool('notification_prayer_yatsi') ?? true;
-    final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? false;
+    final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? true;
     final int offset = prefs.getInt('notification_timing_offset') ?? 0;
 
     final now = DateTime.now();
@@ -165,24 +165,34 @@ class NotificationService {
         if (scheduledDate.isAfter(now)) {
           final tzScheduledDate = tz.TZDateTime.from(scheduledDate, tz.local);
 
-          // Configure sound
-          // Android: Uses the resource raw/adhan.mp3 (without extension)
-          final AndroidNotificationDetails androidDetails =
-              AndroidNotificationDetails(
-                'adhan_alarms_channel',
-                'Ezan Alarmları',
-                channelDescription:
-                    'Ezan vakitlerinde kısa ezan sesi ile bildirim gönderir.',
-                importance: Importance.max,
-                priority: Priority.high,
-                sound: soundEnabled ? const RawResourceAndroidNotificationSound('adhan') : null,
-                playSound: true,
-              );
+          // Configure sound - use separate channels for adhan vs default
+          // Android notification channels are immutable after creation,
+          // so we need different channel IDs for different sound configs
+          final AndroidNotificationDetails androidDetails = soundEnabled
+              ? const AndroidNotificationDetails(
+                  'adhan_sound_channel',
+                  'Ezan Alarmları (Ezan Sesli)',
+                  channelDescription:
+                      'Ezan vakitlerinde ezan sesi ile bildirim gönderir.',
+                  importance: Importance.max,
+                  priority: Priority.high,
+                  sound: RawResourceAndroidNotificationSound('adhan'),
+                  playSound: true,
+                )
+              : const AndroidNotificationDetails(
+                  'adhan_default_channel',
+                  'Ezan Alarmları (Varsayılan Ses)',
+                  channelDescription:
+                      'Ezan vakitlerinde varsayılan bildirim sesi ile bildirim gönderir.',
+                  importance: Importance.max,
+                  priority: Priority.high,
+                  playSound: true,
+                );
 
           // iOS custom sound config (expects adhan.mp3 in App Bundle resources)
           final DarwinNotificationDetails iosDetails =
               DarwinNotificationDetails(
-                sound: soundEnabled ? 'adhan.mp3' : null,
+                sound: soundEnabled ? 'adhan.mp3' : 'default',
                 presentSound: true,
                 presentAlert: true,
                 presentBadge: true,
@@ -237,22 +247,32 @@ class NotificationService {
     await requestPermissions();
 
     final prefs = await SharedPreferences.getInstance();
-    final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? false;
+    final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? true;
 
-    final AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-          'test_alarms_channel',
-          'Test Bildirimleri',
-          channelDescription:
-              'Ezan bildirim sesini test etmek için kullanılır.',
-          importance: Importance.max,
-          priority: Priority.high,
-          sound: soundEnabled ? const RawResourceAndroidNotificationSound('adhan') : null,
-          playSound: true,
-        );
+    // Use separate channels for adhan vs default sound (Android channels are immutable)
+    final AndroidNotificationDetails androidDetails = soundEnabled
+        ? const AndroidNotificationDetails(
+            'test_adhan_channel',
+            'Test Bildirimleri (Ezan Sesli)',
+            channelDescription:
+                'Ezan bildirim sesini test etmek için kullanılır.',
+            importance: Importance.max,
+            priority: Priority.high,
+            sound: RawResourceAndroidNotificationSound('adhan'),
+            playSound: true,
+          )
+        : const AndroidNotificationDetails(
+            'test_default_channel',
+            'Test Bildirimleri (Varsayılan Ses)',
+            channelDescription:
+                'Varsayılan bildirim sesini test etmek için kullanılır.',
+            importance: Importance.max,
+            priority: Priority.high,
+            playSound: true,
+          );
 
     final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-      sound: soundEnabled ? 'adhan.mp3' : null,
+      sound: soundEnabled ? 'adhan.mp3' : 'default',
       presentSound: true,
       presentAlert: true,
       presentBadge: true,

@@ -1,0 +1,12 @@
+{
+  "AllowMultiple": "false",
+  "Description": "\"Assigned the validated Position object to a non-nullable local variable 'pos' to satisfy Dart type-safety and ensure no compile errors.\"",
+  "EndLine": "177",
+  "Instruction": "\"Use a promoted local variable 'pos = position!' to access GPS coordinates.\"",
+  "ReplacementContent": "\"      final pos = position!;\\n      setState(() {\\n        _currentPosition = pos;\\n        for (var mosque in _dynamicMosquesList) {\\n          double dist = _calculateDistance(\\n            pos.latitude,\\n            pos.longitude,\\n            mosque['lat'] as double,\\n            mosque['lon'] as double,\\n          );\\n          mosque['mesafeVal'] = dist;\\n          mosque['mesafeText'] = \\\"${dist.toStringAsFixed(1)} km\\\";\\n        }\\n        _dynamicMosquesList.sort((a, b) => (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));\\n        _loadingLocation = false;\\n      });\"",
+  "StartLine": "162",
+  "TargetContent": "\"      setState(() {\\n        _currentPosition = position;\\n        for (var mosque in _dynamicMosquesList) {\\n          double dist = _calculateDistance(\\n            position.latitude,\\n            position.longitude,\\n            mosque['lat'] as double,\\n            mosque['lon'] as double,\\n          );\\n          mosque['mesafeVal'] = dist;\\n          mosque['mesafeText'] = \\\"${dist.toStringAsFixed(1)} km\\\";\\n        }\\n        _dynamicMosquesList.sort((a, b) => (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));\\n        _loadingLocation = false;\\n      });\"",
+  "TargetFile": "\"C:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Promoting position variable\"",
+  "toolSummary": "\"Edit tool detail screen\""
+}

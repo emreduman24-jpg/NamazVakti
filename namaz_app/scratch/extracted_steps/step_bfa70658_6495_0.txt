@@ -1,0 +1,1 @@
+      position ??= Position(\n        // Fallback mock coordinates (Büyükçekmece, İstanbul) if GPS service hangs or fails\n        latitude: 41.0207,\n        longitude: 28.585,

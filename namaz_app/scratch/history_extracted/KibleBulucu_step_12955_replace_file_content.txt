@@ -1,0 +1,16 @@
+
+Timestamp: 2026-06-01T11:55:10Z
+Args keys: AllowMultiple,Description,EndLine,Instruction,ReplacementContent,StartLine,TargetContent,TargetFile,toolAction,toolSummary
+Arguments: {
+  "AllowMultiple": "false",
+  "Description": "\"Add the 'namaz-vakitleri-aylik' case block to _buildToolBody() switch statement.\"",
+  "EndLine": "952",
+  "Instruction": "\"Inject namaz-vakitleri-aylik case inside _buildToolBody switch cases.\"",
+  "ReplacementContent": "\"      case 'kible-bulucu':\\n        return _buildKibleBulucu();\\n      case 'namaz-vakitleri-aylik':\\n        return _buildAylikNamazVakitleri();\\n      case 'zikirmatik':\\n        return _buildZikirmatik();\"",
+  "StartLine": "947",
+  "TargetContent": "\"      case 'kible-bulucu':\\n        return _buildKibleBulucu();\\n      case 'zikirmatik':\\n        return _buildZikirmatik();\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Injecting namaz-vakitleri-aylik switch case in _buildToolBody\"",
+  "toolSummary": "\"File replace\""
+}
+

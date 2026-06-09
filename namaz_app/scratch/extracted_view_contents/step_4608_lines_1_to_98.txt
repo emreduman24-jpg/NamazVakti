@@ -1,0 +1,57 @@
+Created At: 2026-05-23T14:11:48Z
+Completed At: 2026-05-23T14:11:48Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 98
+Total Bytes: 6240
+Showing lines 1 to 98
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Implementation Plan - Sync & Tools Updates
+2: 
+3: Establish real-time data synchronization between the Admin Panel, the Web Simulator, and the native Flutter Android app. Develop a tools manager in the Admin Panel (add, delete, reorder). Update "Canlı Dini Sohbet" to show a "Yakında" (Coming Soon) message. Align the content and design of four specific tools (Zikirmatik, Dini Günler, Kıble Bulucu, and Yakındaki Camiler) with the reference APK.
+4: 
+5: ## User Review Required
+6: 
+7: > [!IMPORTANT]
+8: > The synchronization will use a local database (`db.json`) hosted on the Vite dev server at port `5173`. The Flutter app in the Android emulator will connect to this server at `http://10.0.2.2:5173/api/`. If the server is offline or unreachable, the Flutter app will automatically fall back to local caching (SharedPreferences) and static mock data to remain fully functional.
+9: 
+10: ## Proposed Changes
+11: 
+12: ### Vite Dev Server (API Middleware)
+13: 
+14: #### [MODIFY] [vite.config.js](file:///c:/Users/kral_/Namaz%20vakitleri/vite.config.js)
+15: - Add a custom Vite plugin `api-server` using `configureServer`.
+16: - Implement endpoints for:
+17:   - `GET /api/duas`, `POST /api/duas` (add/approve/delete/amin).
+18:   - `GET /api/questions`, `POST /api/questions` (add/answer/delete).
+19:   - `GET /api/chat`, `POST /api/chat` (live chat messages).
+20:   - `GET /api/stories`, `POST /api/stories` (create/update/delete).
+21:   - `GET /api/users`, `POST /api/users` (block/unblock user).
+22:   - `GET /api/block_status`, `POST /api/block_stat
+<truncated 3098 bytes>
+rder synced from the admin panel.
+74: - Fallback to the default hardcoded list if offline.
+75: 
+76: #### [MODIFY] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+77: - **Canlı Dini Sohbet**: Update tile/view to show a clean modal alert saying "Yakında Hizmetinizde" (Coming Soon) and close it.
+78: - **Zikirmatik**: Re-implement to include a zikir selector with the 4 standard dhikrs (Arabic text & benefits), counter showing `count / target`, click vibration, and reset.
+79: - **Dini Günler**: Add year tabs (2026-2030) and list categorizations (Kandil, Bayram, etc.).
+80: - **Kıble Bulucu**: Align the Pusula visual styling with the reference app.
+81: - **Yakındaki Camiler**: Add top banner with Hadith about congregational prayer ("Camide Namaz Kılmanın Fazileti") and list mock mosque items.
+82: 
+83: ---
+84: 
+85: ## Verification Plan
+86: 
+87: ### Automated/Emulator Tests
+88: 1. Run Vite dev server in workspace: `npm run dev`.
+89: 2. Access the Admin Panel (`/admin.html`) in a browser and check real-time loading of data.
+90: 3. Submit a new Dua in the app/simulator and verify it goes to the Admin Panel's "Onay Bekleyenler" list.
+91: 4. Verify that approving the Dua in the Admin Panel immediately lists it in the simulator and app's "Dua Bekleyenler" lists.
+92: 5. In the Admin Panel, add a new tool or change the order of existing tools. Verify that the changes reflect immediately on the simulator tools tab and on the Flutter app tools screen.
+93: 6. Trigger the "Global block" in the Admin Panel and check if the app shows the blocked screen.
+94: 
+95: ### Manual Verification
+96: - Deploy Flutter app on emulator (`flutter run -d emulator-5554`) and check Zikirmatik, Dini Günler, Kıble Bulucu, and Yakındaki Camiler layout/content matching.
+97: - Disable Vite dev server to verify that the Flutter app uses local SharedPreferences cache and fallback data when offline.
+98: 
+The above content shows the entire, complete file contents of the requested file.

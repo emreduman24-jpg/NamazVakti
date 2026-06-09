@@ -1,0 +1,42 @@
+Created At: 2026-06-03T13:57:55Z
+Completed At: 2026-06-03T13:57:56Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8272
+Total Bytes: 337530
+Showing lines 855 to 888
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+855:     await prefs.setInt(key, newValue);
+856:     setState(() {
+857:       if (key == 'kaza_sabah') _kazaSabah = newValue;
+858:       if (key == 'kaza_ogle') _kazaOgle = newValue;
+859:       if (key == 'kaza_ikindi') _kazaIkindi = newValue;
+860:       if (key == 'kaza_aksam') _kazaAksam = newValue;
+861:       if (key == 'kaza_yatsi') _kazaYatsi = newValue;
+862:       if (key == 'kaza_vitir') _kazaVitir = newValue;
+863:     });
+864:   }
+865: 
+866:   void _initAudio() {
+867:     _audioPlayer = AudioPlayer();
+868:     _audioPlayer!.onPlayerStateChanged.listen((state) {
+869:       if (mounted) {
+870:         setState(() {
+871:           _playerState = state;
+872:         });
+873:       }
+874:     });
+875:   }
+876: 
+877:   String _normalize(String text) {
+878:     return text
+879:         .toLowerCase()
+880:         .replaceAll('ı', 'i')
+881:         .replaceAll('ğ', 'g')
+882:         .replaceAll('ü', 'u')
+883:         .replaceAll('ş', 's')
+884:         .replaceAll('ö', 'o')
+885:         .replaceAll('ç', 'c');
+886:   }
+887: 
+888:   @override
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

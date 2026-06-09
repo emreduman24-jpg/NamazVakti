@@ -1,0 +1,106 @@
+Created At: 2026-05-23T13:45:34Z
+Completed At: 2026-05-23T13:45:34Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 340 to 490
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+340:       ),
+341:     );
+342:   }
+343: 
+344:   Widget _buildToolBody() {
+345:     switch (widget.toolId) {
+346:       case 'dini-gunler':
+347:         return _buildDiniGunler();
+348:       case 'dua-iste':
+349:         return _buildDuaIste();
+350:       case 'soru-cevap':
+351:         return _buildSoruCevap();
+352:       case 'canli-sohbet':
+353:         return _buildCanliSohbet();
+354:       case 'peygamber-hayati':
+355:         return _buildPeygamberHayati();
+356:       case 'kuran-kerim':
+357:         return _buildKuranKerim();
+358:       case 'esmaul-husna':
+359:         return _buildEsmaulHusna();
+360:       case 'ramazan-hakkinda':
+361:         return _buildRamazanHakkinda();
+362:       case 'oruc-rehberi':
+363:         return _buildOrucRehberi();
+364:       case 'kible-bulucu':
+365:         return _buildKibleBulucu();
+366:       case 'zikirmatik':
+367:         return _buildZikirmatik();
+368:       case 'miladi-hicri':
+369:         return _buildMiladiHicri();
+370:       case 'yasin-suresi':
+371:         return _buildYasinSuresi();
+372:       case 'yakindaki-camiler':
+373:         return _buildYakindakiCamiler();
+374:       case 'hadis-40':
+375:         return _buildHadis40();
+376:       case 'namaz-tesbihati':
+377:         return _buildNamazTesbihati();
+378:       case 'gunluk-dualar':
+379:         return _buildGunlukDualar();
+380:       case 'zekat-hesaplama':
+381:         return _buildZekatHesaplama();
+382:       case 'sahabe-hayatlari':
+383:         return _buildSahabeHayatlari();
+384:       case 'islam-tarihi':
+385:         return _buildI
+<truncated 2057 bytes>
+ 'islamin-sartlari':
+441:         return _buildIslaminSartlari();
+442:       case 'imanin-sartlari':
+443:         return _buildImaninSartlari();
+444:       case 'farz-32':
+445:         return _buildFarz32();
+446:       case 'farz-54':
+447:         return _buildFarz54();
+448:       case 'buyuk-gunahlar':
+449:         return _buildBuyukGunahlar();
+450:       case 'helal-haram':
+451:         return _buildHelalHaram();
+452:       case 'aile-ahlaki':
+453:         return _buildAileAhlaki();
+454:       case 'ticaret-fikhi':
+455:         return _buildTicaretFikhi();
+456:       case 'miras-fikhi':
+457:         return _buildMirasFikhi();
+458:       case 'anne-baba-haklari':
+459:         return _buildAnneBabaHaklari();
+460:       case 'kul-hakki':
+461:         return _buildKulHakki();
+462:       case 'komsu-haklari':
+463:         return _buildKomsuHaklari();
+464:       case 'cocuk-egitimi':
+465:         return _buildCocukEgitimi();
+466:       case 'selamlasma-adabi':
+467:         return _buildSelamlasmaAdabi();
+468:       case 'misafirlik-adabi':
+469:         return _buildMisafirlikAdabi();
+470:       case 'uc-aylar':
+471:         return _buildUcAylar();
+472:       case 'muharrem-asure':
+473:         return _buildMuharremAsure();
+474:       case 'zilhicce-arefe':
+475:         return _buildZilhicceArefe();
+476:       case 'islam-alimleri':
+477:         return _buildIslamAlimleri();
+478:       case 'islam-cografyasi':
+479:         return _buildIslamCografyasi();
+480:       case 'tevbe-istigfar':
+481:         return _buildTevbeIstigfar();
+482:       case 'sadaka-i-cariye':
+483:         return _buildSadakaICariye();
+484:       case 'tecvid-kurallari':
+485:         return _buildTecvidKurallari();
+486:       default:
+487:         return const Center(
+488:           child: Text("Bu özellik çok yakında eklenecektir."),
+489:         );
+490:     }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,101 @@
+Created At: 2026-06-01T11:28:34Z
+Completed At: 2026-06-01T11:28:34Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/scratch/redesign_qibla_radar.dart`
+Total Lines: 549
+Total Bytes: 23072
+Showing lines 1 to 549
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:io';
+2: 
+3: void main() {
+4:   final file = File('lib/screens/tool_detail_screen.dart');
+5:   if (!file.existsSync()) {
+6:     print('Error: lib/screens/tool_detail_screen.dart not found.');
+7:     exit(1);
+8:   }
+9: 
+10:   // Restore the original file using Git first to start from a clean state
+11:   Process.runSync('git', ['checkout', 'lib/screens/tool_detail_screen.dart']);
+12: 
+13:   var content = file.readAsStringSync();
+14:   content = content.replaceAll('\r\n', '\n');
+15: 
+16:   // 1. Insert the getters and currentLocationName state variable at the top of the state class
+17:   const classDeclaration = 'class _ToolDetailScreenState extends State<ToolDetailScreen> {';
+18:   const repoDeclaration = '  final PrayerRepository _repository = PrayerRepository();';
+19:   
+20:   final gettersString = '''
+21: 
+22:   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
+23:   Color get _greenColor => _isDark ? const Color(0xFF27A770) : const Color(0xff1e5e43);
+24:   Color get _textColor => _isDark ? Colors.white : const Color(0xDE000000); // Colors.black87 equivalent
+25:   Color get _subtitleColor => _isDark ? Colors.white70 : const Color(0x8A000000); // Colors.black54 equivalent
+26:   Color get _cardBgColor => _isDark ? const Color(0xFF131D31) : Colors.white;
+27:   String _currentLocationName = "";
+28: 
+29:   Future<void> _loadLocationName() async {
+30:     final savedLoc = await _repository.getSavedLocation();
+31:     final savedCity = savedLoc['cityName'] ?? "İstanbul";
+32:     if (mounted) {
+33:       setState(() {
+34:      
+<truncated 22163 bytes>
+ math.cos(angle),
+493:         center.dy + startR * math.sin(angle),
+494:       );
+495:       final Offset endPoint = Offset(
+496:         center.dx + endR * math.cos(angle),
+497:         center.dy + endR * math.sin(angle),
+498:       );
+499: 
+500:       canvas.drawLine(startPoint, endPoint, tickPaint);
+501:     }
+502: 
+503:     // 5. Draw active radar scanning beam
+504:     final double radAngle = (needleRotation - 90) * 3.141592653589793 / 180;
+505:     
+506:     final sweepPaint = Paint()
+507:       ..color = isAligned 
+508:           ? const Color(0xFF27A770).withOpacity(0.15) 
+509:           : (isDark ? const Color(0xFFD4AF37).withOpacity(0.08) : const Color(0xFF27A770).withOpacity(0.08))
+510:       ..style = PaintingStyle.fill;
+511:     
+512:     final sweepPath = Path()
+513:       ..moveTo(center.dx, center.dy)
+514:       ..arcTo(
+515:         Rect.fromCircle(center: center, radius: radius),
+516:         radAngle - 0.2, 
+517:         0.4,
+518:         false,
+519:       )
+520:       ..close();
+521:     canvas.drawPath(sweepPath, sweepPaint);
+522: 
+523:     // 6. Draw outer target marker (red bracket at the top)
+524:     final targetPaint = Paint()
+525:       ..color = isAligned ? const Color(0xFF27A770) : Colors.redAccent
+526:       ..style = PaintingStyle.stroke
+527:       ..strokeWidth = 2.0;
+528: 
+529:     final double bracketW = 16;
+530:     final double bracketH = 8;
+531:     final bracketPath = Path()
+532:       ..moveTo(center.dx - bracketW, bracketH)
+533:       ..lineTo(center.dx - bracketW, 0)
+534:       ..lineTo(center.dx + bracketW, 0)
+535:       ..lineTo(center.dx + bracketW, bracketH);
+536:     canvas.drawPath(bracketPath, targetPaint);
+537:   }
+538: 
+539:   @override
+540:   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+541: }
+542: ''';
+543: 
+544:   content += radarPainterCode;
+545: 
+546:   file.writeAsStringSync(content);
+547:   print('Qibla Radar Redesign applied successfully!');
+548: }
+549: 
+The above content shows the entire, complete file contents of the requested file.

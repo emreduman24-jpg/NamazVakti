@@ -1,0 +1,127 @@
+Created At: 2026-05-27T20:44:09Z
+Completed At: 2026-05-27T20:44:09Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart`
+Total Lines: 361
+Total Bytes: 9467
+Showing lines 1 to 361
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'package:flutter/material.dart';
+3: import 'data/prayer_repository.dart';
+4: import 'services/notification_service.dart';
+5: import 'screens/main_screen.dart';
+6: import 'screens/tools_screen.dart';
+7: import 'screens/settings_screen.dart';
+8: import 'screens/tool_detail_screen.dart';
+9: import 'screens/splash_screen.dart';
+10: 
+11: void main() async {
+12:   WidgetsFlutterBinding.ensureInitialized();
+13: 
+14:   // Initialize Notification Service
+15:   final notificationService = NotificationService();
+16:   await notificationService.init();
+17: 
+18:   runApp(const MyApp());
+19: }
+20: 
+21: class MyApp extends StatefulWidget {
+22:   const MyApp({super.key});
+23: 
+24:   @override
+25:   State<MyApp> createState() => _MyAppState();
+26: }
+27: 
+28: class _MyAppState extends State<MyApp> {
+29:   final PrayerRepository _repository = PrayerRepository();
+30:   ThemeMode _themeMode = ThemeMode.light;
+31:   bool _loading = true;
+32:   bool _locationSelected = false;
+33:   bool _isBlocked = false;
+34:   Timer? _blockTimer;
+35: 
+36:   @override
+37:   void initState() {
+38:     super.initState();
+39:     _initializeApp();
+40:     _startBlockCheckTimer();
+41:   }
+42: 
+43:   @override
+44:   void dispose() {
+45:     _blockTimer?.cancel();
+46:     super.dispose();
+47:   }
+48: 
+49:   void _startBlockCheckTimer() {
+50:     _blockTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+51:       _checkBlockStatus();
+52:     });
+53:   }
+54: 
+55:   Future<void> _checkBlockStatus() async {
+56:     try {
+57:       final blocked = await _repository.getGlobalBl
+<truncated 7597 bytes>
+        ),
+302:           BottomNavigationBarItem(
+303:             icon: Icon(Icons.grid_view_outlined),
+304:             activeIcon: Icon(Icons.grid_view),
+305:             label: 'Araçlar',
+306:           ),
+307:           BottomNavigationBarItem(
+308:             icon: Icon(Icons.settings_outlined),
+309:             activeIcon: Icon(Icons.settings),
+310:             label: 'Ayarlar',
+311:           ),
+312:         ],
+313:       ),
+314:     );
+315:   }
+316: }
+317: 
+318: class BlockedScreen extends StatelessWidget {
+319:   const BlockedScreen({super.key});
+320: 
+321:   @override
+322:   Widget build(BuildContext context) {
+323:     return const Scaffold(
+324:       backgroundColor: Colors.white,
+325:       body: Center(
+326:         child: Padding(
+327:           padding: EdgeInsets.all(24.0),
+328:           child: Column(
+329:             mainAxisAlignment: MainAxisAlignment.center,
+330:             children: [
+331:               Text(
+332:                 "🚫",
+333:                 style: TextStyle(fontSize: 80),
+334:               ),
+335:               SizedBox(height: 24),
+336:               Text(
+337:                 "Erişiminiz Engellendi",
+338:                 style: TextStyle(
+339:                   fontSize: 24,
+340:                   fontWeight: FontWeight.bold,
+341:                   color: Color(0xFFD32F2F),
+342:                 ),
+343:               ),
+344:               SizedBox(height: 16),
+345:               Text(
+346:                 "Kullanım şartlarını ihlal ettiğiniz için İslami Rehber uygulamasına erişiminiz yönetici tarafından engellenmiştir.",
+347:                 textAlign: TextAlign.center,
+348:                 style: TextStyle(
+349:                   fontSize: 15,
+350:                   color: Colors.black87,
+351:                   height: 1.5,
+352:                 ),
+353:               ),
+354:             ],
+355:           ),
+356:         ),
+357:       ),
+358:     );
+359:   }
+360: }
+361: 
+The above content shows the entire, complete file contents of the requested file.

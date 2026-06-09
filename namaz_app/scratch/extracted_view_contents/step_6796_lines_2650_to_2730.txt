@@ -1,0 +1,89 @@
+Created At: 2026-05-26T15:04:22Z
+Completed At: 2026-05-26T15:04:22Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4996
+Total Bytes: 201666
+Showing lines 2650 to 2730
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2650:                         color: Color(0xFF1E5E43),
+2651:                       ),
+2652:                     ),
+2653:                   ],
+2654:                 ),
+2655:                 SizedBox(height: 8),
+2656:                 Text(
+2657:                   "“Cemaatle kılınan namaz, tek başına kılınan namazdan yirmi yedi derece daha faziletlidir.”",
+2658:                   style: TextStyle(
+2659:                     fontStyle: FontStyle.italic,
+2660:                     fontSize: 13,
+2661:                     color: Colors.black87,
+2662:                     height: 1.35,
+2663:                   ),
+2664:                 ),
+2665:                 SizedBox(height: 6),
+2666:                 Align(
+2667:                   alignment: Alignment.bottomRight,
+2668:                   child: Text(
+2669:                     "(Buhârî, Ezân 30)",
+2670:                     style: TextStyle(
+2671:                       fontSize: 11,
+2672:                       color: Colors.grey,
+2673:                       fontWeight: FontWeight.bold,
+2674:                     ),
+2675:                   ),
+2676:                 ),
+2677:               ],
+2678:             ),
+2679:           ),
+2680:         ),
+2681:         const SizedBox(height: 12),
+2682:         Row(
+2683:           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2684:           children: [
+2685:             Expanded(
+2686:               child: Text(
+2687:                 _currentPosition != null
+2688:                     ? "Konumunuza Göre Sıralanmış Camiler"
+2689:                     : "Konumunuza En Yakın Camiler (Fatih/İstanbul)",
+2690:                 style: const TextStyle(
+2691:                   fontWeight: FontWeight.bold,
+2692:                   color: Color(0xFF1E5E43),
+2693:                   fontSize: 13.5,
+2694:                 ),
+2695:               ),
+2696:             ),
+2697:             if (_loadingLocation)
+2698:               const SizedBox(
+2699:                 width: 20,
+2700:                 height: 20,
+2701:                 child: CircularProgressIndicator(
+2702:                   strokeWidth: 2,
+2703:                   valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF27A770)),
+2704:                 ),
+2705:               )
+2706:             else
+2707:               IconButton(
+2708:                 icon: const Icon(Icons.my_location, color: Color(0xFF27A770), size: 20),
+2709:                 onPressed: () => _getUserLocation(forceRefresh: true),
+2710:                 tooltip: "Konumu Güncelle",
+2711:               ),
+2712:           ],
+2713:         ),
+2714:         const SizedBox(height: 8),
+2715:         Expanded(
+2716:           child: ListView.builder(
+2717:             itemCount: _dynamicMosquesList.length,
+2718:             itemBuilder: (context, index) {
+2719:               final camii = _dynamicMosquesList[index];
+2720:               return Card(
+2721:                 elevation: 1.5,
+2722:                 shape: RoundedRectangleBorder(
+2723:                   borderRadius: BorderRadius.circular(16),
+2724:                 ),
+2725:                 margin: const EdgeInsets.only(bottom: 12),
+2726:                 child: ListTile(
+2727:                   leading: const CircleAvatar(
+2728:                     backgroundColor: Color(0xFFEAF7F1),
+2729:                     child: Icon(Icons.mosque, color: Color(0xFF27A770)),
+2730:                   ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

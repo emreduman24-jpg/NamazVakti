@@ -1,0 +1,59 @@
+Created At: 2026-06-01T10:25:54Z
+Completed At: 2026-06-01T10:25:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5522
+Total Bytes: 227716
+Showing lines 1130 to 1180
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1130:     };
+1131: 
+1132:     return Column(
+1133:       crossAxisAlignment: CrossAxisAlignment.start,
+1134:       children: [
+1135:         // Year tabs horizontally inside a premium stylized container
+1136:         Container(
+1137:           padding: const EdgeInsets.symmetric(vertical: 4.0),
+1138:           decoration: BoxDecoration(
+1139:             color: Colors.white,
+1140:             borderRadius: BorderRadius.circular(16),
+1141:             boxShadow: [
+1142:               BoxShadow(
+1143:                 color: Colors.black.withOpacity(0.03),
+1144:                 blurRadius: 10,
+1145:                 offset: const Offset(0, 4),
+1146:               ),
+1147:             ],
+1148:           ),
+1149:           child: SingleChildScrollView(
+1150:             scrollDirection: Axis.horizontal,
+1151:             physics: const BouncingScrollPhysics(),
+1152:             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+1153:             child: Row(
+1154:               children: ["2026", "2027", "2028", "2029", "2030"].map((year) {
+1155:                 final isSelected = _selectedDiniGunlerYear == year;
+1156:                 return Padding(
+1157:                   padding: const EdgeInsets.symmetric(horizontal: 6.0),
+1158:                   child: InkWell(
+1159:                     onTap: () {
+1160:                       setState(() {
+1161:                         _selectedDiniGunlerYear = year;
+1162:                       });
+1163:                     },
+1164:                     borderRadius: BorderRadius.circular(12),
+1165:                     child: AnimatedContainer(
+1166:                       duration: const Duration(milliseconds: 200),
+1167:                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+1168:                       decoration: BoxDecoration(
+1169:                         gradient: isSelected
+1170:                             ? const LinearGradient(
+1171:                                 colors: [Color(0xFF1E5E43), Color(0xFF27A770)],
+1172:                                 begin: Alignment.topLeft,
+1173:                                 end: Alignment.bottomRight,
+1174:                               )
+1175:                             : null,
+1176:                         color: isSelected ? null : Colors.transparent,
+1177:                         borderRadius: BorderRadius.circular(12),
+1178:                         border: Border.all(
+1179:                           color: isSelected ? Colors.transparent : const Color(0xFFE2E8F0),
+1180:                           width: 1,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

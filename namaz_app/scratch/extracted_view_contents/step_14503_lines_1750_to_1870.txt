@@ -1,0 +1,95 @@
+Created At: 2026-06-03T04:59:35Z
+Completed At: 2026-06-03T04:59:35Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6363
+Total Bytes: 258283
+Showing lines 1750 to 1870
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1750:   }
+1751: 
+1752:   // 6. Kuran-ı Kerim Player
+1753:   Widget _buildKuranKerim() {
+1754:     return Column(
+1755:       children: [
+1756:         Container(
+1757:           padding: EdgeInsets.all(16),
+1758:           decoration: BoxDecoration(
+1759:             color: const Color(0xFFEAF7F1),
+1760:             borderRadius: BorderRadius.circular(16),
+1761:             border: Border.all(color: const Color(0xFF27A770).withOpacity(0.3)),
+1762:           ),
+1763:           child: Column(
+1764:             children: [
+1765:               Icon(Icons.music_note, color: Color(0xFF27A770), size: 36),
+1766:               SizedBox(height: 8),
+1767:               Text(
+1768:                 _currentTrackName.isEmpty
+1769:                     ? "Cüz seçin ve oynatın"
+1770:                     : _currentTrackName,
+1771:                 textAlign: TextAlign.center,
+1772:                 style: TextStyle(
+1773:                   fontWeight: FontWeight.bold,
+1774:                   fontSize: 15,
+1775:                   color: _greenColor,
+1776:                 ),
+1777:               ),
+1778:               SizedBox(height: 12),
+1779:               Row(
+1780:                 mainAxisAlignment: MainAxisAlignment.center,
+1781:                 children: [
+1782:                   IconButton(
+1783:                     iconSize: 40,
+1784:                     icon: Icon(
+1785:                       _playerState == PlayerState.playing
+1786:                           ? Icons.pause_circle_filled
+1787:                           : Icons.play_circle_filled,
+1788:     
+<truncated 1401 bytes>
+d: GridView.builder(
+1825:             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+1826:               crossAxisCount: 3,
+1827:               childAspectRatio: 1.8,
+1828:               crossAxisSpacing: 8,
+1829:               mainAxisSpacing: 8,
+1830:             ),
+1831:             itemCount: 30,
+1832:             itemBuilder: (context, index) {
+1833:               final juzNum = index + 1;
+1834:               final url =
+1835:                   "https://server8.mp3quran.net/afs/${juzNum.toString().padLeft(3, '0')}.mp3";
+1836:               final name = "$juzNum. Cüz Tilaveti - Fatih Çollak";
+1837:               final isCurrent = _currentAudioUrl == url;
+1838: 
+1839:               return ElevatedButton(
+1840:                 style: ElevatedButton.styleFrom(
+1841:                   backgroundColor: isCurrent
+1842:                       ? const Color(0xFF27A770)
+1843:                       : Colors.white,
+1844:                   foregroundColor: isCurrent
+1845:                       ? Colors.white
+1846:                       : _greenColor,
+1847:                   elevation: 1,
+1848:                   shape: RoundedRectangleBorder(
+1849:                     borderRadius: BorderRadius.circular(12),
+1850:                   ),
+1851:                 ),
+1852:                 onPressed: () => _playAudio(url, name),
+1853:                 child: Text(
+1854:                   "$juzNum. Cüz",
+1855:                   style: TextStyle(
+1856:                     fontWeight: FontWeight.bold,
+1857:                     fontSize: 13,
+1858:                   ),
+1859:                 ),
+1860:               );
+1861:             },
+1862:           ),
+1863:         ),
+1864:       ],
+1865:     );
+1866:   }
+1867: 
+1868:   // 7. Esmaül Hüsna
+1869:   Widget _buildEsmaulHusna() {
+1870:     final filtered = ESMAUL_HUSNA.where((item) {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

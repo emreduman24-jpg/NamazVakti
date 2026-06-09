@@ -1,0 +1,1 @@
+          final encodedQuery = Uri.encodeComponent(query);\n          final url = Uri.parse('$endpoint?data=$encodedQuery');\n          final response = await http.get(\n            url,\n            headers: {\n              'Accept': '*/*',\n              'User-Agent': 'NamazVakitleri/1.0',\n            },\n          ).timeout(const Duration(seconds: 20));

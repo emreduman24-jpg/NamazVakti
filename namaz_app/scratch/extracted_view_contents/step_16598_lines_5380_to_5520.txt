@@ -1,0 +1,90 @@
+Created At: 2026-06-03T13:10:47Z
+Completed At: 2026-06-03T13:10:47Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7690
+Total Bytes: 312474
+Showing lines 5380 to 5520
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5380: 
+5381:     return Column(
+5382:       children: [
+5383:         tabRow,
+5384:         Expanded(
+5385:           child: hasAnyItems
+5386:               ? ListView(
+5387:                   physics: const BouncingScrollPhysics(),
+5388:                   children: items,
+5389:                 )
+5390:               : Center(
+5391:                   child: Column(
+5392:                     mainAxisAlignment: MainAxisAlignment.center,
+5393:                     children: [
+5394:                       Icon(
+5395:                         _showOnlyFavorites ? Icons.favorite_border : Icons.search_off,
+5396:                         size: 48,
+5397:                         color: Colors.grey,
+5398:                       ),
+5399:                       const SizedBox(height: 12),
+5400:                       Text(
+5401:                         _showOnlyFavorites
+5402:                             ? "Favori duanız bulunmuyor."
+5403:                             : "Aramanızla eşleşen dua bulunamadı.",
+5404:                         style: const TextStyle(color: Colors.grey),
+5405:                       ),
+5406:                     ],
+5407:                   ),
+5408:                 ),
+5409:         ),
+5410:       ],
+5411:     );
+5412:   }
+5413: 
+5414:   void _showDuaDetailBottomSheet(Map<String, String> dua) {
+5415:     final title = dua['ad'] ?? '';
+5416:     final source = dua['sure'] ?? '';
+5417:     final arabic = dua['arapca'] ?? '';
+5418:     final trans = dua['okunus'] ?? '';
+5419:     final translation = dua['anlam'] ?? '';
+5420:     final url = dua['
+<truncated 2857 bytes>
+             ),
+5482:                             ),
+5483:                           ],
+5484:                         ),
+5485:                       ),
+5486:                       IconButton(
+5487:                         icon: const Icon(Icons.close),
+5488:                         color: _isDark ? Colors.white70 : Colors.black54,
+5489:                         onPressed: () => Navigator.pop(context),
+5490:                       ),
+5491:                     ],
+5492:                   ),
+5493:                   const Divider(height: 20),
+5494:                   Row(
+5495:                     children: [
+5496:                       const Icon(Icons.format_size, size: 16, color: Color(0xFFC19E67)),
+5497:                       const SizedBox(width: 8),
+5498:                       const Text(
+5499:                         "Yazı Boyutu",
+5500:                         style: TextStyle(fontSize: 12, color: Color(0xFFC19E67)),
+5501:                       ),
+5502:                       Expanded(
+5503:                         child: Slider(
+5504:                           value: arabicFontSize,
+5505:                           min: 16.0,
+5506:                           max: 36.0,
+5507:                           activeColor: const Color(0xFFC19E67),
+5508:                           inactiveColor: _isDark ? Colors.grey[800] : Colors.grey[200],
+5509:                           onChanged: (val) {
+5510:                             setModalState(() {
+5511:                               arabicFontSize = val;
+5512:                               translationFontSize = val - 10.0;
+5513:                             });
+5514:                           },
+5515:                         ),
+5516:                       ),
+5517:                     ],
+5518:                   ),
+5519:                   const SizedBox(height: 10),
+5520:                   Expanded(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

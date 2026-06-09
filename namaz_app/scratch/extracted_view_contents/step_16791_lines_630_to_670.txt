@@ -1,0 +1,49 @@
+Created At: 2026-06-03T13:46:58Z
+Completed At: 2026-06-03T13:46:58Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 8261
+Total Bytes: 337401
+Showing lines 630 to 670
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+630:     },
+631:     {
+632:       'sender': 'other',
+633:       'user': 'Ömer Faruk',
+634:       'text': 'Rabbim namazlarımızı ve dualarımızı kabul eylesin.',
+635:     },
+636:   ];
+637:   final TextEditingController _chatInputController = TextEditingController();
+638: 
+639:   // Dini Hoca State
+640:   List<Map<String, dynamic>> _diniHocaMessages = [];
+641:   bool _diniHocaIsTyping = false;
+642:   final ScrollController _diniHocaScrollController = ScrollController();
+643:   final TextEditingController _diniHocaInputController = TextEditingController();
+644:   final List<String> _chatUsers = [
+645:     "Ayşe Yılmaz",
+646:     "Mustafa Demir",
+647:     "Zeynep Çelik",
+648:     "Ahmet Yıldız",
+649:     "Emine Kaya",
+650:   ];
+651:   final List<String> _chatReplies = [
+652:     "Allah hepimizden razı olsun inşallah.",
+653:     "Rabbim bu güzel günün hürmetine dualarımızı kabul eylesin.",
+654:     "Birlik ve beraberliğimiz daim olsun.",
+655:     "Hayırlı, huzurlu vakitler dilerim.",
+656:     "Ve aleyküm selam ve rahmetullah.",
+657:   ];
+658: 
+659:   // Dini Hoca AI State
+660:   final List<Map<String, String>> _diniHocaMessages = [
+661:     {
+662:       'sender': 'ai',
+663:       'text': 'Selamün Aleyküm mümin kardeşim. Ben Dini Hoca Yapay Zeka Danışmanıyım. İslam fıkhı, inanç, ibadetler (abdest, namaz, zekat vb.), hadis-i şerifler veya ahlak adabı hakkında aklına takılan her soruyu bana sorabilirsin. Sana hayırla rehberlik etmek için buradayım.',
+664:     }
+665:   ];
+666:   final TextEditingController _diniHocaInputController = TextEditingController();
+667:   final ScrollController _diniHocaScrollController = ScrollController();
+668:   bool _diniHocaIsTyping = false;
+669: 
+670:   // 40 Hadis State
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

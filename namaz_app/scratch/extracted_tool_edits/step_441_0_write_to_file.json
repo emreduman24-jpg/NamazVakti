@@ -1,0 +1,13 @@
+{
+  "step_index": 441,
+  "tool_name": "write_to_file",
+  "arguments": {
+    "CodeContent": "\"import 'dart:async';\\nimport 'dart:math' as math;\\nimport 'package:flutter/material.dart';\\nimport 'package:flutter/services.dart';\\nimport 'package:flutter_compass/flutter_compass.dart';\\nimport 'package:audioplayers/audioplayers.dart';\\nimport 'package:shared_preferences/shared_preferences.dart';\\nimport '../data/prayer_data.dart';\\nimport '../data/prayer_repository.dart';\\n\\nclass ToolDetailScreen extends StatefulWidget {\\n  final String toolId;\\n  final String toolTitle;\\n\\n  const ToolDetailScreen({Key? key, required this.toolId, required this.toolTitle}) : super(key: key);\\n\\n  @override\\n  _ToolDetailScreenState createState() => _ToolDetailScreenState();\\n}\\n\\nclass _ToolDetailScreenState extends State<ToolDetailScreen> {\\n  final PrayerRepository _repository = PrayerRepository();\\n  AudioPlayer? _audioPlayer;\\n  PlayerState _playerState = PlayerState.stopped;\\n  String _currentAudioUrl = \\\"\\\";\\n  String _currentTrackName = \\\"\\\";\\n  \\n  // Zikirmatik State\\n  int _zikirCount = 0;\\n  int _zikirTarget = 33;\\n  bool _zikirSoundEnabled = true;\\n\\n  // Dua Iste State\\n  List<Map<String, dynamic>> _duaList = [];\\n  final TextEditingController _duaNameController = TextEditingController();\\n  final TextEditingController _duaTextController = TextEditingController();\\n\\n  // Soru Cevap State\\n  final List<Map<String, String>> _qaMessages = [\\n    {\\n      'sender': 'bot',\\n      'text': 'Selamün Aleyküm, ben yapay zeka dini danışmanınız. Merak ettiğiniz fıkhi veya dini konuları sorabilirsiniz.'\\n    }\\n  ];\\n  final TextEditingController _qaInputController = TextEditingController();\\n\\n  // Canli Dini Sohbet State\\n  final List<Map<String, String>> _chatMessages = [\\n    {'sender': 'other', 'user': 'Mehmet Kaya', 'text': 'Selamün Aleyküm muhterem kardeşlerim, gününüz bereketli geçsin inşallah.'},\\n    {'sender': 'other', 'user': 'Fatma Şahin', 'text': 'Ve Aleyküm Selam. Hayırlı günler dilerim.'},\\n    {'sender': 'other', 'user': 'Ömer Faruk', 'text': 'Rabbim namazlarımızı ve dualarımızı\n<truncated 79019 bytes>",
+    "Description": "\"Create tool_detail_screen.dart to render all 22 interactive tools in native Flutter, including compass fallback, audio streaming, date conversions, Q&A chatbot simulator, zikirmatik, and guides.\"",
+    "IsArtifact": "false",
+    "Overwrite": "true",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Creating tool_detail_screen.dart\"",
+    "toolSummary": "\"Creating tool_detail_screen.dart\""
+  }
+}

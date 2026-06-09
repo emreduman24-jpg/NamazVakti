@@ -1,0 +1,39 @@
+Created At: 2026-06-01T10:22:49Z
+Completed At: 2026-06-01T10:22:49Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5512
+Total Bytes: 227382
+Showing lines 980 to 1010
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+980:           child: Column(
+981:             children: [
+982:               _buildKunutCard("Kunut Duası - 1", VITIR_NAMAZI['kunut1']),
+983:               const SizedBox(height: 16),
+984:               _buildKunutCard("Kunut Duası - 2", VITIR_NAMAZI['kunut2']),
+985:             ],
+986:           ),
+987:         );
+988:       case 'yemek-duasi':
+989:         return _buildYemekDuasi();
+990:       case 'sifa-duasi':
+991:         return _buildSifaDuasi();
+992:       case 'koruyucu-dualar':
+993:         return _buildKoruyucuDualar();
+994:       case 'sikinti-borc-duasi':
+995:         return _buildSikintiBorcDuasi();
+996:       case 'rabbena-dualar':
+997:         return _buildRabbenaDualar();
+998:       case 'hac-umre':
+999:         return _buildHacUmre();
+1000:       case 'kurban-rehberi':
+1001:         return _buildKurbanRehberi();
+1002:       case 'sadaka-bilgileri':
+1003:         return _buildSadakaBilgileri();
+1004:       case 'islamin-sartlari':
+1005:         return _buildIslaminSartlari();
+1006:       case 'imanin-sartlari':
+1007:         return _buildImaninSartlari();
+1008:       case 'farz-32':
+1009:         return _buildFarz32();
+1010:       case 'farz-54':
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

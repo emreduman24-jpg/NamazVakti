@@ -1,0 +1,16 @@
+{
+  "step_index": 7379,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Adding debug log for actual GPS position received before mosque search\"",
+    "EndLine": "280",
+    "Instruction": "\"Add debug log showing the position coordinates before calling fetchNearbyMosques\"",
+    "ReplacementContent": "\"      final pos = position!;\\n      debugPrint('=== GPS POSITION: lat=${pos.latitude}, lon=${pos.longitude}, accuracy=${pos.accuracy} ===');\\n      setState(() {\"",
+    "StartLine": "279",
+    "TargetContent": "\"      final pos = position!;\\n      setState(() {\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Adding GPS position logging\"",
+    "toolSummary": "\"Add debug prints\""
+  }
+}

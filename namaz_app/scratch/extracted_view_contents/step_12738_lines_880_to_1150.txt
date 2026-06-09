@@ -1,0 +1,95 @@
+Created At: 2026-06-01T11:28:12Z
+Completed At: 2026-06-01T11:28:12Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5393
+Total Bytes: 217630
+Showing lines 880 to 1150
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+880:       body: SafeArea(
+881:         child: Padding(
+882:           padding: EdgeInsets.all(16.0),
+883:           child: _buildToolBody(),
+884:         ),
+885:       ),
+886:     );
+887:   }
+888: 
+889:   Widget _buildToolBody() {
+890:     switch (widget.toolId) {
+891:       case 'dini-gunler':
+892:         return _buildDiniGunler();
+893:       case 'dua-iste':
+894:         return _buildDuaIste();
+895:       case 'soru-cevap':
+896:         return _buildSoruCevap();
+897:       case 'canli-sohbet':
+898:         return _buildCanliSohbet();
+899:       case 'peygamber-hayati':
+900:         return _buildPeygamberHayati();
+901:       case 'kuran-kerim':
+902:         return _buildKuranKerim();
+903:       case 'esmaul-husna':
+904:         return _buildEsmaulHusna();
+905:       case 'ramazan-hakkinda':
+906:         return _buildRamazanHakkinda();
+907:       case 'oruc-rehberi':
+908:         return _buildOrucRehberi();
+909:       case 'kible-bulucu':
+910:         return _buildKibleBulucu();
+911:       case 'zikirmatik':
+912:         return _buildZikirmatik();
+913:       case 'miladi-hicri':
+914:         return _buildMiladiHicri();
+915:       case 'yasin-suresi':
+916:         return _buildYasinSuresi();
+917:       case 'yakindaki-camiler':
+918:         return _buildYakindakiCamiler();
+919:       case 'hadis-40':
+920:         return _buildHadis40();
+921:       case 'namaz-tesbihati':
+922:         return _buildNamazTesbihati();
+923:       case 'gunluk-dualar':
+924:         return _buildGunlukDualar();
+925:       case 'zekat-hesaplama':
+926:         return _buil
+<truncated 7017 bytes>
+   crossAxisAlignment: CrossAxisAlignment.start,
+1113:                 children: [
+1114:                   // Category Header
+1115:                   Container(
+1116:                     width: double.infinity,
+1117:                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+1118:                     margin: EdgeInsets.only(top: 12, bottom: 8),
+1119:                     decoration: BoxDecoration(
+1120:                       color: const Color(0xFF27A770).withOpacity(0.08),
+1121:                       border: Border(
+1122:                         left: BorderSide(color: Color(0xFF27A770), width: 4),
+1123:                       ),
+1124:                     ),
+1125:                     child: Text(
+1126:                       catName,
+1127:                       style: TextStyle(
+1128:                         fontWeight: FontWeight.bold,
+1129:                         color: _greenColor,
+1130:                         fontSize: 14,
+1131:                       ),
+1132:                     ),
+1133:                   ),
+1134:                   // Items in this category
+1135:                   ...items.map((day) {
+1136:                     return Card(
+1137:                       elevation: 1,
+1138:                       shape: RoundedRectangleBorder(
+1139:                         borderRadius: BorderRadius.circular(12),
+1140:                       ),
+1141:                       margin: EdgeInsets.only(bottom: 8),
+1142:                       child: ListTile(
+1143:                         title: Text(
+1144:                           day['ad'] ?? '',
+1145:                           style: TextStyle(
+1146:                             fontWeight: FontWeight.bold,
+1147:                             fontSize: 14,
+1148:                           ),
+1149:                         ),
+1150:                         subtitle: Text(
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,16 @@
+{
+  "step_index": 5695,
+  "tool_name": "replace_file_content",
+  "arguments": {
+    "AllowMultiple": "false",
+    "Description": "\"Add _loadQuestionList() to initState.\"",
+    "EndLine": "276",
+    "Instruction": "\"Call _loadQuestionList() in initState.\"",
+    "ReplacementContent": "\"  @override\\n  void initState() {\\n    super.initState();\\n    _initAudio();\\n    _loadZikirState();\\n    _loadDuaList();\\n    _loadQuestionList();\\n    _loadKazaState();\\n  }\"",
+    "StartLine": "268",
+    "TargetContent": "\"  @override\\n  void initState() {\\n    super.initState();\\n    _initAudio();\\n    _loadZikirState();\\n    _loadDuaList();\\n    _loadKazaState();\\n  }\"",
+    "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+    "toolAction": "\"Updating initState\"",
+    "toolSummary": "\"initState update\""
+  }
+}

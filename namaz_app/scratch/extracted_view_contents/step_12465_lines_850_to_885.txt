@@ -1,0 +1,44 @@
+Created At: 2026-06-01T10:43:37Z
+Completed At: 2026-06-01T10:43:37Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5599
+Total Bytes: 233281
+Showing lines 850 to 885
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+850:         await _audioPlayer!.resume();
+851:       } else {
+852:         await _audioPlayer!.stop();
+853:         setState(() {
+854:           _currentAudioUrl = url;
+855:           _currentTrackName = name;
+856:         });
+857:         await _audioPlayer!.play(UrlSource(url));
+858:       }
+859:     } catch (e) {
+860:       ScaffoldMessenger.of(
+861:         context,
+862:       ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+863:     }
+864:   }
+865: 
+866:   @override
+867:   Widget build(BuildContext context) {
+868:     return Scaffold(
+869:       backgroundColor: const Color(0xFFF3F8F5),
+870:       appBar: AppBar(
+871:         title: Text(
+872:           widget.toolTitle,
+873:           style: const TextStyle(
+874:             fontWeight: FontWeight.bold,
+875:             color: Colors.white,
+876:           ),
+877:         ),
+878:         backgroundColor: const Color(0xFF1E5E43),
+879:         elevation: 0,
+880:         iconTheme: const IconThemeData(color: Colors.white),
+881:       ),
+882:       body: SafeArea(
+883:         child: Padding(
+884:           padding: const EdgeInsets.all(16.0),
+885:           child: _buildToolBody(),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

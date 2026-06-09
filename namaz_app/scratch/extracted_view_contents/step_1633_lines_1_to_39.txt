@@ -1,0 +1,47 @@
+Created At: 2026-05-22T16:57:23Z
+Completed At: 2026-05-22T16:57:23Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 39
+Total Bytes: 2785
+Showing lines 1 to 39
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Yapılacak İşler Listesi (TODO) - Flutter Geliştirme (Aşama 2)
+2: 
+3: - [x] Proje Altyapısının Kurulması
+4: - [x] Veri Katmanının Hazırlanması
+5: - [x] Konum Seçim (Onboarding) Ekranı
+6: - [x] Ayarlar Ekranı
+7: - [x] Arka Plan Ezan Alarmları ve Bildirimler
+8: 
+9: ### Aşama 2 Görevleri:
+10: - [ ] 1. Giriş/Yükleme (Splash) Ekranı (Image 1)
+11:   - [ ] `lib/screens/splash_screen.dart` oluşturulması
+12:   - [ ] Bej zemin üzerine İslami geometrik motif ve asılı kandil çizimlerinin CustomPaint/Dekorasyon ile eklenmesi
+13:   - [ ] Ortada "Selamün Aleyküm" kaligrafisi ve `assets/muslim_boy_heart.png` görselinin yerleşimi
+14:   - [ ] Alt kısımda altın metalik yaldızlı panel ve bugünün ezan vakitlerinin listelenmesi
+15:   - [ ] %0'dan %100'e dolan ilerleme çizgisi ve 3 saniyelik geçiş animasyonu
+16:   - [ ] `main.dart` entegrasyonu (açılışta splash'in gösterilmesi)
+17: - [ ] 2. Ana Ekran Görsel Güncellemesi (Image 2)
+18:   - [ ] Üst gradyanlı yeşil kart yerine açık renk motifli zemin ve tüm metinlerin yeşil/koyu yeşil yapılması
+19:   - [ ] Sol üstte konum (`İstanbul/Fatih`) ve altında `Lokasyonu Değiştir` text linki
+20:   - [ ] Sağ üstte yeşil renkle Miladi ve Hicri Tarih
+21:   - [ ] Merkezde `Akşam Vaktine` ve büyük yeşil sayaç (`00:42:47`)
+22:   - [ ] İnce yeşil ilerleme çizgisi ve `Aylık Namaz Vakitleri` ile `Ezan Bildirimleri` butonları
+23:   - [ ] 6 vakitlik yatay şerit. Aktif vaktin soft yeşil dolgulu kapsül ile vurgulanması, pasif vakitlerin çerçevesiz sade yazılması
+24:   - [ ] 4 hızlı erişim dairesel butonu (`Dini Danışman`, `Mekke`, `Ramazan`, `Tebrik`) görsel eşleştirmeleri
+25:   - [ ] Günün Ayeti ve Hadisi kartlarının tasarım uyumu, geometrik motif ve silüet görselleri
+26:   - [ ] Geliştirici Mesajı banner'ı ve `assets/gelistirici.png` waving character entegrasyonu
+27:   - [ ] Günün İsimleri kartının arka planında bebek resmi ile düzenlenmesi
+28: - [ ] 3. Araçlar Ekranı (Image 3, 4 ve 5)
+29:   - [ ] `lib/screens/tools_screen.dart` içindeki araç listesinin 22'den 70'e çıkarılması
+30:   - [ ] Tüm 70 aracın Türkçe başlık, alt açıklama, uygun ikon ve renk kodlarıyla gridde listelenmesi
+31:   - [ ] "Araçlar" başlığının üstte ortalı yeşil bold yazılması, sol üste çarpı (`x`) kapatma simgesi
+32: - [ ] 4. Araç Detay Ekranı Zengin İçerikleri (70 Araç)
+33:   - [ ] `lib/screens/tool_detail_screen.dart` dosyasına 48 yeni aracın eklenmesi
+34:   - [ ] Her bir yeni araç için özelleştirilmiş, gerçek bilgi ve duaları içeren (Arapça okunuş, meal, fıkıh kuralları vb.) şık arayüzlerin kodlanması
+35: - [ ] 5. Derleme ve Emulator Doğrulaması
+36:   - [ ] Android emülatörde `flutter run` ile çalıştırma
+37:   - [ ] Yeni Splash ekranı, yeni Ana ekran ve 70 aracın test edilmesi
+38:   - [ ] Hata ayıklama ve son parlatmalar
+39: 
+The above content shows the entire, complete file contents of the requested file.

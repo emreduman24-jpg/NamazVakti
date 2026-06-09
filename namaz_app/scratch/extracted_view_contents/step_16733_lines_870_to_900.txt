@@ -1,0 +1,39 @@
+Created At: 2026-06-03T13:44:01Z
+Completed At: 2026-06-03T13:44:01Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 870 to 900
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+870:         .replaceAll('ş', 's')
+871:         .replaceAll('ö', 'o')
+872:         .replaceAll('ç', 'c');
+873:   }
+874: 
+875:   @override
+876:   void dispose() {
+877:     _audioPlayer?.dispose();
+878:     _duaNameController.dispose();
+879:     _duaTextController.dispose();
+880:     _questionNameController.dispose();
+881:     _qaInputController.dispose();
+882:     _chatInputController.dispose();
+883:     _hadisSearchController.dispose();
+884:     _dualarSearchController.dispose();
+885:     _goldController.dispose();
+886:     _cashController.dispose();
+887:     _businessController.dispose();
+888:     _debtsController.dispose();
+889:     super.dispose();
+890:   }
+891: 
+892:   // Zikirmatik persistence
+893:   Future<void> _loadZikirState() async {
+894:     final count = await _repository.getZikirCount();
+895:     final target = await _repository.getZikirTarget();
+896:     final prefs = await SharedPreferences.getInstance();
+897:     final dates = prefs.getStringList('zikir_completed_dates') ?? [];
+898:     setState(() {
+899:       _zikirCount = count;
+900:       _zikirTarget = target;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

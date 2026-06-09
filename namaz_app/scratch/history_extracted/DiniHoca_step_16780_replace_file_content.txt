@@ -1,0 +1,16 @@
+
+Timestamp: 2026-06-03T13:45:43Z
+Args keys: AllowMultiple,Description,EndLine,Instruction,ReplacementContent,StartLine,TargetContent,TargetFile,toolAction,toolSummary
+Arguments: {
+  "AllowMultiple": "false",
+  "Description": "\"Implement Dini Hoca chatbot screen widget _buildDiniHoca and auxiliary methods in tool_detail_screen.dart.\"",
+  "EndLine": "1880",
+  "Instruction": "\"Insert _buildDiniHoca and Dini Hoca helper methods.\"",
+  "ReplacementContent": "\"  }\\n\\n  // Dini Hoca Asistanı (Yapay Zeka)\\n  void _initDiniHoca() {\\n    if (_diniHocaMessages.isEmpty) {\\n      _diniHocaMessages = [\\n        {\\n          'isMe': false,\\n          'text': \\\"Selamün Aleyküm mümin kardeşim. Ben yapay zeka Dini Hoca asistanınızım. İslamiyet, ibadetler (namaz, abdest, gusül, oruç, zekat vb.), dualar ve sureler hakkında sormak istediğiniz soruları cevaplamaktan mutluluk duyarım. Nasıl yardımcı olabilirim?\\\",\\n          'time': DateTime.now(),\\n        }\\n      ];\\n    }\\n  }\\n\\n  Widget _buildDiniHoca() {\\n    _initDiniHoca();\\n    \\n    final suggestions = [\\n      \\\"Abdest nasıl alınır? 💧\\\",\\n      \\\"Guslün farzları nelerdir? 🚿\\\",\\n      \\\"Namazın farzları nelerdir? 🕋\\\",\\n      \\\"Orucu bozan şeyler nelerdir? 🌙\\\",\\n      \\\"Zekat kimlere verilir? 💰\\\",\\n      \\\"Sehiv secdesi nedir? 🙇\\\",\\n      \\\"Kaza namazı nasıl kılınır? 🕰️\\\",\\n    ];\\n\\n    return Column(\\n      children: [\\n        // AI Advisor Header Card\\n        Container(\\n          margin: const EdgeInsets.all(12),\\n          padding: const EdgeInsets.all(12),\\n          decoration: BoxDecoration(\\n            color: _isDark ? const Color(0xFF131D31) : const Color(0xFFEBF5F0),\\n            borderRadius: BorderRadius.circular(16),\\n            border: Border.all(\\n              color: _isDark ? const Color(0xFF1E2D4A) : const Color(0xFFC2E3D2),\\n            ),\\n          ),\\n          child: Row(\\n            children: [\\n              Container(\\n                padding: const EdgeInsets.all(10),\\n                decoration: BoxDecoration(\\n                  color: _isDark ? const Color(0xFF1E2D4A) : Colors.white,\\n                  shape: BoxShape.circle,\\n                ),\\n                child: const Icon(\\n                  Icons.psychology_rounded,\\n                  color: Color(0xFFC5A059),\\n                  size: 28,\\n                ),\\n              ),\\n              const SizedBox(width: 12),\\n              Expanded(\\n                child: Column(\\n    \n<truncated 24225 bytes>",
+  "StartLine": "1878",
+  "TargetContent": "\"  }\\n \\n   // 5. Peygamberin Hayatı\"",
+  "TargetFile": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+  "toolAction": "\"Inserting Dini Hoca methods in tool_detail_screen.dart\"",
+  "toolSummary": "\"Edit file\""
+}
+

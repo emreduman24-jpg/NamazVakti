@@ -1,0 +1,34 @@
+Created At: 2026-06-03T12:44:20Z
+Completed At: 2026-06-03T12:44:20Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7117
+Total Bytes: 289398
+Showing lines 1000 to 1025
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1000:       ),
+1001:     );
+1002:   }
+1003: 
+1004:   // Audio Play helper
+1005:   Future<void> _playAudio(String url, String name) async {
+1006:     try {
+1007:       if (_currentAudioUrl == url && _playerState == PlayerState.playing) {
+1008:         await _audioPlayer!.pause();
+1009:       } else if (_currentAudioUrl == url &&
+1010:           _playerState == PlayerState.paused) {
+1011:         await _audioPlayer!.resume();
+1012:       } else {
+1013:         await _audioPlayer!.stop();
+1014:         setState(() {
+1015:           _currentAudioUrl = url;
+1016:           _currentTrackName = name;
+1017:         });
+1018:         await _audioPlayer!.play(UrlSource(url));
+1019:       }
+1020:     } catch (e) {
+1021:       ScaffoldMessenger.of(
+1022:         context,
+1023:       ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+1024:     }
+1025:   }
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

@@ -1,0 +1,19 @@
+{
+  "step_index": 12803,
+  "source": "MODEL",
+  "type": "PLANNER_RESPONSE",
+  "status": "DONE",
+  "created_at": "2026-06-01T11:30:23Z",
+  "tool_calls": [
+    {
+      "name": "view_file",
+      "args": {
+        "AbsolutePath": "\"c:\\\\Users\\\\kral_\\\\Namaz vakitleri\\\\namaz_app\\\\lib\\\\screens\\\\tool_detail_screen.dart\"",
+        "EndLine": "650",
+        "StartLine": "630",
+        "toolAction": "\"Viewing initState in tool_detail_screen.dart\"",
+        "toolSummary": "\"View file content\""
+      }
+    }
+  ]
+}

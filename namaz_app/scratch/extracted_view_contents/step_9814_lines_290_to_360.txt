@@ -1,0 +1,79 @@
+Created At: 2026-05-31T12:48:45Z
+Completed At: 2026-05-31T12:48:46Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5229
+Total Bytes: 213780
+Showing lines 290 to 360
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+290:         .replaceAll('Ü', 'U');
+291:   }
+292: 
+293:   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+294:     setState(() {
+295:       _loadingLocation = true;
+296:     });
+297:     try {
+298:       Position? position;
+299: 
+300:       // 1. Check if location services are enabled
+301:       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+302:       LocationPermission permission = await Geolocator.checkPermission();
+303: 
+304:       // 2. Request permission if denied
+305:       if (permission == LocationPermission.denied) {
+306:         permission = await Geolocator.requestPermission();
+307:       }
+308: 
+309:       // 3. Try to get high-accuracy live GPS location first if permitted (tam konum sokağına kadar)
+310:       if (serviceEnabled &&
+311:           (permission == LocationPermission.whileInUse ||
+312:               permission == LocationPermission.always)) {
+313:         try {
+314:           debugPrint("Attempting to get fresh live GPS location...");
+315:           position = await Geolocator.getCurrentPosition(
+316:             desiredAccuracy: LocationAccuracy.high, // High accuracy down to street level
+317:             timeLimit: const Duration(seconds: 7),
+318:           );
+319:           debugPrint("Successfully fetched live high-accuracy GPS: ${position.latitude}, ${position.longitude}");
+320:         } catch (e) {
+321:           debugPrint("Failed to fetch fresh live GPS: $e. Trying cached last known position.");
+322:           try {
+323:             position = await Geolocator.getLastKnownPosition();
+324:             if (position != null) {
+325:               debugPrint("Successfully fetched cached last known GPS: ${position.latitude}, ${position.longitude}");
+326:             }
+327:           } catch (e2) {
+328:             debugPrint("Failed to fetch cached GPS: $e2");
+329:           }
+330:         }
+331:       }
+332: 
+333:       // 4. Fallback to manually selected city coordinates if live GPS is unavailable/denied/timeout
+334:       if (position == null) {
+335:         final savedLoc = await _repository.getSavedLocation();
+336:         final savedCity = savedLoc['cityName'];
+337:         if (savedCity != null && savedCity.isNotEmpty) {
+338:           final normalized = _normalizeCityName(savedCity);
+339:           if (_cityCoordinates.containsKey(normalized)) {
+340:             final coords = _cityCoordinates[normalized]!;
+341:             position = Position(
+342:               latitude: coords["lat"]!,
+343:               longitude: coords["lon"]!,
+344:               timestamp: DateTime.now(),
+345:               accuracy: 0.0,
+346:               altitude: 0.0,
+347:               altitudeAccuracy: 0.0,
+348:               heading: 0.0,
+349:               headingAccuracy: 0.0,
+350:               speed: 0.0,
+351:               speedAccuracy: 0.0,
+352:             );
+353:             debugPrint("Live GPS unavailable. Using manual city coordinate fallback: $savedCity -> ${position.latitude}, ${position.longitude}");
+354:           }
+355:         }
+356:       }
+357: 
+358:       // 5. Ultimate fallback to Büyükçekmece, İstanbul if everything fails
+359:       position ??= Position(
+360:         latitude: 41.0207,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

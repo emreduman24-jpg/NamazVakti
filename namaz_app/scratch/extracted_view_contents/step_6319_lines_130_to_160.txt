@@ -1,0 +1,39 @@
+Created At: 2026-05-26T05:45:07Z
+Completed At: 2026-05-26T05:45:07Z
+File Path: `file:///C:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4921
+Total Bytes: 198934
+Showing lines 130 to 160
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+130:         });
+131:         return;
+132:       }
+133: 
+134:       Position position = await Geolocator.getCurrentPosition(
+135:         desiredAccuracy: LocationAccuracy.high
+136:       );
+137: 
+138:       setState(() {
+139:         _currentPosition = position;
+140:         for (var mosque in _dynamicMosquesList) {
+141:           double dist = _calculateDistance(
+142:             position.latitude,
+143:             position.longitude,
+144:             mosque['lat'] as double,
+145:             mosque['lon'] as double,
+146:           );
+147:           mosque['mesafeVal'] = dist;
+148:           mosque['mesafeText'] = "${dist.toStringAsFixed(1)} km";
+149:         }
+150:         _dynamicMosquesList.sort((a, b) => (a['mesafeVal'] as double).compareTo(b['mesafeVal'] as double));
+151:         _loadingLocation = false;
+152:       });
+153:     } catch (e) {
+154:       debugPrint("Location error: $e");
+155:       setState(() {
+156:         _loadingLocation = false;
+157:       });
+158:     }
+159:   }
+160: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

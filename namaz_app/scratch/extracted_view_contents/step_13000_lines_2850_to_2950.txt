@@ -1,0 +1,76 @@
+Created At: 2026-06-01T11:56:23Z
+Completed At: 2026-06-01T11:56:23Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5894
+Total Bytes: 238386
+Showing lines 2850 to 2950
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+2850:                       Expanded(
+2851:                         flex: 1,
+2852:                         child: Text(
+2853:                           day['Ogle'] ?? '',
+2854:                           textAlign: TextAlign.center,
+2855:                           style: TextStyle(
+2856:                             fontSize: 11.5,
+2857:                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+2858:                             color: _textColor,
+2859:                           ),
+2860:                         ),
+2861:                       ),
+2862:                       Expanded(
+2863:                         flex: 1,
+2864:                         child: Text(
+2865:                           day['Ikindi'] ?? '',
+2866:                           textAlign: TextAlign.center,
+2867:                           style: TextStyle(
+2868:                             fontSize: 11.5,
+2869:                             fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+2870:                             color: _textColor,
+2871:                           ),
+2872:                         ),
+2873:                       ),
+2874:                       Expanded(
+2875:                         flex: 1,
+2876:                         child: Text(
+2877:                           day['Aksam'] ?? '',
+2878:                           textAlign: TextAlign.center,
+2879:                           style: TextStyle(
+2880:                             fontSize: 11.5,
+2881:                             fontWeight: isToday ? FontWeight.bold : FontWeight
+<truncated 1272 bytes>
+ric(horizontal: 16, vertical: 8),
+2917:             decoration: BoxDecoration(
+2918:               color: Colors.white,
+2919:               borderRadius: BorderRadius.circular(12),
+2920:               border: Border.all(color: Colors.grey[200]!),
+2921:             ),
+2922:             child: Row(
+2923:               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+2924:               children: [
+2925:                 Text(
+2926:                   "Zikir Seçin: ",
+2927:                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: _greenColor),
+2928:                 ),
+2929:                 DropdownButton<String>(
+2930:                   value: _selectedZikirId,
+2931:                   underline: const SizedBox.shrink(),
+2932:                   icon: Icon(Icons.arrow_drop_down, color: Color(0xFF27A770)),
+2933:                   items: const [
+2934:                     DropdownMenuItem(value: "subhanallah", child: Text("Sübhânallâh (33)", style: TextStyle(fontSize: 13))),
+2935:                     DropdownMenuItem(value: "elhamdulillah", child: Text("Elhamdülillâh (33)", style: TextStyle(fontSize: 13))),
+2936:                     DropdownMenuItem(value: "allahuekber", child: Text("Allâhu Ekber (34)", style: TextStyle(fontSize: 13))),
+2937:                     DropdownMenuItem(value: "lailaheillallah", child: Text("Lâ ilâhe illallâh (Limitsiz)", style: TextStyle(fontSize: 13))),
+2938:                   ],
+2939:                   onChanged: _onZikirSelected,
+2940:                 ),
+2941:               ],
+2942:             ),
+2943:           ),
+2944:           SizedBox(height: 16),
+2945:           // Dhikr Info Card
+2946:           Card(
+2947:             elevation: 1.5,
+2948:             shape: RoundedRectangleBorder(
+2949:               borderRadius: BorderRadius.circular(16),
+2950:             ),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

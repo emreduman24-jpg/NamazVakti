@@ -1,0 +1,21 @@
+Created At: 2026-06-03T11:39:27Z
+Completed At: 2026-06-03T11:39:28Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6934
+Total Bytes: 282658
+Showing lines 463 to 475
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+463:     }
+464:   }
+465: 
+466:   // Zikirmatik State
+467:   int _zikirCount = 0;
+468:   int _zikirTarget = 33;
+469:   bool _zikirSoundEnabled = true;
+470:   String _selectedZikirId = 'subhanallah';
+471: 
+472:   final Map<String, Map<String, dynamic>> _zikirData = {
+473:     'subhanallah': {
+474:       'ad': 'Sübhânallâh',
+475:       'arapca': 'سُبْحَانَ اللَّهِ',
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

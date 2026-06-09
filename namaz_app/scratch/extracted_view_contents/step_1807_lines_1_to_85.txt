@@ -1,0 +1,63 @@
+Created At: 2026-05-22T17:11:53Z
+Completed At: 2026-05-22T17:11:53Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 85
+Total Bytes: 5777
+Showing lines 1 to 85
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Namaz Vakitleri Mobil Uygulaması Geliştirme Planı - Aşama 2
+2: 
+3: Bu plan, kullanıcının ilettiği görsellere göre uygulamada yapılacak 3 temel geliştirmeyi kapsamaktadır:
+4: 1. **Giriş/Yükleme Ekranı (Image 1)**: Geometrik motifler, askılı kandil, özel hat sanatı, 3D el kalbi yapan erkek çocuk görseli ve alt kısımda bugünün namaz vakitlerini gösteren altın yaldızlı panel.
+5: 2. **Ana Ekran Tasarım Güncellemesi (Image 2)**: Yeşil üst bar yerine açık renk zemin üzerine yeşil yazılar, dairesel sayaç yerine büyük dijital sayaç, hızlı erişim yuvarlak ikonları, vaktin aktif olarak yeşil kapsülle vurgulanması ve günlük içerik kartlarının görsel düzenlemesi.
+6: 3. **48 Adet Yeni Araç Eklenmesi (Image 3, 4 ve 5)**: Toplam araç sayısının 70'e çıkarılması, tüm araçların Türkçe açıklamaları ve zengin içerikleriyle `tools_screen.dart` ve `tool_detail_screen.dart` dosyalarına işlenmesi.
+7: 
+8: ## User Review Required
+9: 
+10: > [!IMPORTANT]
+11: > - Splash screen (Yükleme ekranı) ilk açılışta 3 saniye boyunca bir yükleme çubuğu ile ilerleyecek ve ardından konuma göre ana ekrana yönlendirilecektir.
+12: > - Araçlar bölümündeki 48 yeni aracın her biri için Diyanet uyumlu fıkıh bilgileri, Arapça dualar, Türkçe mealleri ve okunuşları detaylıca kodlanacaktır.
+13: 
+14: ## Open Questions
+15: 
+16: > [!NOTE]
+17: > Herhangi bir açık soru bulunmamaktadır. Tüm görseller ve içerikler netleşmiştir.
+18: 
+19: ## Proposed Changes
+20: 
+21: ---
+22: 
+23: #
+<truncated 2583 bytes>
+kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+56: 48 adet yeni İslami aracın detay görünümleri eklenecektir.
+57: - **Peygamber Duaları & Rabbena Duaları**: Arapça metin, okunuş ve Türkçe mealleri içeren listeler.
+58: - **Abdest, Gusül, Teyemmüm Rehberleri**: Adım adım anlatım ve fıkhi kurallar.
+59: - **Cuma, Teravih, Bayram, Cenaze Namazı Rehberleri**: Kılınış şekilleri, rekatları ve niyetleri.
+60: - **Sabah-Akşam Ezkarı**: Tıklanabilir sayaçlı günlük zikirler.
+61: - **Helal-Haram, Aile Hukuku, Ticaret Fıkhı, Miras Hukuku**: Fıkıh soru-cevap ve rehber içerikleri.
+62: - **İslam Ahlakı, Komşu ve Anne-Baba Hakları, Misafir Adabı**: Ahlaki hadisler ve rehber ilkeler.
+63: - **Muharrem, Recep, Şaban, Zilhicce Ayları, Kandiller**: Önemleri, faziletleri ve yapılacak ibadetler.
+64: - **Gazve ve Seriyyeler, Dört Halife, İslam Medeniyeti, Alimler**: Tarihi bilgiler ve kronolojik detaylar.
+65: 
+66: ---
+67: 
+68: ### [Component: Main & Giriş Yapısı]
+69: 
+70: #### [MODIFY] [main.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/main.dart)
+71: - Uygulama ilk açıldığında `SplashScreen` ekranına gidecek, ardından `OnboardingScreen` veya `MainAppContainer` ekranlarına yönlenecektir.
+72: 
+73: ---
+74: 
+75: ## Verification Plan
+76: 
+77: ### Automated Tests
+78: - `flutter build apk --debug` komutu çalıştırılarak uygulamanın hatasız derlendiği doğrulanacaktır.
+79: 
+80: ### Manual Verification
+81: - Android Emülatör üzerinde uygulama çalıştırılarak:
+82:   1. **Splash/Yükleme Ekranı**: Görsel uyumu ve 3 saniyelik yükleme animasyonu kontrol edilecektir.
+83:   2. **Ana Ekran**: Image 2'deki yeni düzen, yeşil büyük geri sayım, aktif vakit kapsülü ve yuvarlak butonlar test edilecektir.
+84:   3. **Araçlar**: 70 aracın listelendiği ve her birine tıklandığında detay ekranlarının zengin içerikle açıldığı teyit edilecektir.
+85: 
+The above content shows the entire, complete file contents of the requested file.

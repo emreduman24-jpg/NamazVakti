@@ -1,0 +1,51 @@
+Created At: 2026-06-01T11:56:46Z
+Completed At: 2026-06-01T11:56:46Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/walkthrough.md`
+Total Lines: 53
+Total Bytes: 5089
+Showing lines 1 to 53
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Walkthrough - Dark Mode Enhancements, Content Expansion, and Spiritual Qibla Finder Redesign
+2: 
+3: We have successfully resolved all unreadable dark text instances on dark backgrounds, expanded the daily content database to 60 days, and fully completed the **Spiritual Islamic Art Qibla Dial (Mihrab Gates of Mecca)** redesign, ensuring absolute visual elegance and zero simulation UI elements.
+4: 
+5: ## Changes Made
+6: 
+7: ### 1. Spiritual Islamic Art Qibla Finder Redesign (`tool_detail_screen.dart`)
+8: - **Luxurious Gold Brass Dial (`_KibleSanatsalPusulaPainter`):** Redesigned the compass to feature a breathtaking, custom-drawn antique brass plate with:
+9:   - Concentric fine gold rings representing classic Islamic astrolabes.
+10:   - An intricate **Seljuk 8-Pointed Star (Selçuklu Yıldızı)** at the center, drawn with overlapping squares and sub-circles.
+11:   - Detailed 360-degree ticks and elegant labels for cardinal directions: `K` (Kuzey - North), `G` (Güney - South), `D` (Doğu - East), `B` (Batı - West).
+12: - **Golden Needle & Kaaba Pointer:** 
+13:   - An elegant calligraphic needle rotates dynamically with the heading, pointing to Mecca.
+14:   - A beautiful golden round emblem with a **Kaaba icon (🕋)** sits at the pointer's tip.
+15:   - When the needle aligns under the fixed top **Mihrab Arrow**, the Kaaba circle turns green, a glowing halo pulses, and a floating glassmorphic target-lock banner (**"KIBLE HİZALANDI 🕋"**) animates into view.
+16: - **HUD Information Panel:** Renders an elegant card showing target angle, 
+<truncated 1759 bytes>
+_settings_screen.dart`)
+29: - Modified **Namaz Vakitleri** selection card background to adapt dynamically to `0xFF131D31` in dark mode.
+30: - Modified **Ezan Sesi** offset card background to adapt dynamically to `0xFF16251C` in dark mode.
+31: - Added dynamic color mappings to the `RadioListTile` (Timing offset) and `CheckboxListTile` (Prayer selection) to flip their text labels to white (`Colors.white`) in dark mode, solving the unreadable text issues.
+32: - Integrated dynamic `_primaryGreen` color on the **Kaydet** button background when in dark mode to improve premium contrast.
+33: 
+34: ### 4. Dynamic Tools Sub-Screens (`tool_detail_screen.dart`)
+35: - Added highly optimized getter variables for dynamic thematic coloring across all 70+ builders (Dini Günler, Soru Cevap, Zikirmatik, Dua Iste, Kuran, etc.).
+36: - Systematically removed compile-time `const` qualifiers from widgets and stack/list scopes containing these dynamically queried theme colors, successfully avoiding any `invalid_constant` static analyzer errors.
+37: 
+38: ### 5. 60-Day Content Expansion (`prayer_data.dart` & `main_screen.dart`)
+39: - **Database Expansion:** Expanded the dynamic data structures to 60 unique authentic Quranic verses, 60 unique Sahih hadiths, and 60 beautiful Muslim baby name pairs.
+40: - **Progressive Month-Day Indexing:** Changed the simple `% 5` logic to a smart month-day progressive rotation formula:
+41:   ```dart
+42:   _dayIndex = (DateTime.now().day + DateTime.now().month * 30) % VAKTIN_AYETLERI.length;
+43:   ```
+44: 
+45: ## Verification Results
+46: 
+47: - **Static Analysis:**
+48:   - Ran `dart analyze lib/` inside `namaz_app`.
+49:   - Result: **0 Errors / 0 Warnings** (except 1 pre-existing unused method warning in onboarding).
+50: - **Deployment:**
+51:   - Applied Hot Restart to `emulator-5554` running `flutter run`.
+52:   - App successfully updated and loaded all elements with the gorgeous new styling and expanded 60-day contents.
+53: 
+The above content shows the entire, complete file contents of the requested file.

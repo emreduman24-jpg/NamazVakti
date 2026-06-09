@@ -1,0 +1,50 @@
+Created At: 2026-06-03T10:57:26Z
+Completed At: 2026-06-03T10:57:27Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 6795
+Total Bytes: 275160
+Showing lines 739 to 780
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+739:   Map<String, int> _getJuzStartInfo(int juzNumber) {
+740:     final list = [
+741:       {'sura': 1, 'ayah': 1},
+742:       {'sura': 2, 'ayah': 142},
+743:       {'sura': 2, 'ayah': 253},
+744:       {'sura': 3, 'ayah': 93},
+745:       {'sura': 4, 'ayah': 24},
+746:       {'sura': 4, 'ayah': 148},
+747:       {'sura': 5, 'ayah': 82},
+748:       {'sura': 6, 'ayah': 111},
+749:       {'sura': 7, 'ayah': 88},
+750:       {'sura': 8, 'ayah': 41},
+751:       {'sura': 9, 'ayah': 93},
+752:       {'sura': 11, 'ayah': 6},
+753:       {'sura': 12, 'ayah': 53},
+754:       {'sura': 15, 'ayah': 1},
+755:       {'sura': 17, 'ayah': 1},
+756:       {'sura': 18, 'ayah': 75},
+757:       {'sura': 21, 'ayah': 1},
+758:       {'sura': 23, 'ayah': 1},
+759:       {'sura': 25, 'ayah': 21},
+760:       {'sura': 27, 'ayah': 56},
+761:       {'sura': 29, 'ayah': 46},
+762:       {'sura': 33, 'ayah': 31},
+763:       {'sura': 36, 'ayah': 28},
+764:       {'sura': 39, 'ayah': 32},
+765:       {'sura': 41, 'ayah': 47},
+766:       {'sura': 46, 'ayah': 1},
+767:       {'sura': 51, 'ayah': 31},
+768:       {'sura': 57, 'ayah': 1},
+769:       {'sura': 67, 'ayah': 1},
+770:       {'sura': 78, 'ayah': 1},
+771:     ];
+772:     if (juzNumber >= 1 && juzNumber <= 30) {
+773:       return list[juzNumber - 1];
+774:     }
+775:     return {'sura': 1, 'ayah': 1};
+776:   }
+777: 
+778:   
+779: 
+780:   Future<void> _loadKazaState() async {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

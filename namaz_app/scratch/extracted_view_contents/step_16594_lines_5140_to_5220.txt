@@ -1,0 +1,87 @@
+Created At: 2026-06-03T13:10:38Z
+Completed At: 2026-06-03T13:10:39Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7690
+Total Bytes: 312474
+Showing lines 5140 to 5220
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5140: 
+5141:     final Map<String, List<Map<String, String>>> grouped = {
+5142:       'sabah_aksam': [],
+5143:       'namaz': [],
+5144:       'yemek': [],
+5145:       'uyku': [],
+5146:       'yolculuk': [],
+5147:       'genel': [],
+5148:     };
+5149:     
+5150:     for (var dua in filteredList) {
+5151:       final cat = dua['kategori'] ?? 'genel';
+5152:       grouped[cat]?.add(dua);
+5153:     }
+5154: 
+5155:     final categories = [
+5156:       {'key': 'sabah_aksam', 'title': 'Sabah & Akşam Ezkarı', 'emoji': '☀️'},
+5157:       {'key': 'namaz', 'title': 'Namaz Duaları', 'emoji': '🕌'},
+5158:       {'key': 'yemek', 'title': 'Yemek Duaları', 'emoji': '🍴'},
+5159:       {'key': 'uyku', 'title': 'Uyku Duaları', 'emoji': '🌙'},
+5160:       {'key': 'yolculuk', 'title': 'Yolculuk Duaları', 'emoji': '🚗'},
+5161:       {'key': 'genel', 'title': 'Genel Dualar', 'emoji': '✨'},
+5162:     ];
+5163: 
+5164:     bool isPlaying(String url) => _currentAudioUrl == url && _playerState == PlayerState.playing;
+5165: 
+5166:     Widget buildSegmentButton(int index, String label, int count) {
+5167:       final isSelected = _dualarTab == index;
+5168:       return Expanded(
+5169:         child: GestureDetector(
+5170:           onTap: () {
+5171:             setState(() {
+5172:               _dualarTab = index;
+5173:             });
+5174:           },
+5175:           child: AnimatedContainer(
+5176:             duration: const Duration(milliseconds: 200),
+5177:             padding: const EdgeInsets.symmetric(vertical: 12),
+5178:             decoration: BoxDeco
+<truncated 204 bytes>
+erRadius: BorderRadius.circular(12),
+5183:               border: isSelected
+5184:                   ? Border.all(color: const Color(0xFFC19E67), width: 1.5)
+5185:                   : Border.all(color: Colors.transparent, width: 1.5),
+5186:             ),
+5187:             child: Row(
+5188:               mainAxisAlignment: MainAxisAlignment.center,
+5189:               children: [
+5190:                 Text(
+5191:                   label,
+5192:                   style: TextStyle(
+5193:                     fontSize: 13,
+5194:                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+5195:                     color: isSelected
+5196:                         ? const Color(0xFFC19E67)
+5197:                         : (_isDark ? Colors.grey : Colors.grey[700]),
+5198:                   ),
+5199:                 ),
+5200:                 const SizedBox(width: 6),
+5201:                 Container(
+5202:                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+5203:                   decoration: BoxDecoration(
+5204:                     color: isSelected
+5205:                         ? const Color(0xFFC19E67).withOpacity(0.15)
+5206:                         : (_isDark ? Colors.grey[850] : Colors.grey[200]),
+5207:                     borderRadius: BorderRadius.circular(8),
+5208:                   ),
+5209:                   child: Text(
+5210:                     count.toString(),
+5211:                     style: TextStyle(
+5212:                       fontSize: 11,
+5213:                       fontWeight: FontWeight.bold,
+5214:                       color: isSelected
+5215:                           ? const Color(0xFFC19E67)
+5216:                           : (_isDark ? Colors.grey : Colors.grey[700]),
+5217:                     ),
+5218:                   ),
+5219:                 ),
+5220:               ],
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

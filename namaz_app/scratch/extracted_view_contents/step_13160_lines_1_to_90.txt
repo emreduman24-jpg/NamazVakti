@@ -1,0 +1,61 @@
+Created At: 2026-06-01T15:34:58Z
+Completed At: 2026-06-01T15:34:58Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/implementation_plan.md`
+Total Lines: 90
+Total Bytes: 5775
+Showing lines 1 to 90
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Goal Description
+2: 
+3: The user requested a "more beautiful, premium design" for the monthly prayer times page ("Aylık Namaz Vakitleri"). The current design uses a static 7-column table which is functional but text-dense and vertically monotonous. 
+4: 
+5: We will completely rebuild this screen to feature a **Luxury Dual-View Spiritual Dashboard** that gives a true modern web-app feel. It will include:
+6: 1. **Interactive Dual-View Switcher:** A gorgeous custom sliding toggle bar with gold/emerald styling to switch between **"Liste Görünümü" (Card List View)** and **"Takvim Görünümü" (Spiritual Calendar Sheet Grid)**.
+7: 2. **Featured Today's Prayer Dial Card:** A prominent glassmorphic spotlight card showing today's date, location, and the 6 prayer times in large circular dials with high-contrast icons.
+8: 3. **Redesigned Dashboard List:** A table redesign featuring clean vertical dividing lines, customized typography, prayer-specific icons (sun, moon, sunset), and soft gradient shading.
+9: 4. **Spiritual Calendar Sheet Grid (Takvim Görünümü):**
+10:    - An elegant 7-column grid matching the current month's calendar days.
+11:    - Smart padding to align the first day with the correct weekday (Pzt, Sal, vb.).
+12:    - Selection state (`_selectedCalendarDayIndex`) which allows tapping any date to instantly show a beautiful card at the bottom with details and prayer times for that day.
+13:    - Radiant glowing effects and active pulse indicators on the current day (**"Bugün"**).
+14: 
+15: ---
+16: 
+17: ## Proposed Desig
+<truncated 2601 bytes>
+lly updates the details box below the calendar.
+57:   - The details panel renders a luxury horizontal list of 6 individual cards (İmsak, Güneş, vb.), each with its custom icon, name, and time.
+58: 
+59: ---
+60: 
+61: ## Proposed Changes
+62: 
+63: ### [MODIFY] [tool_detail_screen.dart](file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart)
+64: 
+65: 1. **State variables:**
+66:    - Add `String _monthlyViewMode = 'liste';` (default is List mode).
+67:    - Add `int _selectedCalendarDayIndex = 0;` to track calendar selection.
+68: 2. **Update `_loadMonthlyTimes()`:**
+69:    - Parse today's date, find its index, and set `_selectedCalendarDayIndex` to today's index upon successful load.
+70: 3. **Rebuild `_buildAylikNamazVakitleri()`:**
+71:    - Implement the gorgeous header container, sliding view switcher, and conditional body rendering based on `_monthlyViewMode`.
+72:    - Implement `_buildMonthlyListView()` (Premium Card List + Today Highlight Dashboard).
+73:    - Implement `_buildMonthlyCalendarView()` (Spiritual Grid Calendar Sheet + Interactive Details Panel).
+74:    - Integrate all the custom icons, custom gradients, and responsive layouts.
+75: 
+76: ---
+77: 
+78: ## Verification Plan
+79: 
+80: ### Automated Tests
+81: - Run `flutter analyze lib/screens/tool_detail_screen.dart` to verify zero compile or analyzer errors.
+82: 
+83: ### Manual Verification
+84: - Deploy to emulator `emulator-5554` via hot restart (`R` in console).
+85: - Click on "Aylık Namaz Vakitleri" and verify that:
+86:   - Toggle switch changes between List and Calendar layouts immediately with smooth animations.
+87:   - The List View features today's spotlight card and an elegant aviation-style dashboard.
+88:   - The Calendar View aligns the weekdays correctly, highlights today, allows selecting other days, and displays their prayer times dynamically at the bottom.
+89:   - Colors are perfectly readable in both dark and light modes.
+90: 
+The above content shows the entire, complete file contents of the requested file.

@@ -1,0 +1,107 @@
+Created At: 2026-06-03T13:36:14Z
+Completed At: 2026-06-03T13:36:15Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7692
+Total Bytes: 312568
+Showing lines 1780 to 1900
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1780:         ),
+1781:       ],
+1782:     );
+1783:   }
+1784: 
+1785:   // 4. Canlı Sohbet
+1786:   Widget _buildCanliSohbet() {
+1787:     return Center(
+1788:       child: Card(
+1789:         elevation: 3,
+1790:         shadowColor: Colors.black12,
+1791:         shape: RoundedRectangleBorder(
+1792:           borderRadius: BorderRadius.circular(24),
+1793:         ),
+1794:         color: Colors.white,
+1795:         child: Padding(
+1796:           padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
+1797:           child: Column(
+1798:             mainAxisSize: MainAxisSize.min,
+1799:             mainAxisAlignment: MainAxisAlignment.center,
+1800:             children: [
+1801:               Container(
+1802:                 padding: EdgeInsets.all(20),
+1803:                 decoration: BoxDecoration(
+1804:                   color: Color(0xFFFBEAEA),
+1805:                   shape: BoxShape.circle,
+1806:                 ),
+1807:                 child: Icon(
+1808:                   Icons.headphones_rounded,
+1809:                   size: 54,
+1810:                   color: Color(0xFFD9534F),
+1811:                 ),
+1812:               ),
+1813:               SizedBox(height: 20),
+1814:               Text(
+1815:                 "Canlı Dini Sohbet",
+1816:                 style: TextStyle(
+1817:                   fontWeight: FontWeight.bold,
+1818:                   fontSize: 20,
+1819:                   color: _greenColor,
+1820:                 ),
+1821:               ),
+1822:               SizedBox(height: 12),
+1823:               Text(
+1824:       
+<truncated 1165 bytes>
+             fontSize: 13,
+1849:                   ),
+1850:                 ),
+1851:               ),
+1852:             ],
+1853:           ),
+1854:         ),
+1855:       ),
+1856:     );
+1857:   }
+1858: 
+1859:   // 5. Peygamberin Hayatı
+1860:   Widget _buildPeygamberHayati() {
+1861:     return Column(
+1862:       children: [
+1863:         SizedBox(
+1864:           height: 48,
+1865:           child: ListView.builder(
+1866:             scrollDirection: Axis.horizontal,
+1867:             itemCount: PEYGAMBER_HAYATI.length,
+1868:             itemBuilder: (context, index) {
+1869:               final active = _prophetLifeTab == index;
+1870:               return Padding(
+1871:                 padding: EdgeInsets.only(right: 8.0),
+1872:                 child: ChoiceChip(
+1873:                   label: Text(
+1874:                     PEYGAMBER_HAYATI[index]['baslik']?.split(' ')[0] ?? '',
+1875:                   ),
+1876:                   selected: active,
+1877:                   selectedColor: const Color(0xFF27A770),
+1878:                   labelStyle: TextStyle(
+1879:                     color: active ? Colors.white : _greenColor,
+1880:                     fontWeight: FontWeight.bold,
+1881:                   ),
+1882:                   onSelected: (val) {
+1883:                     setState(() {
+1884:                       _prophetLifeTab = index;
+1885:                     });
+1886:                   },
+1887:                 ),
+1888:               );
+1889:             },
+1890:           ),
+1891:         ),
+1892:         SizedBox(height: 16),
+1893:         Expanded(
+1894:           child: Card(
+1895:             elevation: 2,
+1896:             shape: RoundedRectangleBorder(
+1897:               borderRadius: BorderRadius.circular(16),
+1898:             ),
+1899:             child: Padding(
+1900:               padding: EdgeInsets.all(20.0),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

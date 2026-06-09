@@ -1,0 +1,87 @@
+Created At: 2026-05-22T16:02:55Z
+Completed At: 2026-05-22T16:02:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 1975
+Total Bytes: 78817
+Showing lines 1601 to 1975
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1601:                 Align(
+1602:                   alignment: Alignment.centerRight,
+1603:                   child: Text(
+1604:                     dua['arapca'] ?? '',
+1605:                     style: const TextStyle(fontFamily: 'Traditional Arabic', fontSize: 18, height: 1.8, fontWeight: FontWeight.bold, color: Color(0xFF27A770)),
+1606:                     textAlign: TextAlign.right,
+1607:                   ),
+1608:                 ),
+1609:                 const SizedBox(height: 8),
+1610:                 Text("Anlamı: ${dua['anlam']}", style: const TextStyle(fontSize: 13, color: Colors.black87)),
+1611:               ],
+1612:             ),
+1613:           ),
+1614:         );
+1615:       },
+1616:     );
+1617:   }
+1618: 
+1619:   // 18. Zekat Hesaplayıcı
+1620:   Widget _buildZekatHesaplama() {
+1621:     return SingleChildScrollView(
+1622:       child: Column(
+1623:         crossAxisAlignment: CrossAxisAlignment.start,
+1624:         children: [
+1625:           const Text("Dinen zengin sayılan kişilerin yılda bir kez vermesi gereken zekat miktarını hesaplayın.", style: TextStyle(color: Colors.grey, fontSize: 12)),
+1626:           const SizedBox(height: 12),
+1627:           TextField(
+1628:             controller: _goldController,
+1629:             keyboardType: TextInputType.number,
+1630:             decoration: InputDecoration(
+1631:               labelText: "Altın Miktarı (Gram)",
+1632:               filled: true,
+1633:               fillColor: Colors.white,
+1634:               border: OutlineInputBorder(borderRadius: BorderRadius.circu
+<truncated 13731 bytes>
+I['aciklama'] ?? '', style: const TextStyle(fontSize: 13, height: 1.45)),
+1933:                 ],
+1934:               ),
+1935:             ),
+1936:           ),
+1937:           const SizedBox(height: 16),
+1938:           _buildKunutCard("Kunut Duası - 1", VITIR_NAMAZI['kunut1']),
+1939:           const SizedBox(height: 16),
+1940:           _buildKunutCard("Kunut Duası - 2", VITIR_NAMAZI['kunut2']),
+1941:         ],
+1942:       ),
+1943:     );
+1944:   }
+1945: 
+1946:   Widget _buildKunutCard(String title, Map<String, dynamic> kunut) {
+1947:     return Card(
+1948:       elevation: 1.5,
+1949:       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+1950:       child: Padding(
+1951:         padding: const EdgeInsets.all(16.0),
+1952:         child: Column(
+1953:           crossAxisAlignment: CrossAxisAlignment.start,
+1954:           children: [
+1955:             Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1E5E43))),
+1956:             const Divider(height: 12),
+1957:             Align(
+1958:               alignment: Alignment.centerRight,
+1959:               child: Text(
+1960:                 kunut['arapca'] ?? '',
+1961:                 style: const TextStyle(fontFamily: 'Traditional Arabic', fontSize: 18, height: 1.8, fontWeight: FontWeight.bold, color: Color(0xFF27A770)),
+1962:                 textAlign: TextAlign.right,
+1963:               ),
+1964:             ),
+1965:             const SizedBox(height: 8),
+1966:             Text(kunut['okunus'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+1967:             const SizedBox(height: 6),
+1968:             Text("Meali: ${kunut['anlam']}", style: const TextStyle(fontSize: 12, color: Colors.black54)),
+1969:           ],
+1970:         ),
+1971:       ),
+1972:     );
+1973:   }
+1974: }
+1975: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

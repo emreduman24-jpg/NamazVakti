@@ -1,0 +1,39 @@
+Created At: 2026-06-03T13:45:36Z
+Completed At: 2026-06-03T13:45:37Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7713
+Total Bytes: 313578
+Showing lines 1850 to 1880
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1850:                   height: 1.45,
+1851:                 ),
+1852:               ),
+1853:               SizedBox(height: 24),
+1854:               ElevatedButton(
+1855:                 onPressed: () => Navigator.pop(context),
+1856:                 style: ElevatedButton.styleFrom(
+1857:                   backgroundColor: const Color(0xFF27A770),
+1858:                   shape: RoundedRectangleBorder(
+1859:                     borderRadius: BorderRadius.circular(15),
+1860:                   ),
+1861:                   padding: EdgeInsets.symmetric(horizontal: 36, vertical: 12),
+1862:                   elevation: 1,
+1863:                 ),
+1864:                 child: Text(
+1865:                   "Geri Dön",
+1866:                   style: TextStyle(
+1867:                     color: Colors.white,
+1868:                     fontWeight: FontWeight.bold,
+1869:                     fontSize: 13,
+1870:                   ),
+1871:                 ),
+1872:               ),
+1873:             ],
+1874:           ),
+1875:         ),
+1876:       ),
+1877:     );
+1878:   }
+1879: 
+1880:   // 5. Peygamberin Hayatı
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

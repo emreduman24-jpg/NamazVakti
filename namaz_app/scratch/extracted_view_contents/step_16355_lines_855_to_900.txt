@@ -1,0 +1,54 @@
+Created At: 2026-06-03T12:44:39Z
+Completed At: 2026-06-03T12:44:39Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 7117
+Total Bytes: 289398
+Showing lines 855 to 900
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+855:     _cashController.dispose();
+856:     _businessController.dispose();
+857:     _debtsController.dispose();
+858:     super.dispose();
+859:   }
+860: 
+861:   // Zikirmatik persistence
+862:   Future<void> _loadZikirState() async {
+863:     final count = await _repository.getZikirCount();
+864:     final target = await _repository.getZikirTarget();
+865:     final prefs = await SharedPreferences.getInstance();
+866:     final dates = prefs.getStringList('zikir_completed_dates') ?? [];
+867:     setState(() {
+868:       _zikirCount = count;
+869:       _zikirTarget = target;
+870:       _selectedZikirId = prefs.getString('zikir_selected_id') ?? 'subhanallah';
+871:       _zikirCompletedDates = Set<String>.from(dates);
+872:     });
+873:   }
+874: 
+875:   void _onZikirSelected(String? id) async {
+876:     if (id == null) return;
+877:     final prefs = await SharedPreferences.getInstance();
+878:     await prefs.setString('zikir_selected_id', id);
+879:     final target = _zikirData[id]?['hedef'] ?? 33;
+880:     setState(() {
+881:       _selectedZikirId = id;
+882:       _zikirTarget = target;
+883:       _zikirCount = 0;
+884:     });
+885:     await _repository.setZikirTarget(target);
+886:     await _repository.setZikirCount(0);
+887:   }
+888: 
+889:   Future<void> _incrementZikir() async {
+890:     HapticFeedback.lightImpact();
+891:     if (_zikirSoundEnabled) {
+892:       SystemSound.play(SystemSoundType.click);
+893:     }
+894:     setState(() {
+895:       _zikirCount++;
+896:     });
+897:     await _repository.setZikirCount(_zikirCount);
+898: 
+899:     // Save date if it's the first dhikr of the day
+900:     final todayStr = DateTime.now().toIso8601String().split('T')[0];
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

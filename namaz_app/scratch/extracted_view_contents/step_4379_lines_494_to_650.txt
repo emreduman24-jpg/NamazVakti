@@ -1,0 +1,94 @@
+Created At: 2026-05-23T13:45:39Z
+Completed At: 2026-05-23T13:45:39Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4232
+Total Bytes: 166753
+Showing lines 494 to 650
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+494:   Widget _buildDiniGunler() {
+495:     return Column(
+496:       crossAxisAlignment: CrossAxisAlignment.start,
+497:       children: [
+498:         const Text(
+499:           "2026 Yılı Dini Günler Listesi",
+500:           style: TextStyle(
+501:             fontSize: 18,
+502:             fontWeight: FontWeight.bold,
+503:             color: Color(0xFF1E5E43),
+504:           ),
+505:         ),
+506:         const SizedBox(height: 12),
+507:         Expanded(
+508:           child: ListView.builder(
+509:             itemCount: DINI_GUNLER.length,
+510:             itemBuilder: (context, index) {
+511:               final day = DINI_GUNLER[index];
+512:               return Card(
+513:                 elevation: 1,
+514:                 shape: RoundedRectangleBorder(
+515:                   borderRadius: BorderRadius.circular(12),
+516:                 ),
+517:                 margin: const EdgeInsets.only(bottom: 10),
+518:                 child: ListTile(
+519:                   title: Text(
+520:                     day['ad'] ?? '',
+521:                     style: const TextStyle(fontWeight: FontWeight.bold),
+522:                   ),
+523:                   subtitle: Text(day['gun'] ?? ''),
+524:                   trailing: Container(
+525:                     padding: const EdgeInsets.symmetric(
+526:                       horizontal: 12,
+527:                       vertical: 6,
+528:                     ),
+529:                     decoration: BoxDecoration(
+530:                       color: const Color(0xFF27A770).withOpacity(0.12),
+531:                       
+<truncated 2823 bytes>
+  child: ElevatedButton(
+605:                     onPressed: _addDua,
+606:                     style: ElevatedButton.styleFrom(
+607:                       backgroundColor: const Color(0xFF27A770),
+608:                       shape: RoundedRectangleBorder(
+609:                         borderRadius: BorderRadius.circular(10),
+610:                       ),
+611:                     ),
+612:                     child: const Text(
+613:                       "Dua Talebi Paylaş",
+614:                       style: TextStyle(
+615:                         color: Colors.white,
+616:                         fontWeight: FontWeight.bold,
+617:                       ),
+618:                     ),
+619:                   ),
+620:                 ),
+621:               ],
+622:             ),
+623:           ),
+624:         ),
+625:         const SizedBox(height: 16),
+626:         const Text(
+627:           "Dua Bekleyenler",
+628:           style: TextStyle(
+629:             fontSize: 16,
+630:             fontWeight: FontWeight.bold,
+631:             color: Color(0xFF1E5E43),
+632:           ),
+633:         ),
+634:         const SizedBox(height: 8),
+635:         Expanded(
+636:           child: ListView.builder(
+637:             itemCount: _duaList.length,
+638:             itemBuilder: (context, index) {
+639:               final item = _duaList[index];
+640:               return Card(
+641:                 elevation: 1.5,
+642:                 shape: RoundedRectangleBorder(
+643:                   borderRadius: BorderRadius.circular(12),
+644:                 ),
+645:                 margin: const EdgeInsets.only(bottom: 10),
+646:                 child: Padding(
+647:                   padding: const EdgeInsets.all(12.0),
+648:                   child: Column(
+649:                     crossAxisAlignment: CrossAxisAlignment.start,
+650:                     children: [
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

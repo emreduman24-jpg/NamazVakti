@@ -1,0 +1,29 @@
+Created At: 2026-06-01T11:04:54Z
+Completed At: 2026-06-01T11:04:54Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5606
+Total Bytes: 233401
+Showing lines 1130 to 1150
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1130:                     decoration: BoxDecoration(
+1131:                       color: const Color(0xFF27A770).withOpacity(0.08),
+1132:                       border: const Border(
+1133:                         left: BorderSide(color: Color(0xFF27A770), width: 4),
+1134:                       ),
+1135:                     ),
+1136:                     child: Text(
+1137:                       catName,
+1138:                       style: const TextStyle(
+1139:                         fontWeight: FontWeight.bold,
+1140:                         color: _greenColor,
+1141:                         fontSize: 14,
+1142:                       ),
+1143:                     ),
+1144:                   ),
+1145:                   // Items in this category
+1146:                   ...items.map((day) {
+1147:                     return Card(
+1148:                       elevation: 1,
+1149:                       shape: RoundedRectangleBorder(
+1150:                         borderRadius: BorderRadius.circular(12),
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

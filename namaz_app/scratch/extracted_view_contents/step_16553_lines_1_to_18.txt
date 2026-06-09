@@ -1,0 +1,26 @@
+Created At: 2026-06-03T13:03:14Z
+Completed At: 2026-06-03T13:03:15Z
+File Path: `file:///C:/Users/kral_/.gemini/antigravity/brain/bfa70658-74aa-43c5-b71d-b66952b42f2e/task.md`
+Total Lines: 18
+Total Bytes: 1085
+Showing lines 1 to 18
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Dualar Yenileme Çalışma Planı
+2: 
+3: - [ ] Veri Katmanının Güncellenmesi (`prayer_data.dart`)
+4:   - [ ] 36 Kur'an Duasının detaylarıyla eklenmesi (Arapça, Türkçe, Okunuş, Kategori, Ses URL)
+5:   - [ ] 29 Hadis Duasının detaylarıyla eklenmesi (Arapça, Türkçe, Okunuş, Kategori, Ses URL)
+6: - [ ] Depolama Katmanının Güncellenmesi (`prayer_repository.dart`)
+7:   - [ ] "Günlük Dualar" isminin "Dualar" olarak güncellenmesi
+8: - [ ] Arayüz Geliştirmeleri (`tool_detail_screen.dart`)
+9:   - [ ] Kur'an ve Hadis Duaları sekmelerinin (Segmented Control) yapılması
+10:   - [ ] Emojili ve adet sayılı kategori başlıklarının tasarlanması
+11:   - [ ] Kart tasarımlarının ekran görüntüsüne uygun şekilde yenilenmesi
+12:   - [ ] Play/Pause ses çalma mekanizmasının her dua kartı için entegrasyonu
+13:   - [ ] Favori sisteminin SharedPreferences ile bağlanması ve filtreleme butonu
+14:   - [ ] Karta tıklandığında detaylı okuma panelinin (showModalBottomSheet) yapılması
+15: - [ ] Test ve Doğrulama
+16:   - [ ] Uygulamanın derlenmesi
+17:   - [ ] Emülatörde manuel testlerin yapılması
+18: 
+The above content shows the entire, complete file contents of the requested file.

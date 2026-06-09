@@ -1,0 +1,54 @@
+Created At: 2026-05-24T09:06:54Z
+Completed At: 2026-05-24T09:06:55Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4650
+Total Bytes: 189745
+Showing lines 400 to 445
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+400:     setState(() {
+401:       _duaList = list;
+402:     });
+403:   }
+404: 
+405:   Future<void> _addDua() async {
+406:     final name = _duaNameController.text.trim();
+407:     final text = _duaTextController.text.trim();
+408:     if (text.isEmpty) return;
+409: 
+410:     final newDua = {
+411:       "id": DateTime.now().millisecondsSinceEpoch,
+412:       "yazar": name.isEmpty ? "Anonim" : name,
+413:       "dua": text,
+414:       "amin": 0,
+415:     };
+416: 
+417:     setState(() {
+418:       _duaList.insert(0, newDua);
+419:     });
+420: 
+421:     _duaNameController.clear();
+422:     _duaTextController.clear();
+423:     await _repository.saveDuaList(_duaList);
+424: 
+425:     ScaffoldMessenger.of(context).showSnackBar(
+426:       const SnackBar(
+427:         content: Text("Dua talebiniz paylaşıldı."),
+428:         backgroundColor: Color(0xFF27A770),
+429:       ),
+430:     );
+431:   }
+432: 
+433:   Future<void> _aminDua(int index) async {
+434:     HapticFeedback.lightImpact();
+435:     setState(() {
+436:       _duaList[index]['amin'] = (_duaList[index]['amin'] ?? 0) + 1;
+437:     });
+438:     await _repository.saveDuaList(_duaList);
+439:   }
+440: 
+441:   // Audio Play helper
+442:   Future<void> _playAudio(String url, String name) async {
+443:     try {
+444:       if (_currentAudioUrl == url && _playerState == PlayerState.playing) {
+445:         await _audioPlayer!.pause();
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

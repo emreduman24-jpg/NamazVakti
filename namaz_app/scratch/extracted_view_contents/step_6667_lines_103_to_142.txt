@@ -1,0 +1,48 @@
+Created At: 2026-05-26T14:55:13Z
+Completed At: 2026-05-26T14:55:13Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4990
+Total Bytes: 201401
+Showing lines 103 to 142
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+103:   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+104:     setState(() {
+105:       _loadingLocation = true;
+106:     });
+107:     try {
+108:       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+109:       if (!serviceEnabled) {
+110:         setState(() {
+111:           _loadingLocation = false;
+112:         });
+113:         if (mounted) {
+114:           ScaffoldMessenger.of(context).showSnackBar(
+115:             const SnackBar(
+116:               content: Text("Lütfen telefonunuzun konum servisini (GPS) açın."),
+117:               backgroundColor: Colors.redAccent,
+118:             ),
+119:           );
+120:         }
+121:         return;
+122:       }
+123: 
+124:       LocationPermission permission = await Geolocator.checkPermission();
+125:       if (permission == LocationPermission.denied) {
+126:         permission = await Geolocator.requestPermission();
+127:         if (permission == LocationPermission.denied) {
+128:           setState(() {
+129:             _loadingLocation = false;
+130:           });
+131:           if (mounted) {
+132:             ScaffoldMessenger.of(context).showSnackBar(
+133:               const SnackBar(
+134:                 content: Text("Yakındaki camileri görebilmek için konum izni vermeniz gerekmektedir."),
+135:                 backgroundColor: Colors.orangeAccent,
+136:               ),
+137:             );
+138:           }
+139:           return;
+140:         }
+141:       }
+142:       
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

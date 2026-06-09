@@ -1,0 +1,68 @@
+Created At: 2026-05-23T23:04:59Z
+Completed At: 2026-05-23T23:04:59Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 4654
+Total Bytes: 189811
+Showing lines 1 to 60
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import 'dart:async';
+2: import 'dart:math' as math;
+3: import 'package:flutter/material.dart';
+4: import 'package:flutter/services.dart';
+5: import 'package:flutter_compass/flutter_compass.dart';
+6: import 'package:audioplayers/audioplayers.dart';
+7: import 'package:shared_preferences/shared_preferences.dart';
+8: import '../data/prayer_data.dart';
+9: import '../data/prayer_repository.dart';
+10: 
+11: class ToolDetailScreen extends StatefulWidget {
+12:   final String toolId;
+13:   final String toolTitle;
+14: 
+15:   const ToolDetailScreen({
+16:     super.key,
+17:     required this.toolId,
+18:     required this.toolTitle,
+19:   });
+20: 
+21:   @override
+22:   _ToolDetailScreenState createState() => _ToolDetailScreenState();
+23: }
+24: 
+25: class _ToolDetailScreenState extends State<ToolDetailScreen> {
+26:   final PrayerRepository _repository = PrayerRepository();
+27:   AudioPlayer? _audioPlayer;
+28:   PlayerState _playerState = PlayerState.stopped;
+29:   String _currentAudioUrl = "";
+30:   String _currentTrackName = "";
+31: 
+32:   // Zikirmatik State
+33:   int _zikirCount = 0;
+34:   int _zikirTarget = 33;
+35:   bool _zikirSoundEnabled = true;
+36:   String _selectedZikirId = 'subhanallah';
+37: 
+38:   final Map<String, Map<String, dynamic>> _zikirData = {
+39:     'subhanallah': {
+40:       'ad': 'Sübhânallâh',
+41:       'arapca': 'سُبْحَانَ اللَّهِ',
+42:       'anlam': 'Allah noksan sıfatlardan uzaktır.',
+43:       'fazilet': 'Günde 100 defa okuyanın günahları deniz köpüğü kadar da olsa bağışlanır.',
+44:       'hedef': 33
+45:     },
+46:     'elhamdulillah': {
+47:       'ad': 'Elhamdülillâh',
+48:       'arapca': 'الْحَمْدُ لِلَّهِ',
+49:       'anlam': 'Hamd Allah\'a mahsustur.',
+50:       'fazilet': 'Mizanı dolduran en hayırlı hamd cümlesidir.',
+51:       'hedef': 33
+52:     },
+53:     'allahuekber': {
+54:       'ad': 'Allâhu Ekber',
+55:       'arapca': 'اللَّهُ أَكْبَرُ',
+56:       'anlam': 'Allah en büyüktür.',
+57:       'fazilet': 'Allah\'ın büyüklüğünü ve yüceliğini tefekkür zikridir.',
+58:       'hedef': 34
+59:     },
+60:     'lailaheillallah': {
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

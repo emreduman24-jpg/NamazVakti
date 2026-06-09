@@ -1,0 +1,39 @@
+Created At: 2026-06-01T10:28:37Z
+Completed At: 2026-06-01T10:28:37Z
+File Path: `file:///c:/Users/kral_/Namaz%20vakitleri/namaz_app/lib/screens/tool_detail_screen.dart`
+Total Lines: 5599
+Total Bytes: 233276
+Showing lines 5380 to 5410
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+5380:         Container(
+5381:           width: double.infinity,
+5382:           padding: const EdgeInsets.all(16.0),
+5383:           decoration: BoxDecoration(
+5384:             gradient: const LinearGradient(
+5385:               colors: [Color(0xFF1E5E43), Color(0xFF27A770)],
+5386:               begin: Alignment.topLeft,
+5387:               end: Alignment.bottomRight,
+5388:             ),
+5389:             borderRadius: BorderRadius.circular(16),
+5390:             boxShadow: [
+5391:               BoxShadow(
+5392:                 color: const Color(0xFF1E5E43).withOpacity(0.3),
+5393:                 blurRadius: 10,
+5394:                 offset: const Offset(0, 4),
+5395:               ),
+5396:             ],
+5397:           ),
+5398:           child: Column(
+5399:             crossAxisAlignment: CrossAxisAlignment.start,
+5400:             children: [
+5401:               Row(
+5402:                 mainAxisAlignment: MainAxisAlignment.between,
+5403:                 children: [
+5404:                   Expanded(
+5405:                     child: Text(
+5406:                       _currentLocationName.toUpperCase(),
+5407:                       style: const TextStyle(
+5408:                         color: Colors.white,
+5409:                         fontWeight: FontWeight.bold,
+5410:                         fontSize: 16,
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.

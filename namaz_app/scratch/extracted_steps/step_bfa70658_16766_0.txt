@@ -1,0 +1,1 @@
+  // Dini Hoca State\n  List<Map<String, dynamic>> _diniHocaMessages = [];\n  bool _diniHocaIsTyping = false;\n  final ScrollController _diniHocaScrollController = ScrollController();\n  final TextEditingController _diniHocaInputController = TextEditingController();
