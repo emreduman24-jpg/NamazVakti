@@ -192,7 +192,7 @@ class NotificationService {
           // iOS custom sound config (expects adhan.mp3 in App Bundle resources)
           final DarwinNotificationDetails iosDetails =
               DarwinNotificationDetails(
-                sound: soundEnabled ? 'adhan.mp3' : 'default',
+                sound: soundEnabled ? 'adhan.wav' : 'default',
                 presentSound: true,
                 presentAlert: true,
                 presentBadge: true,
@@ -272,7 +272,7 @@ class NotificationService {
           );
 
     final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-      sound: soundEnabled ? 'adhan.mp3' : 'default',
+      sound: soundEnabled ? 'adhan.wav' : 'default',
       presentSound: true,
       presentAlert: true,
       presentBadge: true,
