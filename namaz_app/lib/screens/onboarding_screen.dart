@@ -38,6 +38,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   int _activePage = 0;
   bool _saving = false;
   bool _loadingLocation = false;
+  OverlayEntry? _activeNotificationOverlay;
 
   // Setup/Loading states
   String _setupStatusText = "Namaz vakitleri hesaplanıyor ...";
@@ -87,6 +88,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   @override
   void dispose() {
+    _activeNotificationOverlay?.remove();
+    _activeNotificationOverlay = null;
     _pageController.dispose();
     _gearAnimationController.dispose();
     super.dispose();
@@ -112,13 +115,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   void _showSnackBar(String message, {bool success = false}) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: const TextStyle(color: Colors.white)),
-        backgroundColor: success ? const Color(0xFF27A770) : const Color(0xFFE53935),
-        duration: const Duration(seconds: 2),
+    
+    // Remove active notification if any to avoid overlapping
+    _activeNotificationOverlay?.remove();
+    _activeNotificationOverlay = null;
+
+    late OverlayEntry overlayEntry;
+    overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: MediaQuery.of(context).padding.top + 16,
+        left: 20,
+        right: 20,
+        child: TopNotificationBanner(
+          message: message,
+          success: success,
+          onDismiss: () {
+            if (_activeNotificationOverlay == overlayEntry) {
+              _activeNotificationOverlay = null;
+            }
+            overlayEntry.remove();
+          },
+        ),
       ),
     );
+
+    _activeNotificationOverlay = overlayEntry;
+    
+    // Safely insert overlay
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Overlay.of(context).insert(overlayEntry);
+      }
+    });
   }
 
   void _varyPrayerTimes({required int offsetMinutes}) {
@@ -3018,3 +3046,123 @@ class SetupIllustrationPainter extends CustomPainter {
   bool shouldRepaint(covariant SetupIllustrationPainter oldDelegate) =>
       oldDelegate.rotationAngle != rotationAngle;
 }
+
+class TopNotificationBanner extends StatefulWidget {
+  final String message;
+  final bool success;
+  final VoidCallback onDismiss;
+  final Duration duration;
+
+  const TopNotificationBanner({
+    super.key,
+    required this.message,
+    required this.success,
+    required this.onDismiss,
+    this.duration = const Duration(seconds: 3),
+  });
+
+  @override
+  _TopNotificationBannerState createState() => _TopNotificationBannerState();
+}
+
+class _TopNotificationBannerState extends State<TopNotificationBanner> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _slideAnimation;
+  late Animation<double> _opacityAnimation;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+
+    _slideAnimation = Tween<double>(begin: -40.0, end: 0.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+
+    _controller.forward();
+
+    _timer = Timer(widget.duration, () {
+      if (mounted) {
+        _controller.reverse().then((_) {
+          widget.onDismiss();
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, _slideAnimation.value),
+          child: Opacity(
+            opacity: _opacityAnimation.value,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: widget.success 
+                      ? const Color(0xFF1E3A34).withOpacity(0.95) // Premium deep forest green
+                      : const Color(0xFF3D1E22).withOpacity(0.95), // Premium deep red
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: widget.success 
+                        ? const Color(0xFF2E7D6B).withOpacity(0.4)
+                        : const Color(0xFFC62828).withOpacity(0.4),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.35),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      widget.success ? Icons.check_circle_outline : Icons.error_outline,
+                      color: widget.success ? const Color(0xFF5CD1B4) : const Color(0xFFEF5350),
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        widget.message,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
