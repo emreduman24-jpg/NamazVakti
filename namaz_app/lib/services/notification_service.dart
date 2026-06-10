@@ -66,7 +66,9 @@ class NotificationService {
             AndroidFlutterLocalNotificationsPlugin
           >();
       await androidImplementation?.requestNotificationsPermission();
-      await androidImplementation?.requestExactAlarmsPermission();
+      // Do not request exact alarm permission here as it redirects the user
+      // to settings on Android 13/14+ which is disruptive during onboarding.
+      // Exact alarms will work if pre-granted, or fallback to inexact in schedule.
     }
   }
 
