@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'data/prayer_repository.dart';
 import 'services/notification_service.dart';
 import 'screens/main_screen.dart';
@@ -12,6 +15,13 @@ import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    print("Firebase initialization error: $e");
+  }
 
   // Initialize Notification Service
   final notificationService = NotificationService();
@@ -52,7 +62,54 @@ class _MyAppState extends State<MyApp> {
   void _startBlockCheckTimer() {
     _blockTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
       _checkBlockStatus();
+      _checkPremiumStatus();
+      _checkAnnouncements();
     });
+  }
+
+  Future<void> _checkAnnouncements() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('announcements')
+          .orderBy('id', descending: true)
+          .limit(1)
+          .get()
+          .timeout(const Duration(seconds: 4));
+
+      if (querySnapshot.docs.isNotEmpty) {
+        final doc = querySnapshot.docs.first;
+        final data = doc.data();
+        final idVal = data['id'];
+        if (idVal == null) return;
+        final String announcementId = idVal.toString();
+        final String title = data['title'] ?? 'Yeni Bildirim';
+        final String body = data['body'] ?? '';
+
+        final prefs = await SharedPreferences.getInstance();
+        final String? lastId = prefs.getString('last_announcement_id');
+
+        if (lastId != announcementId) {
+          // Save the new ID immediately so we don't trigger it again
+          await prefs.setString('last_announcement_id', announcementId);
+
+          // Get integer ID from timestamp for Notification service
+          final notificationId = int.tryParse(
+                announcementId.substring(
+                  announcementId.length > 6 ? announcementId.length - 6 : 0,
+                ),
+              ) ??
+              999;
+
+          await NotificationService().showNotification(
+            id: notificationId,
+            title: title,
+            body: body,
+          );
+        }
+      }
+    } catch (e) {
+      print("Announcement check error: $e");
+    }
   }
 
   Future<void> _checkBlockStatus() async {
@@ -68,10 +125,38 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<void> _checkPremiumStatus() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+      if (isLoggedIn) {
+        final email = prefs.getString('user_email');
+        if (email != null && email.isNotEmpty) {
+          final doc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(email)
+              .get()
+              .timeout(const Duration(seconds: 2));
+          if (doc.exists) {
+            final isPremium = doc.data()?['isPremium'] ?? false;
+            final localIsPremium = prefs.getBool('is_premium') ?? false;
+            if (isPremium != localIsPremium) {
+              await prefs.setBool('is_premium', isPremium);
+              print("Premium status updated dynamically from Firestore: $isPremium");
+            }
+          }
+        }
+      }
+    } catch (e) {
+      print("Premium status check error: $e");
+    }
+  }
+
   Future<void> _initializeApp() async {
     final themeStr = await _repository.getThemeMode();
     final isLocSet = await _repository.isLocationSelected();
     await _checkBlockStatus();
+    await _checkPremiumStatus();
 
     setState(() {
       _themeMode = _parseThemeMode(themeStr);
@@ -269,6 +354,7 @@ class MainAppContainer extends StatefulWidget {
 class _MainAppContainerState extends State<MainAppContainer> {
   int _currentIndex = 0;
   late List<Widget> _screens;
+  late PageController _pageController;
   final GlobalKey<MainScreenState> _mainScreenKey = GlobalKey<MainScreenState>();
   final GlobalKey<SettingsScreenState> _settingsScreenKey = GlobalKey<SettingsScreenState>();
 
@@ -280,6 +366,7 @@ class _MainAppContainerState extends State<MainAppContainer> {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
     _screens = [
       MainScreen(
         key: _mainScreenKey,
@@ -287,6 +374,7 @@ class _MainAppContainerState extends State<MainAppContainer> {
           setState(() {
             _currentIndex = index;
           });
+          _pageController.jumpToPage(index);
         },
         onOpenTool: _openToolDetail,
         onLocationReset: widget.onLocationReset,
@@ -304,6 +392,7 @@ class _MainAppContainerState extends State<MainAppContainer> {
           setState(() {
             _currentIndex = 0;
           });
+          _pageController.jumpToPage(0);
         },
       ),
       SettingsScreen(
@@ -315,11 +404,18 @@ class _MainAppContainerState extends State<MainAppContainer> {
     ];
   }
 
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _openToolDetail(String toolId, String toolTitle) {
     if (toolId == 'kible-bulucu') {
       setState(() {
         _currentIndex = 2; // Jump to Qibla Finder tab
       });
+      _pageController.jumpToPage(2);
       return;
     }
     Navigator.push(
@@ -335,13 +431,23 @@ class _MainAppContainerState extends State<MainAppContainer> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(index: _currentIndex, children: _screens),
+      body: PageView(
+        controller: _pageController,
+        physics: const ClampingScrollPhysics(),
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        children: _screens,
+      ),
       bottomNavigationBar: CustomGlassNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
+          _pageController.jumpToPage(index);
         },
       ),
     );

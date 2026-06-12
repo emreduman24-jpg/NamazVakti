@@ -10,10 +10,13 @@ class PrayerTrackerScreen extends StatefulWidget {
   _PrayerTrackerScreenState createState() => _PrayerTrackerScreenState();
 }
 
-class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> {
+class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with AutomaticKeepAliveClientMixin<PrayerTrackerScreen> {
   // DB map of "YYYY-MM-DD" -> [Sabah, Öğle, İkindi, Akşam, Yatsı]
   Map<String, List<bool>> _history = {};
   bool _loading = true;
+
+  @override
+  bool get wantKeepAlive => true;
 
   // Real-time calculated stats
   int _currentStreak = 0;
@@ -411,6 +414,7 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (_loading) {
       return const Scaffold(
         backgroundColor: Color(0xFF0F1B31),

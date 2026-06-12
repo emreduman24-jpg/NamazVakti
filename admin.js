@@ -1,196 +1,236 @@
-// İslami Rehber - Yönetim Paneli Mantığı
+// Firebase Web SDK Modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  onAuthStateChanged, 
+  signOut 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+  getFirestore, 
+  collection, 
+  doc, 
+  getDocs, 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  orderBy 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// Firebase Config Credentials
+const firebaseConfig = {
+  projectId: "namaz-vakti-app-2026",
+  appId: "1:442515189721:web:e18fc8acf6aeff1b8633c8",
+  storageBucket: "namaz-vakti-app-2026.firebasestorage.app",
+  apiKey: "AIzaSyDQkgQ7N47JVnZ3kGmxDEwb2EvMj6CKdY4",
+  authDomain: "namaz-vakti-app-2026.firebaseapp.com",
+  messagingSenderId: "442515189721"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// 21 Default Tools definition for Seeding
+const defaultTools = [
+  { "id": "dini-gunler", "title": "Dini Günler", "desc": "Kandiller ve bayramlar", "icon": "📅", "color": "0xFFEAF7F1", "sira": 1, "aktif": true },
+  { "id": "dua-iste", "title": "Dua İste", "desc": "Dualarınızı paylaşın", "icon": "🤲", "color": "0xFFEAF4FB", "sira": 2, "aktif": true },
+  { "id": "soru-cevap", "title": "Soru Cevap", "desc": "Dini danışmana soru sorun", "icon": "💬", "color": "0xFFFFF7EA", "sira": 3, "aktif": true },
+  { "id": "canli-sohbet", "title": "Canlı Kur'an Radyosu", "desc": "7/24 Kesintisiz Diyanet Kur'an Radyo", "icon": "🎧", "color": "0xFFFBEAEA", "sira": 4, "aktif": true },
+  { "id": "peygamber-hayati", "title": "Peygamberin Hayatı", "desc": "Hz. Muhammed'in yaşamı", "icon": "📖", "color": "0xFFEAF7F1", "sira": 5, "aktif": true },
+  { "id": "kuran-kerim", "title": "Kuran-ı Kerim", "desc": "30 cüz sesli okuma ve takip", "icon": "🕌", "color": "0xFFFFF7EA", "sira": 6, "aktif": true },
+  { "id": "esmaul-husna", "title": "Esmaül Hüsna", "desc": "Allah'ın 99 ismi", "icon": "✨", "color": "0xFFEAF4FB", "sira": 7, "aktif": true },
+  { "id": "kible-bulucu", "title": "Kıble Bulucu", "desc": "Dijital pusula ile yön", "icon": "🧭", "color": "0xFFFFF7EA", "sira": 8, "aktif": true },
+  { "id": "zikirmatik", "title": "Zikirmatik", "desc": "Dijital tesbih sayacı", "icon": "📿", "color": "0xFFEAF4FB", "sira": 9, "aktif": true },
+  { "id": "yakindaki-camiler", "title": "Yakındaki Camiler", "desc": "Konumunuza en yakın camiler", "icon": "📍", "color": "0xFFFFF7EA", "sira": 10, "aktif": true },
+  { "id": "hadis-40", "title": "40 Hadis-i Şerif", "desc": "40 Hadis meali ve dersler", "icon": "📜", "color": "0xFFEAF4FB", "sira": 11, "aktif": true },
+  { "id": "gunluk-dualar", "title": "Dualar", "desc": "Hayatın her anı için dualar", "icon": "🤲", "color": "0xFFEAF7F1", "sira": 12, "aktif": true },
+  { "id": "zekat-hesaplama", "title": "Zekat Hesaplama", "desc": "Zekat miktarını hesaplayın", "icon": "💰", "color": "0xFFFFF7EA", "sira": 13, "aktif": true },
+  { "id": "sahabe-hayatlari", "title": "Sahabe Hayatları", "desc": "Peygamberin ashabı", "icon": "👥", "color": "0xFFEAF4FB", "sira": 14, "aktif": true },
+  { "id": "namaz-kilma", "title": "Namaz Kılma Rehberi", "desc": "Adım adım namaz öğrenin", "icon": "🚶", "color": "0xFFEAF7F1", "sira": 15, "aktif": true },
+  { "id": "abdest-rehberi", "title": "Abdest Rehberi", "desc": "Adım adım abdest alınışı", "icon": "💧", "color": "0xFFEAF7F1", "sira": 16, "aktif": true },
+  { "id": "gusul-abdesti", "title": "Gusül Abdesti", "desc": "Boy abdesti farz ve sünnetleri", "icon": "🚿", "color": "0xFFFFF7EA", "sira": 17, "aktif": true },
+  { "id": "ezkar", "title": "Sabah Akşam Ezkarı", "desc": "Günlük sabah ve akşam zikirleri", "icon": "📿", "color": "0xFFEAF4FB", "sira": 18, "aktif": true },
+  { "id": "kaza-namazlari", "title": "Kazaya Kalan Namazlar", "desc": "Kaza çetelesi ve takibi", "icon": "📊", "color": "0xFFFBEAEA", "sira": 19, "aktif": true },
+  { "id": "islam-sartlari", "title": "İslam'ın Şartları", "desc": "İslam şartları rehberi", "icon": "⭐", "color": "0xFFEAF4FB", "sira": 20, "aktif": true },
+  { "id": "dini-hoca", "title": "Dini Danışman", "desc": "Yapay zeka ile dini sohbet", "icon": "👳", "color": "0xFFFFF7EA", "sira": 21, "aktif": true }
+];
+
+// Global States
+let currentTab = 'dashboard';
+let cache = {
+  duas: [],
+  questions: [],
+  tools: [],
+  blockStatus: false,
+  users: [],
+  announcements: []
+};
+let activeQuestionDocId = null;
+
+// DOM Elements
+const els = {
+  loginContainer: document.getElementById('login-container'),
+  adminContainer: document.getElementById('admin-container'),
+  loginForm: document.getElementById('login-form'),
+  emailInput: document.getElementById('email'),
+  passwordInput: document.getElementById('password'),
+  loginError: document.getElementById('login-error-msg'),
+  btnLogout: document.getElementById('btn-logout'),
+  adminDisplayName: document.getElementById('admin-display-name'),
+  pageTitle: document.getElementById('page-title'),
+  menuItems: document.querySelectorAll('.sidebar-menu .menu-item'),
+  tabPanes: document.querySelectorAll('.tab-pane'),
+
+  // Sidebar Badges
+  badgePendingPrayers: document.getElementById('sidebar-pending-prayers-count'),
+  badgePendingQuestions: document.getElementById('sidebar-pending-questions-count'),
+  badgeToolsCount: document.getElementById('sidebar-tools-count'),
+  badgeBlockStatus: document.getElementById('sidebar-block-status'),
+  badgeUsersCount: document.getElementById('sidebar-users-count'),
+
+  // Dashboard Tab
+  statTotalPrayers: document.getElementById('stat-total-prayers'),
+  statPendingPrayers: document.getElementById('stat-pending-prayers'),
+  statTotalQuestions: document.getElementById('stat-total-questions'),
+  statPendingQuestions: document.getElementById('stat-pending-questions'),
+  dashboardRecentPrayers: document.getElementById('dashboard-recent-prayers'),
+  dashboardBlockStatusBadge: document.getElementById('dashboard-block-status-badge'),
+  dashboardToolsCount: document.getElementById('dashboard-tools-count'),
+  dashboardUsersCountBadge: document.getElementById('dashboard-users-count-badge'),
+  btnQuickBlockNav: document.getElementById('btn-quick-block-nav'),
+
+  // Dua İstekleri Tab
+  duaTableBody: document.getElementById('dua-istekleri-table-body'),
+  duaFilters: document.querySelectorAll('[data-filter]'),
+  searchDuaInput: document.getElementById('search-dua'),
+
+  // Soru & Cevap Tab
+  qaFilterSelect: document.getElementById('qa-filter-select'),
+  qaQuestionsList: document.getElementById('qa-questions-list'),
+  qaDetailEmpty: document.getElementById('qa-detail-empty'),
+  qaDetailContainer: document.getElementById('qa-detail-container'),
+  qaDetailAuthor: document.getElementById('qa-detail-author'),
+  qaDetailDate: document.getElementById('qa-detail-date'),
+  qaDetailText: document.getElementById('qa-detail-text'),
+  qaReplyText: document.getElementById('qa-reply-text'),
+  btnDeleteQuestion: document.getElementById('btn-delete-question'),
+  btnSendAnswer: document.getElementById('btn-send-answer'),
+
+  // Araçlar Yönetimi Tab
+  toolsTableBody: document.getElementById('tools-table-body'),
+
+  // Kayıtlı Kullanıcılar Tab
+  usersTableBody: document.getElementById('users-table-body'),
+  userFilters: document.querySelectorAll('[data-user-filter]'),
+  searchUserInput: document.getElementById('search-user'),
+
+  // Erişim Kilidi Tab
+  lockIconContainer: document.getElementById('lock-icon-container'),
+  lockStatusIcon: document.getElementById('lock-status-icon'),
+  lockStatusTitle: document.getElementById('lock-status-title'),
+  chkGlobalUserBlock: document.getElementById('chk-global-user-block'),
+
+  // Modals
+  toolEditModal: document.getElementById('tool-edit-modal'),
+  btnCancelToolEdit: document.getElementById('btn-cancel-tool-edit'),
+  btnCloseToolModal: document.getElementById('btn-close-tool-modal'),
+  toolEditForm: document.getElementById('tool-edit-form'),
+  editToolDocId: document.getElementById('edit-tool-doc-id'),
+  editToolId: document.getElementById('edit-tool-id'),
+  editToolTitle: document.getElementById('edit-tool-title'),
+  editToolDesc: document.getElementById('edit-tool-desc'),
+  editToolIcon: document.getElementById('edit-tool-icon'),
+  editToolColor: document.getElementById('edit-tool-color'),
+  editToolOrder: document.getElementById('edit-tool-order'),
+  editToolStatus: document.getElementById('edit-tool-status'),
+
+  // User Inspect Modal
+  userInspectModal: document.getElementById('user-inspect-modal'),
+  btnCloseUserModal: document.getElementById('btn-close-user-modal'),
+  btnCloseUserModalFooter: document.getElementById('btn-close-user-modal-footer'),
+  inspectUserAvatar: document.getElementById('inspect-user-avatar'),
+  inspectUserName: document.getElementById('inspect-user-name'),
+  inspectUserEmail: document.getElementById('inspect-user-email'),
+  inspectUserPremiumBadge: document.getElementById('inspect-user-premium-badge'),
+  inspectUserGender: document.getElementById('inspect-user-gender'),
+  inspectUserPlatform: document.getElementById('inspect-user-platform'),
+  inspectUserCreatedDate: document.getElementById('inspect-user-created-date'),
+  inspectUserLastActive: document.getElementById('inspect-user-last-active'),
+  inspectUserIp: document.getElementById('inspect-user-ip'),
+  inspectUserDuration: document.getElementById('inspect-user-duration'),
+  inspectUserPremiumToggle: document.getElementById('inspect-user-premium-toggle'),
+  inspectToggleStatusLabel: document.getElementById('inspect-toggle-status-label'),
+
+  // Bildirim Gönder Tab
+  notificationForm: document.getElementById('notification-form'),
+  notifTitle: document.getElementById('notif-title'),
+  notifBody: document.getElementById('notif-body'),
+  notificationsTableBody: document.getElementById('notifications-table-body')
+};
+
+// ==================== INITIALIZATION & AUTH ====================
 document.addEventListener('DOMContentLoaded', () => {
-  // Elementleri Başlat
-  initElements();
-
-  // Session kontrolü
-  checkSession();
-
-  // Olay Dinleyicileri (Event Listeners)
   bindEvents();
+  checkSession();
 });
 
-// Küresel Durum (State)
-let currentTab = 'dashboard';
-let editingDuaId = null;
-let editingStoryId = null;
-let selectedQuestionId = null;
-let chatInterval = null;
-let dashboardInterval = null;
-
-// DOM Element Referansları
-let els = {};
-
-function initElements() {
-  els = {
-    // Giriş
-    loginContainer: document.getElementById('login-container'),
-    adminContainer: document.getElementById('admin-container'),
-    loginForm: document.getElementById('login-form'),
-    usernameInput: document.getElementById('username'),
-    passwordInput: document.getElementById('password'),
-    loginError: document.getElementById('login-error-msg'),
-    btnLogout: document.getElementById('btn-logout'),
-
-    // Sayfa ve Sekmeler
-    pageTitle: document.getElementById('page-title'),
-    menuItems: document.querySelectorAll('.menu-item'),
-    tabPanes: document.querySelectorAll('.tab-pane'),
-
-    // Dashboard İstatistikleri
-    statTotalUsers: document.getElementById('stat-total-users'),
-    statTotalPrayers: document.getElementById('stat-total-prayers'),
-    statPendingPrayers: document.getElementById('stat-pending-prayers'),
-    statApprovedPrayers: document.getElementById('stat-approved-prayers'),
-    recentPrayersTable: document.getElementById('dashboard-recent-prayers'),
-    pendingPrayersQuickList: document.getElementById('dashboard-pending-prayers-list'),
-
-    // Dua İstekleri
-    summaryTotalPrayers: document.getElementById('summary-total-prayers'),
-    summaryPendingPrayers: document.getElementById('summary-pending-prayers'),
-    summaryApprovedPrayers: document.getElementById('summary-approved-prayers'),
-    duaTableBody: document.getElementById('dua-istekleri-table-body'),
-    filterBtns: document.querySelectorAll('.btn-filter'),
-    searchDuaInput: document.getElementById('search-dua'),
-    btnSearchDua: document.getElementById('btn-search-dua'),
-    sidebarPendingPrayersBadge: document.getElementById('sidebar-pending-prayers-count'),
-
-    // Günlük Dualar
-    dailyDuaForm: document.getElementById('daily-dua-form'),
-    dailyDuaFormTitle: document.getElementById('daily-dua-form-title'),
-    dailyDuaId: document.getElementById('daily-dua-id'),
-    dailyDuaTitle: document.getElementById('daily-dua-title'),
-    dailyDuaText: document.getElementById('daily-dua-text'),
-    dailyDuaBenefit: document.getElementById('daily-dua-benefit'),
-    dailyDuaCategory: document.getElementById('daily-dua-category'),
-    dailyDuaOrder: document.getElementById('daily-dua-order'),
-    btnCancelDailyDua: document.getElementById('btn-cancel-daily-dua'),
-    btnSaveDailyDua: document.getElementById('btn-save-daily-dua'),
-    dailyDuasCount: document.getElementById('daily-duas-count'),
-    dailyDuasList: document.getElementById('daily-duas-list'),
-
-    // Hikayeler
-    storyForm: document.getElementById('story-form'),
-    storyFormTitle: document.getElementById('story-form-title'),
-    storyId: document.getElementById('story-id'),
-    storyTitle: document.getElementById('story-title'),
-    storyImageFile: document.getElementById('story-image-file'),
-    storyImageInfo: document.getElementById('story-image-info'),
-    storyImageData: document.getElementById('story-image-data'),
-    storyImagePreviewContainer: document.getElementById('story-image-preview-container'),
-    storyImagePreview: document.getElementById('story-image-preview'),
-    btnRemoveStoryImg: document.getElementById('btn-remove-story-img'),
-    storyType: document.getElementById('story-type'),
-    storyContent: document.getElementById('story-content'),
-    storyOrder: document.getElementById('story-order'),
-    btnCancelStory: document.getElementById('btn-cancel-story'),
-    btnSaveStory: document.getElementById('btn-save-story'),
-    storiesCount: document.getElementById('stories-count'),
-    storiesList: document.getElementById('stories-list'),
-
-    // Soru Cevap
-    sidebarPendingQuestionsBadge: document.getElementById('sidebar-pending-questions-count'),
-    qaQuestionsCount: document.getElementById('qa-questions-count'),
-    qaQuestionsList: document.getElementById('qa-questions-list'),
-    qaDetailEmpty: document.getElementById('qa-detail-empty'),
-    qaDetailContainer: document.getElementById('qa-detail-container'),
-    qaDetailAuthor: document.getElementById('qa-detail-author'),
-    qaDetailDate: document.getElementById('qa-detail-date'),
-    qaDetailText: document.getElementById('qa-detail-text'),
-    qaReplyText: document.getElementById('qa-reply-text'),
-    btnDeleteQuestion: document.getElementById('btn-delete-question'),
-    btnSendAnswer: document.getElementById('btn-send-answer'),
-
-    // Canlı Sohbet
-    adminChatMessages: document.getElementById('admin-chat-messages'),
-    adminChatInput: document.getElementById('admin-chat-input'),
-    btnAdminChatSend: document.getElementById('btn-admin-chat-send'),
-
-    // Kullanıcı Yönetimi
-    chkGlobalUserBlock: document.getElementById('chk-global-user-block'),
-    usersCount: document.getElementById('users-count'),
-    usersTableBody: document.getElementById('users-table-body'),
-
-    // Araçlar Yönetimi
-    toolForm: document.getElementById('tool-form'),
-    toolFormTitle: document.getElementById('tool-form-title'),
-    toolFormId: document.getElementById('tool-form-id'),
-    toolIdInput: document.getElementById('tool-id'),
-    toolTitleInput: document.getElementById('tool-title-input'),
-    toolDescInput: document.getElementById('tool-desc'),
-    toolIconInput: document.getElementById('tool-icon'),
-    toolColorInput: document.getElementById('tool-color'),
-    toolOrderInput: document.getElementById('tool-order'),
-    btnCancelTool: document.getElementById('btn-cancel-tool'),
-    btnSaveTool: document.getElementById('btn-save-tool'),
-    toolsCount: document.getElementById('tools-count'),
-    toolsList: document.getElementById('tools-list')
-  };
-}
-
-// ==================== API ASYNC HELPER FUNCTIONS ====================
-async function apiFetch(endpoint, defaultValue = []) {
-  try {
-    const res = await fetch(endpoint);
-    if (res.ok) {
-      const data = await res.json();
-      const keyMap = {
-        '/api/duas': 'dua_iste_list',
-        '/api/questions': 'soru_cevap_list',
-        '/api/stories': 'stories_list',
-        '/api/chat': 'live_chat_list',
-        '/api/users': 'users_list',
-        '/api/tools': 'tools_list'
-      };
-      if (keyMap[endpoint]) {
-        localStorage.setItem(keyMap[endpoint], JSON.stringify(data));
-      }
-      return data;
+// Setup Auth Watcher
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    sessionStorage.setItem('admin_logged_in', 'true');
+    sessionStorage.removeItem('admin_fallback');
+    showAdminPanel(user.email);
+  } else {
+    if (sessionStorage.getItem('admin_fallback') !== 'true') {
+      sessionStorage.removeItem('admin_logged_in');
+      showLoginForm();
+    } else {
+      showAdminPanel("admin@namazvakti.com");
     }
-  } catch (e) {
-    console.warn(`API fetch error on ${endpoint}, loading from cache:`, e);
   }
-  const keyMap = {
-    '/api/duas': 'dua_iste_list',
-    '/api/questions': 'soru_cevap_list',
-    '/api/stories': 'stories_list',
-    '/api/chat': 'live_chat_list',
-    '/api/users': 'users_list',
-    '/api/tools': 'tools_list'
-  };
-  const key = keyMap[endpoint];
-  if (key) {
-    return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue));
+});
+
+function checkSession() {
+  const isLoggedIn = sessionStorage.getItem('admin_logged_in') === 'true';
+  const isFallback = sessionStorage.getItem('admin_fallback') === 'true';
+  if (isLoggedIn) {
+    const email = isFallback ? "admin@namazvakti.com" : (auth.currentUser ? auth.currentUser.email : "Yönetici");
+    showAdminPanel(email);
+  } else {
+    showLoginForm();
   }
-  return defaultValue;
 }
 
-async function apiPost(endpoint, body) {
-  try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data;
-    }
-  } catch (e) {
-    console.error(`API post error on ${endpoint}:`, e);
-  }
-  return null;
+function showAdminPanel(email) {
+  els.loginContainer.style.opacity = '0';
+  setTimeout(() => {
+    els.loginContainer.style.display = 'none';
+    els.adminContainer.style.display = 'flex';
+    els.adminDisplayName.textContent = email;
+    initializeData();
+  }, 300);
 }
 
+function showLoginForm() {
+  els.adminContainer.style.display = 'none';
+  els.loginContainer.style.display = 'flex';
+  els.loginContainer.style.opacity = '1';
+}
+
+// ==================== EVENT BINDING ====================
 function bindEvents() {
-  // Giriş Formu Gönderimi
-  els.loginForm.addEventListener('submit', handleLoginSubmit);
+  // Login Form Submit
+  els.loginForm.addEventListener('submit', handleLogin);
 
-  // Çıkış
+  // Logout Click
   els.btnLogout.addEventListener('click', handleLogout);
 
-  // Sekmeler Arası Geçiş
+  // Sidebar Tabs Switching
   els.menuItems.forEach(item => {
     item.addEventListener('click', () => {
       const tabName = item.getAttribute('data-tab');
@@ -198,106 +238,251 @@ function bindEvents() {
     });
   });
 
-  // Dua Filtreleme
-  els.filterBtns.forEach(btn => {
+  // Dashboard Navigation Actions
+  document.querySelectorAll('.btn-view-all-duas').forEach(btn => {
+    btn.addEventListener('click', () => switchTab('dua-istekleri'));
+  });
+  els.btnQuickBlockNav.addEventListener('click', () => switchTab('erisim-kilidi'));
+
+  // Dua İstekleri Filters
+  els.duaFilters.forEach(btn => {
     btn.addEventListener('click', () => {
-      els.filterBtns.forEach(b => b.classList.remove('active'));
+      els.duaFilters.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderDuaIstekleri();
     });
   });
 
-  // Dua Arama
-  els.btnSearchDua.addEventListener('click', renderDuaIstekleri);
-  els.searchDuaInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') renderDuaIstekleri();
+  // Dua İstekleri Search
+  els.searchDuaInput.addEventListener('input', renderDuaIstekleri);
+
+  // Soru & Cevap Filter Select
+  els.qaFilterSelect.addEventListener('change', renderQuestionsList);
+
+  // Question Reply Submission
+  els.btnSendAnswer.addEventListener('click', saveQuestionAnswer);
+  els.btnDeleteQuestion.addEventListener('click', deleteSelectedQuestion);
+
+  // Erişim Kilidi Toggle
+  els.chkGlobalUserBlock.addEventListener('change', handleBlockStatusToggle);
+
+  // Tool Edit Modal Closing
+  els.btnCancelToolEdit.addEventListener('click', closeToolModal);
+  els.btnCloseToolModal.addEventListener('click', closeToolModal);
+
+  // Tool Edit Form Submit
+  els.toolEditForm.addEventListener('submit', handleToolUpdate);
+
+  // Kayıtlı Kullanıcılar Tab Filters
+  els.userFilters.forEach(btn => {
+    btn.addEventListener('click', () => {
+      els.userFilters.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderUsersList();
+    });
   });
 
-  // Günlük Dua CRUD
-  els.dailyDuaForm.addEventListener('submit', saveDailyDua);
-  els.btnCancelDailyDua.addEventListener('click', clearDailyDuaForm);
+  // Kayıtlı Kullanıcılar Search
+  els.searchUserInput.addEventListener('input', renderUsersList);
 
-  // Hikaye Resim Değişimi & Yükleme
-  els.storyImageFile.addEventListener('change', handleStoryImageUpload);
-  els.btnRemoveStoryImg.addEventListener('click', clearStoryImagePreview);
-  els.storyForm.addEventListener('submit', saveStory);
-  els.btnCancelStory.addEventListener('click', clearStoryForm);
+  // User Inspect Modal Closing
+  els.btnCloseUserModal.addEventListener('click', closeUserModal);
+  els.btnCloseUserModalFooter.addEventListener('click', closeUserModal);
 
-  // Soru Cevap
-  els.btnSendAnswer.addEventListener('click', sendQuestionAnswer);
-  els.btnDeleteQuestion.addEventListener('click', deleteQuestion);
+  // User Premium Toggle Action
+  els.inspectUserPremiumToggle.addEventListener('change', handleUserPremiumToggle);
 
-  // Canlı Sohbet
-  els.btnAdminChatSend.addEventListener('click', sendAdminChatMessage);
-  els.adminChatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendAdminChatMessage();
-  });
-
-  // Kullanıcı Yönetimi - Genel Engel Kilidi
-  els.chkGlobalUserBlock.addEventListener('change', async (e) => {
-    await apiPost('/api/block_status', { blocked: e.target.checked });
-  });
-
-  // Araçlar Yönetimi CRUD
-  els.toolForm.addEventListener('submit', saveTool);
-  els.btnCancelTool.addEventListener('click', clearToolForm);
-
-  // Dashboard "Tümünü Gör" Yönlendirmesi
-  document.querySelectorAll('.btn-view-all-duas').forEach(btn => {
-    btn.addEventListener('click', () => switchTab('dua-istekleri'));
-  });
-}
-
-// ==================== GİRİŞ & OTURUM KONTROLÜ ====================
-function checkSession() {
-  const isLoggedIn = sessionStorage.getItem('admin_logged_in') === 'true';
-  if (isLoggedIn) {
-    els.loginContainer.style.display = 'none';
-    els.adminContainer.style.display = 'flex';
-    startPanel();
-  } else {
-    els.loginContainer.style.display = 'flex';
-    els.adminContainer.style.display = 'none';
+  // Notification Form Submit
+  if (els.notificationForm) {
+    els.notificationForm.addEventListener('submit', handleSendNotification);
   }
 }
 
-function handleLoginSubmit(e) {
-  if (e) e.preventDefault();
-  const username = els.usernameInput.value.trim();
+// ==================== AUTHENTICATION ACTIONS ====================
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = els.emailInput.value.trim();
   const password = els.passwordInput.value.trim();
+  hideLoginError();
 
-  // Şifre: 123456 veya admin / kullanıcı adı: admin
-  if (username === 'admin' && (password === '123456' || password === 'admin')) {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
     sessionStorage.setItem('admin_logged_in', 'true');
-    els.loginError.style.display = 'none';
-    
-    // Geçiş Animasyonu
-    els.loginContainer.style.opacity = '0';
-    setTimeout(() => {
-      els.loginContainer.style.display = 'none';
-      els.adminContainer.style.display = 'flex';
-      checkSession();
-    }, 400);
-  } else {
-    els.loginError.textContent = 'Kullanıcı adı veya şifre hatalı!';
-    els.loginError.style.display = 'block';
+    sessionStorage.removeItem('admin_fallback');
+  } catch (err) {
+    console.warn("Firebase Auth sign-in failed. Testing local fallback...", err);
+    // Secure Local Fallback in case Auth Provider is not enabled yet in Firebase Console
+    if (email === "admin@namazvakti.com" && password === "admin123") {
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        sessionStorage.setItem('admin_logged_in', 'true');
+        sessionStorage.removeItem('admin_fallback');
+        showToast("İlk giriş başarılı. Yönetici hesabı Firebase Authentication üzerinde otomatik oluşturuldu!", "success");
+      } catch (createErr) {
+        console.warn("Could not auto-create Firebase Auth user:", createErr);
+        sessionStorage.setItem('admin_logged_in', 'true');
+        sessionStorage.setItem('admin_fallback', 'true');
+        showAdminPanel(email);
+        showToast("Yerel yedek hesapla giriş yapıldı. (Firebase Auth bağlantı uyarısı)", "warning");
+      }
+    } else {
+      showLoginError("Hatalı e-posta veya şifre!");
+    }
   }
 }
 
 function handleLogout() {
-  if (confirm('Yönetim panelinden çıkış yapmak istiyor musunuz?')) {
-    sessionStorage.removeItem('admin_logged_in');
-    clearIntervals();
-    checkSession();
+  if (confirm("Yönetim panelinden çıkış yapmak istiyor musunuz?")) {
+    if (sessionStorage.getItem('admin_fallback') === 'true') {
+      sessionStorage.removeItem('admin_logged_in');
+      sessionStorage.removeItem('admin_fallback');
+      showLoginForm();
+    } else {
+      signOut(auth).then(() => {
+        sessionStorage.removeItem('admin_logged_in');
+        showLoginForm();
+      });
+    }
   }
 }
 
-// ==================== SEKME KONTROLÜ ====================
+function showLoginError(msg) {
+  els.loginError.textContent = msg;
+  els.loginError.style.display = 'block';
+}
+
+function hideLoginError() {
+  els.loginError.style.display = 'none';
+}
+
+// ==================== DATA FETCHING & SYNCHRONIZATION ====================
+async function initializeData() {
+  // Seeding tools if empty
+  await checkAndSeedTools();
+  // Seeding global block status if empty
+  await checkAndSeedBlockStatus();
+  // Fetch lists
+  await refreshAllData();
+  // Set tab
+  switchTab(currentTab);
+}
+
+async function refreshAllData() {
+  try {
+    // 1. Fetch block status
+    const blockSnap = await getDoc(doc(db, "block_status", "global"));
+    if (blockSnap.exists()) {
+      cache.blockStatus = blockSnap.data().blocked || false;
+    }
+
+    // 2. Fetch tools
+    const toolsSnap = await getDocs(query(collection(db, "tools"), orderBy("sira", "asc")));
+    cache.tools = toolsSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
+
+    // 3. Fetch prayers (duas)
+    const duasSnap = await getDocs(collection(db, "duas"));
+    cache.duas = duasSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
+    // Sort duas: newest first by id field (timestamp)
+    cache.duas.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+    // 4. Fetch Q&A questions
+    const questionsSnap = await getDocs(collection(db, "questions"));
+    cache.questions = questionsSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
+    // Sort questions: newest first by id field (timestamp)
+    cache.questions.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+    // 5. Fetch registered users
+    const usersSnap = await getDocs(collection(db, "users"));
+    cache.users = usersSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
+    // Sort users: newest first by registration date (created)
+    cache.users.sort((a, b) => {
+      const aTime = a.created ? new Date(a.created).getTime() : 0;
+      const bTime = b.created ? new Date(b.created).getTime() : 0;
+      return bTime - aTime;
+    });
+
+    // 6. Fetch sent announcements
+    const announcementsSnap = await getDocs(collection(db, "announcements"));
+    cache.announcements = announcementsSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
+    cache.announcements.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+    updateSidebarBadges();
+  } catch (err) {
+    console.error("Data fetch error from Firestore:", err);
+    showToast("Veriler yüklenirken hata oluştu!", "danger");
+  }
+}
+
+async function checkAndSeedTools() {
+  try {
+    const snap = await getDocs(collection(db, "tools"));
+    if (snap.empty) {
+      console.log("Tools collection is empty. Auto-seeding default 21 tools...");
+      for (const tool of defaultTools) {
+        await setDoc(doc(db, "tools", tool.id), tool);
+      }
+    }
+  } catch (err) {
+    console.error("Tool seeding failed:", err);
+  }
+}
+
+async function checkAndSeedBlockStatus() {
+  try {
+    const globalDocRef = doc(db, "block_status", "global");
+    const docSnap = await getDoc(globalDocRef);
+    if (!docSnap.exists()) {
+      console.log("Global block status does not exist. Initializing to blocked = false...");
+      await setDoc(globalDocRef, { blocked: false });
+    }
+  } catch (err) {
+    console.error("Block status seeding failed:", err);
+  }
+}
+
+function updateSidebarBadges() {
+  // 1. Pending prayers count
+  const pendingPrayers = cache.duas.filter(d => d.durum === 'bekliyor').length;
+  if (pendingPrayers > 0) {
+    els.badgePendingPrayers.textContent = pendingPrayers;
+    els.badgePendingPrayers.style.display = 'inline-flex';
+  } else {
+    els.badgePendingPrayers.style.display = 'none';
+  }
+
+  // 2. Pending questions count
+  const pendingQuestions = cache.questions.filter(q => !q.cevap || q.cevap.trim() === '').length;
+  if (pendingQuestions > 0) {
+    els.badgePendingQuestions.textContent = pendingQuestions;
+    els.badgePendingQuestions.style.display = 'inline-flex';
+  } else {
+    els.badgePendingQuestions.style.display = 'none';
+  }
+
+  // 3. Tools count
+  els.badgeToolsCount.textContent = cache.tools.length;
+
+  // 4. Block status badge
+  if (cache.blockStatus) {
+    els.badgeBlockStatus.style.display = 'inline-flex';
+  } else {
+    els.badgeBlockStatus.style.display = 'none';
+  }
+
+  // 5. Users count badge
+  if (cache.users.length > 0) {
+    els.badgeUsersCount.textContent = cache.users.length;
+    els.badgeUsersCount.style.display = 'inline-flex';
+  } else {
+    els.badgeUsersCount.style.display = 'none';
+  }
+}
+
+// ==================== TABS NAVIGATION ====================
 function switchTab(tabName) {
   currentTab = tabName;
-  clearIntervals();
 
-  // Sidebar aktif sınıfını güncelle
+  // Update active sidebar link
   els.menuItems.forEach(item => {
     if (item.getAttribute('data-tab') === tabName) {
       item.classList.add('active');
@@ -306,20 +491,19 @@ function switchTab(tabName) {
     }
   });
 
-  // Sayfa başlığını güncelle
+  // Update Topbar page title
   const tabTitles = {
     'dashboard': 'Dashboard',
-    'dua-istekleri': 'Dua İstekleri',
-    'gunluk-dualar': 'Günlük Dualar Yönetimi',
-    'hikayeler': 'Hikaye Yönetimi',
+    'dua-istekleri': 'Dua İstekleri Yönetimi',
     'soru-cevap': 'Soru & Cevap Talepleri',
-    'canli-sohbet': 'Canlı Sohbet Odası',
-    'kullanici-yonetimi': 'Kullanıcı Yönetimi',
-    'arac-yonetimi': 'Araçlar Yönetimi'
+    'arac-yonetimi': 'Araçlar Yönetimi',
+    'kullanicilar': 'Kayıtlı Kullanıcı Yönetimi',
+    'bildirim-gonder': 'Bildirim & Günlük Ayet Gönder',
+    'erisim-kilidi': 'Uygulama Erişim Kilidi'
   };
   els.pageTitle.textContent = tabTitles[tabName] || 'Yönetim Paneli';
 
-  // İçerik panellerini göster/gizle
+  // Toggle Tab Sections
   els.tabPanes.forEach(pane => {
     if (pane.id === `tab-content-${tabName}`) {
       pane.classList.add('active');
@@ -328,868 +512,426 @@ function switchTab(tabName) {
     }
   });
 
-  // Sekmeye özgü verileri yükle ve poller'ları başlat
-  refreshActiveTabData();
+  // Populate active tab content
+  renderActiveTab();
 }
 
-function refreshActiveTabData() {
+function renderActiveTab() {
   switch (currentTab) {
     case 'dashboard':
       renderDashboard();
-      dashboardInterval = setInterval(renderDashboard, 3000);
       break;
     case 'dua-istekleri':
       renderDuaIstekleri();
       break;
-    case 'gunluk-dualar':
-      renderGunlukDualar();
-      break;
-    case 'hikayeler':
-      renderHikayeler();
-      break;
     case 'soru-cevap':
       renderSoruCevap();
       break;
-    case 'canli-sohbet':
-      renderCanliSohbet();
-      chatInterval = setInterval(renderCanliSohbet, 1500);
-      break;
-    case 'kullanici-yonetimi':
-      renderKullaniciYonetimi();
-      break;
     case 'arac-yonetimi':
-      renderAracYonetimi();
+      renderAraçYönetimi();
       break;
-  }
-}
-
-function clearIntervals() {
-  if (chatInterval) clearInterval(chatInterval);
-  if (dashboardInterval) clearInterval(dashboardInterval);
-}
-
-// ==================== PANEL BAŞLANGICI ====================
-function startPanel() {
-  // Sidebar rozetlerini güncelle
-  updateSidebarBadges();
-  // İlk sekmeyi yükle
-  switchTab('dashboard');
-}
-
-async function updateSidebarBadges() {
-  const duas = await apiFetch('/api/duas');
-  const pendingDuas = duas.filter(d => d.durum === 'bekliyor').length;
-  
-  if (pendingDuas > 0) {
-    els.sidebarPendingPrayersBadge.textContent = pendingDuas;
-    els.sidebarPendingPrayersBadge.style.display = 'inline-flex';
-  } else {
-    els.sidebarPendingPrayersBadge.style.display = 'none';
-  }
-
-  const questions = await apiFetch('/api/questions');
-  const pendingQuestions = questions.filter(q => !q.cevap).length;
-
-  if (pendingQuestions > 0) {
-    els.sidebarPendingQuestionsBadge.textContent = pendingQuestions;
-    els.sidebarPendingQuestionsBadge.style.display = 'inline-flex';
-  } else {
-    els.sidebarPendingQuestionsBadge.style.display = 'none';
+    case 'kullanicilar':
+      renderUsersTab();
+      break;
+    case 'erisim-kilidi':
+      renderErişimKilidi();
+      break;
+    case 'bildirim-gonder':
+      renderBildirimGonder();
+      break;
   }
 }
 
 // ==================== TAB 1: DASHBOARD ====================
-async function renderDashboard() {
-  const users = await apiFetch('/api/users');
-  const duas = await apiFetch('/api/duas');
-  
-  const pendingDuas = duas.filter(d => d.durum === 'bekliyor');
-  const approvedDuas = duas.filter(d => d.durum === 'yayinda');
+function renderDashboard() {
+  // Statistics values
+  const totalPrayers = cache.duas.length;
+  const pendingPrayers = cache.duas.filter(d => d.durum === 'bekliyor').length;
+  const totalQuestions = cache.questions.length;
+  const pendingQuestions = cache.questions.filter(q => !q.cevap || q.cevap.trim() === '').length;
 
-  // Sayısal değerleri yaz
-  els.statTotalUsers.textContent = (users.length + 245815).toLocaleString();
-  els.statTotalPrayers.textContent = duas.length;
-  els.statPendingPrayers.textContent = pendingDuas.length;
-  els.statApprovedPrayers.textContent = approvedDuas.length;
+  els.statTotalPrayers.textContent = totalPrayers;
+  els.statPendingPrayers.textContent = pendingPrayers;
+  els.statTotalQuestions.textContent = totalQuestions;
+  els.statPendingQuestions.textContent = pendingQuestions;
 
-  // Son Eklenen Dualar Tablosu (Son 5 dua)
-  els.recentPrayersTable.innerHTML = '';
-  const recentDuas = [...duas].slice(0, 5);
-  
-  if (recentDuas.length === 0) {
-    els.recentPrayersTable.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">Henüz dua eklenmemiş.</td></tr>';
+  // App-wide Status boxes
+  if (cache.blockStatus) {
+    els.dashboardBlockStatusBadge.textContent = "Kilitli";
+    els.dashboardBlockStatusBadge.className = "status-value-badge status-red";
   } else {
-    recentDuas.forEach(d => {
-      const tr = document.createElement('tr');
-      const stateBadge = d.durum === 'yayinda' 
-        ? '<span class="badge badge-success">Yayında</span>' 
-        : '<span class="badge badge-warning">Bekliyor</span>';
-      
-      tr.innerHTML = `
-        <td><strong>${escapeHTML(d.yazar || 'Anonim')}</strong></td>
-        <td><div style="max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHTML(d.dua)}</div></td>
-        <td>${stateBadge}</td>
-        <td><span style="font-size: 11px; color:#888;">${d.tarih || 'Bilinmiyor'}</span></td>
-      `;
-      els.recentPrayersTable.appendChild(tr);
-    });
+    els.dashboardBlockStatusBadge.textContent = "Aktif";
+    els.dashboardBlockStatusBadge.className = "status-value-badge status-green";
+  }
+  els.dashboardToolsCount.textContent = `${cache.tools.length} Araç`;
+  
+  if (els.dashboardUsersCountBadge) {
+    els.dashboardUsersCountBadge.textContent = `${cache.users.length} Kullanıcı`;
   }
 
-  // Dashboard Onay Bekleyenler Hızlı Listesi
-  els.pendingPrayersQuickList.innerHTML = '';
-  if (pendingDuas.length === 0) {
-    els.pendingPrayersQuickList.innerHTML = `
-      <div class="panel-empty-state" style="height: 150px;">
-        <i class="fa-solid fa-circle-check text-success" style="font-size: 24px; opacity: 0.6;"></i>
-        <p>Onay bekleyen dua bulunmuyor.</p>
-      </div>
-    `;
+  // Recent prayers list (take last 5)
+  els.dashboardRecentPrayers.innerHTML = '';
+  const recentPrayers = cache.duas.slice(0, 5);
+  
+  if (recentPrayers.length === 0) {
+    els.dashboardRecentPrayers.innerHTML = `<tr><td colspan="4" style="text-align: center;" class="text-muted">Dua talebi bulunmuyor.</td></tr>`;
   } else {
-    pendingDuas.slice(0, 4).forEach(d => {
-      const card = document.createElement('div');
-      card.className = 'quick-pending-card';
-      card.innerHTML = `
-        <div class="quick-pending-text"><strong>${escapeHTML(d.yazar)}</strong>: "${escapeHTML(d.dua)}"</div>
-        <div class="quick-pending-meta">
-          <span style="font-size: 10px; color:#888;">${d.tarih}</span>
-          <div class="quick-pending-actions" style="display: flex; gap: 6px;">
-            <button class="btn-approve-solid" onclick="approveDua(${d.id})">Onayla</button>
-            <button class="btn-delete-solid" onclick="deleteDua(${d.id})">Sil</button>
-          </div>
-        </div>
+    recentPrayers.forEach(dua => {
+      const tr = document.createElement('tr');
+      const badgeClass = dua.durum === 'yayinda' ? 'badge-success' : 'badge-warning';
+      const badgeText = dua.durum === 'yayinda' ? 'Yayında' : 'Bekliyor';
+      
+      tr.innerHTML = `
+        <td><strong>${escapeHTML(dua.yazar || 'Anonim')}</strong></td>
+        <td><div class="dua-text-cell" style="max-width: 380px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHTML(dua.dua)}</div></td>
+        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+        <td><span class="text-muted" style="font-size:12px;">${dua.tarih || ''}</span></td>
       `;
-      els.pendingPrayersQuickList.appendChild(card);
+      els.dashboardRecentPrayers.appendChild(tr);
     });
   }
 }
 
 // ==================== TAB 2: DUA İSTEKLERİ ====================
-async function renderDuaIstekleri() {
-  const filterBtn = document.querySelector('.btn-filter.active');
-  const filter = filterBtn ? filterBtn.getAttribute('data-filter') : 'all';
-  const searchVal = els.searchDuaInput.value.toLowerCase().trim();
-  const duas = await apiFetch('/api/duas');
+function renderDuaIstekleri() {
+  const activeFilter = document.querySelector('.btn-filter.active').getAttribute('data-filter');
+  const searchText = els.searchDuaInput.value.toLowerCase().trim();
 
-  // İstatistikleri güncelle
-  const pendingCount = duas.filter(d => d.durum === 'bekliyor').length;
-  const approvedCount = duas.filter(d => d.durum === 'yayinda').length;
-  els.summaryTotalPrayers.textContent = duas.length;
-  els.summaryPendingPrayers.textContent = pendingCount;
-  els.summaryApprovedPrayers.textContent = approvedCount;
-
-  // Filtreleme
-  let filteredDuas = duas;
-  if (filter === 'pending') {
-    filteredDuas = duas.filter(d => d.durum === 'bekliyor');
-  } else if (filter === 'approved') {
-    filteredDuas = duas.filter(d => d.durum === 'yayinda');
+  // Filter
+  let list = cache.duas;
+  if (activeFilter === 'pending') {
+    list = cache.duas.filter(d => d.durum === 'bekliyor');
+  } else if (activeFilter === 'approved') {
+    list = cache.duas.filter(d => d.durum === 'yayinda');
   }
 
-  // Arama
-  if (searchVal) {
-    filteredDuas = filteredDuas.filter(d => 
-      d.yazar.toLowerCase().includes(searchVal) || 
-      d.dua.toLowerCase().includes(searchVal)
+  // Search
+  if (searchText) {
+    list = list.filter(d => 
+      (d.yazar || '').toLowerCase().includes(searchText) || 
+      (d.dua || '').toLowerCase().includes(searchText)
     );
   }
 
-  // Tablo Çıktısı
+  // Table Body
   els.duaTableBody.innerHTML = '';
-  if (filteredDuas.length === 0) {
-    els.duaTableBody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary">Aramaya uygun dua talebi bulunamadı.</td></tr>';
+  if (list.length === 0) {
+    els.duaTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;" class="text-muted">Gösterilecek dua bulunamadı.</td></tr>`;
     return;
   }
 
-  filteredDuas.forEach(d => {
+  list.forEach(dua => {
     const tr = document.createElement('tr');
-    const stateBadge = d.durum === 'yayinda' 
-      ? '<span class="badge badge-success">Yayında</span>' 
-      : '<span class="badge badge-warning">Bekliyor</span>';
-    
-    // İşlem Butonları (Onay bekleyende onaylama butonu ekle)
-    let actionsHtml = `<button class="btn-delete-solid" onclick="deleteDua(${d.id})">Sil</button>`;
-    if (d.durum === 'bekliyor') {
-      actionsHtml = `
-        <button class="btn-approve-solid" onclick="approveDua(${d.id})" style="margin-right: 6px;">Onayla</button>
-        ${actionsHtml}
-      `;
+    const badgeClass = dua.durum === 'yayinda' ? 'badge-success' : 'badge-warning';
+    const badgeText = dua.durum === 'yayinda' ? 'Yayında' : 'Bekliyor';
+
+    let actionButtons = '';
+    if (dua.durum === 'bekliyor') {
+      actionButtons += `<button class="btn-approve-solid" data-doc-id="${dua.docId}" style="margin-right:8px;"><i class="fa-solid fa-check"></i> Onayla</button>`;
     }
+    actionButtons += `<button class="btn-delete-solid" data-doc-id="${dua.docId}"><i class="fa-solid fa-trash-can"></i> Sil</button>`;
 
     tr.innerHTML = `
-      <td><strong>${escapeHTML(d.yazar || 'Anonim')}</strong></td>
-      <td><div style="max-width: 400px; word-wrap: break-word; white-space: pre-wrap;">${escapeHTML(d.dua)}</div></td>
-      <td style="text-align: center;"><span class="amin-badge"><i class="fa-solid fa-heart"></i> ${d.amin}</span></td>
-      <td>${stateBadge}</td>
-      <td><span style="font-size: 11px; color:#888;">${d.tarih || 'Bilinmiyor'}</span></td>
-      <td style="text-align: right; white-space: nowrap;">${actionsHtml}</td>
+      <td><strong>${escapeHTML(dua.yazar || 'Anonim')}</strong></td>
+      <td><div style="max-width: 450px; white-space: normal; word-break: break-all;">${escapeHTML(dua.dua)}</div></td>
+      <td style="text-align: center;"><span class="amin-badge"><i class="fa-solid fa-heart"></i> ${dua.amin || 0}</span></td>
+      <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+      <td><span class="text-muted" style="font-size:12px; white-space:nowrap;">${dua.tarih || ''}</span></td>
+      <td style="text-align: right; white-space:nowrap;">${actionButtons}</td>
     `;
     els.duaTableBody.appendChild(tr);
   });
-}
 
-// Global olarak tetiklenebilmesi için window nesnesine atıyoruz
-window.approveDua = async function(id) {
-  await apiPost('/api/duas/approve', { id });
-  await updateSidebarBadges();
-  refreshActiveTabData();
-};
-
-window.deleteDua = async function(id) {
-  if (confirm('Bu dua isteğini silmek istediğinizden emin misiniz?')) {
-    await apiPost('/api/duas/delete', { id });
-    await updateSidebarBadges();
-    refreshActiveTabData();
-  }
-};
-
-// ==================== TAB 3: GÜNLÜK DUALAR ====================
-function renderGunlukDualar() {
-  const list = JSON.parse(localStorage.getItem('gunluk_dualar_list') || '[]');
-  els.dailyDuasCount.textContent = list.length;
-
-  els.dailyDuasList.innerHTML = '';
-  if (list.length === 0) {
-    els.dailyDuasList.innerHTML = '<div class="panel-empty-state"><p>Kayıtlı günlük dua bulunmuyor.</p></div>';
-    return;
-  }
-
-  // Sıralamaya göre diz
-  const sortedList = [...list].sort((a, b) => a.sira - b.sira);
-
-  sortedList.forEach(dua => {
-    const card = document.createElement('div');
-    card.className = 'editor-card';
-    const activeBadge = dua.aktif 
-      ? '<span class="badge badge-success">Aktif</span>' 
-      : '<span class="badge badge-danger">Pasif</span>';
-    const categoryBadge = `<span class="badge badge-primary">${escapeHTML(dua.kategori || 'Genel')}</span>`;
-
-    card.innerHTML = `
-      <div class="editor-card-header">
-        <h4>${escapeHTML(dua.baslik)}</h4>
-        <div class="editor-card-actions">
-          <button class="btn btn-icon btn-icon-edit" onclick="editDailyDua(${dua.id})" title="Düzenle"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn btn-icon btn-icon-toggle" onclick="toggleDailyDua(${dua.id})" title="Aktif/Pasif Yap"><i class="fa-solid fa-eye-slash"></i></button>
-          <button class="btn btn-icon btn-icon-delete" onclick="deleteDailyDua(${dua.id})" title="Sil"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      </div>
-      <div class="editor-card-badges">
-        ${categoryBadge}
-        <span class="badge badge-info">Sıra: ${dua.sira}</span>
-        ${activeBadge}
-      </div>
-      <div class="editor-card-body" style="font-family: 'Traditional Arabic', serif; font-size: 16px; text-align: right; direction: rtl; font-weight: bold;">${escapeHTML(dua.dua_metni)}</div>
-      <div class="editor-card-footer"><strong>Meal/Fazilet:</strong> ${escapeHTML(dua.fazilet)}</div>
-    `;
-    els.dailyDuasList.appendChild(card);
+  // Bind buttons
+  els.duaTableBody.querySelectorAll('.btn-approve-solid').forEach(btn => {
+    btn.addEventListener('click', (e) => handleDuaApprove(e.currentTarget.getAttribute('data-doc-id')));
+  });
+  els.duaTableBody.querySelectorAll('.btn-delete-solid').forEach(btn => {
+    btn.addEventListener('click', (e) => handleDuaDelete(e.currentTarget.getAttribute('data-doc-id')));
   });
 }
 
-function saveDailyDua() {
-  const baslik = els.dailyDuaTitle.value.trim();
-  const dua_metni = els.dailyDuaText.value.trim();
-  const fazilet = els.dailyDuaBenefit.value.trim();
-  const kategori = els.dailyDuaCategory.value;
-  const sira = parseInt(els.dailyDuaOrder.value) || 0;
+async function handleDuaApprove(docId) {
+  try {
+    const docRef = doc(db, "duas", docId);
+    await updateDoc(docRef, { durum: 'yayinda' });
+    showToast("Dua başarıyla onaylandı ve yayına alındı.", "success");
+    await refreshAllData();
+    renderActiveTab();
+  } catch (err) {
+    console.error("Error approving dua:", err);
+    showToast("Dua onaylanırken hata oluştu!", "danger");
+  }
+}
 
-  if (!baslik || !dua_metni || !fazilet) return;
-
-  const list = JSON.parse(localStorage.getItem('gunluk_dualar_list') || '[]');
-
-  if (editingDuaId) {
-    const target = list.find(d => d.id === editingDuaId);
-    if (target) {
-      target.baslik = baslik;
-      target.dua_metni = dua_metni;
-      target.fazilet = fazilet;
-      target.kategori = kategori;
-      target.sira = sira;
+async function handleDuaDelete(docId) {
+  if (confirm("Bu dua isteğini silmek istediğinizden emin misiniz?")) {
+    try {
+      await deleteDoc(doc(db, "duas", docId));
+      showToast("Dua isteği silindi.", "success");
+      await refreshAllData();
+      renderActiveTab();
+    } catch (err) {
+      console.error("Error deleting dua:", err);
+      showToast("Dua silinirken hata oluştu!", "danger");
     }
-    editingDuaId = null;
-  } else {
-    const newDua = {
-      id: Date.now(),
-      baslik,
-      dua_metni,
-      fazilet,
-      kategori,
-      sira,
-      aktif: true
-    };
-    list.push(newDua);
   }
-
-  localStorage.setItem('gunluk_dualar_list', JSON.stringify(list));
-  clearDailyDuaForm();
-  renderGunlukDualar();
 }
 
-window.editDailyDua = function(id) {
-  const list = JSON.parse(localStorage.getItem('gunluk_dualar_list') || '[]');
-  const target = list.find(d => d.id === id);
-  if (target) {
-    editingDuaId = id;
-    els.dailyDuaFormTitle.textContent = 'Duayı Düzenle';
-    els.dailyDuaTitle.value = target.baslik;
-    els.dailyDuaText.value = target.dua_metni;
-    els.dailyDuaBenefit.value = target.fazilet;
-    els.dailyDuaCategory.value = target.kategori || 'Genel';
-    els.dailyDuaOrder.value = target.sira;
-    els.btnCancelDailyDua.style.display = 'inline-flex';
-    els.btnSaveDailyDua.textContent = 'Güncelle';
-    els.dailyDuaForm.scrollIntoView({ behavior: 'smooth' });
-  }
-};
-
-window.toggleDailyDua = function(id) {
-  const list = JSON.parse(localStorage.getItem('gunluk_dualar_list') || '[]');
-  const target = list.find(d => d.id === id);
-  if (target) {
-    target.aktif = !target.aktif;
-    localStorage.setItem('gunluk_dualar_list', JSON.stringify(list));
-    renderGunlukDualar();
-  }
-};
-
-window.deleteDailyDua = function(id) {
-  if (confirm('Bu günlük duayı kalıcı olarak silmek istediğinizden emin misiniz?')) {
-    let list = JSON.parse(localStorage.getItem('gunluk_dualar_list') || '[]');
-    list = list.filter(d => d.id !== id);
-    localStorage.setItem('gunluk_dualar_list', JSON.stringify(list));
-    renderGunlukDualar();
-  }
-};
-
-function clearDailyDuaForm() {
-  editingDuaId = null;
-  els.dailyDuaFormTitle.textContent = 'Yeni Dua Ekle';
-  els.dailyDuaForm.reset();
-  els.dailyDuaOrder.value = 0;
-  els.btnCancelDailyDua.style.display = 'none';
-  els.btnSaveDailyDua.textContent = 'Dua Ekle';
+// ==================== TAB 3: SORU & CEVAP ====================
+function renderSoruCevap() {
+  renderQuestionsList();
+  
+  // Reset Q&A Detail side
+  activeQuestionDocId = null;
+  els.qaDetailContainer.style.display = 'none';
+  els.qaDetailEmpty.style.display = 'flex';
 }
 
-// ==================== TAB 4: HİKAYELER ====================
-async function renderHikayeler() {
-  const list = await apiFetch('/api/stories');
-  els.storiesCount.textContent = list.length;
+function renderQuestionsList() {
+  const filter = els.qaFilterSelect.value;
+  let list = cache.questions;
 
-  els.storiesList.innerHTML = '';
-  if (list.length === 0) {
-    els.storiesList.innerHTML = '<div class="panel-empty-state"><p>Kayıtlı hikaye bulunmuyor.</p></div>';
-    return;
+  if (filter === 'unanswered') {
+    list = cache.questions.filter(q => !q.cevap || q.cevap.trim() === '');
+  } else if (filter === 'answered') {
+    list = cache.questions.filter(q => q.cevap && q.cevap.trim() !== '');
   }
-
-  const sortedList = [...list].sort((a, b) => a.sira - b.sira);
-
-  sortedList.forEach(story => {
-    const card = document.createElement('div');
-    card.className = 'editor-card';
-    const activeBadge = story.aktif 
-      ? '<span class="badge badge-success">Aktif</span>' 
-      : '<span class="badge badge-danger">Pasif</span>';
-    const typeBadge = `<span class="badge badge-info">${escapeHTML(story.kategori || 'Özel')}</span>`;
-
-    let imgHtml = '';
-    if (story.resim) {
-      imgHtml = `<img src="${story.resim}" alt="${escapeHTML(story.baslik)}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color); margin-right: 12px;">`;
-    } else {
-      const initials = story.baslik.substring(0, 2).toUpperCase();
-      imgHtml = `<div style="width: 44px; height: 44px; display:flex; justify-content:center; align-items:center; background:var(--primary-color); color:white; font-weight:bold; font-size:14px; border-radius:8px; margin-right: 12px;">${initials}</div>`;
-    }
-
-    const isSystem = ['dini-danisman', 'mekke', 'ramazan', 'tebrik'].includes(story.id);
-    const deleteBtn = isSystem 
-      ? `<button class="btn btn-icon btn-icon-delete" style="opacity: 0.3; cursor: not-allowed;" title="Sistem hikayeleri silinemez" disabled><i class="fa-solid fa-lock"></i></button>`
-      : `<button class="btn btn-icon btn-icon-delete" onclick="deleteStory('${story.id}')" title="Sil"><i class="fa-solid fa-trash"></i></button>`;
-
-    card.innerHTML = `
-      <div style="display: flex; align-items: center; margin-bottom: 8px;">
-        ${imgHtml}
-        <div style="flex: 1;">
-          <div class="editor-card-header" style="margin-bottom: 0;">
-            <h4 style="max-width: 90%;">${escapeHTML(story.baslik)}</h4>
-            <div class="editor-card-actions">
-              <button class="btn btn-icon btn-icon-edit" onclick="editStory('${story.id}')" title="Düzenle"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-icon btn-icon-toggle" onclick="toggleStory('${story.id}')" title="Aktif/Pasif Yap"><i class="fa-solid fa-eye-slash"></i></button>
-              ${deleteBtn}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="editor-card-badges" style="margin-left: 56px;">
-        ${typeBadge}
-        <span class="badge badge-info">Sıra: ${story.sira}</span>
-        ${activeBadge}
-      </div>
-      <div class="editor-card-body" style="margin-left: 56px; max-width: calc(100% - 56px);">${escapeHTML(story.icerik || '')}</div>
-      <div class="editor-card-footer" style="margin-left: 56px;">Oluşturan: ${story.olusturan || 'Sistem'} | Sıra: ${story.sira}</div>
-    `;
-    els.storiesList.appendChild(card);
-  });
-}
-
-function handleStoryImageUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  if (file.size > 5 * 1024 * 1024) {
-    alert('Dosya boyutu çok büyük! Maksimum 5MB yüklenebilir.');
-    els.storyImageFile.value = '';
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(evt) {
-    const base64 = evt.target.result;
-    els.storyImageData.value = base64;
-    els.storyImagePreview.src = base64;
-    els.storyImagePreviewContainer.style.display = 'block';
-    els.storyImageInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-  };
-  reader.readAsDataURL(file);
-}
-
-function clearStoryImagePreview() {
-  els.storyImageFile.value = '';
-  els.storyImageData.value = '';
-  els.storyImagePreview.src = '';
-  els.storyImagePreviewContainer.style.display = 'none';
-  els.storyImageInfo.textContent = 'Maksimum 5MB (JPG, PNG, WEBP)';
-}
-
-async function saveStory() {
-  const baslik = els.storyTitle.value.trim();
-  const kategori = els.storyType.value;
-  const icerik = els.storyContent.value.trim();
-  const sira = parseInt(els.storyOrder.value) || 0;
-  const resim = els.storyImageData.value; // base64
-
-  if (!baslik || !icerik) return;
-
-  const newStory = {
-    id: editingStoryId || ('story-' + Date.now()),
-    baslik,
-    kategori,
-    sira,
-    aktif: true,
-    resim: resim || null,
-    icerik,
-    olusturan: editingStoryId ? 'system/admin' : 'admin'
-  };
-
-  await apiPost('/api/stories', newStory);
-  clearStoryForm();
-  renderHikayeler();
-}
-
-window.editStory = async function(id) {
-  const list = await apiFetch('/api/stories');
-  const target = list.find(s => s.id === id);
-  if (target) {
-    editingStoryId = id;
-    els.storyFormTitle.textContent = 'Hikayeyi Düzenle';
-    els.storyTitle.value = target.baslik;
-    els.storyType.value = target.kategori === 'Sistem' ? 'Dua' : (target.kategori || 'Dua');
-    els.storyContent.value = target.icerik || '';
-    els.storyOrder.value = target.sira;
-    
-    if (target.resim) {
-      els.storyImageData.value = target.resim;
-      els.storyImagePreview.src = target.resim;
-      els.storyImagePreviewContainer.style.display = 'block';
-    } else {
-      clearStoryImagePreview();
-    }
-
-    els.btnCancelStory.style.display = 'inline-flex';
-    els.btnSaveStory.textContent = 'Güncelle';
-    els.storyForm.scrollIntoView({ behavior: 'smooth' });
-  }
-};
-
-window.toggleStory = async function(id) {
-  const list = await apiFetch('/api/stories');
-  const target = list.find(s => s.id === id);
-  if (target) {
-    target.aktif = !target.aktif;
-    await apiPost('/api/stories', target);
-    renderHikayeler();
-  }
-};
-
-window.deleteStory = async function(id) {
-  if (confirm('Bu özel hikayeyi kalıcı olarak silmek istediğinizden emin misiniz?')) {
-    await apiPost('/api/stories/delete', { id });
-    renderHikayeler();
-  }
-};
-
-function clearStoryForm() {
-  editingStoryId = null;
-  els.storyFormTitle.textContent = 'Yeni Hikaye Ekle';
-  els.storyForm.reset();
-  els.storyOrder.value = 0;
-  clearStoryImagePreview();
-  els.btnCancelStory.style.display = 'none';
-  els.btnSaveStory.textContent = 'Hikaye Ekle';
-}
-
-// ==================== TAB 5: SORU CEVAP ====================
-async function renderSoruCevap() {
-  const list = await apiFetch('/api/questions');
-  els.qaQuestionsCount.textContent = list.length;
 
   els.qaQuestionsList.innerHTML = '';
   if (list.length === 0) {
-    els.qaQuestionsList.innerHTML = '<div class="panel-empty-state" style="height: 200px;"><p>Soru talebi bulunmuyor.</p></div>';
-    els.qaDetailEmpty.style.display = 'flex';
-    els.qaDetailContainer.style.display = 'none';
+    els.qaQuestionsList.innerHTML = `<div style="text-align:center; padding: 20px;" class="text-muted">Soru bulunamadı.</div>`;
     return;
   }
 
-  const sortedList = [...list].sort((a, b) => b.id - a.id);
-
-  sortedList.forEach(qa => {
+  list.forEach(q => {
     const card = document.createElement('div');
-    card.className = `qa-question-card ${selectedQuestionId === qa.id ? 'active' : ''}`;
-    
-    const replyBadge = qa.cevap 
-      ? '<span class="badge badge-success" style="margin-left:auto;">Cevaplandı</span>' 
-      : '<span class="badge badge-warning" style="margin-left:auto;">Cevap Bekliyor</span>';
+    card.className = `qa-question-card ${activeQuestionDocId === q.docId ? 'active' : ''}`;
+    card.setAttribute('data-doc-id', q.docId);
+
+    const answeredBadge = q.cevap && q.cevap.trim() !== '' 
+      ? '<span class="badge badge-success">Cevaplandı</span>' 
+      : '<span class="badge badge-danger">Cevapsız</span>';
 
     card.innerHTML = `
       <div class="qa-meta">
-        <span class="qa-author">${escapeHTML(qa.yazar || 'Kullanıcı')}</span>
-        <span class="qa-date">${qa.tarih || ''}</span>
+        <span class="qa-author">${escapeHTML(q.yazar || 'Anonim')}</span>
+        <span class="qa-date">${q.tarih || ''}</span>
       </div>
-      <div class="qa-snippet">${escapeHTML(qa.soru)}</div>
-      <div style="display:flex; align-items:center; margin-top: 4px;">
-        ${replyBadge}
+      <div class="qa-snippet">${escapeHTML(q.soru)}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+        ${answeredBadge}
+        <span style="font-size:10px; color:var(--text-muted);">ID: ${q.id || ''}</span>
       </div>
     `;
 
-    card.onclick = () => selectQuestion(qa.id);
+    card.addEventListener('click', () => selectQuestion(q));
     els.qaQuestionsList.appendChild(card);
   });
-
-  if (selectedQuestionId) {
-    const activeQA = list.find(q => q.id === selectedQuestionId);
-    if (activeQA) {
-      els.qaDetailAuthor.textContent = activeQA.yazar || 'Kullanıcı';
-      els.qaDetailDate.textContent = activeQA.tarih || '';
-      els.qaDetailText.textContent = activeQA.soru || '';
-      els.qaReplyText.value = activeQA.cevap || '';
-      els.qaDetailEmpty.style.display = 'none';
-      els.qaDetailContainer.style.display = 'block';
-    } else {
-      selectedQuestionId = null;
-      els.qaDetailEmpty.style.display = 'flex';
-      els.qaDetailContainer.style.display = 'none';
-    }
-  } else {
-    els.qaDetailEmpty.style.display = 'flex';
-    els.qaDetailContainer.style.display = 'none';
-  }
 }
 
-function selectQuestion(id) {
-  selectedQuestionId = id;
-  renderSoruCevap();
-}
-
-async function sendQuestionAnswer() {
-  if (!selectedQuestionId) return;
-
-  const replyText = els.qaReplyText.value.trim();
-  if (!replyText) {
-    alert('Lütfen boş bir cevap göndermeyin.');
-    return;
-  }
-
-  await apiPost('/api/questions/answer', { id: selectedQuestionId, cevap: replyText });
-  await updateSidebarBadges();
-  renderSoruCevap();
-  alert('Cevabınız başarıyla iletildi.');
-}
-
-async function deleteQuestion() {
-  if (!selectedQuestionId) return;
-
-  if (confirm('Bu soruyu kalıcı olarak silmek istediğinizden emin misiniz?')) {
-    await apiPost('/api/questions/delete', { id: selectedQuestionId });
-    selectedQuestionId = null;
-    await updateSidebarBadges();
-    renderSoruCevap();
-  }
-}
-
-// ==================== TAB 6: CANLI SOHBET ====================
-async function renderCanliSohbet() {
-  const messages = await apiFetch('/api/chat');
+function selectQuestion(q) {
+  activeQuestionDocId = q.docId;
   
-  const currentMsgCount = els.adminChatMessages.children.length;
-  if (currentMsgCount === messages.length) return; 
-
-  els.adminChatMessages.innerHTML = '';
-  
-  if (messages.length === 0) {
-    els.adminChatMessages.innerHTML = '<div class="panel-empty-state"><p>Sohbette mesaj bulunmuyor.</p></div>';
-    return;
-  }
-
-  messages.forEach(msg => {
-    const bubble = document.createElement('div');
-    bubble.className = 'chat-bubble';
-
-    if (msg.isAdmin) {
-      bubble.className += ' user'; 
-      bubble.innerHTML = `<span class="chat-user-label" style="color: rgba(255,255,255,0.85);">🕌 Yönetici (Admin) - ${msg.tarih || ''}</span>${escapeHTML(msg.metin)}`;
+  // Highlight active card
+  document.querySelectorAll('.qa-question-card').forEach(card => {
+    if (card.getAttribute('data-doc-id') === q.docId) {
+      card.classList.add('active');
     } else {
-      bubble.className += ' other'; 
-      if (msg.isAdminStyle) {
-        bubble.className += ' admin';
-      }
-      bubble.innerHTML = `<span class="chat-user-label">${escapeHTML(msg.yazar)} - ${msg.tarih || ''}</span>${escapeHTML(msg.metin)}`;
+      card.classList.remove('active');
     }
-    
-    els.adminChatMessages.appendChild(bubble);
   });
 
-  els.adminChatMessages.scrollTop = els.adminChatMessages.scrollHeight;
+  // Populate Details
+  els.qaDetailAuthor.textContent = q.yazar || 'Anonim';
+  els.qaDetailDate.textContent = q.tarih || '';
+  els.qaDetailText.textContent = q.soru || '';
+  els.qaReplyText.value = q.cevap || '';
+
+  // Show container
+  els.qaDetailEmpty.style.display = 'none';
+  els.qaDetailContainer.style.display = 'block';
 }
 
-async function sendAdminChatMessage() {
-  const metin = els.adminChatInput.value.trim();
-  if (!metin) return;
+async function saveQuestionAnswer() {
+  if (!activeQuestionDocId) return;
+  const reply = els.qaReplyText.value.trim();
 
-  const timeStr = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-
-  const newMsg = {
-    id: Date.now(),
-    yazar: 'Admin',
-    metin: metin,
-    tarih: timeStr,
-    isAdmin: true
-  };
-
-  await apiPost('/api/chat', newMsg);
-  els.adminChatInput.value = '';
-  renderCanliSohbet();
-}
-
-// ==================== TAB 7: KULLANICI YÖNETİMİ ====================
-async function renderKullaniciYonetimi() {
-  const users = await apiFetch('/api/users');
-  els.usersCount.textContent = users.length;
-
-  // Global engelleme durumunu API'den çek
-  const blockStatus = await apiFetch('/api/block_status', { blocked: false });
-  els.chkGlobalUserBlock.checked = blockStatus.blocked;
-
-  els.usersTableBody.innerHTML = '';
-  if (users.length === 0) {
-    els.usersTableBody.innerHTML = '<tr><td colspan="5" class="text-center text-secondary">Kayıtlı kullanıcı simülasyonu bulunmamaktadır.</td></tr>';
+  if (!reply) {
+    showToast("Lütfen bir cevap yazın!", "warning");
     return;
   }
 
-  users.forEach(user => {
-    const tr = document.createElement('tr');
+  try {
+    const docRef = doc(db, "questions", activeQuestionDocId);
+    await updateDoc(docRef, { cevap: reply });
+    showToast("Cevap başarıyla kaydedildi.", "success");
+    await refreshAllData();
+    renderQuestionsList();
     
-    const stateBadge = user.engelli 
-      ? '<span class="badge badge-danger">Engelli</span>' 
-      : '<span class="badge badge-success">Aktif</span>';
+    // Update currently selected object in memory
+    const updated = cache.questions.find(q => q.docId === activeQuestionDocId);
+    if (updated) {
+      selectQuestion(updated);
+    }
+  } catch (err) {
+    console.error("Error saving answer:", err);
+    showToast("Yanıt kaydedilirken hata oluştu!", "danger");
+  }
+}
 
-    const actionBtn = user.engelli
-      ? `<button class="btn btn-secondary ripple btn-sm" onclick="toggleUserBlock('${escapeJSString(user.eposta)}')" style="padding: 6px 12px; font-size: 11px;"><i class="fa-solid fa-user-check"></i> Engeli Kaldır</button>`
-      : `<button class="btn btn-logout ripple btn-sm" onclick="toggleUserBlock('${escapeJSString(user.eposta)}')" style="padding: 6px 12px; font-size: 11px; color:#fff;"><i class="fa-solid fa-user-slash"></i> Engelle</button>`;
+async function deleteSelectedQuestion() {
+  if (!activeQuestionDocId) return;
+
+  if (confirm("Bu soruyu kalıcı olarak silmek istediğinizden emin misiniz?")) {
+    try {
+      await deleteDoc(doc(db, "questions", activeQuestionDocId));
+      showToast("Soru başarıyla silindi.", "success");
+      await refreshAllData();
+      renderSoruCevap();
+    } catch (err) {
+      console.error("Error deleting question:", err);
+      showToast("Soru silinirken hata oluştu!", "danger");
+    }
+  }
+}
+
+// ==================== TAB 4: ARAÇLAR YÖNETİMİ ====================
+function renderAraçYönetimi() {
+  els.toolsTableBody.innerHTML = '';
+  if (cache.tools.length === 0) {
+    els.toolsTableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;" class="text-muted">Araçlar yüklenemedi.</td></tr>`;
+    return;
+  }
+
+  cache.tools.forEach(tool => {
+    const tr = document.createElement('tr');
+    const statusClass = tool.aktif ? 'badge-success' : 'badge-danger';
+    const statusText = tool.aktif ? 'Aktif' : 'Pasif (Gizli)';
 
     tr.innerHTML = `
-      <td><strong>${escapeHTML(user.adSoyad)}</strong></td>
-      <td>${escapeHTML(user.eposta)}</td>
-      <td><span style="font-size: 11px; color:#888;">${user.kayitTarihi || 'Bilinmiyor'}</span></td>
-      <td>${stateBadge}</td>
-      <td style="text-align: right;">${actionBtn}</td>
-    `;
-    els.usersTableBody.appendChild(tr);
-  });
-}
-
-window.toggleUserBlock = async function(email) {
-  const users = await apiFetch('/api/users');
-  const target = users.find(u => u.eposta === email);
-  if (target) {
-    target.engelli = !target.engelli;
-    await apiPost('/api/users', target);
-    
-    if (email === 'ahmet@gmail.com') {
-      await apiPost('/api/block_status', { blocked: target.engelli });
-    }
-    
-    renderKullaniciYonetimi();
-  }
-};
-
-// ==================== TAB 8: ARAÇLAR YÖNETİMİ ====================
-let editingToolId = null;
-
-async function renderAracYonetimi() {
-  const list = await apiFetch('/api/tools');
-  els.toolsCount.textContent = list.length;
-  els.toolsList.innerHTML = '';
-
-  if (list.length === 0) {
-    els.toolsList.innerHTML = '<div class="panel-empty-state"><p>Kayıtlı araç bulunmuyor.</p></div>';
-    return;
-  }
-
-  // Sort by sira ascending
-  const sortedList = [...list].sort((a, b) => a.sira - b.sira);
-
-  sortedList.forEach((tool, index) => {
-    const card = document.createElement('div');
-    card.className = 'editor-card';
-    const activeBadge = tool.aktif 
-      ? '<span class="badge badge-success">Aktif</span>' 
-      : '<span class="badge badge-danger">Pasif</span>';
-
-    card.innerHTML = `
-      <div class="editor-card-header">
-        <h4>${escapeHTML(tool.title)} <span style="font-size:12px; color:#888;">(${tool.id})</span></h4>
-        <div class="editor-card-actions">
-          <button class="btn btn-icon btn-icon-edit" onclick="editTool('${tool.id}')" title="Düzenle"><i class="fa-solid fa-pen"></i></button>
-          <button class="btn btn-icon btn-icon-toggle" onclick="toggleTool('${tool.id}')" title="Aktif/Pasif Yap"><i class="fa-solid fa-eye-slash"></i></button>
-          <button class="btn btn-icon btn-icon-delete" onclick="deleteTool('${tool.id}')" title="Sil"><i class="fa-solid fa-trash"></i></button>
-          <button class="btn btn-icon" onclick="moveTool('${tool.id}', -1)" title="Yukarı Taşı" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}><i class="fa-solid fa-arrow-up"></i></button>
-          <button class="btn btn-icon" onclick="moveTool('${tool.id}', 1)" title="Aşağı Taşı" ${index === sortedList.length - 1 ? 'disabled style="opacity:0.3;"' : ''}><i class="fa-solid fa-arrow-down"></i></button>
+      <td style="text-align:center; font-size:20px;">${escapeHTML(tool.icon || '✨')}</td>
+      <td><strong>${escapeHTML(tool.title || '')}</strong></td>
+      <td><span style="font-size:13px; color:var(--text-secondary);">${escapeHTML(tool.desc || '')}</span></td>
+      <td><code style="color:var(--accent-gold); font-size:12px;">${escapeHTML(tool.id || '')}</code></td>
+      <td style="text-align:center; font-weight:700;">${tool.sira || 99}</td>
+      <td>
+        <div class="tool-color-indicator">
+          <span class="color-dot" style="background-color: ${parseColor(tool.color)};"></span>
+          <span>${escapeHTML(tool.color || '')}</span>
         </div>
-      </div>
-      <div class="editor-card-badges">
-        <span class="badge badge-info">Sıra: ${tool.sira}</span>
-        <span class="badge" style="background-color: ${tool.color.replace('0xFF', '#')}; color: #333;">Renk: ${tool.color}</span>
-        <span class="badge" style="background:#eee; color:#333;">İkon: ${tool.icon}</span>
-        ${activeBadge}
-      </div>
-      <div class="editor-card-body">${escapeHTML(tool.desc)}</div>
+      </td>
+      <td><span class="badge ${statusClass}">${statusText}</span></td>
+      <td style="text-align: right;">
+        <button class="btn-edit-tool" data-doc-id="${tool.docId}"><i class="fa-solid fa-pen-to-square"></i> Düzenle</button>
+      </td>
     `;
-    els.toolsList.appendChild(card);
+
+    els.toolsTableBody.appendChild(tr);
+  });
+
+  // Bind Edit buttons
+  els.toolsTableBody.querySelectorAll('.btn-edit-tool').forEach(btn => {
+    btn.addEventListener('click', (e) => openToolModal(e.currentTarget.getAttribute('data-doc-id')));
   });
 }
 
-async function saveTool() {
-  const id = els.toolIdInput.value.trim();
-  const title = els.toolTitleInput.value.trim();
-  const desc = els.toolDescInput.value.trim();
-  const icon = els.toolIconInput.value.trim();
-  const color = els.toolColorInput.value.trim();
-  const sira = parseInt(els.toolOrderInput.value) || 0;
+function openToolModal(docId) {
+  const tool = cache.tools.find(t => t.docId === docId);
+  if (!tool) return;
 
-  if (!id || !title || !desc || !icon || !color) return;
+  els.editToolDocId.value = tool.docId;
+  els.editToolId.value = tool.id;
+  els.editToolTitle.value = tool.title;
+  els.editToolDesc.value = tool.desc;
+  els.editToolIcon.value = tool.icon;
+  els.editToolColor.value = tool.color;
+  els.editToolOrder.value = tool.sira;
+  els.editToolStatus.value = String(tool.aktif);
 
-  const list = await apiFetch('/api/tools');
+  els.toolEditModal.style.display = 'flex';
+}
 
-  if (editingToolId) {
-    const target = list.find(t => t.id === editingToolId);
-    if (target) {
-      target.title = title;
-      target.desc = desc;
-      target.icon = icon;
-      target.color = color;
-      target.sira = sira;
-    }
-    editingToolId = null;
+function closeToolModal() {
+  els.toolEditModal.style.display = 'none';
+  els.toolEditForm.reset();
+}
+
+async function handleToolUpdate(e) {
+  e.preventDefault();
+  const docId = els.editToolDocId.value;
+  
+  const updatedData = {
+    title: els.editToolTitle.value.trim(),
+    desc: els.editToolDesc.value.trim(),
+    icon: els.editToolIcon.value.trim(),
+    color: els.editToolColor.value.trim(),
+    sira: parseInt(els.editToolOrder.value) || 1,
+    aktif: els.editToolStatus.value === 'true'
+  };
+
+  try {
+    const docRef = doc(db, "tools", docId);
+    await updateDoc(docRef, updatedData);
+    showToast("Araç güncellendi.", "success");
+    closeToolModal();
+    await refreshAllData();
+    renderAraçYönetimi();
+  } catch (err) {
+    console.error("Error updating tool:", err);
+    showToast("Araç güncellenirken hata oluştu!", "danger");
+  }
+}
+
+// ==================== TAB 5: ERİŞİM KİLİDİ ====================
+function renderErişimKilidi() {
+  els.chkGlobalUserBlock.checked = cache.blockStatus;
+  
+  if (cache.blockStatus) {
+    els.lockIconContainer.className = "lock-icon-wrapper locked";
+    els.lockStatusIcon.className = "fa-solid fa-lock";
+    els.lockStatusTitle.textContent = "Sistem Erişimi: ENGEL KİLİTLİ";
   } else {
-    if (list.some(t => t.id === id)) {
-      alert('Bu araç ID zaten kullanılmaktadır!');
-      return;
-    }
-    const newTool = {
-      id,
-      title,
-      desc,
-      icon,
-      color,
-      sira,
-      aktif: true
-    };
-    list.push(newTool);
+    els.lockIconContainer.className = "lock-icon-wrapper";
+    els.lockStatusIcon.className = "fa-solid fa-lock-open";
+    els.lockStatusTitle.textContent = "Sistem Erişimi: AKTİF (AÇIK)";
   }
-
-  await apiPost('/api/tools', list);
-  clearToolForm();
-  await renderAracYonetimi();
 }
 
-window.editTool = async function(id) {
-  const list = await apiFetch('/api/tools');
-  const target = list.find(t => t.id === id);
-  if (target) {
-    editingToolId = id;
-    els.toolFormTitle.textContent = 'Aracı Düzenle';
-    els.toolIdInput.value = target.id;
-    els.toolIdInput.disabled = true;
-    els.toolTitleInput.value = target.title;
-    els.toolDescInput.value = target.desc;
-    els.toolIconInput.value = target.icon;
-    els.toolColorInput.value = target.color;
-    els.toolOrderInput.value = target.sira;
-    els.btnCancelTool.style.display = 'inline-flex';
-    els.btnSaveTool.textContent = 'Güncelle';
-    els.toolForm.scrollIntoView({ behavior: 'smooth' });
+async function handleBlockStatusToggle(e) {
+  const isBlocked = e.target.checked;
+  try {
+    const globalDocRef = doc(db, "block_status", "global");
+    await updateDoc(globalDocRef, { blocked: isBlocked });
+    
+    cache.blockStatus = isBlocked;
+    renderErişimKilidi();
+    updateSidebarBadges();
+    
+    const message = isBlocked 
+      ? "Erişim kilidi AKTİFLEŞTİRİLDİ. Tüm mobil kullanıcıların erişimi engellendi." 
+      : "Erişim kilidi AÇILDI. Uygulamaya tekrar erişilebilir.";
+    const statusType = isBlocked ? "warning" : "success";
+    showToast(message, statusType);
+  } catch (err) {
+    console.error("Error toggling block status:", err);
+    showToast("Erişim kilidi değiştirilirken hata oluştu!", "danger");
+    e.target.checked = !isBlocked; // revert switch
   }
-};
-
-window.toggleTool = async function(id) {
-  const list = await apiFetch('/api/tools');
-  const target = list.find(t => t.id === id);
-  if (target) {
-    target.aktif = !target.aktif;
-    await apiPost('/api/tools', list);
-    await renderAracYonetimi();
-  }
-};
-
-window.deleteTool = async function(id) {
-  if (confirm('Bu aracı kalıcı olarak silmek istediğinizden emin misiniz?')) {
-    let list = await apiFetch('/api/tools');
-    list = list.filter(t => t.id !== id);
-    await apiPost('/api/tools', list);
-    await renderAracYonetimi();
-  }
-};
-
-window.moveTool = async function(id, direction) {
-  const list = await apiFetch('/api/tools');
-  const sortedList = [...list].sort((a, b) => a.sira - b.sira);
-  const index = sortedList.findIndex(t => t.id === id);
-  if (index === -1) return;
-
-  const newIndex = index + direction;
-  if (newIndex < 0 || newIndex >= sortedList.length) return;
-
-  const temp = sortedList[index].sira;
-  sortedList[index].sira = sortedList[newIndex].sira;
-  sortedList[newIndex].sira = temp;
-
-  if (sortedList[index].sira === sortedList[newIndex].sira) {
-    sortedList.forEach((t, i) => t.sira = i + 1);
-  }
-
-  await apiPost('/api/tools', sortedList);
-  await renderAracYonetimi();
-};
-
-function clearToolForm() {
-  editingToolId = null;
-  els.toolFormTitle.textContent = 'Yeni Araç Ekle';
-  els.toolIdInput.disabled = false;
-  els.toolForm.reset();
-  els.toolOrderInput.value = 0;
-  els.btnCancelTool.style.display = 'none';
-  els.btnSaveTool.textContent = 'Araç Ekle';
 }
 
-// ==================== YARDIMCI ARAÇLAR (UTILITIES) ====================
+// ==================== HELPER UTILITIES ====================
+function parseColor(hexStr) {
+  if (!hexStr) return "transparent";
+  // Parse colors like '0xFFEAF7F1' or '#EAF7F1' or 'EAF7F1'
+  let clean = hexStr.replace('0x', '').replace('#', '');
+  if (clean.length === 8) {
+    // Has alpha channel, extract last 6 characters
+    clean = clean.substring(2);
+  }
+  return '#' + clean;
+}
+
 function escapeHTML(str) {
   if (!str) return '';
   return str.replace(/[&<>'"]/g, 
@@ -1203,7 +945,346 @@ function escapeHTML(str) {
   );
 }
 
-function escapeJSString(str) {
-  if (!str) return '';
-  return str.replace(/'/g, "\\'");
+// Custom Toast/Notification Utility
+function showToast(message, type = "info") {
+  // Create toast container if not exists
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.position = 'fixed';
+    container.style.bottom = '24px';
+    container.style.right = '24px';
+    container.style.zIndex = '9999';
+    container.style.display = 'flex';
+    container.style.flexDirection = 'column';
+    container.style.gap = '10px';
+    document.body.appendChild(container);
+  }
+
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.style.padding = '14px 20px';
+  toast.style.borderRadius = '12px';
+  toast.style.color = '#fff';
+  toast.style.fontSize = '13px';
+  toast.style.fontWeight = '600';
+  toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+  toast.style.display = 'flex';
+  toast.style.alignItems = 'center';
+  toast.style.gap = '10px';
+  toast.style.minWidth = '280px';
+  toast.style.maxWidth = '400px';
+  toast.style.animation = 'fadeIn 0.3s ease, slideInRight 0.3s ease';
+  toast.style.borderLeft = '4px solid';
+  
+  // Style types
+  let icon = 'fa-info-circle';
+  if (type === 'success') {
+    toast.style.backgroundColor = 'rgba(16, 185, 129, 0.95)';
+    toast.style.borderLeftColor = '#34d399';
+    icon = 'fa-circle-check';
+  } else if (type === 'warning') {
+    toast.style.backgroundColor = 'rgba(245, 158, 11, 0.95)';
+    toast.style.borderLeftColor = '#fbbf24';
+    icon = 'fa-triangle-exclamation';
+  } else if (type === 'danger') {
+    toast.style.backgroundColor = 'rgba(244, 63, 94, 0.95)';
+    toast.style.borderLeftColor = '#fca5a5';
+    icon = 'fa-circle-exclamation';
+  } else {
+    toast.style.backgroundColor = 'rgba(59, 130, 246, 0.95)';
+    toast.style.borderLeftColor = '#60a5fa';
+    icon = 'fa-circle-info';
+  }
+
+  toast.innerHTML = `<i class="fa-solid ${icon}" style="font-size:16px;"></i> <div>${escapeHTML(message)}</div>`;
+  container.appendChild(toast);
+
+  // Auto remove toast after 4 seconds
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    toast.style.transition = 'opacity 0.3s, transform 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// Add CSS keyframe for slide in to head
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+`;
+document.head.appendChild(styleSheet);
+
+// ==================== TAB 6: REGISTERED USERS ====================
+function renderUsersTab() {
+  renderUsersList();
+}
+
+function renderUsersList() {
+  const activeFilterBtn = document.querySelector('[data-user-filter].active');
+  const activeFilter = activeFilterBtn ? activeFilterBtn.getAttribute('data-user-filter') : 'all';
+  const searchText = els.searchUserInput.value.toLowerCase().trim();
+
+  // Filter
+  let list = cache.users;
+  if (activeFilter === 'premium') {
+    list = cache.users.filter(u => u.isPremium === true);
+  } else if (activeFilter === 'free') {
+    list = cache.users.filter(u => !u.isPremium);
+  }
+
+  // Search
+  if (searchText) {
+    list = list.filter(u => 
+      (u.name || '').toLowerCase().includes(searchText) || 
+      (u.email || '').toLowerCase().includes(searchText)
+    );
+  }
+
+  // Table Body
+  els.usersTableBody.innerHTML = '';
+  if (list.length === 0) {
+    els.usersTableBody.innerHTML = `<tr><td colspan="6" style="text-align: center;" class="text-muted">Gösterilecek kayıtlı kullanıcı bulunamadı.</td></tr>`;
+    return;
+  }
+
+  list.forEach(user => {
+    const tr = document.createElement('tr');
+    
+    // Gender Avatar
+    const avatarEmoji = user.gender === 'kadin' ? '👩' : '👨';
+    
+    // Premium Badge
+    const premiumClass = user.isPremium ? 'premium' : '';
+    const premiumText = user.isPremium ? '<i class="fa-solid fa-crown" style="color:#fbbf24;"></i> PRO' : 'Standart';
+    
+    // Platform Badge
+    const platform = (user.platform || 'android').toLowerCase();
+    const platformIcon = platform === 'ios' ? 'fa-apple' : 'fa-android';
+    const platformLabel = platform === 'ios' ? 'iOS' : 'Android';
+    
+    // Formatted Dates
+    const createdDate = formatDate(user.created);
+    const lastActiveDate = formatDate(user.lastActive);
+
+    tr.innerHTML = `
+      <td>
+        <div class="user-info-cell">
+          <div class="user-avatar-small">${avatarEmoji}</div>
+          <div class="user-meta-info">
+            <span class="user-meta-name">${escapeHTML(user.name || 'İsimsiz Kullanıcı')}</span>
+            <span class="user-meta-email">${escapeHTML(user.email || '')}</span>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="platform-badge ${platform}">
+          <i class="fa-brands ${platformIcon}"></i> ${platformLabel}
+        </span>
+      </td>
+      <td>
+        <span class="premium-badge-cell ${premiumClass}">${premiumText}</span>
+      </td>
+      <td><span class="text-muted" style="font-size:13px;">${createdDate}</span></td>
+      <td><span class="text-muted" style="font-size:13px;">${lastActiveDate}</span></td>
+      <td style="text-align: right; white-space:nowrap;">
+        <button class="btn-inspect-user" data-doc-id="${user.docId}"><i class="fa-solid fa-address-card"></i> İncele</button>
+      </td>
+    `;
+    els.usersTableBody.appendChild(tr);
+  });
+
+  // Bind Buttons
+  els.usersTableBody.querySelectorAll('.btn-inspect-user').forEach(btn => {
+    btn.addEventListener('click', (e) => openUserModal(e.currentTarget.getAttribute('data-doc-id')));
+  });
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  } catch (e) {
+    return dateStr;
+  }
+}
+
+// Global inspect state
+let activeInspectUser = null;
+
+function openUserModal(docId) {
+  activeInspectUser = cache.users.find(u => u.docId === docId);
+  if (!activeInspectUser) return;
+
+  const user = activeInspectUser;
+
+  els.inspectUserAvatar.textContent = user.gender === 'kadin' ? '👩' : '👨';
+  els.inspectUserName.textContent = user.name || 'İsimsiz Kullanıcı';
+  els.inspectUserEmail.textContent = user.email || '';
+  
+  if (user.isPremium) {
+    els.inspectUserPremiumBadge.textContent = 'PREMIUM (PRO) ÜYE';
+    els.inspectUserPremiumBadge.className = 'premium-badge-status premium';
+    els.inspectUserPremiumToggle.checked = true;
+    els.inspectToggleStatusLabel.textContent = 'Premium / Aktif';
+    els.inspectToggleStatusLabel.className = 'toggle-status-label premium-active';
+  } else {
+    els.inspectUserPremiumBadge.textContent = 'STANDART ÜYE';
+    els.inspectUserPremiumBadge.className = 'premium-badge-status';
+    els.inspectUserPremiumToggle.checked = false;
+    els.inspectToggleStatusLabel.textContent = 'Standart';
+    els.inspectToggleStatusLabel.className = 'toggle-status-label';
+  }
+
+  els.inspectUserGender.textContent = user.gender === 'kadin' ? 'Kadın' : 'Erkek';
+  
+  const platform = (user.platform || 'android').toLowerCase();
+  const platformIcon = platform === 'ios' ? 'fa-apple' : 'fa-android';
+  els.inspectUserPlatform.innerHTML = `<i class="fa-brands ${platformIcon}"></i> ${platform === 'ios' ? 'iOS' : 'Android'}`;
+  
+  els.inspectUserCreatedDate.textContent = formatDate(user.created);
+  els.inspectUserLastActive.textContent = formatDate(user.lastActive);
+  els.inspectUserIp.textContent = user.ipAddress || user.ip || 'Bilinmiyor';
+  
+  // App usage duration format
+  let durationText = '0 Dakika';
+  if (user.usageDuration) {
+    const minutes = Math.floor(user.usageDuration / 60);
+    const seconds = user.usageDuration % 60;
+    if (minutes > 0) {
+      durationText = `${minutes} dk ${seconds} sn`;
+    } else {
+      durationText = `${seconds} saniye`;
+    }
+  }
+  els.inspectUserDuration.textContent = durationText;
+
+  els.userInspectModal.style.display = 'flex';
+}
+
+function closeUserModal() {
+  els.userInspectModal.style.display = 'none';
+  activeInspectUser = null;
+}
+
+async function handleUserPremiumToggle(e) {
+  if (!activeInspectUser) return;
+  const isPremium = e.target.checked;
+  const email = activeInspectUser.email; // Firestore doc ID is email
+
+  try {
+    const docRef = doc(db, "users", email);
+    await updateDoc(docRef, { isPremium: isPremium });
+    
+    showToast(`Premium durum başarıyla güncellendi: ${isPremium ? 'PRO' : 'Standart'}`, "success");
+    
+    // Update local cache item
+    activeInspectUser.isPremium = isPremium;
+    
+    // Update active modal indicators
+    if (isPremium) {
+      els.inspectUserPremiumBadge.textContent = 'PREMIUM (PRO) ÜYE';
+      els.inspectUserPremiumBadge.className = 'premium-badge-status premium';
+      els.inspectToggleStatusLabel.textContent = 'Premium / Aktif';
+      els.inspectToggleStatusLabel.className = 'toggle-status-label premium-active';
+    } else {
+      els.inspectUserPremiumBadge.textContent = 'STANDART ÜYE';
+      els.inspectUserPremiumBadge.className = 'premium-badge-status';
+      els.inspectToggleStatusLabel.textContent = 'Standart';
+      els.inspectToggleStatusLabel.className = 'toggle-status-label';
+    }
+
+    await refreshAllData();
+    renderUsersList();
+  } catch (err) {
+    console.error("Error updating user premium status:", err);
+    showToast("Premium durum güncellenirken hata oluştu!", "danger");
+    e.target.checked = !isPremium; // Revert
+  }
+}
+
+// ==================== TAB 7: BİLDİRİM GÖNDER ====================
+function renderBildirimGonder() {
+  renderNotificationsList();
+}
+
+function renderNotificationsList() {
+  if (!els.notificationsTableBody) return;
+  els.notificationsTableBody.innerHTML = '';
+  const list = cache.announcements || [];
+
+  if (list.length === 0) {
+    els.notificationsTableBody.innerHTML = `<tr><td colspan="3" style="text-align: center;" class="text-muted">Henüz gönderilmiş bildirim bulunmuyor.</td></tr>`;
+    return;
+  }
+
+  // Show last 5 notifications
+  list.slice(0, 5).forEach(notif => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${escapeHTML(notif.title || '')}</strong></td>
+      <td><div style="max-width: 300px; white-space: normal; word-break: break-all;">${escapeHTML(notif.body || '')}</div></td>
+      <td><span class="text-muted" style="font-size:12px; white-space:nowrap;">${formatDate(notif.sentAt)}</span></td>
+    `;
+    els.notificationsTableBody.appendChild(tr);
+  });
+}
+
+async function handleSendNotification(e) {
+  e.preventDefault();
+  const title = els.notifTitle.value.trim();
+  const body = els.notifBody.value.trim();
+
+  if (!title || !body) {
+    showToast("Lütfen tüm alanları doldurun!", "warning");
+    return;
+  }
+
+  // Confirmation dialog
+  if (!confirm("Bu bildirimi tüm kullanıcılara göndermek istediğinizden emin misiniz?")) {
+    return;
+  }
+
+  const btn = document.getElementById('btn-send-notification');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Gönderiliyor...`;
+
+  const newId = Date.now();
+  const announcementDoc = {
+    id: newId,
+    title: title,
+    body: body,
+    sentAt: new Date().toISOString()
+  };
+
+  try {
+    // Save to Firestore 'announcements' using newId as document name
+    await setDoc(doc(db, "announcements", newId.toString()), announcementDoc);
+    
+    showToast("Bildirim başarıyla gönderildi ve yayına alındı.", "success");
+    els.notifTitle.value = '';
+    els.notifBody.value = '';
+    
+    await refreshAllData();
+    renderNotificationsList();
+  } catch (err) {
+    console.error("Error sending notification:", err);
+    showToast("Bildirim gönderilirken hata oluştu!", "danger");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
 }

@@ -5,28 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>İslami Rehber - Yönetim Paneli</title>
   <link rel="stylesheet" href="admin.css">
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
   <!-- ==================== GİRİŞ EKRANI (LOGIN) ==================== -->
   <div id="login-container" class="login-wrapper">
+    <div class="login-card-backdrop"></div>
     <div class="login-card">
       <div class="login-logo">
         <i class="fa-solid fa-mosque"></i>
       </div>
       <h2>İslami Rehber</h2>
-      <p class="subtitle">Yönetim Paneli Girişi</p>
+      <p class="subtitle">Yönetici Girişi</p>
       
       <div class="login-error" id="login-error-msg" style="display: none;"></div>
 
       <form id="login-form" onsubmit="return false;">
         <div class="form-group">
-          <label for="username">Kullanıcı Adı</label>
-          <input type="text" id="username" class="form-control-styled" placeholder="admin" required autocomplete="username">
+          <label for="email"><i class="fa-solid fa-envelope"></i> E-Posta</label>
+          <input type="email" id="email" class="form-control-styled" placeholder="admin@namazvakti.com" required autocomplete="email">
         </div>
         <div class="form-group">
-          <label for="password">Şifre</label>
+          <label for="password"><i class="fa-solid fa-lock"></i> Şifre</label>
           <input type="password" id="password" class="form-control-styled" placeholder="••••••" required autocomplete="current-password">
         </div>
         <button type="submit" id="btn-login" class="btn btn-primary w-100">Giriş Yap</button>
@@ -45,7 +48,7 @@
           </div>
           <div class="logo-text">
             <h3>İslami Rehber</h3>
-            <span>Yönetim Paneli</span>
+            <span>Yönetici Kontrolü</span>
           </div>
         </div>
       </div>
@@ -56,37 +59,45 @@
           <span>Dashboard</span>
         </div>
         
-        <div class="menu-section-label">İÇERİK YÖNETİMİ</div>
+        <div class="menu-section-label">UYGULAMA İÇERİĞİ</div>
 
         <div class="menu-item" data-tab="dua-istekleri">
           <i class="fa-solid fa-hands-praying"></i>
           <span>Dua İstekleri</span>
           <span class="badge badge-warning" id="sidebar-pending-prayers-count" style="display: none;">0</span>
         </div>
-        <div class="menu-item" data-tab="gunluk-dualar">
-          <i class="fa-solid fa-book-open"></i>
-          <span>Günlük Dualar</span>
-        </div>
-        <div class="menu-item" data-tab="hikayeler">
-          <i class="fa-solid fa-photo-film"></i>
-          <span>Hikayeler</span>
-        </div>
+
         <div class="menu-item" data-tab="soru-cevap">
-          <i class="fa-solid fa-comment-question"></i>
+          <i class="fa-solid fa-circle-question"></i>
           <span>Soru & Cevap</span>
           <span class="badge badge-warning" id="sidebar-pending-questions-count" style="display: none;">0</span>
         </div>
-        <div class="menu-item" data-tab="canli-sohbet">
-          <i class="fa-solid fa-comments"></i>
-          <span>Canlı Sohbet</span>
-        </div>
-        <div class="menu-item" data-tab="kullanici-yonetimi">
-          <i class="fa-solid fa-users"></i>
-          <span>Kullanıcı Yönetimi</span>
-        </div>
+
         <div class="menu-item" data-tab="arac-yonetimi">
           <i class="fa-solid fa-screwdriver-wrench"></i>
           <span>Araçlar Yönetimi</span>
+          <span class="badge badge-info" id="sidebar-tools-count">21</span>
+        </div>
+
+        <div class="menu-item" data-tab="bildirim-gonder">
+          <i class="fa-solid fa-bell"></i>
+          <span>Bildirim Gönder</span>
+        </div>
+
+        <div class="menu-section-label">KULLANICI YÖNETİMİ</div>
+
+        <div class="menu-item" data-tab="kullanicilar">
+          <i class="fa-solid fa-users"></i>
+          <span>Kayıtlı Kullanıcılar</span>
+          <span class="badge badge-info" id="sidebar-users-count">0</span>
+        </div>
+
+        <div class="menu-section-label">GÜVENLİK VE AYARLAR</div>
+
+        <div class="menu-item" data-tab="erisim-kilidi">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Erişim Kilidi</span>
+          <span class="badge badge-danger" id="sidebar-block-status" style="display: none;">KİLİTLİ</span>
         </div>
       </nav>
 
@@ -107,10 +118,10 @@
         </div>
         <div class="topbar-user">
           <div class="user-info">
-            <span class="username">admin</span>
+            <span class="username" id="admin-display-name">Yönetici</span>
             <span class="role">Süper Admin</span>
           </div>
-          <div class="avatar">A</div>
+          <div class="avatar"><i class="fa-solid fa-user-shield"></i></div>
         </div>
       </header>
 
@@ -123,20 +134,9 @@
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-content">
-                <span class="stat-label">TOPLAM KULLANICI</span>
-                <h3 class="stat-value" id="stat-total-users">0</h3>
-                <span class="stat-sub text-success"><i class="fa-solid fa-arrow-up"></i> +12% bu ay</span>
-              </div>
-              <div class="stat-icon bg-success-light text-success">
-                <i class="fa-solid fa-users"></i>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-content">
-                <span class="stat-label">TOPLAM DUA</span>
+                <span class="stat-label">TOPLAM DUA İSTEĞİ</span>
                 <h3 class="stat-value" id="stat-total-prayers">0</h3>
-                <span class="stat-sub text-primary"><i class="fa-solid fa-heart"></i> Tüm istekler</span>
+                <span class="stat-sub text-success"><i class="fa-solid fa-heart"></i> Tüm dualar</span>
               </div>
               <div class="stat-icon bg-primary-light text-primary">
                 <i class="fa-solid fa-hands-praying"></i>
@@ -145,9 +145,9 @@
 
             <div class="stat-card">
               <div class="stat-content">
-                <span class="stat-label">ONAY BEKLEYEN</span>
-                <h3 class="stat-value" id="stat-pending-prayers">0</h3>
-                <span class="stat-sub text-warning"><i class="fa-solid fa-clock"></i> İncelenmeli</span>
+                <span class="stat-label">ONAY BEKLEYEN DUALAR</span>
+                <h3 class="stat-value text-warning" id="stat-pending-prayers">0</h3>
+                <span class="stat-sub text-warning"><i class="fa-solid fa-hourglass-half"></i> Moderasyon</span>
               </div>
               <div class="stat-icon bg-warning-light text-warning">
                 <i class="fa-solid fa-clock"></i>
@@ -156,12 +156,23 @@
 
             <div class="stat-card">
               <div class="stat-content">
-                <span class="stat-label">ONAYLANAN</span>
-                <h3 class="stat-value" id="stat-approved-prayers">0</h3>
-                <span class="stat-sub text-success"><i class="fa-solid fa-check-double"></i> Yayında</span>
+                <span class="stat-label">TOPLAM SORU TALEBİ</span>
+                <h3 class="stat-value" id="stat-total-questions">0</h3>
+                <span class="stat-sub text-info"><i class="fa-solid fa-comments"></i> Soru & Cevap</span>
               </div>
-              <div class="stat-icon bg-warning-light text-warning">
-                <i class="fa-solid fa-circle-check"></i>
+              <div class="stat-icon bg-info-light text-info">
+                <i class="fa-solid fa-circle-question"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-content">
+                <span class="stat-label">CEVAP BEKLEYEN SORULAR</span>
+                <h3 class="stat-value text-danger" id="stat-pending-questions">0</h3>
+                <span class="stat-sub text-danger"><i class="fa-solid fa-reply"></i> Yanıt bekleyen</span>
+              </div>
+              <div class="stat-icon bg-danger-light text-danger">
+                <i class="fa-solid fa-circle-exclamation"></i>
               </div>
             </div>
           </div>
@@ -171,17 +182,17 @@
             <!-- Son Eklenen Dualar -->
             <div class="panel-card flex-2">
               <div class="panel-header">
-                <h3>Son Eklenen Dualar</h3>
+                <h3>Son Dua İstekleri</h3>
                 <button class="btn btn-text btn-view-all-duas">Tümünü Gör</button>
               </div>
               <div class="table-responsive">
                 <table class="table-styled">
                   <thead>
                     <tr>
-                      <th>KULLANICI</th>
-                      <th>DUA METNİ</th>
-                      <th>DURUM</th>
-                      <th>TARİH</th>
+                      <th>Kullanıcı</th>
+                      <th>Dua Metni</th>
+                      <th>Durum</th>
+                      <th>Tarih</th>
                     </tr>
                   </thead>
                   <tbody id="dashboard-recent-prayers">
@@ -191,13 +202,34 @@
               </div>
             </div>
 
-            <!-- Onay Bekleyen Dualar Hızlı Bakış -->
+            <!-- Hızlı Bilgi & Durum Kartı -->
             <div class="panel-card flex-1">
               <div class="panel-header">
-                <h3>Onay Bekleyen Dualar</h3>
+                <h3>Sistem Durumu</h3>
               </div>
-              <div class="quick-pending-list" id="dashboard-pending-prayers-list">
-                <!-- Dinamik veya boş uyarısı -->
+              <div class="system-status-box">
+                <div class="status-item">
+                  <span class="status-label">Uygulama Erişim Durumu:</span>
+                  <span class="status-value-badge" id="dashboard-block-status-badge">Aktif</span>
+                </div>
+                <div class="status-item">
+                  <span class="status-label">Kayıtlı Araç Sayısı:</span>
+                  <span class="status-value-badge status-blue" id="dashboard-tools-count">21 Araç</span>
+                </div>
+                <div class="status-item">
+                  <span class="status-label">Kayıtlı Kullanıcı Sayısı:</span>
+                  <span class="status-value-badge status-purple" id="dashboard-users-count-badge">0 Kullanıcı</span>
+                </div>
+                <div class="status-item">
+                  <span class="status-label">Firebase Bağlantısı:</span>
+                  <span class="status-value-badge status-green"><i class="fa-solid fa-cloud"></i> Çevrimiçi</span>
+                </div>
+              </div>
+              
+              <div class="quick-nav-actions" style="margin-top: 20px;">
+                <button class="btn btn-secondary w-100" id="btn-quick-block-nav" style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                  <i class="fa-solid fa-shield-halved"></i> Erişim Kilidi Ayarlarına Git
+                </button>
               </div>
             </div>
           </div>
@@ -205,52 +237,27 @@
 
         <!-- SECİM: DUA İSTEKLERİ -->
         <section id="tab-content-dua-istekleri" class="tab-pane">
-          <div class="panel-stats-summary stats-grid" style="margin-bottom: 20px;">
-            <div class="stat-card">
-              <div class="stat-content">
-                <span class="stat-label">TOPLAM DUA</span>
-                <h3 class="stat-value" id="summary-total-prayers">0</h3>
-              </div>
-              <div class="stat-icon bg-primary-light text-primary"><i class="fa-solid fa-hands-praying"></i></div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-content">
-                <span class="stat-label">ONAY BEKLEYEN</span>
-                <h3 class="stat-value" id="summary-pending-prayers">0</h3>
-              </div>
-              <div class="stat-icon bg-warning-light text-warning"><i class="fa-solid fa-clock"></i></div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-content">
-                <span class="stat-label">ONAYLANAN</span>
-                <h3 class="stat-value" id="summary-approved-prayers">0</h3>
-              </div>
-              <div class="stat-icon bg-success-light text-success"><i class="fa-solid fa-circle-check"></i></div>
-            </div>
-          </div>
-
           <div class="panel-card">
             <div class="panel-toolbar">
               <div class="filter-buttons">
                 <button class="btn btn-filter active" data-filter="all">Tümü</button>
                 <button class="btn btn-filter" data-filter="pending">Bekleyenler</button>
-                <button class="btn btn-filter" data-filter="approved">Onaylananlar</button>
+                <button class="btn btn-filter" data-filter="approved">Yayındakiler</button>
               </div>
               <div class="search-box">
-                <input type="text" id="search-dua" class="form-control-styled" placeholder="Ara...">
-                <button class="btn btn-primary" id="btn-search-dua">Ara</button>
+                <input type="text" id="search-dua" class="form-control-styled" placeholder="Dua veya yazar ara...">
               </div>
             </div>
             <div class="table-responsive">
               <table class="table-styled">
                 <thead>
                   <tr>
-                    <th>KULLANICI</th>
-                    <th>DUA METNİ</th>
-                    <th style="text-align: center;">AMİN</th>
-                    <th>DURUM</th>
-                    <th>TARİH</th>
-                    <th style="text-align: right;">İŞLEM</th>
+                    <th>Yazar</th>
+                    <th>Dua Metni</th>
+                    <th style="text-align: center;">Amin</th>
+                    <th>Durum</th>
+                    <th>Tarih</th>
+                    <th style="text-align: right;">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody id="dua-istekleri-table-body">
@@ -261,128 +268,20 @@
           </div>
         </section>
 
-        <!-- SECİM: GÜNLÜK DUALAR -->
-        <section id="tab-content-gunluk-dualar" class="tab-pane">
-          <div class="editor-layout">
-            <!-- Form Kartı -->
-            <div class="panel-card editor-form-panel">
-              <div class="panel-header">
-                <h3 id="daily-dua-form-title">Yeni Dua Ekle</h3>
-              </div>
-              <form id="daily-dua-form" onsubmit="return false;">
-                <input type="hidden" id="daily-dua-id">
-                <div class="form-group">
-                  <label for="daily-dua-title">Başlık</label>
-                  <input type="text" id="daily-dua-title" class="form-control-styled w-100" placeholder="Örn: Sabah Duası" required>
-                </div>
-                <div class="form-group">
-                  <label for="daily-dua-text">Dua Metni</label>
-                  <textarea id="daily-dua-text" class="form-control-styled w-100" style="height: 100px; resize: vertical;" placeholder="Arapça veya Türkçe dua metni..." required></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="daily-dua-benefit">Fazilet / Meal</label>
-                  <textarea id="daily-dua-benefit" class="form-control-styled w-100" style="height: 80px; resize: vertical;" placeholder="Duanın anlamı ve fazileti..." required></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="daily-dua-category">Kategori</label>
-                  <select id="daily-dua-category" class="form-control-styled w-100">
-                    <option value="Genel">Genel</option>
-                    <option value="Sabah">Sabah</option>
-                    <option value="Akşam">Akşam</option>
-                    <option value="Yemek">Yemek</option>
-                    <option value="Uyku">Uyku</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="daily-dua-order">Sıra</label>
-                  <input type="number" id="daily-dua-order" class="form-control-styled w-100" value="0" min="0">
-                </div>
-                <div class="form-buttons">
-                  <button type="button" id="btn-cancel-daily-dua" class="btn btn-secondary" style="display: none;">İptal</button>
-                  <button type="submit" id="btn-save-daily-dua" class="btn btn-primary">Dua Ekle</button>
-                </div>
-              </form>
-            </div>
-
-            <!-- Liste Kartı -->
-            <div class="panel-card editor-list-panel">
-              <div class="panel-header">
-                <h3>Günlük Dualar (<span id="daily-duas-count">0</span>)</h3>
-              </div>
-              <div class="scrollable-list" id="daily-duas-list">
-                <!-- Dinamik yüklenecek -->
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- SECİM: HİKAYELER -->
-        <section id="tab-content-hikayeler" class="tab-pane">
-          <div class="editor-layout">
-            <!-- Form Kartı -->
-            <div class="panel-card editor-form-panel">
-              <div class="panel-header">
-                <h3 id="story-form-title">Yeni Hikaye Ekle</h3>
-              </div>
-              <form id="story-form" onsubmit="return false;">
-                <input type="hidden" id="story-id">
-                <div class="form-group">
-                  <label for="story-title">Başlık</label>
-                  <input type="text" id="story-title" class="form-control-styled w-100" placeholder="Örn: Cuma Tebriği" required>
-                </div>
-                <div class="form-group">
-                  <label>Resim (Opsiyonel)</label>
-                  <input type="file" id="story-image-file" accept="image/*" class="form-control-styled w-100" style="padding: 6px 12px; font-weight: 500;">
-                  <span id="story-image-info" style="font-size: 11px; color: var(--text-secondary); display: block; margin-top: 4px;">JPG, PNG, GIF veya WEBP (Max 5MB)</span>
-                  <input type="hidden" id="story-image-data">
-                  <div class="preview-img-container" id="story-image-preview-container" style="display: none;">
-                    <img id="story-image-preview" src="" alt="Önizleme">
-                    <button type="button" id="btn-remove-story-img" class="btn-remove-img">&times;</button>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="story-type">İçerik Türü</label>
-                  <select id="story-type" class="form-control-styled w-100">
-                    <option value="Dua">Dua</option>
-                    <option value="Hadis">Hadis</option>
-                    <option value="Hikaye">Hikaye</option>
-                    <option value="Faydalı Bilgi">Faydalı Bilgi</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="story-content">İçerik</label>
-                  <textarea id="story-content" class="form-control-styled w-100" style="height: 100px; resize: vertical;" placeholder="Hikayeye tıklandığında gösterilecek detaylı içerik..." required></textarea>
-                </div>
-                <div class="form-group">
-                  <label for="story-order">Sıra</label>
-                  <input type="number" id="story-order" class="form-control-styled w-100" value="0" min="0">
-                </div>
-                <div class="form-buttons">
-                  <button type="button" id="btn-cancel-story" class="btn btn-secondary" style="display: none;">İptal</button>
-                  <button type="submit" id="btn-save-story" class="btn btn-primary">Hikaye Ekle</button>
-                </div>
-              </form>
-            </div>
-
-            <!-- Liste Kartı -->
-            <div class="panel-card editor-list-panel">
-              <div class="panel-header">
-                <h3>Hikayeler (<span id="stories-count">0</span>)</h3>
-              </div>
-              <div class="scrollable-list" id="stories-list">
-                <!-- Dinamik yüklenecek -->
-              </div>
-            </div>
-          </div>
-        </section>
-
         <!-- SECİM: SORU & CEVAP -->
         <section id="tab-content-soru-cevap" class="tab-pane">
           <div class="qa-layout">
             <!-- Sol: Soru Listesi -->
             <div class="panel-card qa-list-panel">
               <div class="panel-header">
-                <h3>Soru Talepleri (<span id="qa-questions-count">0</span>)</h3>
+                <h3>Soru Listesi</h3>
+                <div class="qa-filter">
+                  <select id="qa-filter-select" class="form-control-styled" style="padding: 4px 8px; font-size: 12px; width: auto;">
+                    <option value="all">Tümü</option>
+                    <option value="unanswered">Cevaplanmamış</option>
+                    <option value="answered">Cevaplanmış</option>
+                  </select>
+                </div>
               </div>
               <div class="scrollable-list" id="qa-questions-list">
                 <!-- Dinamik yüklenecek -->
@@ -392,32 +291,32 @@
             <!-- Sağ: Cevaplama Arayüzü -->
             <div class="panel-card qa-detail-panel">
               <div class="panel-header">
-                <h3>Soru Detayı & Cevap</h3>
+                <h3>Soru İnceleme & Yanıtlama</h3>
               </div>
               <div id="qa-detail-empty" class="panel-empty-state">
                 <i class="fa-solid fa-comment-dots"></i>
-                <p>Cevaplamak veya görüntülemek için soldan bir soru seçin.</p>
+                <p>Detayları görüntülemek ve cevap yazmak için soldan bir soru seçin.</p>
               </div>
               <div id="qa-detail-container" style="display: none;">
                 <div class="qa-question-detail-card">
                   <div class="qa-meta">
-                    <span class="qa-author" id="qa-detail-author">Anonim</span>
+                    <span class="qa-author" id="qa-detail-author">Yükleniyor...</span>
                     <span class="qa-date" id="qa-detail-date">17.03.2026</span>
                   </div>
-                  <div class="qa-text" id="qa-detail-text">Soru metni buraya gelecek.</div>
+                  <div class="qa-text" id="qa-detail-text">Soru metni yükleniyor...</div>
                 </div>
 
                 <div class="qa-answer-form" style="margin-top: 20px;">
                   <div class="form-group">
-                    <label for="qa-reply-text">Yazacağınız Cevap (Müftü / Yönetici Unvanıyla Gönderilir)</label>
-                    <textarea id="qa-reply-text" class="form-control-styled w-100" style="height: 150px; resize: none;" placeholder="İslami kaynaklara ve fıkha uygun açıklayıcı cevap yazınız..."></textarea>
+                    <label for="qa-reply-text"><i class="fa-solid fa-reply"></i> Dini Danışman Cevabı</label>
+                    <textarea id="qa-reply-text" class="form-control-styled w-100" style="height: 180px; resize: vertical;" placeholder="İslami kaynaklara ve fıkha uygun, açıklayıcı bir yanıt giriniz..."></textarea>
                   </div>
-                  <div class="form-buttons" style="justify-content: flex-end;">
-                    <button type="button" id="btn-delete-question" class="btn btn-secondary text-danger" style="margin-right: auto;">
+                  <div class="form-buttons" style="justify-content: flex-end; gap: 10px; margin-top: 15px;">
+                    <button type="button" id="btn-delete-question" class="btn btn-danger-outline">
                       <i class="fa-solid fa-trash-can"></i> Soruyu Sil
                     </button>
                     <button type="button" id="btn-send-answer" class="btn btn-primary">
-                      <i class="fa-solid fa-paper-plane"></i> Cevabı Gönder
+                      <i class="fa-solid fa-paper-plane"></i> Cevabı Kaydet
                     </button>
                   </div>
                 </div>
@@ -426,65 +325,59 @@
           </div>
         </section>
 
-        <!-- SECİM: CANLI SOHBET -->
-        <section id="tab-content-canli-sohbet" class="tab-pane">
-          <div class="chat-panel-layout">
-            <div class="panel-card chat-room-card">
-              <div class="panel-header">
-                <h3>Canlı Sohbet Odası</h3>
-                <div class="online-indicator">
-                  <span class="dot pulse"></span> Canlı Yayın Akışı (Admin Etiketli)
-                </div>
-              </div>
-              
-              <div class="chat-messages-container" id="admin-chat-messages">
-                <!-- Mesajlar dinamik akacak -->
-              </div>
-              
-              <div class="chat-input-row">
-                <input type="text" id="admin-chat-input" class="form-control-styled" placeholder="Yönetici olarak mesaj yazın...">
-                <button id="btn-admin-chat-send" class="btn btn-primary">
-                  <i class="fa-solid fa-paper-plane"></i> Gönder
-                </button>
-              </div>
+        <!-- SECİM: ARAÇLAR YÖNETİMİ -->
+        <section id="tab-content-arac-yonetimi" class="tab-pane">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h3>Dinamik Araç Listesi</h3>
+              <p class="subtitle" style="margin-bottom: 0;">Sistemde yüklü olan tam 21 aracı listeler ve düzenlemenizi sağlar.</p>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="table-styled">
+                <thead>
+                  <tr>
+                    <th style="width: 60px; text-align: center;">İkon</th>
+                    <th>Araç Başlığı</th>
+                    <th>Açıklama</th>
+                    <th>ID</th>
+                    <th style="text-align: center;">Sıralama</th>
+                    <th>Renk Kodu</th>
+                    <th>Durum</th>
+                    <th style="text-align: right;">İşlem</th>
+                  </tr>
+                </thead>
+                <tbody id="tools-table-body">
+                  <!-- Dinamik yüklenecek -->
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
 
-        <!-- SECİM: KULLANICI YÖNETİMİ -->
-        <section id="tab-content-kullanici-yonetimi" class="tab-pane">
-          <!-- Genel Engelleme Durumu -->
-          <div class="panel-card text-center" style="margin-bottom: 20px; padding: 25px 20px;">
-            <div class="block-status-header" style="max-width: 500px; margin: 0 auto;">
-              <i class="fa-solid fa-shield-slash text-danger" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
-              <h3>Uygulama Genel Erişim Kilidi</h3>
-              <p style="font-size: 13px; color: var(--text-secondary); margin: 8px 0 15px 0;">
-                Bu ayarı açarsanız, uygulamaya girmeye çalışan tüm kullanıcıların ekranında "Erişiminiz Engellendi" uyarısı çıkar ve giriş yapamazlar.
-              </p>
-              <div class="toggle-switch-wrapper" style="display: inline-flex; align-items: center; gap: 10px;">
-                <span style="font-weight: 700; font-size: 14px;">Genel Engelleme Modu:</span>
-                <label class="switch">
-                  <input type="checkbox" id="chk-global-user-block">
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <!-- Kullanıcı Tablosu -->
+        <!-- SECİM: KAYITLI KULLANICILAR -->
+        <section id="tab-content-kullanicilar" class="tab-pane">
           <div class="panel-card">
-            <div class="panel-header">
-              <h3>Kayıtlı Kullanıcılar (<span id="users-count">0</span>)</h3>
+            <div class="panel-toolbar">
+              <div class="filter-buttons">
+                <button class="btn btn-filter active" data-user-filter="all">Tümü</button>
+                <button class="btn btn-filter" data-user-filter="premium">Premium Üyeler</button>
+                <button class="btn btn-filter" data-user-filter="free">Standart Üyeler</button>
+              </div>
+              <div class="search-box">
+                <input type="text" id="search-user" class="form-control-styled" placeholder="İsim veya e-posta ara...">
+              </div>
             </div>
             <div class="table-responsive">
               <table class="table-styled">
                 <thead>
                   <tr>
-                    <th>AD SOYAD</th>
-                    <th>E-POSTA</th>
-                    <th>KAYIT TARİHİ</th>
-                    <th>DURUM</th>
-                    <th style="text-align: right;">İŞLEM</th>
+                    <th>Kullanıcı Bilgileri</th>
+                    <th>Platform</th>
+                    <th>Premium Durumu</th>
+                    <th>Kayıt Tarihi</th>
+                    <th>Son Görülme</th>
+                    <th style="text-align: right;">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody id="users-table-body">
@@ -495,54 +388,82 @@
           </div>
         </section>
 
-        <!-- SECİM: ARAÇLAR YÖNETİMİ -->
-        <section id="tab-content-arac-yonetimi" class="tab-pane">
-          <div class="editor-layout">
-            <!-- Form Kartı -->
-            <div class="panel-card editor-form-panel">
-              <div class="panel-header">
-                <h3 id="tool-form-title">Yeni Araç Ekle</h3>
-              </div>
-              <form id="tool-form" onsubmit="return false;">
-                <input type="hidden" id="tool-form-id">
-                <div class="form-group">
-                  <label for="tool-id">Araç ID (Benzersiz İngilizce Karakterler)</label>
-                  <input type="text" id="tool-id" class="form-control-styled w-100" placeholder="Örn: zikirmatik" required>
-                </div>
-                <div class="form-group">
-                  <label for="tool-title">Başlık</label>
-                  <input type="text" id="tool-title-input" class="form-control-styled w-100" placeholder="Örn: Zikirmatik" required>
-                </div>
-                <div class="form-group">
-                  <label for="tool-desc">Açıklama</label>
-                  <input type="text" id="tool-desc" class="form-control-styled w-100" placeholder="Örn: Dijital tesbih sayacı" required>
-                </div>
-                <div class="form-group">
-                  <label for="tool-icon">İkon (Emoji)</label>
-                  <input type="text" id="tool-icon" class="form-control-styled w-100" placeholder="Örn: 📿" required>
-                </div>
-                <div class="form-group">
-                  <label for="tool-color">Arka Plan Rengi (Hex e.g. 0xFFEAF4FB)</label>
-                  <input type="text" id="tool-color" class="form-control-styled w-100" placeholder="Örn: 0xFFEAF4FB" required>
-                </div>
-                <div class="form-group">
-                  <label for="tool-order">Sıra</label>
-                  <input type="number" id="tool-order" class="form-control-styled w-100" value="0" min="0">
-                </div>
-                <div class="form-buttons">
-                  <button type="button" id="btn-cancel-tool" class="btn btn-secondary" style="display: none;">İptal</button>
-                  <button type="submit" id="btn-save-tool" class="btn btn-primary">Araç Ekle</button>
-                </div>
-              </form>
+        <!-- SECİM: BİLDİRİM GÖNDER -->
+        <section id="tab-content-bildirim-gonder" class="tab-pane">
+          <div class="panel-card" style="max-width: 600px; margin: 0 auto;">
+            <div class="panel-header">
+              <h3>Bildirim & Günlük Ayet Gönder</h3>
+              <p class="subtitle">Buradan yazacağınız bildirimler veya günlük ayetler, uygulamayı kullanan tüm kullanıcıların ekranına anlık olarak düşecektir.</p>
             </div>
-
-            <!-- Liste Kartı -->
-            <div class="panel-card editor-list-panel">
-              <div class="panel-header">
-                <h3>Sistem Araçları (<span id="tools-count">0</span>)</h3>
+            
+            <form id="notification-form" onsubmit="return false;" style="margin-top: 20px;">
+              <div class="form-group">
+                <label for="notif-title"><i class="fa-solid fa-heading"></i> Bildirim Başlığı</label>
+                <input type="text" id="notif-title" class="form-control-styled w-100" placeholder="Örn: Günün Ayeti, Duyuru" required>
               </div>
-              <div class="scrollable-list" id="tools-list">
-                <!-- Dinamik yüklenecek -->
+              
+              <div class="form-group" style="margin-top: 15px;">
+                <label for="notif-body"><i class="fa-solid fa-align-left"></i> Bildirim İçeriği</label>
+                <textarea id="notif-body" class="form-control-styled w-100" style="height: 120px; resize: vertical;" placeholder="Bildirim veya günlük ayet metnini buraya yazın..." required></textarea>
+              </div>
+
+              <div class="form-buttons" style="margin-top: 20px; justify-content: flex-end;">
+                <button type="submit" id="btn-send-notification" class="btn btn-primary">
+                  <i class="fa-solid fa-paper-plane"></i> Hemen Gönder
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <!-- Gönderilen Son Bildirimler Listesi -->
+          <div class="panel-card" style="max-width: 600px; margin: 24px auto 0 auto;">
+            <div class="panel-header">
+              <h3>Son Gönderilen Bildirimler</h3>
+            </div>
+            <div class="table-responsive" style="margin-top: 10px;">
+              <table class="table-styled">
+                <thead>
+                  <tr>
+                    <th>Başlık</th>
+                    <th>İçerik</th>
+                    <th>Tarih</th>
+                  </tr>
+                </thead>
+                <tbody id="notifications-table-body">
+                  <tr><td colspan="3" style="text-align: center;" class="text-muted">Yükleniyor...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECİM: ERİŞİM KİLİDİ -->
+        <section id="tab-content-erisim-kilidi" class="tab-pane">
+          <div class="panel-card lock-panel">
+            <div class="lock-panel-content">
+              <div class="lock-icon-wrapper" id="lock-icon-container">
+                <i class="fa-solid fa-shield-halved" id="lock-status-icon"></i>
+              </div>
+              
+              <h2 id="lock-status-title">Sistem Erişimi: AKTİF</h2>
+              <p class="lock-desc">
+                Erişim kilidini açtığınızda, mobil uygulamanıza giren tüm kullanıcılar bir kilit ekranıyla karşılaşır ve uygulamayı kullanamazlar. Acil durumlar ve bakım çalışmaları için bu paneli kullanabilirsiniz.
+              </p>
+
+              <div class="lock-control-box">
+                <span class="lock-toggle-label">Genel Engelleme Modu:</span>
+                <label class="switch">
+                  <input type="checkbox" id="chk-global-user-block">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="warning-alert-box">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div class="alert-content">
+                  <h4>DİKKAT</h4>
+                  <p>Bu ayar anında geçerlilik kazanır. Uygulamaya bağlı tüm kullanıcılar blok ekranına yönlendirilir!</p>
+                </div>
               </div>
             </div>
           </div>
@@ -552,6 +473,129 @@
     </main>
   </div>
 
+  <!-- ==================== ARAÇ DÜZENLEME MODALI ==================== -->
+  <div id="tool-edit-modal" class="modal-wrapper" style="display: none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Araç Düzenle</h3>
+        <button type="button" class="btn-close-modal" id="btn-close-tool-modal">&times;</button>
+      </div>
+      <form id="tool-edit-form" onsubmit="return false;">
+        <input type="hidden" id="edit-tool-doc-id">
+        <input type="hidden" id="edit-tool-id">
+        
+        <div class="form-group">
+          <label for="edit-tool-title">Başlık</label>
+          <input type="text" id="edit-tool-title" class="form-control-styled w-100" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-tool-desc">Açıklama</label>
+          <input type="text" id="edit-tool-desc" class="form-control-styled w-100" required>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="edit-tool-icon">İkon (Emoji)</label>
+            <input type="text" id="edit-tool-icon" class="form-control-styled w-100" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-tool-color">Arka Plan Rengi (Hex)</label>
+            <input type="text" id="edit-tool-color" class="form-control-styled w-100" placeholder="0xFFEAF4FB" required>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label for="edit-tool-order">Görünüm Sırası</label>
+            <input type="number" id="edit-tool-order" class="form-control-styled w-100" min="1" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-tool-status">Durum</label>
+            <select id="edit-tool-status" class="form-control-styled w-100">
+              <option value="true">Aktif</option>
+              <option value="false">Pasif (Gizli)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-buttons" style="margin-top: 25px;">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-tool-edit">İptal</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-tool-edit">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== KULLANICI DETAY MODALI ==================== -->
+  <div id="user-inspect-modal" class="modal-wrapper" style="display: none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card user-detail-card-modal">
+      <div class="modal-header">
+        <h3>Kullanıcı Detay Kartı</h3>
+        <button type="button" class="btn-close-modal" id="btn-close-user-modal">&times;</button>
+      </div>
+      <div class="modal-body user-inspect-body">
+        <div class="user-inspect-header">
+          <div class="user-avatar-large" id="inspect-user-avatar">👨</div>
+          <div class="user-main-info">
+            <h2 id="inspect-user-name">Yükleniyor...</h2>
+            <p id="inspect-user-email">email@email.com</p>
+            <span class="premium-badge-status" id="inspect-user-premium-badge">STANDART ÜYE</span>
+          </div>
+        </div>
+
+        <div class="user-inspect-details-grid">
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa-solid fa-venus-mars"></i> Cinsiyet</div>
+            <div class="detail-value" id="inspect-user-gender">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa-solid fa-mobile-screen-button"></i> Platform / Cihaz</div>
+            <div class="detail-value" id="inspect-user-platform">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa-solid fa-calendar-plus"></i> Kayıt Tarihi</div>
+            <div class="detail-value" id="inspect-user-created-date">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa-solid fa-clock-rotate-left"></i> Son Görülme</div>
+            <div class="detail-value" id="inspect-user-last-active">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa-solid fa-network-wired"></i> IP Adresi</div>
+            <div class="detail-value" id="inspect-user-ip">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label"><i class="fa-solid fa-hourglass-half"></i> Toplam Kullanım</div>
+            <div class="detail-value" id="inspect-user-duration">-</div>
+          </div>
+        </div>
+
+        <div class="user-premium-action-section">
+          <div class="action-desc">
+            <h4>Premium Üyelik Yönetimi</h4>
+            <p>Kullanıcının premium üyeliğini anında aktif edebilir veya standart üyeliğe geri döndürebilirsiniz. Mobil uygulama 3 saniye içinde otomatik senkronize olacaktır.</p>
+          </div>
+          <div class="action-toggle-wrapper">
+            <span class="toggle-status-label" id="inspect-toggle-status-label">Standart</span>
+            <label class="switch switch-premium">
+              <input type="checkbox" id="inspect-user-premium-toggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+        <button type="button" class="btn btn-secondary w-100" id="btn-close-user-modal-footer">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase configuration and application scripts -->
   <script type="module" src="admin.js"></script>
 </body>
 </html>

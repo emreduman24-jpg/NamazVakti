@@ -11,12 +11,15 @@ class ToolsScreen extends StatefulWidget {
   _ToolsScreenState createState() => _ToolsScreenState();
 }
 
-class _ToolsScreenState extends State<ToolsScreen> {
+class _ToolsScreenState extends State<ToolsScreen> with AutomaticKeepAliveClientMixin<ToolsScreen> {
   final PrayerRepository _repository = PrayerRepository();
   List<Map<String, dynamic>> _allTools = [];
   List<Map<String, dynamic>> _filteredTools = [];
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -80,6 +83,7 @@ class _ToolsScreenState extends State<ToolsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),

@@ -49,12 +49,26 @@ This document contains the progress, architectural details, and recent changes o
   - Reordered Overpass servers: official server (`overpass-api.de`) and Swiss mirror (`overpass.osm.ch`) are queried first.
   - Reduced endpoint network timeout from 20 seconds to 4 seconds, avoiding long sequential freezes.
 
+### 6. Admin Panel Notification & Daily Verse Sender
+- **Problem:** No real-time announcements, notification sending, or daily verse push functionality from the administration panel.
+- **Solution:**
+  - Added "Bildirim Gönder" tab and dark-glassmorphic form in `admin.html` / `admin.js` to write custom announcements to Firestore `announcements` collection.
+  - Implemented background loop check (`_checkAnnouncements`) in `lib/main.dart` running every 3 seconds to fetch the latest announcement, compare its ID with SharedPreferences cache, and trigger a native system notification instantly via `NotificationService`.
+
+### 7. Premium Splash Screen Rebranding
+- **Problem:** The original opening splash screen felt amateurish and lacked high-end aesthetics.
+- **Solution:**
+  - Generated a high-resolution 3D cartoon Muslim character (holding hands in a heart shape, wearing a kufi) using Gemini and saved it as the main asset `assets/muslim_boy_heart.png`.
+  - Upgraded `MandalaPainter` to paint a highly intricate, lace-like golden Islamic geometric mandala motif on the top-left (with nested star polygons and outer loops).
+  - Upgraded `LanternPainter` to paint an ornate, detailed golden hanging lantern with a glowing radial light gradient and filigree overlays on the top-right.
+  - Formatted calligraphy typography ("سَلَامٌ عَلَيْكُمْ" and "Selamün Aleyküm") using elegant serifs, custom italics, and drop shadows with decorative separators (`•••• ⚜ ••••`).
+  - Redesigned the bottom bar into a gold-bordered mahogany panel containing custom icons for each of the six prayer times.
+
 ---
 
 ## 📋 Next Steps & Open Tasks
-1. **Verify GPS in Settings:** Test the GPS auto-detect modal dialog on a physical device or emulator.
-2. **Verify Zikirmatik Checklist:** Test that dhikrs completed on different days are correctly persisted and marked in the tracker list.
-3. **Verify Route Redirects:** Check that clicking the home screen advisor/religious info circles correctly navigates to the expected tools pages.
+1. **Verify New Splash Screen:** Launch the app to verify the golden mandala, hanging lantern, and the new 3D character display correctly on physical devices.
+2. **Verify Notifications:** Send a test daily verse/notification from the web admin panel and check if it pops up on the mobile screen within 3 seconds.
 
 ---
 

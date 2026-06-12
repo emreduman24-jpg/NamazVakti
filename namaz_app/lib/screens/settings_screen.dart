@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 import '../data/prayer_repository.dart';
 import '../services/notification_service.dart';
 import 'notification_settings_screen.dart';
 import 'premium_screen.dart';
+import 'auth_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback onThemeChanged;
@@ -31,6 +34,10 @@ class SettingsScreenState extends State<SettingsScreen> {
   String _themeMode = 'light';
   Map<String, String?> _location = {};
   bool _loading = true;
+  String _userName = '';
+  String _userGender = 'erkek';
+  bool _isLoggedIn = false;
+  bool _isPremium = false;
 
   @override
   void initState() {
@@ -38,13 +45,24 @@ class SettingsScreenState extends State<SettingsScreen> {
     loadSettings();
   }
 
-  Future<void> loadSettings() async {
-    setState(() => _loading = true);
+  Future<void> loadSettings({bool showLoading = true}) async {
+    if (showLoading) {
+      setState(() => _loading = true);
+    }
     final theme = await _repository.getThemeMode();
     final loc = await _repository.getSavedLocation();
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('user_name') ?? '';
+    final gender = prefs.getString('user_gender') ?? 'erkek';
+    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+    final isPremium = prefs.getBool('is_premium') ?? false;
     setState(() {
       _themeMode = theme;
       _location = loc;
+      _userName = name;
+      _userGender = gender;
+      _isLoggedIn = isLoggedIn;
+      _isPremium = isPremium;
       _loading = false;
     });
   }
@@ -62,38 +80,94 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _showThemeDialog() async {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Tema Ayarları'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RadioListTile<String>(
-              title: const Text('Aydınlık Tema'),
-              value: 'light',
-              groupValue: _themeMode,
-              activeColor: const Color(0xFF27A770),
-              onChanged: (val) => Navigator.pop(context, val),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          Widget buildThemeOption(String value, String title, IconData icon, Color color) {
+            final isSelected = _themeMode == value;
+            return GestureDetector(
+              onTap: () => Navigator.pop(context, value),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: isSelected 
+                      ? color.withOpacity(0.12)
+                      : (dark ? Colors.white.withOpacity(0.04) : Colors.grey[100]),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isSelected ? color : (dark ? Colors.white10 : Colors.grey[300]!),
+                    width: 2,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? color.withOpacity(0.2) : (dark ? Colors.white10 : Colors.grey[200]),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(icon, color: isSelected ? color : Colors.grey, size: 20),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? color : (dark ? Colors.white70 : Colors.black87),
+                        ),
+                      ),
+                    ),
+                    if (isSelected)
+                      Icon(Icons.check_circle, color: color, size: 22),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return AlertDialog(
+            backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(
+                color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
+                width: 1.2,
+              ),
             ),
-            RadioListTile<String>(
-              title: const Text('Karanlık Tema'),
-              value: 'dark',
-              groupValue: _themeMode,
-              activeColor: const Color(0xFF27A770),
-              onChanged: (val) => Navigator.pop(context, val),
+            title: Text(
+              'Tema Ayarları',
+              style: TextStyle(
+                color: dark ? Colors.white : const Color(0xFF1E5E43),
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            RadioListTile<String>(
-              title: const Text('Sistem Varsayılanı'),
-              value: 'system',
-              groupValue: _themeMode,
-              activeColor: const Color(0xFF27A770),
-              onChanged: (val) => Navigator.pop(context, val),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 8),
+                buildThemeOption('light', 'Aydınlık Tema', Icons.wb_sunny_rounded, const Color(0xFF27A770)),
+                buildThemeOption('dark', 'Karanlık Tema', Icons.nights_stay_rounded, const Color(0xFF2D9CDB)),
+                buildThemeOption('system', 'Sistem Varsayılanı', Icons.settings_suggest_rounded, Colors.grey),
+              ],
             ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Kapat', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
+              ),
+            ],
+          );
+        },
       ),
     );
+
     if (result != null) {
       await _repository.setThemeMode(result);
       setState(() => _themeMode = result);
@@ -105,9 +179,16 @@ class SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+        ),
         backgroundColor: success ? const Color(0xFF27A770) : Colors.redAccent,
         duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
     );
   }
@@ -124,8 +205,12 @@ class SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.all(24),
             margin: const EdgeInsets.symmetric(horizontal: 40),
             decoration: BoxDecoration(
-              color: dark ? const Color(0xFF121B2C).withOpacity(0.95) : Colors.white.withOpacity(0.95),
+              color: dark ? const Color(0xFF131D31).withOpacity(0.95) : Colors.white.withOpacity(0.95),
               borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: dark ? Colors.white.withOpacity(0.08) : const Color(0xFFE0EBE4),
+                width: 1.2,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.15),
@@ -257,11 +342,9 @@ class SettingsScreenState extends State<SettingsScreen> {
           
           final districts = await _repository.getDistricts(cityId);
           
-          // Robust Tuzla / Merkez matching logic to avoid "İSTANBUL" district overtaking specific sub-localities
           Map<String, dynamic> matchedDistrict = <String, dynamic>{};
           final String normalizedCityName = normalizeString(cityName);
           
-          // 1. Try exact match for geoData's specific locality (e.g., "tuzla") ONLY if it's not the same as the city name
           final String? locality = geoData['locality'] != null ? normalizeString(geoData['locality']) : null;
           if (locality != null && locality != normalizedCityName) {
             matchedDistrict = districts.firstWhere(
@@ -270,7 +353,6 @@ class SettingsScreenState extends State<SettingsScreen> {
             );
           }
           
-          // 2. Prioritize sub-locality names in geoNames that are NOT equal to the city-level name matching
           if (matchedDistrict.isEmpty) {
             matchedDistrict = districts.firstWhere(
               (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')) &&
@@ -279,7 +361,6 @@ class SettingsScreenState extends State<SettingsScreen> {
             );
           }
           
-          // 3. Fallback to any geoNames match
           if (matchedDistrict.isEmpty) {
             matchedDistrict = districts.firstWhere(
               (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')),
@@ -287,7 +368,6 @@ class SettingsScreenState extends State<SettingsScreen> {
             );
           }
 
-          // 4. Default fallback to districts[0]
           if (matchedDistrict.isEmpty) {
             matchedDistrict = districts.isNotEmpty ? districts[0] : <String, dynamic>{};
           }
@@ -306,7 +386,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
             if (mounted) Navigator.pop(context);
             _showSnackBar("Konum GPS ile güncellendi: $cityName/$districtName", success: true);
-            await loadSettings();
+            await loadSettings(showLoading: false);
             widget.onLocationChanged?.call();
             return;
           }
@@ -397,6 +477,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     bool loadingDistricts = false;
     bool savingLocation = false;
 
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -420,8 +501,15 @@ class SettingsScreenState extends State<SettingsScreen> {
 
           return AlertDialog(
             backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(
+                color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
+                width: 1.2,
+              ),
+            ),
             title: Text(
-              'Lokasyonlarım',
+              'Konum Ayarları',
               style: TextStyle(
                 color: dark ? Colors.white : const Color(0xFF1E5E43),
                 fontWeight: FontWeight.bold,
@@ -432,27 +520,58 @@ class SettingsScreenState extends State<SettingsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on, color: Color(0xFF27A770)),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          '$city / $district',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: dark ? Colors.white : Colors.black87,
+                  // Current Active Location Card
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF27A770).withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFF27A770).withOpacity(0.3), width: 1),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF27A770).withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.location_on, color: Color(0xFF27A770), size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Mevcut Konum',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: dark ? Colors.white60 : Colors.grey[600],
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                '$city / $district',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: dark ? Colors.white : Colors.black87,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Konumunuzu otomatik güncelleyebilir veya aşağıdan yenisini seçebilirsiniz:',
+                    'Konumunuzu değiştirmek için GPS ile otomatik algılayabilir veya listeden manuel olarak seçebilirsiniz.',
                     style: TextStyle(
                       fontSize: 12.5,
+                      height: 1.4,
                       color: dark ? Colors.white60 : Colors.grey[700],
                     ),
                   ),
@@ -461,58 +580,104 @@ class SettingsScreenState extends State<SettingsScreen> {
                   if (savingLocation)
                     const Center(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                        padding: EdgeInsets.symmetric(vertical: 24),
                         child: CircularProgressIndicator(color: Color(0xFF27A770)),
                       ),
                     )
                   else ...[
-                    // GPS Button
-                    SizedBox(
+                    // GPS Button with gradient background
+                    Container(
                       width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF27A770).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1E5E43),
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
                           foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        icon: const Icon(Icons.gps_fixed, size: 16, color: Color(0xFFD4AF37)),
-                        label: const Text('Cihaz Konumunu Kullan (GPS)', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.bold)),
+                        icon: const Icon(Icons.gps_fixed_rounded, size: 18, color: Color(0xFFD4AF37)),
+                        label: const Text(
+                          'Cihaz Konumunu Kullan (GPS)',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                        ),
                         onPressed: () async {
                           Navigator.pop(context); // Close dialog
                           await _autoDetectAndSaveLocation();
                         },
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    const Divider(height: 1, color: Colors.white12),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        const Expanded(child: Divider(color: Colors.white12)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Text(
+                            'VEYA MANUEL SEÇİN',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: dark ? Colors.white38 : Colors.grey[500],
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ),
+                        const Expanded(child: Divider(color: Colors.white12)),
+                      ],
+                    ),
                     const SizedBox(height: 16),
 
                     // City Dropdown
                     if (loadingCities)
-                      const Center(child: CircularProgressIndicator(color: Color(0xFF27A770)))
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: CircularProgressIndicator(color: Color(0xFF27A770)),
+                        ),
+                      )
                     else
                       DropdownButtonFormField<Map<String, dynamic>>(
                         dropdownColor: dark ? const Color(0xFF131D31) : Colors.white,
-                        style: TextStyle(color: dark ? Colors.white : Colors.black87),
+                        style: TextStyle(color: dark ? Colors.white : Colors.black87, fontSize: 14),
+                        icon: Icon(Icons.arrow_drop_down_circle_outlined, color: dark ? Colors.white60 : Colors.grey),
                         decoration: InputDecoration(
                           labelText: "Şehir Seçin",
                           labelStyle: TextStyle(color: dark ? Colors.white70 : Colors.grey[700]),
                           filled: true,
-                          fillColor: dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                          fillColor: dark ? Colors.white.withOpacity(0.04) : Colors.grey[100],
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(14),
                             borderSide: BorderSide.none,
                           ),
-                          prefixIcon: const Icon(Icons.location_city, color: Color(0xFF27A770), size: 18),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(color: Color(0xFF27A770), width: 1.5),
+                          ),
+                          prefixIcon: const Icon(Icons.location_city_rounded, color: Color(0xFF27A770), size: 20),
                         ),
                         value: selectedCity,
                         items: citiesList.map((c) {
                           return DropdownMenuItem<Map<String, dynamic>>(
                             value: c,
-                            child: Text(c['SehirAdi'] ?? '', style: const TextStyle(fontSize: 13.5)),
+                            child: Text(c['SehirAdi'] ?? '', style: const TextStyle(fontWeight: FontWeight.w500)),
                           );
                         }).toList(),
                         onChanged: (val) async {
@@ -535,27 +700,37 @@ class SettingsScreenState extends State<SettingsScreen> {
                     // District Dropdown
                     if (selectedCity != null) ...[
                       if (loadingDistricts)
-                        const Center(child: CircularProgressIndicator(color: Color(0xFF27A770)))
+                        const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: CircularProgressIndicator(color: Color(0xFF27A770)),
+                          ),
+                        )
                       else
                         DropdownButtonFormField<Map<String, dynamic>>(
                           dropdownColor: dark ? const Color(0xFF131D31) : Colors.white,
-                          style: TextStyle(color: dark ? Colors.white : Colors.black87),
+                          style: TextStyle(color: dark ? Colors.white : Colors.black87, fontSize: 14),
+                          icon: Icon(Icons.arrow_drop_down_circle_outlined, color: dark ? Colors.white60 : Colors.grey),
                           decoration: InputDecoration(
                             labelText: "İlçe Seçin",
                             labelStyle: TextStyle(color: dark ? Colors.white70 : Colors.grey[700]),
                             filled: true,
-                            fillColor: dark ? Colors.white.withOpacity(0.05) : Colors.grey[100],
+                            fillColor: dark ? Colors.white.withOpacity(0.04) : Colors.grey[100],
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide.none,
                             ),
-                            prefixIcon: const Icon(Icons.map, color: Color(0xFF27A770), size: 18),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(color: Color(0xFF27A770), width: 1.5),
+                            ),
+                            prefixIcon: const Icon(Icons.map_rounded, color: Color(0xFF27A770), size: 20),
                           ),
                           value: selectedDistrict,
                           items: districtsList.map((d) {
                             return DropdownMenuItem<Map<String, dynamic>>(
                               value: d,
-                              child: Text(d['IlceAdi'] ?? '', style: const TextStyle(fontSize: 13.5)),
+                              child: Text(d['IlceAdi'] ?? '', style: const TextStyle(fontWeight: FontWeight.w500)),
                             );
                           }).toList(),
                           onChanged: (val) {
@@ -570,14 +745,14 @@ class SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
-            actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            actionsPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             actions: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('İptal', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[700])),
+                    child: Text('İptal', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -586,6 +761,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     ),
                     onPressed: (selectedCity == null || selectedDistrict == null || savingLocation)
                         ? null
@@ -601,7 +777,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                               await _repository.saveLocation(cityName, cityId, districtName, districtId);
                               await _notificationService.schedulePrayerAlarms(times);
 
-                              await loadSettings();
+                              await loadSettings(showLoading: false);
 
                               if (context.mounted) {
                                 Navigator.pop(context);
@@ -624,9 +800,295 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Future<void> _showProfileDialog() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String currentName = prefs.getString('user_name') ?? '';
+    final String currentGender = prefs.getString('user_gender') ?? 'erkek';
+    
+    final TextEditingController nameController = TextEditingController(text: currentName);
+    String selectedGender = currentGender;
+    
+    if (!mounted) return;
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(
+                color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
+                width: 1.2,
+              ),
+            ),
+            title: Text(
+              'Profilimi Düzenle',
+              style: TextStyle(
+                color: dark ? Colors.white : const Color(0xFF1E5E43),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Adınız Soyadınız',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.white70 : Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: nameController,
+                    style: TextStyle(color: dark ? Colors.white : Colors.black87),
+                    decoration: InputDecoration(
+                      hintText: 'Örn. Ahmet Yılmaz',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      filled: true,
+                      fillColor: dark ? Colors.white.withOpacity(0.04) : Colors.grey[100],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFF27A770), width: 1.5),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Cinsiyetiniz',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: dark ? Colors.white70 : Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      // Male selection card
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setDialogState(() {
+                              selectedGender = 'erkek';
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: selectedGender == 'erkek'
+                                  ? const Color(0xFF27A770).withOpacity(0.12)
+                                  : (dark ? Colors.white.withOpacity(0.04) : Colors.grey[100]),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: selectedGender == 'erkek'
+                                    ? const Color(0xFF27A770)
+                                    : (dark ? Colors.white10 : Colors.grey[300]!),
+                                width: 2,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  '👨',
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Erkek',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: selectedGender == 'erkek'
+                                        ? const Color(0xFF27A770)
+                                        : (dark ? Colors.white70 : Colors.black87),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Female selection card
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setDialogState(() {
+                              selectedGender = 'kadin';
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: selectedGender == 'kadin'
+                                  ? const Color(0xFFE5A93B).withOpacity(0.12)
+                                  : (dark ? Colors.white.withOpacity(0.04) : Colors.grey[100]),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: selectedGender == 'kadin'
+                                    ? const Color(0xFFE5A93B)
+                                    : (dark ? Colors.white10 : Colors.grey[300]!),
+                                width: 2,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  '👩',
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Kadın',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: selectedGender == 'kadin'
+                                        ? const Color(0xFFE5A93B)
+                                        : (dark ? Colors.white70 : Colors.black87),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('İptal', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF27A770),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                ),
+                onPressed: () async {
+                  final String name = nameController.text.trim();
+                  if (name.isEmpty) {
+                    _showSnackBar('Lütfen adınızı giriniz.');
+                    return;
+                  }
+                  await prefs.setString('user_name', name);
+                  await prefs.setString('user_gender', selectedGender);
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    _showSnackBar('Profil bilgileri başarıyla güncellendi.', success: true);
+                  }
+                  await loadSettings(showLoading: false);
+                },
+                child: const Text('Kaydet', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _showLogoutConfirmationDialog() async {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
+            width: 1.2,
+          ),
+        ),
+        title: Text(
+          'Oturumu Kapat',
+          style: TextStyle(
+            color: dark ? Colors.white : const Color(0xFF1E5E43),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
+          style: TextStyle(
+            color: dark ? Colors.white70 : Colors.black87,
+            fontSize: 14.5,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Vazgeç', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFEB5757),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onPressed: () async {
+              Navigator.pop(context); // Close dialog
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool('is_logged_in', false);
+              await prefs.remove('user_name');
+              await prefs.remove('user_gender');
+              await prefs.remove('user_email');
+              
+              await loadSettings(showLoading: false);
+              _showSnackBar("Oturum kapatıldı.", success: true);
+            },
+            child: const Text('Çıkış Yap', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchURL(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        _showSnackBar("Bağlantı açılamadı: $urlString");
+      }
+    } catch (e) {
+      _showSnackBar("Hata oluştu: $e");
+    }
+  }
+
+  Future<void> _shareApp() async {
+    await Clipboard.setData(const ClipboardData(
+      text: "Namaz Vakitleri & Dini Rehber uygulamasını indir: https://namazvakti.com/indir",
+    ));
+    _showSnackBar("Uygulama indirme bağlantısı kopyalandı! Dilediğiniz yerde paylaşabilirsiniz.", success: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool dark = Theme.of(context).brightness == Brightness.dark;
+    
     if (_loading) {
       return Scaffold(
         backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
@@ -635,6 +1097,12 @@ class SettingsScreenState extends State<SettingsScreen> {
         ),
       );
     }
+
+    final String displayCity = _formatTurkishCity(_location['cityName'] ?? 'Konum Seçilmedi');
+    final String rawDistrict = _location['districtName'] ?? '';
+    final String displayDistrict = rawDistrict.toLowerCase() == _location['cityName']?.toLowerCase()
+        ? 'Merkez'
+        : _formatTurkishDistrict(rawDistrict);
 
     return Scaffold(
       backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
@@ -662,163 +1130,365 @@ class SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
 
-            // Scrollable menu items
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Profilim
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.person,
-                        const Color(0xFFCDDC39),
+              // 1. Redesigned User Profile Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: InkWell(
+                  onTap: _isLoggedIn
+                      ? _showProfileDialog
+                      : () async {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const AuthScreen()),
+                          );
+                          if (result == true) {
+                            await loadSettings(showLoading: false);
+                          }
+                        },
+                  borderRadius: BorderRadius.circular(24),
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: dark ? const Color(0xFF131D31) : Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
+                        width: 1.2,
                       ),
-                      title: 'Profilim',
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        final String currentName = prefs.getString('user_name') ?? '';
-                        final String currentGender = prefs.getString('user_gender') ?? 'erkek';
-                        
-                        final TextEditingController nameController = TextEditingController(text: currentName);
-                        String selectedGender = currentGender;
-
-                        if (!context.mounted) return;
-                        showDialog(
-                          context: context,
-                          builder: (context) => StatefulBuilder(
-                            builder: (context, setDialogState) {
-                              return AlertDialog(
-                                title: const Text('Profilimi Düzenle'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    TextField(
-                                      controller: nameController,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Adınız Soyadınız',
-                                        border: OutlineInputBorder(),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(dark ? 0.2 : 0.04),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        // Avatar
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            border: Border.all(
+                              color: const Color(0xFFD4AF37),
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF27A770).withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: _isLoggedIn
+                                ? Text(
+                                    _userGender == 'kadin' ? '👩' : '👨',
+                                    style: const TextStyle(fontSize: 32),
+                                  )
+                                : const Icon(
+                                    Icons.person_rounded,
+                                    size: 32,
+                                    color: Colors.white,
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // User Info
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _isLoggedIn ? "Hayırlı Günler," : "Hoş Geldiniz,",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: dark ? Colors.white60 : Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      _isLoggedIn
+                                          ? (_userName.isNotEmpty ? _userName : "Değerli Kardeşimiz")
+                                          : "Misafir Kullanıcı",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: dark ? Colors.white : const Color(0xFF1E5E43),
                                       ),
                                     ),
-                                    const SizedBox(height: 16),
-                                    const Text('Cinsiyetiniz:', style: TextStyle(fontWeight: FontWeight.bold)),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: selectedGender == 'erkek' ? const Color(0xFF27A770) : Colors.grey[200],
-                                              foregroundColor: selectedGender == 'erkek' ? Colors.white : Colors.black,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              setDialogState(() {
-                                                selectedGender = 'erkek';
-                                              });
-                                            },
-                                            child: const Text('👨 Erkek'),
-                                          ),
+                                  ),
+                                  if (_isPremium) ...[
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [Color(0xFFD4AF37), Color(0xFF996515)],
                                         ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: selectedGender == 'kadin' ? const Color(0xFFE5A93B) : Colors.grey[200],
-                                              foregroundColor: selectedGender == 'kadin' ? Colors.white : Colors.black,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              setDialogState(() {
-                                                selectedGender = 'kadin';
-                                              });
-                                            },
-                                            child: const Text('👩 Kadın'),
-                                          ),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: Colors.white24, width: 0.8),
+                                      ),
+                                      child: const Text(
+                                        "PRO",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 0.5,
                                         ),
-                                      ],
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    _isLoggedIn ? Icons.edit_outlined : Icons.login_rounded,
+                                    size: 12,
+                                    color: dark ? Colors.white38 : Colors.grey[500],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    _isLoggedIn
+                                        ? "Profili Düzenlemek İçin Dokunun"
+                                        : "Giriş Yapmak veya Kayıt Olmak İçin Dokunun",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: dark ? Colors.white38 : Colors.grey[500],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                          color: dark ? Colors.white38 : Colors.grey[400],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // 2. Premium Promo Card
+              _isPremium
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF131D31), Color(0xFF1E3A34)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: const Color(0xFFD4AF37).withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFD4AF37).withOpacity(0.1),
+                              blurRadius: 15,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                right: -30,
+                                top: -30,
+                                child: Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFFD4AF37).withOpacity(0.05),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: const Color(0xFFD4AF37).withOpacity(0.2),
+                                      ),
+                                      child: const Icon(
+                                        Icons.verified_user_rounded,
+                                        color: Color(0xFFD4AF37),
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            "Namaz Vakti Pro Aktif",
+                                            style: TextStyle(
+                                              color: Color(0xFFD4AF37),
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "Reklamsız kullanım ve tüm özelliklere sınırsız erişiminiz aktif. Destekleriniz için teşekkür ederiz.",
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.85),
+                                              fontSize: 12,
+                                              height: 1.3,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Kapat', style: TextStyle(color: Colors.grey)),
-                                  ),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF27A770),
-                                      foregroundColor: Colors.white,
-                                    ),
-                                    onPressed: () async {
-                                      final String name = nameController.text.trim();
-                                      if (name.isEmpty) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Lütfen adınızı giriniz.')),
-                                        );
-                                        return;
-                                      }
-                                      await prefs.setString('user_name', name);
-                                      await prefs.setString('user_gender', selectedGender);
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Profil bilgileri başarıyla güncellendi.')),
-                                        );
-                                      }
-                                    },
-                                    child: const Text('Kaydet'),
-                                  ),
-                                ],
-                              );
-                            }
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
-
-                    // Çıkış Yap
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 4.0,
+                        ),
                       ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Oturum yönetimi yakında eklenecektir.',
-                              ),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12.0,
-                            horizontal: 8.0,
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFD4AF37), Color(0xFF996515)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          child: Row(
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF996515).withOpacity(0.35),
+                              blurRadius: 15,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: Stack(
                             children: [
-                              _buildCircleIcon(
-                                Icons.logout,
-                                const Color(0xFFCDDC39),
+                              // Subtle golden dust visual decoration
+                              Positioned(
+                                right: -30,
+                                top: -30,
+                                child: Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white.withOpacity(0.1),
+                                  ),
+                                ),
                               ),
-                              const SizedBox(width: 16),
-                              const Text(
-                                'Çıkış Yap',
-                                style: TextStyle(
-                                  color: Color(0xFF27A770),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Row(
+                                  children: [
+                                    // Crown Icon inside bubble
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white.withOpacity(0.2),
+                                      ),
+                                      child: const Icon(
+                                        Icons.workspace_premium_rounded,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            "Premium Üye Olun",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            "Reklamsız kullanım ve tüm içeriklere sınırsız erişim elde edin.",
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.9),
+                                              fontSize: 12,
+                                              height: 1.3,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              foregroundColor: const Color(0xFF996515),
+                                              elevation: 2,
+                                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(30),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (_) => const PremiumScreen(),
+                                                ),
+                                              );
+                                            },
+                                            child: const Text(
+                                              "Şimdi Keşfet",
+                                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.5),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -827,264 +1497,319 @@ class SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
 
-                    _buildSectionDivider(),
-
-                    // Premium Ol
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.workspace_premium,
-                        const Color(0xFFCDDC39),
-                      ),
-                      title: 'Premium Ol',
-                      subtitle:
-                          'Tüm özelliklere erişin, daha fazla müslümana ulaşmamıza yardım et!',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const PremiumScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    // Reklamlardan ücretsiz kurtul!
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.star,
-                        const Color(0xFFCDDC39),
-                      ),
-                      title: 'Reklamlardan ücretsiz kurtul!',
-                      subtitle: 'Sadece 30 saniyenizi ayırın.',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const PremiumScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    _buildSectionDivider(),
-
-                    // Uygulama Dili
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.language,
-                        const Color(0xFFCDDC39),
-                      ),
-                      title: 'Uygulama Dili',
-                      trailing: const Text(
-                        'Türkçe',
-                        style: TextStyle(
-                          color: Color(0xFF27A770),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+              // 3. Grouped Settings Categories
+              _buildCardGroup(
+                title: "VAKİT & KONUM AYARLARI",
+                children: [
+                  _buildSettingRow(
+                    icon: Icons.location_on_rounded,
+                    title: "Lokasyonlarım",
+                    subtitle: displayDistrict.isNotEmpty ? "$displayCity / $displayDistrict" : displayCity,
+                    gradientColors: [const Color(0xFF27A770), const Color(0xFF1E5E43)],
+                    onTap: _showLocationDialog,
+                  ),
+                  _buildSettingRow(
+                    icon: Icons.notifications_active_rounded,
+                    title: "Bildirim Ayarları",
+                    subtitle: "Ezan vakti alarmları ve bildirimleri",
+                    gradientColors: [const Color(0xFF6F52ED), const Color(0xFF8B73FF)],
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationSettingsScreen(),
                         ),
-                      ),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Dil değişikliği yakında eklenecektir.',
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-
-                    // Bildirim Ayarları
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.notifications_outlined,
-                        const Color(0xFFCDDC39),
-                      ),
-                      title: 'Bildirim Ayarları',
-                      subtitle: 'Ezan vakti bildirimlerini yönet',
-                      trailing: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.grey,
-                        size: 22,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const NotificationSettingsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    // Lokasyonlarım
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.location_on_outlined,
-                        const Color(0xFFCDDC39),
-                      ),
-                      title: 'Lokasyonlarım',
-                      onTap: _showLocationDialog,
-                    ),
-
-                    // Tema Ayarları
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.palette_outlined,
-                        const Color(0xFFCDDC39),
-                      ),
-                      title: 'Tema Ayarları',
-                      trailing: Text(
-                        _themeDisplayText(),
-                        style: const TextStyle(
-                          color: Color(0xFF27A770),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      onTap: _showThemeDialog,
-                    ),
-
-                    // Kerahat Vakti
-                    _buildMenuItem(
-                      icon: _buildCircleIcon(
-                        Icons.timer_outlined,
-                        const Color(0xFFCDDC39),
-                      ),
-                      title: 'Kerahat Vakti',
-                      trailing: const Text(
-                        '45 dk',
-                        style: TextStyle(
-                          color: Color(0xFF27A770),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Kerahat vakti: Güneş doğduktan sonraki 45 dakika ve öğle vaktinden önceki 45 dakika.',
-                            ),
-                            duration: Duration(seconds: 4),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Gizlilik Politikası
-                    GestureDetector(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Gizlilik Politikası sayfası yakında eklenecektir.',
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Gizlilik Politikası',
-                        style: TextStyle(
-                          color: Color(0xFF27A770),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          decorationColor: Color(0xFF27A770),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // Version
-                    const Text(
-                      'v4.7.4',
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-
-                    const SizedBox(height: 100),
-                  ],
-                ),
+                      );
+                    },
+                  ),
+                  _buildSettingRow(
+                    icon: Icons.access_time_filled_rounded,
+                    title: "Kerahat Vakti Hatırlatıcısı",
+                    subtitle: "Kerahat vakti kuralları hakkında bilgi",
+                    gradientColors: [const Color(0xFFF2994A), const Color(0xFFF2C94C)],
+                    onTap: () {
+                      _showSnackBar(
+                        'Kerahat vakti: Güneş doğduktan sonraki 45 dakika ve öğle vaktinden önceki 45 dakikalık süredir.',
+                      );
+                    },
+                    isLast: true,
+                  ),
+                ],
               ),
-            ),
-          ],
+
+              _buildCardGroup(
+                title: "UYGULAMA ÖZELLEŞTİRME",
+                children: [
+                  _buildSettingRow(
+                    icon: Icons.palette_rounded,
+                    title: "Tema Ayarları",
+                    subtitle: "Görünüm modu: ${_themeDisplayText()}",
+                    gradientColors: [const Color(0xFF2D9CDB), const Color(0xFF56CCF2)],
+                    onTap: _showThemeDialog,
+                  ),
+                  _buildSettingRow(
+                    icon: Icons.language_rounded,
+                    title: "Uygulama Dili",
+                    subtitle: "Aktif dil: Türkçe",
+                    gradientColors: [const Color(0xFF2F80ED), const Color(0xFF00C9FF)],
+                    trailing: const Text(
+                      'Türkçe',
+                      style: TextStyle(
+                        color: Color(0xFF27A770),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    onTap: () {
+                      _showSnackBar('Dil değişikliği seçeneği yakında eklenecektir.');
+                    },
+                    isLast: true,
+                  ),
+                ],
+              ),
+
+              _buildCardGroup(
+                title: "DESTEK & HESAP",
+                children: [
+                  _buildSettingRow(
+                    icon: Icons.workspace_premium_rounded,
+                    title: _isPremium ? "Namaz Vakti Pro" : "Reklamlardan Kurtul",
+                    subtitle: _isPremium ? "Premium üyelik aktif" : "Sadece 30 saniyenizi ayırarak destek olun",
+                    gradientColors: _isPremium
+                        ? [const Color(0xFFD4AF37), const Color(0xFF996515)]
+                        : [const Color(0xFFE2B93C), const Color(0xFFD4AF37)],
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PremiumScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  _isLoggedIn
+                      ? _buildSettingRow(
+                          icon: Icons.power_settings_new_rounded,
+                          title: "Oturumu Kapat",
+                          subtitle: "Hesabınızdan güvenli çıkış yapın",
+                          gradientColors: [const Color(0xFFEB5757), const Color(0xFFFF8A8A)],
+                          onTap: _showLogoutConfirmationDialog,
+                          isLast: true,
+                        )
+                      : _buildSettingRow(
+                          icon: Icons.login_rounded,
+                          title: "Giriş Yap / Üye Ol",
+                          subtitle: "Hesabınıza giriş yapın",
+                          gradientColors: [const Color(0xFF27A770), const Color(0xFF80ED99)],
+                          onTap: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const AuthScreen()),
+                            );
+                            if (result == true) {
+                              await loadSettings(showLoading: false);
+                            }
+                          },
+                          isLast: true,
+                        ),
+                ],
+              ),
+
+              // 4. About Section Card Group
+              _buildCardGroup(
+                title: "HAKKINDA",
+                children: [
+                  _buildSettingRow(
+                    icon: Icons.star_rounded,
+                    title: "Değerlendir",
+                    subtitle: "Uygulamamıza puan verin",
+                    gradientColors: [const Color(0xFFFFB300), const Color(0xFFF57C00)],
+                    onTap: () => _launchURL("https://play.google.com/store/apps/details?id=com.namazvakti.app"),
+                  ),
+                  _buildSettingRow(
+                    icon: Icons.share_rounded,
+                    title: "Uygulamayı Paylaş",
+                    subtitle: "Sevdiklerinizle paylaşın",
+                    gradientColors: [const Color(0xFF2D9CDB), const Color(0xFF2F80ED)],
+                    onTap: _shareApp,
+                  ),
+                  _buildSettingRow(
+                    icon: Icons.mail_rounded,
+                    title: "Bize Ulaş",
+                    subtitle: "Görüş ve önerilerinizi iletin",
+                    gradientColors: [const Color(0xFF00C9FF), const Color(0xFF00796B)],
+                    onTap: () => _launchURL("mailto:destek@namazvakti.com?subject=Namaz%20Vakitleri%20Geri%20Bildirim"),
+                  ),
+                  _buildSettingRow(
+                    icon: Icons.language_rounded,
+                    title: "Web Sitesi",
+                    subtitle: "Resmi internet sitemizi ziyaret edin",
+                    gradientColors: [const Color(0xFF27A770), const Color(0xFF1E5E43)],
+                    onTap: () => _launchURL("https://namazvakti.com"),
+                  ),
+                  _buildSettingRow(
+                    icon: Icons.security_rounded,
+                    title: "Gizlilik Politikası",
+                    subtitle: "Veri politikası ve koşullar",
+                    gradientColors: [const Color(0xFF80CBC4), const Color(0xFF00796B)],
+                    onTap: () {
+                      _showSnackBar('Gizlilik Politikası yakında eklenecektir.');
+                    },
+                    isLast: true,
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Version Info
+              const Text(
+                'Sürüm v4.7.4',
+                style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+
+              const SizedBox(height: 100),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  /// Builds a circular icon widget matching the screenshot style (yellow-green circle with icon)
-  Widget _buildCircleIcon(IconData icon, Color bgColor) {
-    return Container(
-      width: 42,
-      height: 42,
-      decoration: BoxDecoration(
-        color: bgColor.withOpacity(0.15),
-        shape: BoxShape.circle,
-        border: Border.all(color: bgColor.withOpacity(0.5), width: 2),
-      ),
-      child: Icon(icon, color: const Color(0xFF689F38), size: 22),
+  /// Wraps children setting elements into a rounded, themed card container
+  Widget _buildCardGroup({required List<Widget> children, required String title}) {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 20.0, bottom: 8.0, top: 20.0),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: dark ? Colors.white54 : Colors.grey[600],
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16.0),
+          decoration: BoxDecoration(
+            color: dark ? const Color(0xFF131D31) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: dark ? Colors.white.withOpacity(0.05) : const Color(0xFFE0EBE4),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(dark ? 0.15 : 0.02),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Column(
+              children: children,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  /// Builds a single menu item row
-  Widget _buildMenuItem({
-    required Widget icon,
+  /// Builds a single stylized setting row with rounded icon container, gradient, text elements and chevron indicator
+  Widget _buildSettingRow({
+    required IconData icon,
     required String title,
     String? subtitle,
     Widget? trailing,
+    required List<Color> gradientColors,
     required VoidCallback onTap,
+    bool isLast = false,
   }) {
     final bool dark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-        child: Row(
-          children: [
-            icon,
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: dark ? Colors.white : Colors.black87,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+            child: Row(
+              children: [
+                // Styled Gradient Icon Container
+                Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: gradientColors,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  ),
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 12, 
-                        color: dark ? Colors.white54 : Colors.grey[600],
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: gradientColors[0].withOpacity(0.25),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
                       ),
-                    ),
-                  ],
-                ],
-              ),
+                    ],
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 16),
+                // Text details block
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: dark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      if (subtitle != null && subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: dark ? Colors.white60 : Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Trailing indicator or widget
+                if (trailing != null) 
+                  trailing
+                else
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: dark ? Colors.white24 : Colors.grey[400],
+                    size: 14,
+                  ),
+              ],
             ),
-            if (trailing != null) trailing,
-          ],
-        ),
+          ),
+          if (!isLast)
+            Divider(
+              height: 1,
+              indent: 70, // Align with text start, skipping the icon
+              color: dark ? Colors.white.withOpacity(0.05) : const Color(0xFFE0EBE4),
+            ),
+        ],
       ),
-    );
-  }
-
-  /// Builds a horizontal section divider
-  Widget _buildSectionDivider() {
-    final bool dark = Theme.of(context).brightness == Brightness.dark;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Divider(color: dark ? Colors.white10 : Colors.grey[200], thickness: 1),
     );
   }
 }

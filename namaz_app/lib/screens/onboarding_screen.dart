@@ -96,7 +96,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   }
 
   void _goToNextPage() {
-    if (_activePage < 9) {
+    if (_activePage < 8) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -433,7 +433,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     _goToNextPage();
   }
 
-  // Runs the beautiful 2-phase loading screen, then completed to Prayer Times Preview!
+  // Runs the beautiful loading process in a dialog, then completes to Prayer Times Preview!
   Future<void> _runSetupAndComplete() async {
     if (_location['districtId'] == null) {
       _showSnackBar("Lütfen devam etmeden önce konumunuzu seçin.");
@@ -441,22 +441,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       return;
     }
 
-    // Slide to Page 7 (the Setup screen)
-    _pageController.animateToPage(7, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
-
-    // 1st loading phase (1.5 seconds)
-    setState(() {
-      _setupStatusText = "Namaz vakitleri hesaplanıyor ...";
-    });
-
-    await Future.delayed(const Duration(milliseconds: 1500));
-
-    // 2nd loading phase (1.5 seconds)
-    if (mounted) {
-      setState(() {
-        _setupStatusText = "Neredeyse hazır ...";
-      });
-    }
+    // Show a beautiful, seamless loading dialog on top of customize notifications screen
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F1B31),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white10),
+          ),
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8AA996)),
+              ),
+              SizedBox(height: 20),
+              Text(
+                "Namaz vakitleri hesaplanıyor...",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
 
     // Complete saving preferences in background
     try {
@@ -484,11 +501,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       debugPrint("Setup background save error: $e");
     }
 
-    await Future.delayed(const Duration(milliseconds: 1500));
+    // Small delay to ensure the dialog doesn't just flash if cached/fast
+    await Future.delayed(const Duration(milliseconds: 800));
 
-    // Slide to final Prayer Times Preview Screen (Page 8)
     if (mounted) {
-      _pageController.animateToPage(8, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+      // Dismiss the dialog
+      Navigator.of(context).pop();
+      // Slide to final Prayer Times Preview Screen (now Page 7)
+      _pageController.animateToPage(7, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
     }
   }
 
@@ -706,9 +726,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     // Hide dots and buttons when in loading/setup/checkout screens
-    final bool isSetupPage = _activePage == 7;
-    final bool isPremiumPage = _activePage == 9;
-    final bool hideFooter = isSetupPage || isPremiumPage;
+    final bool isPremiumPage = _activePage == 8;
+    final bool hideFooter = isPremiumPage;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0F1B31),
@@ -743,8 +762,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               _buildPageJoinUs(),
               _buildPageNotificationRequest(),
               _buildPageNotificationCustomize(),
-              _buildPageSetupLoading(), // Immersive setup/loading screen
-              _buildPagePrayerTimesPreview(), // Shows after setup loading screen!
+              _buildPagePrayerTimesPreview(), // Shows after setup loading dialog!
               PremiumScreen(isFromOnboarding: true, onComplete: _handleComplete), // Stunning Botanical Premium Screen!
             ],
           ),
@@ -755,10 +773,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             left: 20,
             right: 20,
             child: AnimatedOpacity(
-              opacity: isPremiumPage ? 0.0 : 1.0,
+              opacity: (isPremiumPage || _activePage == 0 || _activePage == 1 || _activePage == 3 || _activePage == 4 || _activePage == 5 || _activePage == 6) ? 0.0 : 1.0,
               duration: const Duration(milliseconds: 300),
               child: IgnorePointer(
-                ignoring: isPremiumPage,
+                ignoring: isPremiumPage || _activePage == 0 || _activePage == 1 || _activePage == 3 || _activePage == 4 || _activePage == 5 || _activePage == 6,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -800,20 +818,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             ),
           ),
 
-          // Pagination Dots indicator (Permanent with dynamic opacity and IgnorePointer)
-          Positioned(
-            bottom: 120,
-            left: 0,
-            right: 0,
-            child: AnimatedOpacity(
-              opacity: hideFooter ? 0.0 : 1.0,
-              duration: const Duration(milliseconds: 300),
-              child: IgnorePointer(
-                ignoring: hideFooter,
-                child: _buildDotsIndicator(8, _getDotIndex(_activePage)),
-              ),
-            ),
-          ),
+          // Pagination Dots indicator disabled from here since we build them directly under illustrations
+          const SizedBox.shrink(),
 
           // Main Lower Green Button (Permanent with dynamic opacity and IgnorePointer)
           Positioned(
@@ -996,24 +1002,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     );
   }
 
-  // Dots indicator
-  Widget _buildDotsIndicator(int count, int activeIndex) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(count, (index) {
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 350),
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: index == activeIndex ? 22 : 6,
-          height: 6,
-          decoration: BoxDecoration(
-            color: index == activeIndex
-                ? const Color(0xFF90B49C)
-                : Colors.white.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(3),
-          ),
-        );
-      }),
+
+
+  Widget _buildDotsUnderIllustration() {
+    int dotCount = 6;
+    int dotIndex = _activePage;
+    if (dotIndex > 5) {
+      dotIndex = 5;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0, bottom: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(dotCount, (index) {
+          final bool isActive = index == dotIndex;
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 350),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: isActive ? 22 : 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: isActive
+                  ? const Color(0xFF90B49C)
+                  : const Color(0xFF2C3C58),
+              borderRadius: BorderRadius.circular(3),
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -1084,7 +1101,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   // SCREEN 1: Welcome (Hoş Geldiniz)
   Widget _buildPageWelcome() {
     return _buildPageLayout(
-      painter: IntroIllustrationPainter(),
+      imagePath: 'assets/onboarding_welcome.png',
       category: "HOŞ GELDİNİZ",
       title: "Namazınıza\nodaklanma zamanı",
       desc: "Sizi namazlarınızı hatırlatarak ve rehberlik ederek destekliyoruz. Deneyiminizi kişiselleştirelim.",
@@ -1095,7 +1112,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   // SCREEN 2: Location Request (Doğru konum)
   Widget _buildPagePermissionRequest() {
     return _buildPageLayout(
-      painter: LocationPermissionIllustrationPainter(),
+      imagePath: 'assets/onboarding_location.png',
       category: "NAMAZ VAKİTLERİ",
       title: "Doğru konum",
       desc: "Namaz vakitlerini doğru hesaplayabilmemiz için lütfen konuma erişime izin verin. Alternatif olarak konumunuzu manuel olarak girebilir ve ayarlardan istediğiniz zaman değiştirebilirsiniz.",
@@ -1384,53 +1401,59 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   // SCREEN 4: Calculation Method (Bir yöntem seçin)
   Widget _buildPageCalculationMethod() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
-          // Astrolabe/Compass custom painted
-          Expanded(
-            flex: 3,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFF142442),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: CustomPaint(
-                  painter: CalculationMethodIllustrationPainter(),
+    return Column(
+      children: [
+        // 40% height full-width image
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          width: double.infinity,
+          child: Image.asset(
+            'assets/onboarding_calculation.png',
+            fit: BoxFit.cover,
+            alignment: Alignment.bottomCenter,
+          ),
+        ),
+        
+        // Page indicator dots directly under the illustration
+        _buildDotsUnderIllustration(),
+        
+        const SizedBox(height: 16),
+        
+        // Category + Title
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            children: [
+              const Text(
+                "NAMAZ VAKTİ HESAPLAMASI",
+                style: TextStyle(
+                  color: Color(0xFF8AA996),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  letterSpacing: 1.5,
                 ),
               ),
-            ),
+              const SizedBox(height: 10),
+              const Text(
+                "Bir yöntem seçin",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                  height: 1.25,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          // Title
-          const Text(
-            "NAMAZ VAKTİ HESAPLAMASI",
-            style: TextStyle(
-              color: Color(0xFF8AA996),
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              letterSpacing: 1.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            "Bir yöntem seçin",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 26,
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Scrollable list of options
-          Expanded(
-            flex: 4,
+        ),
+        
+        const SizedBox(height: 16),
+        
+        // Scrollable list of options
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1440,7 +1463,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 6),
-                  // Recommended Method: Diyanet
                   _buildMethodCard(
                     id: 'diyanet',
                     title: "Diyanet İşleri Başkanlığı",
@@ -1466,127 +1488,87 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     subtitle: "İmsak: 18° - Yatsı: 18°",
                     isRecommended: false,
                   ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'cezayir',
+                    title: "Cezayir Dini İşler ve Vakıflar",
+                    subtitle: "İmsak: 18° - Yatsı: 17°",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'fransa15',
+                    title: "Fransa - 15°",
+                    subtitle: "İmsak: 15° - Yatsı: 15°",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'fransa18',
+                    title: "Fransa - 18°",
+                    subtitle: "İmsak: 18° - Yatsı: 18°",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'kuzey_amerika',
+                    title: "Kuzey Amerika İslam Topluluğu",
+                    subtitle: "İmsak: 15° - Yatsı: 15°",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'misir',
+                    title: "Mısır Genel Ölçme Otoritesi",
+                    subtitle: "İmsak: 19.5° - Yatsı: 17.5°",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'rusya',
+                    title: "Rusya Müslümanların Manevi İdaresi",
+                    subtitle: "İmsak: 18° - Yatsı: 15°",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'tahran',
+                    title: "Tahran Üniversitesi Jeofizik Enstitüsü",
+                    subtitle: "İmsak: 17.7° - Yatsı: 14°",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildMethodCard(
+                    id: 'mekke',
+                    title: "Umm al-Qura Üniversitesi Mekke",
+                    subtitle: "İmsak: 18.5° - Yatsı: 90 dk",
+                    isRecommended: false,
+                  ),
+                  const SizedBox(height: 120), // Space for bottom button
                 ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   // SCREEN 5: Join Us (Bize Katıl)
   Widget _buildPageJoinUs() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
-          // Dynamic painted map + stars character rating
-          Expanded(
-            flex: 5,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    width: double.infinity,
-                    color: const Color(0xFF142442),
-                    child: CustomPaint(
-                      painter: JoinUsIllustrationPainter(),
-                    ),
-                  ),
-                ),
-                // Rating Overlay
-                Positioned(
-                  left: 24,
-                  bottom: 32,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        "4.9",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 64,
-                          fontWeight: FontWeight.bold,
-                          height: 1.0,
-                        ),
-                      ),
-                      const Row(
-                        children: [
-                          Icon(Icons.star, color: Color(0xFFE5A93B), size: 16),
-                          Icon(Icons.star, color: Color(0xFFE5A93B), size: 16),
-                          Icon(Icons.star, color: Color(0xFFE5A93B), size: 16),
-                          Icon(Icons.star, color: Color(0xFFE5A93B), size: 16),
-                          Icon(Icons.star, color: Color(0xFFE5A93B), size: 16),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "App Store",
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 32),
-          // Texts
-          Expanded(
-            flex: 5,
-            child: Column(
-              children: [
-                const Text(
-                  "BİZE KATIL",
-                  style: TextStyle(
-                    color: Color(0xFF8AA996),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Dünya çapında birçok\nkişi tarafından kullanılıyor",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                    height: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "Doğru namaz vakitlerine, kıble yönüne ve günlük hatırlatmalara güvenen; nerede olurlarsa olsunlar inançlarıyla bağlı kalmak isteyen büyüyen bir Müslüman topluluğuna katılın.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 14,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return _buildPageLayout(
+      imagePath: 'assets/onboarding_join.png',
+      category: "BİZE KATIL",
+      title: "Dünya çapında birçok\nkişi tarafından kullanılıyor",
+      desc: "Doğru namaz vakitlerine, kıble yönüne ve günlük hatırlatmalara güvenen; nerede olurlarsa olsunlar inançlarıyla bağlı kalmak isteyen büyüyen bir Müslüman topluluğuna katılın.",
+      fullWidthPainter: true,
     );
   }
 
   // SCREEN 6: Notification Permission (Bildirimlere izin ver)
   Widget _buildPageNotificationRequest() {
     return _buildPageLayout(
-      painter: ReminderIllustrationPainter(),
+      imagePath: 'assets/onboarding_notifications.png',
       category: "HATIRLATICI",
       title: "Bildirimlere izin ver",
       desc: "Size zamanında hatırlatırız, böylece namazınızı asla kaçırmazsınız.",
@@ -1596,153 +1578,113 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   // SCREEN 7: Customize Notifications (Bildirimleri özelleştir)
   Widget _buildPageNotificationCustomize() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
-          // Clock Image - set fixed height to prevent overlaps across screen sizes
-          Container(
-            height: 190,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: const Color(0xFF142442),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: CustomPaint(
-                painter: ReminderIllustrationPainter(),
-              ),
-            ),
+    return Column(
+      children: [
+        // Image at top - 40% height
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          width: double.infinity,
+          child: Image.asset(
+            'assets/onboarding_notifications.png',
+            fit: BoxFit.cover,
+            alignment: Alignment.bottomCenter,
           ),
-          const SizedBox(height: 20),
-          // Category and texts
-          const Text(
-            "HATIRLATICI",
-            style: TextStyle(
-              color: Color(0xFF8AA996),
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-              letterSpacing: 1.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            "Bildirimleri özelleştir",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 26,
-            ),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            "Ne zaman hatırlatalım?",
-            style: TextStyle(color: Colors.white60, fontSize: 14),
-          ),
-          const SizedBox(height: 12),
-
-          // Custom selection buttons
-          Row(
+        ),
+        // Dots
+        _buildDotsUnderIllustration(),
+        const Spacer(flex: 1),
+        // Contents
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
             children: [
-              Expanded(
-                child: _buildReminderTimeButton(
-                  id: '30',
-                  label: "30 dk.\nönce",
+              const Text(
+                "HATIRLATICI",
+                style: TextStyle(
+                  color: Color(0xFF8AA996),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  letterSpacing: 1.5,
                 ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildReminderTimeButton(
-                  id: '15',
-                  label: "15 dk.\nönce",
+              const SizedBox(height: 10),
+              const Text(
+                "Bildirimleri özelleştir",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                  height: 1.25,
                 ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildReminderTimeButton(
-                  id: 'vaktinde',
-                  label: "Vaktinde",
+              const SizedBox(height: 10),
+              const Text(
+                "Ne zaman hatırlatalım?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white60,
+                  fontSize: 16,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 20),
+              // Custom selection buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildReminderTimeButton(
+                      id: '30',
+                      label: "30 dk.\nönce",
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildReminderTimeButton(
+                      id: '15',
+                      label: "15 dk.\nönce",
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildReminderTimeButton(
+                      id: 'vaktinde',
+                      label: "Vaktinde",
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Flat link button below
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedReminderTime = 'kapali';
+                  });
+                  _runSetupAndComplete();
+                },
+                child: Text(
+                  "Hatırlatmaları kapalı tut",
+                  style: TextStyle(
+                    color: _selectedReminderTime == 'kapali' ? const Color(0xFF90B49C) : Colors.white54,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-
-          // Flat link button below
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedReminderTime = 'kapali';
-              });
-              _runSetupAndComplete();
-            },
-            child: Text(
-              "Hatırlatmaları kapalı tut",
-              style: TextStyle(
-                color: _selectedReminderTime == 'kapali' ? const Color(0xFF90B49C) : Colors.white54,
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-          ),
-          const SizedBox(height: 140), // Reserved space for bottom action buttons to prevent overlapping
-        ],
-      ),
-    );
-  }
-
-  // Maps active page index to correct dot indicator index
-  int _getDotIndex(int page) {
-    if (page < 7) return page; // 0-6 maps exactly to dots 0-6
-    if (page == 8) return 7;   // Prayer preview (page 8) is the 8th dot (index 7)
-    return 0;
-  }
-
-  // SCREEN 8: Final Immersive Setup/Loading screen
-  Widget _buildPageSetupLoading() {
-    return Column(
-      children: [
-        const SizedBox(height: 80),
-        // Setup Gears custom painter animated
-        Expanded(
-          flex: 5,
-          child: AnimatedBuilder(
-            animation: _gearAnimationController,
-            builder: (context, child) {
-              final scale = 1.0 + 0.03 * math.sin(_gearAnimationController.value * 2 * math.pi);
-              return Transform.scale(
-                scale: scale,
-                child: CustomPaint(
-                  painter: SetupIllustrationPainter(
-                    rotationAngle: _gearAnimationController.value * 2 * math.pi,
-                  ),
-                ),
-              );
-            },
-          ),
         ),
-        const SizedBox(height: 24),
-        // Animated transition status text at bottom
-        Expanded(
-          flex: 3,
-          child: Center(
-            child: Text(
-              _setupStatusText,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
+        const Spacer(flex: 1),
+        const SizedBox(height: 120), // Reserved space for bottom action buttons to prevent overlapping
       ],
     );
   }
+
+
+
+
 
   // Customize reminder time choice card button
   Widget _buildReminderTimeButton({
@@ -1790,85 +1732,97 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     required String desc,
     bool fullWidthPainter = false,
   }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: fullWidthPainter ? 0.0 : 24.0),
-      child: Column(
-        children: [
+    return Column(
+      children: [
+        if (fullWidthPainter && imagePath != null)
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            width: double.infinity,
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              alignment: Alignment.bottomCenter,
+            ),
+          )
+        else ...[
           if (!fullWidthPainter) const SizedBox(height: 70),
           // Illustration Box
           Expanded(
-            flex: 5,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFF142442),
-                borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
-              ),
-              child: ClipRRect(
-                borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
-                child: painter != null
-                    ? CustomPaint(
-                        painter: painter,
-                        child: const SizedBox.expand(),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(24.0),
-                        child: Image.asset(
-                          imagePath!,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          // Texts Box with safe scroll and bottom spacing for notches/safearea/buttons (Feedback 5)
-          Expanded(
-            flex: 5,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: fullWidthPainter ? 24.0 : 0.0),
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    Text(
-                      category,
-                      style: const TextStyle(
-                        color: Color(0xFF8AA996),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
-                        height: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      desc,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 160), // Reservate space at bottom to prevent dynamic notches/safespace button overlays!
-                  ],
+              padding: EdgeInsets.symmetric(horizontal: fullWidthPainter ? 0.0 : 24.0),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.transparent, // Seamless integration with transparent background
+                  borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
+                ),
+                child: ClipRRect(
+                  borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
+                  child: painter != null
+                      ? CustomPaint(
+                          painter: painter,
+                          child: const SizedBox.expand(),
+                        )
+                      : Image.asset(
+                          imagePath!,
+                          fit: fullWidthPainter ? BoxFit.cover : BoxFit.contain,
+                          width: double.infinity,
+                        ),
                 ),
               ),
             ),
           ),
         ],
-      ),
+        
+        // Page indicator dots directly under the illustration
+        _buildDotsUnderIllustration(),
+        
+        if (fullWidthPainter && imagePath != null)
+          const Spacer(flex: 1)
+        else
+          const SizedBox(height: 16),
+        
+        // Texts Box
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            children: [
+              Text(
+                category,
+                style: TextStyle(
+                  color: const Color(0xFF8AA996),
+                  fontWeight: FontWeight.bold,
+                  fontSize: (fullWidthPainter && imagePath != null) ? 15 : 13,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: (fullWidthPainter && imagePath != null) ? 32 : 28,
+                  height: 1.25,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                desc,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.85),
+                  fontSize: (fullWidthPainter && imagePath != null) ? 16 : 14,
+                  height: 1.55,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (fullWidthPainter && imagePath != null) const Spacer(flex: 1),
+        const SizedBox(height: 120), // Reserved space for the bottom button (bottom: 40 + height: 54)
+      ],
     );
   }
 
@@ -1894,6 +1848,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
           _varyPrayerTimes(offsetMinutes: -3);
         } else if (id == 'bask') {
           _varyPrayerTimes(offsetMinutes: 2);
+        } else if (id == 'cezayir') {
+          _varyPrayerTimes(offsetMinutes: 1);
+        } else if (id == 'fransa15') {
+          _varyPrayerTimes(offsetMinutes: -2);
+        } else if (id == 'fransa18') {
+          _varyPrayerTimes(offsetMinutes: 2);
+        } else if (id == 'kuzey_amerika') {
+          _varyPrayerTimes(offsetMinutes: -1);
+        } else if (id == 'misir') {
+          _varyPrayerTimes(offsetMinutes: 3);
+        } else if (id == 'rusya') {
+          _varyPrayerTimes(offsetMinutes: -4);
+        } else if (id == 'tahran') {
+          _varyPrayerTimes(offsetMinutes: 4);
+        } else if (id == 'mekke') {
+          _varyPrayerTimes(offsetMinutes: -5);
         } else {
           _varyPrayerTimes(offsetMinutes: 0); // Reset to Diyanet
         }
@@ -3165,4 +3135,5 @@ class _TopNotificationBannerState extends State<TopNotificationBanner> with Sing
     );
   }
 }
+
 

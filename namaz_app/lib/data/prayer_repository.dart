@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'prayer_data.dart';
 
 class PrayerRepository {
@@ -204,21 +205,36 @@ class PrayerRepository {
     { "id": "ezkar", "title": "Sabah Akşam Ezkarı", "desc": "Günlük sabah ve akşam zikirleri", "icon": "📿", "color": "0xFFEAF4FB", "sira": 18, "aktif": true },
     { "id": "kaza-namazlari", "title": "Kazaya Kalan Namazlar", "desc": "Kaza çetelesi ve takibi", "icon": "📊", "color": "0xFFFBEAEA", "sira": 19, "aktif": true },
     { "id": "islam-sartlari", "title": "İslam'ın Şartları", "desc": "İslam şartları rehberi", "icon": "⭐", "color": "0xFFEAF4FB", "sira": 20, "aktif": true },
-    { "id": "dini-hoca", "title": "Dini Hoca", "desc": "Yapay zeka ile dini sohbet", "icon": "👳", "color": "0xFFFFF7EA", "sira": 21, "aktif": true }
+    { "id": "dini-hoca", "title": "Dini Danışman", "desc": "Yapay zeka ile dini sohbet", "icon": "👳", "color": "0xFFFFF7EA", "sira": 21, "aktif": true }
   ];
 
   // Dynamic Tools list
   Future<List<Map<String, dynamic>>> getDynamicTools() async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      final response = await http.get(Uri.parse('$apiBaseUrl/tools')).timeout(const Duration(seconds: 2));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        await prefs.setString(keyToolsList, response.body);
-        return data.map((e) => Map<String, dynamic>.from(e)).toList();
+      final snap = await FirebaseFirestore.instance
+          .collection('tools')
+          .get()
+          .timeout(const Duration(seconds: 4));
+      
+      if (snap.docs.isNotEmpty) {
+        final List<Map<String, dynamic>> tools = snap.docs.map((doc) {
+          final data = doc.data();
+          return {
+            'id': data['id'] ?? doc.id,
+            'title': data['title'] ?? '',
+            'desc': data['desc'] ?? '',
+            'icon': data['icon'] ?? '✨',
+            'color': data['color'] ?? '0xFFEAF7F1',
+            'sira': data['sira'] ?? 999,
+            'aktif': data['aktif'] ?? true,
+          };
+        }).toList();
+        await prefs.setString(keyToolsList, json.encode(tools));
+        return tools;
       }
     } catch (e) {
-      print('Error fetching tools: $e. Using cache.');
+      print('Error fetching tools from Firestore: $e. Using cache.');
     }
 
     final cached = prefs.getString(keyToolsList);
@@ -234,15 +250,19 @@ class PrayerRepository {
   Future<bool> getGlobalBlockStatus() async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      final response = await http.get(Uri.parse('$apiBaseUrl/block_status')).timeout(const Duration(seconds: 2));
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final bool blocked = data['blocked'] ?? false;
+      final doc = await FirebaseFirestore.instance
+          .collection('block_status')
+          .doc('global')
+          .get()
+          .timeout(const Duration(seconds: 4));
+      
+      if (doc.exists) {
+        final bool blocked = doc.data()?['blocked'] ?? false;
         await prefs.setBool(keyBlockStatus, blocked);
         return blocked;
       }
     } catch (e) {
-      print('Error getting block status: $e');
+      print('Error getting block status from Firestore: $e');
     }
     return prefs.getBool(keyBlockStatus) ?? false;
   }
@@ -251,14 +271,30 @@ class PrayerRepository {
   Future<List<Map<String, dynamic>>> getDuaList() async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      final response = await http.get(Uri.parse('$apiBaseUrl/duas')).timeout(const Duration(seconds: 2));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        await prefs.setString(keyDuaList, response.body);
-        return data.map((e) => Map<String, dynamic>.from(e)).toList();
-      }
+      final snap = await FirebaseFirestore.instance
+          .collection('duas')
+          .get()
+          .timeout(const Duration(seconds: 4));
+      
+      final List<Map<String, dynamic>> duas = snap.docs.map((doc) {
+        final data = doc.data();
+        return {
+          'id': data['id'] ?? int.tryParse(doc.id) ?? DateTime.now().millisecondsSinceEpoch,
+          'yazar': data['yazar'] ?? 'Anonim',
+          'dua': data['dua'] ?? '',
+          'amin': data['amin'] ?? 0,
+          'durum': data['durum'] ?? 'bekliyor',
+          'tarih': data['tarih'] ?? '',
+        };
+      }).toList();
+      
+      // Sort: newest first
+      duas.sort((a, b) => (b['id'] ?? 0).compareTo(a['id'] ?? 0));
+      
+      await prefs.setString(keyDuaList, json.encode(duas));
+      return duas;
     } catch (e) {
-      print('Error fetching duas: $e. Using cache.');
+      print('Error fetching duas from Firestore: $e. Using cache.');
     }
 
     final cached = prefs.getString(keyDuaList);
@@ -279,28 +315,35 @@ class PrayerRepository {
 
   Future<void> addDua(String author, String text) async {
     try {
-      await http.post(
-        Uri.parse('$apiBaseUrl/duas'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "yazar": author,
-          "dua": text,
-          "durum": "bekliyor",
-          "amin": 0,
-        }),
-      ).timeout(const Duration(seconds: 2));
+      final id = DateTime.now().millisecondsSinceEpoch;
+      final now = DateTime.now();
+      final dateStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+      
+      await FirebaseFirestore.instance.collection('duas').add({
+        "id": id,
+        "yazar": author,
+        "dua": text,
+        "durum": "bekliyor",
+        "amin": 0,
+        "tarih": dateStr,
+      }).timeout(const Duration(seconds: 4));
     } catch (e) {
-      print('Error adding dua: $e');
+      print('Error adding dua to Firestore: $e');
     }
   }
 
   Future<void> addAmin(int id) async {
     try {
-      await http.post(
-        Uri.parse('$apiBaseUrl/duas/amin'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({"id": id}),
-      ).timeout(const Duration(seconds: 2));
+      final snap = await FirebaseFirestore.instance
+          .collection('duas')
+          .where('id', isEqualTo: id)
+          .get()
+          .timeout(const Duration(seconds: 4));
+      for (var doc in snap.docs) {
+        await doc.reference.update({
+          'amin': FieldValue.increment(1),
+        });
+      }
     } catch (e) {
       print('Error adding amin: $e');
     }
@@ -310,14 +353,28 @@ class PrayerRepository {
   Future<List<Map<String, dynamic>>> getQuestionList() async {
     final prefs = await SharedPreferences.getInstance();
     try {
-      final response = await http.get(Uri.parse('$apiBaseUrl/questions')).timeout(const Duration(seconds: 2));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        await prefs.setString(keyQuestionList, response.body);
-        return data.map((e) => Map<String, dynamic>.from(e)).toList();
-      }
+      final snap = await FirebaseFirestore.instance
+          .collection('questions')
+          .get()
+          .timeout(const Duration(seconds: 4));
+      
+      final List<Map<String, dynamic>> questions = snap.docs.map((doc) {
+        final data = doc.data();
+        return {
+          'id': data['id'] ?? int.tryParse(doc.id) ?? DateTime.now().millisecondsSinceEpoch,
+          'soru': data['soru'] ?? '',
+          'cevap': data['cevap'] ?? '',
+          'yazar': data['yazar'] ?? 'Anonim',
+          'tarih': data['tarih'] ?? '',
+        };
+      }).toList();
+      
+      questions.sort((a, b) => (b['id'] ?? 0).compareTo(a['id'] ?? 0));
+      
+      await prefs.setString(keyQuestionList, json.encode(questions));
+      return questions;
     } catch (e) {
-      print('Error fetching questions: $e. Using cache.');
+      print('Error fetching questions from Firestore: $e. Using cache.');
     }
 
     final cached = prefs.getString(keyQuestionList);
@@ -339,17 +396,19 @@ class PrayerRepository {
 
   Future<void> sendQuestion(String author, String text) async {
     try {
-      await http.post(
-        Uri.parse('$apiBaseUrl/questions'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          "yazar": author,
-          "soru": text,
-          "cevap": "",
-        }),
-      ).timeout(const Duration(seconds: 2));
+      final id = DateTime.now().millisecondsSinceEpoch;
+      final now = DateTime.now();
+      final dateStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+
+      await FirebaseFirestore.instance.collection('questions').add({
+        "id": id,
+        "yazar": author,
+        "soru": text,
+        "cevap": "",
+        "tarih": dateStr,
+      }).timeout(const Duration(seconds: 4));
     } catch (e) {
-      print('Error sending question: $e');
+      print('Error sending question to Firestore: $e');
     }
   }
 

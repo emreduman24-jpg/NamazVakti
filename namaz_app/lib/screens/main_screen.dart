@@ -29,10 +29,13 @@ class MainScreen extends StatefulWidget {
   MainScreenState createState() => MainScreenState();
 }
 
-class MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMixin<MainScreen> {
   final PrayerRepository _repository = PrayerRepository();
   final NotificationService _notificationService = NotificationService();
   final PrayerTrackerState _trackerState = PrayerTrackerState();
+
+  @override
+  bool get wantKeepAlive => true;
 
   String normalizeString(String str) {
     return str
@@ -834,6 +837,7 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     if (_loading) {
       return const Scaffold(
         body: Center(
@@ -1200,7 +1204,7 @@ class MainScreenState extends State<MainScreen> {
                     title: 'Dini Danışman',
                     imagePath: 'assets/dini_danisman.png',
                     onTap: () =>
-                        widget.onOpenTool('dini-hoca', 'Dini Hoca'),
+                        widget.onOpenTool('dini-hoca', 'Dini Danışman'),
                   ),
                   _buildCircularQuickAction(
                     title: 'Kuran-ı Kerim',
@@ -1719,19 +1723,29 @@ class MainScreenState extends State<MainScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    const Text("🕌", style: TextStyle(fontSize: 18)),
-                    const SizedBox(width: 8),
-                    Text(
-                      "Namaz Takibi",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: dark ? Colors.white : const Color(0xFF1E5E43),
+                GestureDetector(
+                  onTap: () => widget.onTabChange(1),
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    children: [
+                      const Text("🕌", style: TextStyle(fontSize: 18)),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Namaz Takibi",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: dark ? Colors.white : const Color(0xFF1E5E43),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.chevron_right,
+                        size: 16,
+                        color: dark ? Colors.white54 : const Color(0xFF1E5E43).withOpacity(0.7),
+                      ),
+                    ],
+                  ),
                 ),
                 // Dynamic Streak Badge (NAMAZ SERİSİ veya BAŞLANGIÇ)
                 Container(

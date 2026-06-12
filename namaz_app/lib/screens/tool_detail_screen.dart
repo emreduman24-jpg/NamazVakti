@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
@@ -32,6 +33,8 @@ class ToolDetailScreen extends StatefulWidget {
 
 class _ToolDetailScreenState extends State<ToolDetailScreen> {
   final PrayerRepository _repository = PrayerRepository();
+  String? _activeToolId;
+  String? _activeToolTitle;
 
   // Color Utility Getters
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
@@ -187,18 +190,22 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     await prefs.setStringList('favorite_dualar', _favoriteDualar.toList());
   }
 
-  // Dini Hoca State
+  // Dini Danışman State
   List<Map<String, dynamic>> _diniHocaMessages = [];
   bool _diniHocaIsTyping = false;
   final ScrollController _diniHocaScrollController = ScrollController();
   final TextEditingController _diniHocaInputController = TextEditingController();
+  
+  // Geliştirici Gemini API Anahtarı (Gemini'ı aktifleştirmek için anahtarınızı buraya yazabilirsiniz)
+  static const String _geminiApiKey = "";
+  bool get _useGeminiAI => _geminiApiKey.isNotEmpty;
 
   void _initDiniHoca() {
     if (_diniHocaMessages.isEmpty) {
       _diniHocaMessages = [
         {
           'isMe': false,
-          'text': "Selamün Aleyküm mümin kardeşim. Ben yapay zeka Dini Hoca asistanınızım. İslamiyet, ibadetler (namaz, abdest, gusül, oruç, zekat vb.), dualar ve sureler hakkında sormak istediğiniz soruları cevaplamaktan mutluluk duyarım. Nasıl yardımcı olabilirim?",
+          'text': "Selamün Aleyküm mümin kardeşim. Ben yapay zeka Dini Danışman asistanınızım. İslamiyet, ibadetler (namaz, abdest, gusül, oruç, zekat vb.), dualar ve sureler hakkında sormak istediğiniz soruları cevaplamaktan mutluluk duyarım. Nasıl yardımcı olabilirim?",
           'time': DateTime.now(),
         }
       ];
@@ -673,99 +680,101 @@ out center body;
   String _selectedDiniGunlerYear = "2026";
   final Map<String, List<Map<String, String>>> _diniGunlerByYear = {
     "2026": [
-      { "ad": "Regaib Kandili", "gun": "Pazartesi", "tarih": "26 Ocak 2026", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Miraç Kandili", "gun": "Cuma", "tarih": "13 Şubat 2026", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Berat Kandili", "gun": "Pazartesi", "tarih": "2 Mart 2026", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Başlangıcı", "gun": "Perşembe", "tarih": "19 Mart 2026", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Kadir Gecesi", "gun": "Salı", "tarih": "14 Nisan 2026", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Bayramı Arefesi", "gun": "Cuma", "tarih": "17 Nisan 2026", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Cumartesi", "tarih": "18 Nisan 2026", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Pazar", "tarih": "19 Nisan 2026", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Pazartesi", "tarih": "20 Nisan 2026", "kat": "Ramazan Bayramı" },
-      { "ad": "Kurban Bayramı Arefesi", "gun": "Pazartesi", "tarih": "25 Mayıs 2026", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Salı", "tarih": "26 Mayıs 2026", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Çarşamba", "tarih": "27 Mayıs 2026", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Perşembe", "tarih": "28 Mayıs 2026", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Cuma", "tarih": "29 Mayıs 2026", "kat": "Kurban Bayramı" },
-      { "ad": "Hicri Yılbaşı (1 Muharrem 1448)", "gun": "Salı", "tarih": "16 Haziran 2026", "kat": "Hicri Yılbaşı ve Aşure" },
+      { "ad": "Miraç Kandili", "gun": "Perşembe", "tarih": "15 Ocak 2026", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Berat Kandili", "gun": "Pazartesi", "tarih": "2 Şubat 2026", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Başlangıcı", "gun": "Perşembe", "tarih": "19 Şubat 2026", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Kadir Gecesi", "gun": "Pazartesi", "tarih": "16 Mart 2026", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Bayramı Arefesi", "gun": "Perşembe", "tarih": "19 Mart 2026", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Cuma", "tarih": "20 Mart 2026", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Cumartesi", "tarih": "21 Mart 2026", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Pazar", "tarih": "22 Mart 2026", "kat": "Ramazan Bayramı" },
+      { "ad": "Kurban Bayramı Arefesi", "gun": "Salı", "tarih": "26 Mayıs 2026", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Çarşamba", "tarih": "27 Mayıs 2026", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Perşembe", "tarih": "28 Mayıs 2026", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Cuma", "tarih": "29 Mayıs 2026", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Cumartesi", "tarih": "30 Mayıs 2026", "kat": "Kurban Bayramı" },
+      { "ad": "Hicri Yılbaşı", "gun": "Salı", "tarih": "16 Haziran 2026", "kat": "Hicri Yılbaşı ve Aşure" },
       { "ad": "Aşure Günü", "gun": "Perşembe", "tarih": "25 Haziran 2026", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Mevlid Kandili", "gun": "Pazar", "tarih": "23 Ağustos 2026", "kat": "Kandil ve Mübarek Geceler" }
+      { "ad": "Mevlid Kandili", "gun": "Pazartesi", "tarih": "24 Ağustos 2026", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "10 Aralık 2026", "kat": "Kandil ve Mübarek Geceler" }
     ],
     "2027": [
-      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "14 Ocak 2027", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Miraç Kandili", "gun": "Salı", "tarih": "2 Şubat 2027", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Berat Kandili", "gun": "Cuma", "tarih": "19 Şubat 2027", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Başlangıcı", "gun": "Pazartesi", "tarih": "8 Mart 2027", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Kadir Gecesi", "gun": "Cumartesi", "tarih": "3 Nisan 2027", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Bayramı Arefesi", "gun": "Salı", "tarih": "6 Nisan 2027", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Çarşamba", "tarih": "7 Nisan 2027", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Perşembe", "tarih": "8 Nisan 2027", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Cuma", "tarih": "9 Nisan 2027", "kat": "Ramazan Bayramı" },
-      { "ad": "Kurban Bayramı Arefesi", "gun": "Cuma", "tarih": "14 Mayıs 2027", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Cumartesi", "tarih": "15 Mayıs 2027", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Pazar", "tarih": "16 Mayıs 2027", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Pazartesi", "tarih": "17 Mayıs 2027", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Salı", "tarih": "18 Mayıs 2027", "kat": "Kurban Bayramı" },
-      { "ad": "Hicri Yılbaşı", "gun": "Cumartesi", "tarih": "5 Haziran 2027", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Aşure Günü", "gun": "Pazartesi", "tarih": "14 Haziran 2027", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Mevlid Kandili", "gun": "Perşembe", "tarih": "12 Ağustos 2027", "kat": "Kandil ve Mübarek Geceler" }
+      { "ad": "Miraç Kandili", "gun": "Pazartesi", "tarih": "4 Ocak 2027", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Berat Kandili", "gun": "Cuma", "tarih": "22 Ocak 2027", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Başlangıcı", "gun": "Pazartesi", "tarih": "8 Şubat 2027", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Kadir Gecesi", "gun": "Cuma", "tarih": "5 Mart 2027", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Bayramı Arefesi", "gun": "Pazartesi", "tarih": "8 Mart 2027", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Salı", "tarih": "9 Mart 2027", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Çarşamba", "tarih": "10 Mart 2027", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Perşembe", "tarih": "11 Mart 2027", "kat": "Ramazan Bayramı" },
+      { "ad": "Kurban Bayramı Arefesi", "gun": "Cumartesi", "tarih": "15 Mayıs 2027", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Pazar", "tarih": "16 Mayıs 2027", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Pazartesi", "tarih": "17 Mayıs 2027", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Salı", "tarih": "18 Mayıs 2027", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Çarşamba", "tarih": "19 Mayıs 2027", "kat": "Kurban Bayramı" },
+      { "ad": "Hicri Yılbaşı", "gun": "Pazar", "tarih": "6 Haziran 2027", "kat": "Hicri Yılbaşı ve Aşure" },
+      { "ad": "Aşure Günü", "gun": "Salı", "tarih": "15 Haziran 2027", "kat": "Hicri Yılbaşı ve Aşure" },
+      { "ad": "Mevlid Kandili", "gun": "Cuma", "tarih": "13 Ağustos 2027", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "2 Aralık 2027", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Miraç Kandili", "gun": "Cuma", "tarih": "24 Aralık 2027", "kat": "Kandil ve Mübarek Geceler" }
     ],
     "2028": [
-      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "3 Ocak 2028", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Miraç Kandili", "gun": "Pazartesi", "tarih": "24 Ocak 2028", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Berat Kandili", "gun": "Salı", "tarih": "8 Şubat 2028", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Başlangıcı", "gun": "Cumartesi", "tarih": "26 Şubat 2028", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Kadir Gecesi", "gun": "Çarşamba", "tarih": "22 Mart 2028", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Bayramı Arefesi", "gun": "Cumartesi", "tarih": "25 Mart 2028", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Pazar", "tarih": "26 Mart 2028", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Pazartesi", "tarih": "27 Mart 2028", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Salı", "tarih": "28 Mart 2028", "kat": "Ramazan Bayramı" },
-      { "ad": "Kurban Bayramı Arefesi", "gun": "Salı", "tarih": "29 Nisan 2028", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Çarşamba", "tarih": "3 Mayıs 2028", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Perşembe", "tarih": "4 Mayıs 2028", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Cuma", "tarih": "5 Mayıs 2028", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Cumartesi", "tarih": "6 Mayıs 2028", "kat": "Kurban Bayramı" },
-      { "ad": "Hicri Yılbaşı", "gun": "Çarşamba", "tarih": "24 Mayıs 2028", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Aşure Günü", "gun": "Cuma", "tarih": "2 Haziran 2028", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Mevlid Kandili", "gun": "Salı", "tarih": "1 Ağu 2028", "kat": "Kandil ve Mübarek Geceler" }
+      { "ad": "Berat Kandili", "gun": "Salı", "tarih": "11 Ocak 2028", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Başlangıcı", "gun": "Cuma", "tarih": "28 Ocak 2028", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Kadir Gecesi", "gun": "Salı", "tarih": "22 Şubat 2028", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Bayramı Arefesi", "gun": "Cuma", "tarih": "25 Şubat 2028", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Cumartesi", "tarih": "26 Şubat 2028", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Pazar", "tarih": "27 Şubat 2028", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Pazartesi", "tarih": "28 Şubat 2028", "kat": "Ramazan Bayramı" },
+      { "ad": "Kurban Bayramı Arefesi", "gun": "Perşembe", "tarih": "4 Mayıs 2028", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Cuma", "tarih": "5 Mayıs 2028", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Cumartesi", "tarih": "6 Mayıs 2028", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Pazar", "tarih": "7 Mayıs 2028", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Pazartesi", "tarih": "8 Mayıs 2028", "kat": "Kurban Bayramı" },
+      { "ad": "Hicri Yılbaşı", "gun": "Perşembe", "tarih": "25 Mayıs 2028", "kat": "Hicri Yılbaşı ve Aşure" },
+      { "ad": "Aşure Günü", "gun": "Cumartesi", "tarih": "3 Haziran 2028", "kat": "Hicri Yılbaşı ve Aşure" },
+      { "ad": "Mevlid Kandili", "gun": "Çarşamba", "tarih": "2 Ağustos 2028", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "23 Kasım 2028", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Miraç Kandili", "gun": "Çarşamba", "tarih": "13 Aralık 2028", "kat": "Kandil ve Mübarek Geceler" }
     ],
     "2029": [
-      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "21 Aralık 2028", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Miraç Kandili", "gun": "Cumartesi", "tarih": "13 Ocak 2029", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Berat Kandili", "gun": "Çarşamba", "tarih": "31 Ocak 2029", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Başlangıcı", "gun": "Çarşamba", "tarih": "14 Şubat 2029", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Kadir Gecesi", "gun": "Pazartesi", "tarih": "12 Mart 2029", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Bayramı Arefesi", "gun": "Perşembe", "tarih": "15 Mart 2029", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Cuma", "tarih": "16 Mart 2029", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Cumartesi", "tarih": "17 Mart 2029", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Pazar", "tarih": "18 Mart 2029", "kat": "Ramazan Bayramı" },
-      { "ad": "Kurban Bayramı Arefesi", "gun": "Cumartesi", "tarih": "21 Nisan 2029", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Pazar", "tarih": "22 Nisan 2029", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Pazartesi", "tarih": "23 Nisan 2029", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Salı", "tarih": "24 Nisan 2029", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Çarşamba", "tarih": "25 Nisan 2029", "kat": "Kurban Bayramı" },
+      { "ad": "Ramazan Başlangıcı", "gun": "Salı", "tarih": "16 Ocak 2029", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Kadir Gecesi", "gun": "Cumartesi", "tarih": "10 Şubat 2029", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Bayramı Arefesi", "gun": "Salı", "tarih": "13 Şubat 2029", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Çarşamba", "tarih": "14 Şubat 2029", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Perşembe", "tarih": "15 Şubat 2029", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Cuma", "tarih": "16 Şubat 2029", "kat": "Ramazan Bayramı" },
+      { "ad": "Kurban Bayramı Arefesi", "gun": "Pazartesi", "tarih": "23 Nisan 2029", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Salı", "tarih": "24 Nisan 2029", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Çarşamba", "tarih": "25 Nisan 2029", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Perşembe", "tarih": "26 Nisan 2029", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Cuma", "tarih": "27 Nisan 2029", "kat": "Kurban Bayramı" },
       { "ad": "Hicri Yılbaşı", "gun": "Pazartesi", "tarih": "14 Mayıs 2029", "kat": "Hicri Yılbaşı ve Aşure" },
       { "ad": "Aşure Günü", "gun": "Çarşamba", "tarih": "23 Mayıs 2029", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Mevlid Kandili", "gun": "Salı", "tarih": "22 Temmuz 2029", "kat": "Kandil ve Mübarek Geceler" }
+      { "ad": "Mevlid Kandili", "gun": "Pazartesi", "tarih": "23 Temmuz 2029", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "8 Kasım 2029", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Miraç Kandili", "gun": "Pazar", "tarih": "2 Aralık 2029", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Berat Kandili", "gun": "Perşembe", "tarih": "20 Aralık 2029", "kat": "Kandil ve Mübarek Geceler" }
     ],
     "2030": [
-      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "10 Ocak 2030", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Miraç Kandili", "gun": "Salı", "tarih": "29 Ocak 2030", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Berat Kandili", "gun": "Cuma", "tarih": "15 Şubat 2030", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Başlangıcı", "gun": "Salı", "tarih": "5 Mart 2030", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Kadir Gecesi", "gun": "Pazar", "tarih": "31 Mart 2030", "kat": "Kandil ve Mübarek Geceler" },
-      { "ad": "Ramazan Bayramı Arefesi", "gun": "Perşembe", "tarih": "4 Nisan 2030", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Cuma", "tarih": "5 Nisan 2030", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Cumartesi", "tarih": "6 Nisan 2030", "kat": "Ramazan Bayramı" },
-      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Pazar", "tarih": "7 Nisan 2030", "kat": "Ramazan Bayramı" },
-      { "ad": "Kurban Bayramı Arefesi", "gun": "Pazartesi", "tarih": "11 Nisan 2030", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Salı", "tarih": "12 Nisan 2030", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Çarşamba", "tarih": "13 Nisan 2030", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Perşembe", "tarih": "14 Nisan 2030", "kat": "Kurban Bayramı" },
-      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Cuma", "tarih": "15 Nisan 2030", "kat": "Kurban Bayramı" },
-      { "ad": "Hicri Yılbaşı", "gun": "Cuma", "tarih": "3 Mayıs 2030", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Aşure Günü", "gun": "Pazar", "tarih": "12 Mayıs 2030", "kat": "Hicri Yılbaşı ve Aşure" },
-      { "ad": "Mevlid Kandili", "gun": "Salı", "tarih": "11 Temmuz 2030", "kat": "Kandil ve Mübarek Geceler" }
+      { "ad": "Ramazan Başlangıcı (1. Ramazan)", "gun": "Cumartesi", "tarih": "5 Ocak 2030", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Kadir Gecesi", "gun": "Çarşamba", "tarih": "30 Ocak 2030", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Bayramı Arefesi", "gun": "Cumartesi", "tarih": "2 Şubat 2030", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (1. Gün)", "gun": "Pazar", "tarih": "3 Şubat 2030", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (2. Gün)", "gun": "Pazartesi", "tarih": "4 Şubat 2030", "kat": "Ramazan Bayramı" },
+      { "ad": "Ramazan Bayramı (3. Gün)", "gun": "Salı", "tarih": "5 Şubat 2030", "kat": "Ramazan Bayramı" },
+      { "ad": "Kurban Bayramı Arefesi", "gun": "Cuma", "tarih": "12 Nisan 2030", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (1. Gün)", "gun": "Cumartesi", "tarih": "13 Nisan 2030", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (2. Gün)", "gun": "Pazar", "tarih": "14 Nisan 2030", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (3. Gün)", "gun": "Pazartesi", "tarih": "15 Nisan 2030", "kat": "Kurban Bayramı" },
+      { "ad": "Kurban Bayramı (4. Gün)", "gun": "Salı", "tarih": "16 Nisan 2030", "kat": "Kurban Bayramı" },
+      { "ad": "Hicri Yılbaşı", "gun": "Cumartesi", "tarih": "4 Mayıs 2030", "kat": "Hicri Yılbaşı ve Aşure" },
+      { "ad": "Aşure Günü", "gun": "Pazartesi", "tarih": "13 Mayıs 2030", "kat": "Hicri Yılbaşı ve Aşure" },
+      { "ad": "Mevlid Kandili", "gun": "Cuma", "tarih": "12 Temmuz 2030", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Regaib Kandili", "gun": "Perşembe", "tarih": "31 Ekim 2030", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Miraç Kandili", "gun": "Cuma", "tarih": "22 Kasım 2030", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Berat Kandili", "gun": "Pazartesi", "tarih": "9 Aralık 2030", "kat": "Kandil ve Mübarek Geceler" },
+      { "ad": "Ramazan Başlangıcı (2. Ramazan)", "gun": "Perşembe", "tarih": "26 Aralık 2030", "kat": "Kandil ve Mübarek Geceler" }
     ]
   };
 
@@ -818,6 +827,7 @@ out center body;
   int _hadisIndex = 0;
   final List<Map<String, dynamic>> _filteredHadisList = [...HADISLER_40];
   final TextEditingController _hadisSearchController = TextEditingController();
+  late PageController _hadisPageController;
 
   // Namaz Tesbihati State
   int _tesbihStep = 0;
@@ -846,9 +856,23 @@ out center body;
 
   // Prophet Life Tab
   int _prophetLifeTab = 0;
+  int _prophetSubSection = 0; // 0: Donemler, 1: Semail, 2: Ahlak, 3: Aile, 4: Gazveler, 5: Sunnet/Hadisler
 
   // Namaz Kilma Tab
   bool _namazKilmaErkek = true;
+  int _namazStepIndex = 0;
+
+  // Abdest & Gusul Steps State
+  int _abdestStepIndex = 0;
+  int _gusulStepIndex = 0;
+  int _abdestTab = 0;
+  int _gusulTab = 0;
+
+  // Live Quran Radio State
+  bool _isRadioLoading = false;
+
+  // Expanded Sahabe ID
+  String? _expandedSahabeAd;
 
   // Kaza Namazi State
   int _kazaSabah = 0;
@@ -866,6 +890,8 @@ out center body;
   @override
   void initState() {
     super.initState();
+    _activeToolId = widget.toolId;
+    _activeToolTitle = widget.toolTitle;
     _initMosques();
     _loadLocationName();
     _loadQuranLastRead();
@@ -883,6 +909,16 @@ out center body;
     _loadDuaList();
     _loadQuestionList();
     _loadKazaState();
+    _hadisPageController = PageController(initialPage: _hadisIndex);
+  }
+
+  @override
+  void didUpdateWidget(covariant ToolDetailScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.toolId != widget.toolId || oldWidget.toolTitle != widget.toolTitle) {
+      _activeToolId = widget.toolId;
+      _activeToolTitle = widget.toolTitle;
+    }
   }
 
   Future<void> _loadKazaState() async {
@@ -918,6 +954,9 @@ out center body;
       if (mounted) {
         setState(() {
           _playerState = state;
+          if (state == PlayerState.playing || state == PlayerState.stopped || state == PlayerState.paused) {
+            _isRadioLoading = false;
+          }
         });
       }
     });
@@ -949,41 +988,70 @@ out center body;
     _cashController.dispose();
     _businessController.dispose();
     _debtsController.dispose();
+    _hadisPageController.dispose();
     super.dispose();
   }
 
   // Zikirmatik persistence
   Future<void> _loadZikirState() async {
-    final count = await _repository.getZikirCount();
-    final target = await _repository.getZikirTarget();
     final prefs = await SharedPreferences.getInstance();
+    
+    // Load custom Esma zikirs if they exist
+    final customIds = prefs.getStringList('zikir_custom_ids') ?? [];
+    for (final customId in customIds) {
+      final customAd = prefs.getString('zikir_custom_ad_$customId') ?? '';
+      final customArapca = prefs.getString('zikir_custom_arapca_$customId') ?? '';
+      final customAnlam = prefs.getString('zikir_custom_anlam_$customId') ?? '';
+      final customFazilet = prefs.getString('zikir_custom_fazilet_$customId') ?? '';
+      final customHedef = prefs.getInt('zikir_custom_hedef_$customId') ?? 33;
+      _zikirData[customId] = {
+        'ad': customAd,
+        'arapca': customArapca,
+        'anlam': customAnlam,
+        'fazilet': customFazilet,
+        'hedef': customHedef,
+      };
+    }
+
+    final selectedId = prefs.getString('zikir_selected_id') ?? 'subhanallah';
+    final count = prefs.getInt('zikir_count_$selectedId') ?? 0;
+    final target = prefs.getInt('zikir_target_$selectedId') ?? (_zikirData[selectedId]?['hedef'] ?? 33);
+    
     setState(() {
+      _selectedZikirId = selectedId;
       _zikirCount = count;
       _zikirTarget = target;
-      _selectedZikirId = prefs.getString('zikir_selected_id') ?? 'subhanallah';
     });
   }
 
   void _onZikirSelected(String? id) async {
     if (id == null) return;
     final prefs = await SharedPreferences.getInstance();
+    
+    // Save current count of the old zikir first
+    await prefs.setInt('zikir_count_$_selectedZikirId', _zikirCount);
+    
     await prefs.setString('zikir_selected_id', id);
-    final target = _zikirData[id]?['hedef'] ?? 33;
+    
+    final target = prefs.getInt('zikir_target_$id') ?? (_zikirData[id]?['hedef'] ?? 33);
+    final count = prefs.getInt('zikir_count_$id') ?? 0;
+    
     setState(() {
       _selectedZikirId = id;
       _zikirTarget = target;
-      _zikirCount = 0;
+      _zikirCount = count;
     });
+    
     await _repository.setZikirTarget(target);
-    await _repository.setZikirCount(0);
+    await _repository.setZikirCount(count);
   }
-
-
 
   Future<void> _resetZikir() async {
     setState(() {
       _zikirCount = 0;
     });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('zikir_count_$_selectedZikirId', 0);
     await _repository.setZikirCount(0);
   }
 
@@ -1081,35 +1149,89 @@ out center body;
     }
   }
 
+  // Radio stream toggle helper
+  Future<void> _toggleRadio(String url) async {
+    try {
+      if (_currentAudioUrl == url && _playerState == PlayerState.playing) {
+        await _audioPlayer!.stop();
+        setState(() {
+          _playerState = PlayerState.stopped;
+        });
+      } else {
+        setState(() {
+          _isRadioLoading = true;
+          _currentAudioUrl = url;
+          _currentTrackName = "Canlı Kur'an Radyosu";
+        });
+        await _audioPlayer!.stop();
+        await _audioPlayer!.play(UrlSource(url));
+      }
+    } catch (e) {
+      setState(() {
+        _isRadioLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Radyo yayını başlatılamadı: $e"))
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool dark = _isDark;
-    return Scaffold(
-      backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
-      appBar: AppBar(
-        automaticallyImplyLeading: !widget.isTab,
-        title: Text(
-          widget.toolTitle,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+    return PopScope(
+      canPop: _activeToolId == widget.toolId,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        if (_activeToolId != widget.toolId) {
+          setState(() {
+            _activeToolId = widget.toolId;
+            _activeToolTitle = widget.toolTitle;
+          });
+        }
+      },
+      child: Scaffold(
+        backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
+        appBar: AppBar(
+          automaticallyImplyLeading: !widget.isTab,
+          leading: widget.isTab
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    if (_activeToolId != widget.toolId) {
+                      setState(() {
+                        _activeToolId = widget.toolId;
+                        _activeToolTitle = widget.toolTitle;
+                      });
+                    } else {
+                      Navigator.of(context).maybePop();
+                    }
+                  },
+                ),
+          title: Text(
+            _activeToolTitle ?? widget.toolTitle,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
+          backgroundColor: dark ? const Color(0xFF111A2E) : const Color(0xFF1E5E43),
+          elevation: 0,
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-        backgroundColor: dark ? const Color(0xFF111A2E) : const Color(0xFF1E5E43),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _buildToolBody(),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _buildToolBody(),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildToolBody() {
-    switch (widget.toolId) {
+    switch (_activeToolId ?? widget.toolId) {
       case 'dini-gunler':
         return _buildDiniGunler();
       case 'dua-iste':
@@ -1225,6 +1347,7 @@ out center body;
         return _buildKurbanRehberi();
       case 'sadaka-bilgileri':
         return _buildSadakaBilgileri();
+      case 'islam-sartlari':
       case 'islamin-sartlari':
         return _buildIslaminSartlari();
       case 'imanin-sartlari':
@@ -2053,74 +2176,178 @@ out center body;
     );
   }
 
-  // 4. Canlı Sohbet
+  // 4. Canlı Sohbet (Canlı Kur'an Radyosu)
   Widget _buildCanliSohbet() {
+    final bool dark = _isDark;
+    const String streamUrl = "https://eustr73.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c14192aa92.smil/playlist.m3u8";
+    final bool isCurrentPlaying = _currentAudioUrl == streamUrl && _playerState == PlayerState.playing;
+
     return Center(
-      child: Card(
-        elevation: 3,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFBEAEA),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.headphones_rounded,
-                  size: 54,
-                  color: Color(0xFFD9534F),
-                ),
+      child: SingleChildScrollView(
+        child: Card(
+          elevation: dark ? 4 : 8,
+          shadowColor: Colors.black26,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: dark
+                ? BorderSide(color: Colors.white.withOpacity(0.08), width: 1.5)
+                : BorderSide.none,
+          ),
+          color: dark ? const Color(0xFF131D31) : Colors.white,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(28.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              gradient: LinearGradient(
+                colors: dark
+                    ? [const Color(0xFF131D31), const Color(0xFF0D1625)]
+                    : [Colors.white, const Color(0xFFF2FAF6)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-              const SizedBox(height: 20),
-              const Text(
-                "Canlı Dini Sohbet",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Color(0xFF1E5E43),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Live Status Badge
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: isCurrentPlaying ? Colors.redAccent : Colors.grey,
+                        shape: BoxShape.circle,
+                        boxShadow: isCurrentPlaying
+                            ? [
+                                BoxShadow(
+                                  color: Colors.redAccent.withOpacity(0.5),
+                                  blurRadius: 8,
+                                  spreadRadius: 2,
+                                )
+                              ]
+                            : [],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isCurrentPlaying ? "CANLI YAYIN" : "YAYIN DURDURULDU",
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.2,
+                        color: isCurrentPlaying ? Colors.redAccent : Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                "Değerli hocalarımızın canlı dini sohbet yayınları çok yakında bu ekranda sizlerle olacaktır.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 13.5,
-                  height: 1.45,
-                ),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF27A770),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                const SizedBox(height: 24),
+                // Radio Symbol
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: dark ? const Color(0xFF1B2A47) : const Color(0xFFE8F5E9),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF27A770).withOpacity(dark ? 0.2 : 0.1),
+                        blurRadius: 20,
+                        spreadRadius: 5,
+                      )
+                    ],
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 12),
-                  elevation: 1,
+                  child: Center(
+                    child: Icon(
+                      Icons.radio_rounded,
+                      size: 56,
+                      color: dark ? const Color(0xFF27A770) : const Color(0xFF1E5E43),
+                    ),
+                  ),
                 ),
-                child: const Text(
-                  "Geri Dön",
+                const SizedBox(height: 24),
+                Text(
+                  "Diyanet Kur'an Radyo",
                   style: TextStyle(
-                    color: Colors.white,
                     fontWeight: FontWeight.bold,
+                    fontSize: 22,
+                    letterSpacing: 0.5,
+                    color: _textColor,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  "Kesintisiz Kur'an-ı Kerim Meali ve Tilaveti",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: _subtitleColor,
                     fontSize: 13,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 24),
+                // Wave Equalizer
+                QuranEqualizer(isPlaying: isCurrentPlaying),
+                const SizedBox(height: 24),
+                // Play / Stop Controls
+                if (_isRadioLoading)
+                  const SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFFD4AF37),
+                        strokeWidth: 4,
+                      ),
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTap: () => _toggleRadio(streamUrl),
+                    child: Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: isCurrentPlaying ? const Color(0xFFD9534F) : const Color(0xFF27A770),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isCurrentPlaying ? const Color(0xFFD9534F) : const Color(0xFF27A770)).withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Icon(
+                        isCurrentPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
+                        size: 40,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 28),
+                // Open Web Link button
+                TextButton.icon(
+                  onPressed: () async {
+                    final Uri url = Uri.parse("https://diyanetkuranradyo.com/canli-dinle");
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                    }
+                  },
+                  icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                  label: const Text(
+                    "Diyanet Web Sayfasını Aç",
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFFD4AF37),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -2129,30 +2356,44 @@ out center body;
 
   // 5. Peygamberin Hayatı
   Widget _buildPeygamberHayati() {
+    final bool dark = _isDark;
+    final List<String> sections = [
+      "Dönemler",
+      "Ahlakı",
+      "Şemaili",
+      "Ailesi",
+      "Gazveler",
+      "Sünnetleri"
+    ];
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Sub-section tabs
         SizedBox(
-          height: 48,
+          height: 40,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: PEYGAMBER_HAYATI.length,
+            itemCount: sections.length,
             itemBuilder: (context, index) {
-              final active = _prophetLifeTab == index;
+              final active = _prophetSubSection == index;
               return Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: ChoiceChip(
                   label: Text(
-                    PEYGAMBER_HAYATI[index]['baslik']?.split(' ')[0] ?? '',
+                    sections[index],
+                    style: TextStyle(
+                      color: active ? Colors.white : (dark ? Colors.white70 : const Color(0xFF1E5E43)),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.5,
+                    ),
                   ),
                   selected: active,
                   selectedColor: const Color(0xFF27A770),
-                  labelStyle: TextStyle(
-                    color: active ? Colors.white : const Color(0xFF1E5E43),
-                    fontWeight: FontWeight.bold,
-                  ),
+                  backgroundColor: dark ? const Color(0xFF1B2A47) : const Color(0xFFE8F5E9),
                   onSelected: (val) {
                     setState(() {
-                      _prophetLifeTab = index;
+                      _prophetSubSection = index;
                     });
                   },
                 ),
@@ -2162,42 +2403,544 @@ out center body;
         ),
         const SizedBox(height: 16),
         Expanded(
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+          child: _buildProphetSectionContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProphetSectionContent() {
+    final bool dark = _isDark;
+    final Map<String, dynamic> rehber = PEYGAMBER_REHBERI;
+
+    switch (_prophetSubSection) {
+      case 0: // Dönemler
+        final List<dynamic> donemler = rehber['donemler'];
+        final current = donemler[_prophetLifeTab];
+        final List<String> milestones = current['ek_bilgi'].toString().split(' • ');
+
+        return Column(
+          children: [
+            // Period selector
+            SizedBox(
+              height: 36,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: donemler.length,
+                itemBuilder: (context, idx) {
+                  final active = _prophetLifeTab == idx;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 6.0),
+                    child: ChoiceChip(
+                      label: Text(
+                        donemler[idx]['baslik'].toString().split(' (')[0],
+                        style: TextStyle(
+                          color: active ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                          fontSize: 11.5,
+                          fontWeight: active ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
+                      selected: active,
+                      selectedColor: const Color(0xFFD4AF37),
+                      backgroundColor: dark ? const Color(0xFF152238) : Colors.grey[200],
+                      onSelected: (val) {
+                        setState(() {
+                          _prophetLifeTab = idx;
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SingleChildScrollView(
+            const SizedBox(height: 12),
+            // Period card
+            Expanded(
+              child: Card(
+                color: dark ? const Color(0xFF131D31) : Colors.white,
+                elevation: 1.5,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                child: Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                current['baslik'],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF27A770),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD4AF37).withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                current['yil'],
+                                style: const TextStyle(
+                                  color: Color(0xFFD4AF37),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 24),
+                        Text(
+                          current['icerik'],
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            height: 1.6,
+                            color: _textColor,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Ayet box
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD4AF37).withOpacity(0.06),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.2)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.menu_book_rounded, size: 16, color: Color(0xFFD4AF37)),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    "İlgili Ayet",
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: const Color(0xFFD4AF37),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                current['ayet'],
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontStyle: FontStyle.italic,
+                                  height: 1.45,
+                                  color: dark ? Colors.white70 : Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Milestones
+                        Text(
+                          "Önemli Detaylar",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: dark ? Colors.white : const Color(0xFF1E5E43),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: milestones.map((m) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: dark ? const Color(0xFF1B2A47) : const Color(0xFFF0F9F4),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                m,
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  color: dark ? Colors.white70 : const Color(0xFF1E5E43),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+
+      case 1: // Ahlakı
+        final List<dynamic> ahlak = rehber['ahlak'];
+        return ListView.builder(
+          itemCount: ahlak.length,
+          itemBuilder: (context, idx) {
+            final item = ahlak[idx];
+            return Card(
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              margin: const EdgeInsets.only(bottom: 10),
+              child: ExpansionTile(
+                iconColor: const Color(0xFFD4AF37),
+                collapsedIconColor: const Color(0xFF27A770),
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF27A770).withOpacity(0.12),
+                  child: const Icon(Icons.star_border_rounded, color: Color(0xFF27A770)),
+                ),
+                title: Text(
+                  item['baslik'],
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.5,
+                    color: dark ? Colors.white : const Color(0xFF1E5E43),
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 18.0, right: 18.0, bottom: 18.0),
+                    child: Text(
+                      item['detay'],
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.5,
+                        color: dark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+
+      case 2: // Şemaili
+        final List<dynamic> semail = rehber['semail'];
+        return ListView.builder(
+          itemCount: semail.length,
+          itemBuilder: (context, idx) {
+            final item = semail[idx];
+            return Card(
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      PEYGAMBER_HAYATI[_prophetLifeTab]['baslik'] ?? '',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E5E43),
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          idx == 0
+                              ? Icons.face_rounded
+                              : idx == 1
+                                  ? Icons.directions_walk_rounded
+                                  : Icons.blur_on_rounded,
+                          color: const Color(0xFFD4AF37),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          item['baslik'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: dark ? Colors.white : const Color(0xFF1E5E43),
+                          ),
+                        ),
+                      ],
                     ),
-                    const Divider(height: 24),
+                    const Divider(height: 20),
                     Text(
-                      PEYGAMBER_HAYATI[_prophetLifeTab]['icerik'] ?? '',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        height: 1.6,
-                        color: Colors.black87,
+                      item['detay'],
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.55,
+                        color: dark ? Colors.white70 : Colors.black87,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
+            );
+          },
+        );
+
+      case 3: // Ailesi
+        final Map<String, dynamic> aile = rehber['aile'];
+        final List<dynamic> ebeveyn = aile['anne_baba'];
+        final List<dynamic> esleri = aile['esleri'];
+        final List<dynamic> cocuklar = aile['cocuklari'];
+
+        return DefaultTabController(
+          length: 3,
+          child: Column(
+            children: [
+              TabBar(
+                tabs: const [
+                  Tab(text: "Büyükleri"),
+                  Tab(text: "Eşleri"),
+                  Tab(text: "Çocukları"),
+                ],
+                labelColor: const Color(0xFF27A770),
+                unselectedLabelColor: _subtitleColor,
+                indicatorColor: const Color(0xFF27A770),
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    // Anne Baba
+                    ListView.builder(
+                      itemCount: ebeveyn.length,
+                      itemBuilder: (context, idx) {
+                        final p = ebeveyn[idx];
+                        return Card(
+                          color: dark ? const Color(0xFF131D31) : Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: const Color(0xFF27A770).withOpacity(0.12),
+                              foregroundColor: const Color(0xFF27A770),
+                              child: Text(p['rol'][0]),
+                            ),
+                            title: Text(
+                              "${p['ad']} (${p['rol']})",
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                p['bilgi'],
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // Eşleri
+                    ListView.builder(
+                      itemCount: esleri.length,
+                      itemBuilder: (context, idx) {
+                        final e = esleri[idx];
+                        return Card(
+                          color: dark ? const Color(0xFF131D31) : Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: const Color(0xFFD4AF37).withOpacity(0.12),
+                              foregroundColor: const Color(0xFFD4AF37),
+                              child: Text((idx + 1).toString()),
+                            ),
+                            title: Text(
+                              e['ad'],
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                e['bilgi'],
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    // Çocukları
+                    ListView.builder(
+                      itemCount: cocuklar.length,
+                      itemBuilder: (context, idx) {
+                        final c = cocuklar[idx];
+                        return Card(
+                          color: dark ? const Color(0xFF131D31) : Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: const Color(0xFF27A770).withOpacity(0.12),
+                              foregroundColor: const Color(0xFF27A770),
+                              child: const Icon(Icons.child_care_rounded, size: 20),
+                            ),
+                            title: Text(
+                              c['ad'],
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5),
+                            ),
+                            subtitle: Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                c['bilgi'],
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
+        );
+
+      case 4: // Savaşlar
+        final List<dynamic> gazveler = rehber['gazveler'];
+        return ListView.builder(
+          itemCount: gazveler.length,
+          itemBuilder: (context, idx) {
+            final g = gazveler[idx];
+            return Card(
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ExpansionTile(
+                iconColor: const Color(0xFFD4AF37),
+                collapsedIconColor: const Color(0xFF27A770),
+                leading: CircleAvatar(
+                  backgroundColor: Colors.redAccent.withOpacity(0.12),
+                  child: const Icon(Icons.shield_outlined, color: Colors.redAccent, size: 20),
+                ),
+                title: Text(
+                  g['ad'],
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: dark ? Colors.white : const Color(0xFF1E5E43),
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          g['detay'],
+                          style: TextStyle(
+                            fontSize: 13,
+                            height: 1.5,
+                            color: dark ? Colors.white70 : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Icon(Icons.check_circle_outline_rounded, size: 16, color: Color(0xFF27A770)),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Sonuç: ${g['sonuc']}",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF27A770),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFD4AF37).withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.15)),
+                          ),
+                          child: Text(
+                            "Çıkarılan Ders: ${g['ders']}",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontStyle: FontStyle.italic,
+                              color: Color(0xFFB8860B),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+
+      default: // Sünnetleri
+        final List<dynamic> sunnetler = rehber['hadis_sunnet'];
+        return ListView.builder(
+          itemCount: sunnetler.length,
+          itemBuilder: (context, idx) {
+            final s = sunnetler[idx];
+            final List<dynamic> detaylar = s['detaylar'];
+            return Card(
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: ExpansionTile(
+                iconColor: const Color(0xFFD4AF37),
+                collapsedIconColor: const Color(0xFF27A770),
+                leading: CircleAvatar(
+                  backgroundColor: const Color(0xFF27A770).withOpacity(0.12),
+                  child: const Icon(Icons.spa_outlined, color: Color(0xFF27A770), size: 20),
+                ),
+                title: Text(
+                  s['kategori'],
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.5,
+                    color: dark ? Colors.white : const Color(0xFF1E5E43),
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                    child: Column(
+                      children: detaylar.map<Widget>((d) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text("• ", style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF27A770))),
+                              Expanded(
+                                child: Text(
+                                  d.toString(),
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    height: 1.4,
+                                    color: dark ? Colors.white70 : Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+    }
   }
 
   // 6. Kuran-ı Kerim V2
@@ -2845,17 +3588,54 @@ out center body;
                                 vertical: 2,
                               ),
                             ),
-                            onPressed: () {
+                            onPressed: () async {
+                              final String customZikirId = 'esma_${item['no']}';
+                              final int target = item['zikir'] as int;
+                              
+                              final prefs = await SharedPreferences.getInstance();
+                              
+                              // Save custom Esma details persistently
+                              await prefs.setString('zikir_custom_ad_$customZikirId', item['ad'].toString());
+                              await prefs.setString('zikir_custom_arapca_$customZikirId', item['arapca']?.toString() ?? '');
+                              await prefs.setString('zikir_custom_anlam_$customZikirId', item['anlam'].toString());
+                              await prefs.setString('zikir_custom_fazilet_$customZikirId', item['fazilet'].toString());
+                              await prefs.setInt('zikir_custom_hedef_$customZikirId', target);
+
+                              // Add custom ID to set of custom zikir IDs
+                              final customIds = prefs.getStringList('zikir_custom_ids') ?? [];
+                              if (!customIds.contains(customZikirId)) {
+                                customIds.add(customZikirId);
+                                await prefs.setStringList('zikir_custom_ids', customIds);
+                              }
+
+                              // Add to active data map
+                              _zikirData[customZikirId] = {
+                                'ad': item['ad'],
+                                'arapca': item['arapca'] ?? '',
+                                'anlam': item['anlam'] ?? '',
+                                'fazilet': item['fazilet'] ?? '',
+                                'hedef': target,
+                              };
+
+                              // Load previous count if they already started it
+                              final previousCount = prefs.getInt('zikir_count_$customZikirId') ?? 0;
+
                               setState(() {
-                                _zikirTarget = item['zikir'] as int;
-                                _zikirCount = 0;
+                                _selectedZikirId = customZikirId;
+                                _zikirTarget = target;
+                                _zikirCount = previousCount;
+                                _activeToolId = 'zikirmatik';
+                                _activeToolTitle = 'Zikirmatik';
                               });
-                              _repository.setZikirTarget(_zikirTarget);
-                              _repository.setZikirCount(0);
+
+                              await prefs.setString('zikir_selected_id', customZikirId);
+                              await _repository.setZikirTarget(target);
+                              await _repository.setZikirCount(previousCount);
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    "${item['ad']} zikri hedef olarak ayarlandı: ${item['zikir']} adet.",
+                                    "${item['ad']} zikri zikirmatik hedefi olarak ayarlandı ve aktif edildi.",
                                   ),
                                   backgroundColor: const Color(0xFF27A770),
                                 ),
@@ -3489,6 +4269,9 @@ out center body;
                 _zikirCount++;
               });
               await _repository.setZikirCount(_zikirCount);
+              
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setInt('zikir_count_$_selectedZikirId', _zikirCount);
 
               final now = DateTime.now();
               final todayStr = "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
@@ -3510,6 +4293,7 @@ out center body;
                   _zikirCount = 0;
                 });
                 await _repository.setZikirCount(0);
+                await prefs.setInt('zikir_count_$_selectedZikirId', 0);
               }
             },
             child: AnimatedScale(
@@ -4182,110 +4966,387 @@ out center body;
       return text.contains(query) || source.contains(query);
     }).toList();
 
-    return Column(
-      children: [
-        TextField(
-          controller: _hadisSearchController,
-          decoration: InputDecoration(
-            hintText: "Hadislerde ara...",
-            prefixIcon: const Icon(Icons.search, color: Color(0xFF27A770)),
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide.none,
+    // Ensure _hadisIndex is within bounds after filtering
+    if (_hadisIndex >= filtered.length) {
+      _hadisIndex = 0;
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: Stack(
+        children: [
+          // 1. Background image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/hadis_bg.png',
+              fit: BoxFit.cover,
             ),
           ),
-          onChanged: (val) {
-            setState(() {
-              _hadisSearchQuery = val;
-              _hadisIndex = 0;
-            });
-          },
-        ),
-        const SizedBox(height: 16),
-        if (filtered.isEmpty)
-          const Expanded(
-            child: Center(child: Text("Aranan kriterde hadis bulunamadı.")),
-          )
-        else ...[
-          Expanded(
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Hadis #${filtered[_hadisIndex]['no']}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Color(0xFF27A770),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "“${filtered[_hadisIndex]['metin']}”",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontStyle: FontStyle.italic,
-                        height: 1.45,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      "Kaynak: ${filtered[_hadisIndex]['kaynak']}",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
+          // 2. Koyu maske
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.4),
+                    Colors.black.withOpacity(0.7),
                   ],
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                onPressed: _hadisIndex > 0
-                    ? () {
+          // 3. İçerik
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Cam-morfik arama çubuğu
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: TextField(
+                        controller: _hadisSearchController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          hintText: "Hadislerde ara...",
+                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
+                          prefixIcon: const Icon(Icons.search, color: Colors.white70),
+                          suffixIcon: _hadisSearchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear, color: Colors.white70),
+                                  onPressed: () {
+                                    setState(() {
+                                      _hadisSearchController.clear();
+                                      _hadisSearchQuery = "";
+                                      _hadisIndex = 0;
+                                      if (_hadisPageController.hasClients) {
+                                        _hadisPageController.jumpToPage(0);
+                                      }
+                                    });
+                                  },
+                                )
+                              : null,
+                          filled: false,
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        ),
+                        onChanged: (val) {
+                          setState(() {
+                            _hadisSearchQuery = val;
+                            _hadisIndex = 0;
+                            if (_hadisPageController.hasClients) {
+                              _hadisPageController.jumpToPage(0);
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // Hadis alanı
+                if (filtered.isEmpty)
+                  Expanded(
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            ),
+                            child: const Text(
+                              "Aranan kriterde hadis bulunamadı.",
+                              style: TextStyle(color: Colors.white70, fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else ...[
+                  // PageView area
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _hadisPageController,
+                      itemCount: filtered.length,
+                      onPageChanged: (index) {
                         setState(() {
-                          _hadisIndex--;
+                          _hadisIndex = index;
                         });
-                      }
-                    : null,
-                child: const Text("Geri"),
-              ),
-              Text(
-                "${_hadisIndex + 1} / ${filtered.length}",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              ElevatedButton(
-                onPressed: _hadisIndex < filtered.length - 1
-                    ? () {
-                        setState(() {
-                          _hadisIndex++;
-                        });
-                      }
-                    : null,
-                child: const Text("İleri"),
-              ),
-            ],
+                      },
+                      itemBuilder: (context, idx) {
+                        final hadis = filtered[idx];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.15),
+                                    width: 1.2,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(24.0),
+                                  child: Column(
+                                    children: [
+                                      // Hadis No Badge
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              const Color(0xFF27A770).withOpacity(0.8),
+                                              const Color(0xFF1E5E43).withOpacity(0.8),
+                                            ],
+                                          ),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(color: Colors.white24),
+                                        ),
+                                        child: Text(
+                                          "HADİS-İ ŞERİF #${hadis['no']}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            letterSpacing: 1.2,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      
+                                      // Quote Icon
+                                      Icon(
+                                        Icons.format_quote_rounded,
+                                        size: 36,
+                                        color: const Color(0xFF27A770).withOpacity(0.7),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      
+                                      // Hadis Text (Scrollable if too long)
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          physics: const BouncingScrollPhysics(),
+                                          child: Text(
+                                            "“${hadis['metin']}”",
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              fontSize: 17,
+                                              fontStyle: FontStyle.italic,
+                                              fontWeight: FontWeight.w400,
+                                              height: 1.6,
+                                              color: Colors.white,
+                                              letterSpacing: 0.2,
+                                              shadows: [
+                                                Shadow(
+                                                  color: Colors.black38,
+                                                  offset: Offset(1, 1),
+                                                  blurRadius: 2,
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      
+                                      const Divider(color: Colors.white24, thickness: 1, indent: 20, endIndent: 20),
+                                      const SizedBox(height: 12),
+                                      
+                                      // Kaynak
+                                      Text(
+                                        "Kaynak: ${hadis['kaynak']}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                          color: Colors.white.withOpacity(0.75),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      
+                                      // Actions Panel (Copy)
+                                      InkWell(
+                                        onTap: () {
+                                          Clipboard.setData(
+                                            ClipboardData(text: "${hadis['metin']}\n\nKaynak: ${hadis['kaynak']}"),
+                                          );
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Row(
+                                                children: const [
+                                                  Icon(Icons.check_circle, color: Colors.white),
+                                                  SizedBox(width: 8),
+                                                  Text("Hadis panoya kopyalandı!"),
+                                                ],
+                                              ),
+                                              backgroundColor: const Color(0xFF27A770),
+                                              duration: const Duration(seconds: 2),
+                                              behavior: SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                            ),
+                                          );
+                                        },
+                                        borderRadius: BorderRadius.circular(30),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.08),
+                                            borderRadius: BorderRadius.circular(30),
+                                            border: Border.all(color: Colors.white12),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: const [
+                                              Icon(Icons.copy_rounded, color: Colors.white, size: 16),
+                                              SizedBox(width: 6),
+                                              Text(
+                                                "Hadisi Kopyala",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Alt Kontrol Barları
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.25),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.white.withOpacity(0.15)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Geri
+                            IconButton(
+                              icon: const Icon(Icons.chevron_left_rounded, color: Colors.white, size: 28),
+                              onPressed: _hadisIndex > 0
+                                  ? () {
+                                      _hadisPageController.previousPage(
+                                        duration: const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    }
+                                  : null,
+                            ),
+                            
+                            // Sayfa ve Karıştır Butonu
+                            InkWell(
+                              onTap: () {
+                                if (filtered.length > 1) {
+                                  final random = math.Random();
+                                  int nextIdx = _hadisIndex;
+                                  while (nextIdx == _hadisIndex) {
+                                    nextIdx = random.nextInt(filtered.length);
+                                  }
+                                  _hadisPageController.animateToPage(
+                                    nextIdx,
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeInOut,
+                                  );
+                                }
+                              },
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: Colors.white12),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.shuffle_rounded, color: Colors.white70, size: 16),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      "${_hadisIndex + 1} / ${filtered.length}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            
+                            // İleri
+                            IconButton(
+                              icon: const Icon(Icons.chevron_right_rounded, color: Colors.white, size: 28),
+                              onPressed: _hadisIndex < filtered.length - 1
+                                  ? () {
+                                      _hadisPageController.nextPage(
+                                        duration: const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      );
+                                    }
+                                  : null,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ],
-      ],
+      ),
     );
   }
 
@@ -5209,6 +6270,7 @@ out center body;
 
   // 19. Sahabe Hayatları
   Widget _buildSahabeHayatlari() {
+    final bool dark = _isDark;
     final filtered = SAHABE_HAYATLARI.where((item) {
       final name = _normalize(item['ad'].toString());
       final summary = _normalize(item['ozet'].toString());
@@ -5218,15 +6280,27 @@ out center body;
 
     return Column(
       children: [
+        // Premium Search bar
         TextField(
+          style: TextStyle(color: _textColor),
           decoration: InputDecoration(
             hintText: "Sahabe ara...",
+            hintStyle: TextStyle(color: _subtitleColor),
             prefixIcon: const Icon(Icons.search, color: Color(0xFF27A770)),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: dark ? const Color(0xFF131D31) : Colors.white,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(20),
+              borderSide: dark ? BorderSide(color: Colors.white.withOpacity(0.08)) : BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: dark ? BorderSide(color: Colors.white.withOpacity(0.08)) : BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Color(0xFF27A770), width: 1.5),
             ),
           ),
           onChanged: (val) {
@@ -5235,61 +6309,116 @@ out center body;
             });
           },
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Expanded(
           child: ListView.builder(
             itemCount: filtered.length,
             itemBuilder: (context, index) {
               final item = filtered[index];
+              final String name = item['ad'] ?? '';
+              final String unvan = item['unvan'] ?? '';
+              final bool isExpanded = _expandedSahabeAd == name;
+
+              // Extract initials
+              final cleanName = name.replaceAll("Hz. ", "").replaceAll(" (r.a.)", "").replaceAll(" (r.anha)", "").trim();
+              final parts = cleanName.split(" ");
+              final String initials = parts.length >= 2
+                  ? "${parts[0][0]}${parts[1][0]}"
+                  : (parts.isNotEmpty && parts[0].isNotEmpty ? parts[0].substring(0, math.min(2, parts[0].length)) : "S");
+
               return Card(
-                elevation: 1.5,
+                elevation: dark ? 2 : 4,
+                shadowColor: Colors.black12,
+                color: dark ? const Color(0xFF131D31) : Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(22),
+                  side: dark ? BorderSide(color: Colors.white.withOpacity(0.06)) : BorderSide.none,
                 ),
                 margin: const EdgeInsets.only(bottom: 12),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: Theme(
+                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    key: PageStorageKey<String>(name),
+                    initiallyExpanded: isExpanded,
+                    onExpansionChanged: (expanded) {
+                      setState(() {
+                        _expandedSahabeAd = expanded ? name : null;
+                      });
+                    },
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: const Color(0xFF27A770).withOpacity(0.12),
+                      foregroundColor: const Color(0xFF27A770),
+                      child: Text(
+                        initials.toUpperCase(),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                    ),
+                    title: Text(
+                      name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: dark ? Colors.white : const Color(0xFF1E5E43),
+                      ),
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        unvan,
+                        style: const TextStyle(
+                          color: Color(0xFFD4AF37),
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            item['ad'] ?? '',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Color(0xFF1E5E43),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFD700).withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              item['unvan'] ?? '',
-                              style: const TextStyle(
-                                color: Color(0xFFB8860B),
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Divider(height: 1),
+                            const SizedBox(height: 16),
+                            // Özet
+                            Text(
+                              item['ozet'] ?? '',
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                fontStyle: FontStyle.italic,
+                                color: dark ? Colors.white70 : Colors.black87,
+                                height: 1.45,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 16),
-                      Text(
-                        item['ozet'] ?? '',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          height: 1.45,
-                          color: Colors.black87,
+                            const SizedBox(height: 20),
+
+                            // Hayatı
+                            _buildSahabeDetailSection(
+                              icon: Icons.history_edu_rounded,
+                              title: "Hayatı",
+                              text: item['hayat'] ?? '',
+                              dark: dark,
+                            ),
+                            const SizedBox(height: 20),
+
+                            // Faziletleri
+                            _buildSahabeDetailSection(
+                              icon: Icons.star_purple500_rounded,
+                              title: "Faziletleri ve Önemli Hadiseler",
+                              text: item['fazilet'] ?? '',
+                              dark: dark,
+                            ),
+                            const SizedBox(height: 20),
+
+                            // Efendimiz ile ilişkisi
+                            _buildSahabeDetailSection(
+                              icon: Icons.favorite_rounded,
+                              title: "Resûlullah (s.a.v.) ile İlişkisi",
+                              text: item['iliskisi'] ?? '',
+                              dark: dark,
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -5297,6 +6426,53 @@ out center body;
                 ),
               );
             },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSahabeDetailSection({
+    required IconData icon,
+    required String title,
+    required String text,
+    required bool dark,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18, color: const Color(0xFF27A770)),
+            const SizedBox(width: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                color: dark ? Colors.white : const Color(0xFF1E5E43),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: dark ? const Color(0xFF1B2A47).withOpacity(0.5) : const Color(0xFFF7FAF8),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: dark ? Colors.white.withOpacity(0.04) : const Color(0xFF27A770).withOpacity(0.08),
+            ),
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 12.5,
+              height: 1.5,
+              color: _textColor,
+            ),
           ),
         ),
       ],
@@ -5379,17 +6555,25 @@ out center body;
 
   // 21. Namaz Kılma Rehberi
   Widget _buildNamazKilma() {
-    final List<dynamic> steps =
-        NAMAZ_KILMA_REHBERI[_namazKilmaErkek ? 'erkek' : 'kadin'];
+    final bool dark = _isDark;
+    final List<dynamic> steps = NAMAZ_KILMA_REHBERI[_namazKilmaErkek ? 'erkek' : 'kadin'];
 
     return Column(
       children: [
+        // Gender Toggle Selector
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ChoiceChip(
-              label: const Text("Erkek"),
+              label: const Text("Erkek Rehberi"),
               selected: _namazKilmaErkek,
+              selectedColor: const Color(0xFF27A770),
+              backgroundColor: dark ? const Color(0xFF1B2A47) : Colors.grey[200],
+              labelStyle: TextStyle(
+                color: _namazKilmaErkek ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
               onSelected: (val) {
                 setState(() {
                   _namazKilmaErkek = true;
@@ -5398,8 +6582,15 @@ out center body;
             ),
             const SizedBox(width: 12),
             ChoiceChip(
-              label: const Text("Kadın"),
+              label: const Text("Kadın Rehberi"),
               selected: !_namazKilmaErkek,
+              selectedColor: const Color(0xFF27A770),
+              backgroundColor: dark ? const Color(0xFF1B2A47) : Colors.grey[200],
+              labelStyle: TextStyle(
+                color: !_namazKilmaErkek ? Colors.white : (dark ? Colors.white60 : Colors.black87),
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
               onSelected: (val) {
                 setState(() {
                   _namazKilmaErkek = false;
@@ -5408,16 +6599,20 @@ out center body;
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
+        // Vertical Step List
         Expanded(
           child: ListView.builder(
             itemCount: steps.length,
             itemBuilder: (context, index) {
               final step = steps[index];
               return Card(
-                elevation: 1.5,
+                elevation: dark ? 2 : 3,
+                shadowColor: Colors.black12,
+                color: dark ? const Color(0xFF131D31) : Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
+                  side: dark ? BorderSide(color: Colors.white.withOpacity(0.06)) : BorderSide.none,
                 ),
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Padding(
@@ -5425,31 +6620,40 @@ out center body;
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Step Number Avatar
                       CircleAvatar(
+                        radius: 16,
                         backgroundColor: const Color(0xFF27A770),
                         foregroundColor: Colors.white,
-                        child: Text("${index + 1}"),
+                        child: Text(
+                          "${index + 1}",
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 14),
+                      // Title and Content
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               step['ad'] ?? '',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
-                                color: Color(0xFF1E5E43),
+                                color: dark ? Colors.white : const Color(0xFF1E5E43),
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 8),
                             Text(
                               step['aciklama'] ?? '',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
-                                height: 1.4,
-                                color: Colors.black87,
+                                height: 1.45,
+                                color: dark ? Colors.white70 : Colors.black87,
                               ),
                             ),
                           ],
@@ -5802,83 +7006,621 @@ out center body;
 
   // 23. Abdest Rehberi
   Widget _buildAbdestRehberi() {
-    return _buildStepRehberi("Abdest Nasıl Alınır?", [
-      {
-        "baslik": "Niyet ve Besmele",
-        "icerik":
-            "Niyet ettim Allah rızası için abdest almaya denilerek Euzü-Besmele çekilir, eller bileklere kadar 3 defa yıkanır.",
-      },
-      {
-        "baslik": "Ağıza Su Vermek (Mazmaza)",
-        "icerik":
-            "Sağ el ile ağıza 3 defa su verilerek ağız içi iyice çalkalanır ve temizlenir.",
-      },
-      {
-        "baslik": "Burna Su Vermek (İstinsak)",
-        "icerik":
-            "Sağ el ile buruna 3 defa su çekilir, sol el ile burun sümkürülerek temizlenir.",
-      },
-      {
-        "baslik": "Yüzü Yıkamak",
-        "icerik":
-            "Alın saç bitiminden çene altına ve kulak yumuşaklarına kadar tüm yüz 3 defa yıkanır.",
-      },
-      {
-        "baslik": "Kolları Yıkamak",
-        "icerik":
-            "Önce sağ kol, sonra sol kol dirseklerle beraber 3 defa yıkanır. Kuru yer kalmamasına dikkat edilir.",
-      },
-      {
-        "baslik": "Başı Meshetmek",
-        "icerik":
-            "Sağ el ıslatılarak başın en az dörtte biri (üst kısmı) bir defa meshedilir.",
-      },
-      {
-        "baslik": "Kulakları Meshetmek",
-        "icerik":
-            "Eller tekrar ıslatılarak serçe parmaklarla kulak içi, baş parmaklarla kulak arkası meshedilir.",
-      },
-      {
-        "baslik": "Boynu Meshetmek",
-        "icerik":
-            "Ellerin kalan üçer parmağının dış kısımlarıyla boynun arkası meshedilir, boğaz kısmı meshedilmez.",
-      },
-      {
-        "baslik": "Ayakları Yıkamak",
-        "icerik":
-            "Önce sağ ayak, sonra sol ayak parmak aralarından başlanarak topuklarla beraber 3 defa yıkanır.",
-      },
-    ]);
+    final bool dark = _isDark;
+    final List<String> sections = [
+      "Nasıl Alınır?",
+      "Farzları",
+      "Sünnetleri",
+      "Bozan Durumlar"
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Tab selector chips
+        SizedBox(
+          height: 40,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: sections.length,
+            itemBuilder: (context, index) {
+              final active = _abdestTab == index;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ChoiceChip(
+                  label: Text(
+                    sections[index],
+                    style: TextStyle(
+                      color: active ? Colors.white : (dark ? Colors.white70 : const Color(0xFF1E5E43)),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.5,
+                    ),
+                  ),
+                  selected: active,
+                  selectedColor: const Color(0xFF27A770),
+                  backgroundColor: dark ? const Color(0xFF1B2A47) : const Color(0xFFE8F5E9),
+                  onSelected: (val) {
+                    setState(() {
+                      _abdestTab = index;
+                    });
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: _buildAbdestTabContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAbdestTabContent() {
+    final bool dark = _isDark;
+    switch (_abdestTab) {
+      case 0: // Nasıl Alınır? (Dikey adım listesi)
+        final List<Map<String, dynamic>> steps = [
+          {
+            "baslik": "Niyet ve Besmele",
+            "icerik": "Niyet ettim Allah rızası için abdest almaya denilerek Euzü-Besmele çekilir, eller bileklere kadar 3 defa yıkanır.",
+            "farz": false,
+          },
+          {
+            "baslik": "Ağıza Su Vermek (Mazmaza)",
+            "icerik": "Sağ el ile ağıza 3 defa su verilerek ağız içi iyice çalkalanır ve temizlenir.",
+            "farz": false,
+          },
+          {
+            "baslik": "Burna Su Vermek (İstinsak)",
+            "icerik": "Sağ el ile buruna 3 defa su çekilir, sol el ile burun sümkürülerek temizlenir.",
+            "farz": false,
+          },
+          {
+            "baslik": "Yüzü Yıkamak",
+            "icerik": "Alın saç bitiminden çene altına ve kulak yumuşaklarına kadar tüm yüz 3 defa yıkanır.",
+            "farz": true,
+          },
+          {
+            "baslik": "Kolları Yıkamak",
+            "icerik": "Önce sağ kol, sonra sol kol dirseklerle beraber 3 defa yıkanır. Kuru yer kalmamasına dikkat edilir.",
+            "farz": true,
+          },
+          {
+            "baslik": "Başı Meshetmek",
+            "icerik": "Sağ el ıslatılarak başın en az dörtte biri (üst kısmı) bir defa meshedilir.",
+            "farz": true,
+          },
+          {
+            "baslik": "Kulakları Meshetmek",
+            "icerik": "Eller tekrar ıslatılarak serçe parmaklarla kulak içi, baş parmaklarla kulak arkası meshedilir.",
+            "farz": false,
+          },
+          {
+            "baslik": "Boynu Meshetmek",
+            "icerik": "Ellerin kalan üçer parmağının dış kısımlarıyla boynun arkası meshedilir, boğaz kısmı meshedilmez.",
+            "farz": false,
+          },
+          {
+            "baslik": "Ayakları Yıkamak",
+            "icerik": "Önce sağ ayak, sonra sol ayak parmak aralarından başlanarak topuklarla beraber 3 defa yıkanır.",
+            "farz": true,
+          },
+        ];
+
+        return ListView.builder(
+          itemCount: steps.length,
+          itemBuilder: (context, index) {
+            final step = steps[index];
+            final bool isFarz = step['farz'] == true;
+            return Card(
+              elevation: dark ? 2 : 3,
+              shadowColor: Colors.black12,
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: dark ? BorderSide(color: Colors.white.withOpacity(0.06)) : BorderSide.none,
+              ),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Step Number Avatar
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundColor: isFarz ? const Color(0xFFD9534F) : const Color(0xFF27A770),
+                      foregroundColor: Colors.white,
+                      child: Text(
+                        "${index + 1}",
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    // Title and Content
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  step['baslik']!,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: dark ? Colors.white : const Color(0xFF1E5E43),
+                                  ),
+                                ),
+                              ),
+                              if (isFarz)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD9534F).withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: const Color(0xFFD9534F).withOpacity(0.3)),
+                                  ),
+                                  child: const Text(
+                                    "FARZ",
+                                    style: TextStyle(
+                                      color: Color(0xFFD9534F),
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            step['icerik']!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.45,
+                              color: dark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+
+      case 1: // Farzları
+        final List<Map<String, String>> farzlar = [
+          {
+            "baslik": "Yüzü Yıkamak",
+            "icerik": "Alın saç bitiminden çene altına ve kulak yumuşaklarına kadar tüm yüzün bir defa yıkanması farzdır."
+          },
+          {
+            "baslik": "Kolları Yıkamak",
+            "icerik": "Dirseklerle beraber her iki kolun bir defa yıkanması farzdır. Kuru yer kalmamasına dikkat edilmelidir."
+          },
+          {
+            "baslik": "Başı Meshetmek",
+            "icerik": "Başın en az dörtte birinin ıslak el ile meshedilmesi farzdır."
+          },
+          {
+            "baslik": "Ayakları Yıkamak",
+            "icerik": "Topuklarla beraber her iki ayağın bir defa yıkanması farzdır."
+          }
+        ];
+        return ListView.builder(
+          itemCount: farzlar.length,
+          itemBuilder: (context, index) {
+            final farz = farzlar[index];
+            return Card(
+              elevation: dark ? 2 : 3,
+              color: dark ? const Color(0xFF131D31) : const Color(0xFFFDF7F7),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: const Color(0xFFD9534F).withOpacity(dark ? 0.2 : 0.1),
+                ),
+              ),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: const Color(0xFFD9534F),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            farz['baslik']!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.5,
+                              color: dark ? Colors.white : const Color(0xFFAC2925),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            farz['icerik']!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.4,
+                              color: dark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+
+      case 2: // Sünnetleri
+        final List<String> sunnetler = [
+          "Abdeste eûzü-besmele ile başlamak.",
+          "Niyet etmek (Kalben niyet sünnettir, dil ile söylemek müstehaptır).",
+          "Yıkamaya elleri bileklere kadar yıkayarak başlamak.",
+          "Dişleri misvak veya fırça ile, yoksa parmaklarla ovuşturarak temizlemek.",
+          "Ağza ve burna üçer defa su vermek, ağızda suyu çalkalamak (mazmaza) ve burna su çekip sol elle temizlemek (istinsak).",
+          "Uzvun her birini üçer defa yıkamak (üçten fazla yıkamak veya eksik yapmak mekruhtur).",
+          "Uzvun her birini yıkarken ovalamak.",
+          "Yıkamaya sağ taraftan başlamak.",
+          "Sırayı (tertibi) gözetmek; yani önce elleri, sonra yüzü, kolları, başı meshedip ayakları yıkamak.",
+          "Başın tamamını meshetmek (Kaplama mesh).",
+          "Kulakları ve boynu ıslak elin dışıyla meshetmek.",
+          "Uzvun biri kurumadan diğerini yıkamak (Muvâlât).",
+          "Parmak aralarını hilallemek (ovuşturarak yıkamak)."
+        ];
+        return _buildBulletListCard(sunnetler, dark);
+
+      case 3: // Bozan Durumlar
+        final List<String> bozanlar = [
+          "Ön ve arkadan idrar, dışkı, gaz, meni veya mezi gibi bir necasetin çıkması.",
+          "Vücudun herhangi bir yerinden kan, irin veya sarı su gibi bir sıvının çıkıp akması (Çıktığı yerin çevresine dağılacak miktarda olması gerekir).",
+          "Ağız dolusu kusmak (Safra, yemek veya kan).",
+          "Uyumak (Yan yatarak veya bağdaş kurarak yaslanıp, bilincini kaybedecek şekilde uyumak).",
+          "Bayılmak, delirmek veya sarhoş olmak.",
+          "Namaz kılan bir kişinin, yanındakiler duyacak şekilde sesli olarak gülmesi (Namazı da abdesti de bozar).",
+          "Ağlamak, inlemek veya sızlanmak gibi durumlarda namaz dışı sözler çıkması (Sadece namazı bozar, abdesti bozmaz; ancak dünyevi bir kederden dolayı ağlanmışsa abdest de bozulur)."
+        ];
+        return _buildBulletListCard(bozanlar, dark);
+
+      default:
+        return const SizedBox();
+    }
+  }
+
+  Widget _buildBulletListCard(List<String> items, bool dark) {
+    return Card(
+      elevation: dark ? 2 : 3,
+      color: dark ? const Color(0xFF131D31) : Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: dark ? BorderSide(color: Colors.white.withOpacity(0.06)) : BorderSide.none,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: CircleAvatar(
+                      radius: 3.5,
+                      backgroundColor: const Color(0xFF27A770),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      items[index],
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.45,
+                        color: dark ? Colors.white70 : Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   // 24. Gusül Rehberi
   Widget _buildGusulRehberi() {
-    return _buildStepRehberi("Gusül Abdesti Nasıl Alınır?", [
-      {
-        "baslik": "Niyet ve Beden Temizliği",
-        "icerik":
-            "Niyet ettim Allah rızası için gusül abdesti almaya diyerek niyet edilir. Beden üzerindeki necaset ve kirler yıkanır.",
-      },
-      {
-        "baslik": "Namaz Abdesti Almak",
-        "icerik":
-            "Gusle başlarken normal namaz abdesti gibi abdest alınır, ağız ve burun temizliği daha bol suyla yapılır.",
-      },
-      {
-        "baslik": "Ağza Bolca Su Vermek (Farz)",
-        "icerik":
-            "Ağza 3 kere bolca su alınarak boğaza kadar çalkalanır (Gargara yapılır, oruçlu değilken).",
-      },
-      {
-        "baslik": "Burna Bolca Su Vermek (Farz)",
-        "icerik": "Buruna 3 kere genize kadar bolca su çekilir ve temizlenir.",
-      },
-      {
-        "baslik": "Tüm Bedenin Yıkanması (Farz)",
-        "icerik":
-            "Önce başa, sonra sağ omuza ve sol omuza üçer defa su dökülerek tüm vücut iğne ucu kadar kuru yer kalmayacak şekilde yıkanır.",
-      },
-    ]);
+    final bool dark = _isDark;
+    final List<String> sections = [
+      "Guslün Alınışı",
+      "Guslün Farzları",
+      "Guslün Sünnetleri",
+      "Gerektiren Haller"
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Tab selector chips
+        SizedBox(
+          height: 40,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: sections.length,
+            itemBuilder: (context, index) {
+              final active = _gusulTab == index;
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ChoiceChip(
+                  label: Text(
+                    sections[index],
+                    style: TextStyle(
+                      color: active ? Colors.white : (dark ? Colors.white70 : const Color(0xFF1E5E43)),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.5,
+                    ),
+                  ),
+                  selected: active,
+                  selectedColor: const Color(0xFF27A770),
+                  backgroundColor: dark ? const Color(0xFF1B2A47) : const Color(0xFFE8F5E9),
+                  onSelected: (val) {
+                    setState(() {
+                      _gusulTab = index;
+                    });
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: _buildGusulTabContent(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGusulTabContent() {
+    final bool dark = _isDark;
+    switch (_gusulTab) {
+      case 0: // Guslün Alınışı
+        final List<Map<String, dynamic>> steps = [
+          {
+            "baslik": "Niyet ve Beden Temizliği",
+            "icerik": "Niyet ettim Allah rızası için gusül abdesti almaya diyerek niyet edilir. Beden üzerindeki necaset ve kirler iyice yıkanır.",
+            "farz": false,
+          },
+          {
+            "baslik": "Elleri Yıkamak ve Namaz Abdesti Almak",
+            "icerik": "Önce eller yıkanır. Ardından normal namaz abdesti gibi abdest alınır, ağız ve burun temizliği daha bol suyla yapılır.",
+            "farz": false,
+          },
+          {
+            "baslik": "Ağza Bolca Su Vermek",
+            "icerik": "Ağza 3 kere bolca su alınarak boğaza kadar çalkalanır (Gargara yapılır, oruçlu değilken). Bu işlem guslün farzlarındandır.",
+            "farz": true,
+          },
+          {
+            "baslik": "Burna Bolca Su Vermek",
+            "icerik": "Buruna 3 kere genize kadar bolca su çekilir ve temizlenir. Bu işlem guslün farzlarındandır.",
+            "farz": true,
+          },
+          {
+            "baslik": "Tüm Bedenin Yıkanması",
+            "icerik": "Önce başa, sonra sağ omuza ve sol omuza üçer defa su dökülerek tüm vücut iğne ucu kadar kuru yer kalmayacak şekilde yıkanır. Bu işlem guslün farzlarındandır.",
+            "farz": true,
+          },
+        ];
+
+        return ListView.builder(
+          itemCount: steps.length,
+          itemBuilder: (context, index) {
+            final step = steps[index];
+            final bool isFarz = step['farz'] == true;
+            return Card(
+              elevation: dark ? 2 : 3,
+              shadowColor: Colors.black12,
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: dark ? BorderSide(color: Colors.white.withOpacity(0.06)) : BorderSide.none,
+              ),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundColor: isFarz ? const Color(0xFFD9534F) : const Color(0xFF27A770),
+                      foregroundColor: Colors.white,
+                      child: Text(
+                        "${index + 1}",
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  step['baslik']!,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                    color: dark ? Colors.white : const Color(0xFF1E5E43),
+                                  ),
+                                ),
+                              ),
+                              if (isFarz)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD9534F).withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: const Color(0xFFD9534F).withOpacity(0.3)),
+                                  ),
+                                  child: const Text(
+                                    "FARZ",
+                                    style: TextStyle(
+                                      color: Color(0xFFD9534F),
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            step['icerik']!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.45,
+                              color: dark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+
+      case 1: // Guslün Farzları
+        final List<Map<String, String>> farzlar = [
+          {
+            "baslik": "Ağza Su Vermek (Mazmaza)",
+            "icerik": "Ağız içini suyla iyice yıkayıp çalkalamak ve suyu boğaza kadar ulaştırmaktır (Oruçlu olmayanların gargara yapması sünnettir)."
+          },
+          {
+            "baslik": "Burna Su Vermek (İstinsak)",
+            "icerik": "Genize kadar su çekip burnu temizlemektir. Suyun genizi sızlatacak derecede çekilmesi gerekir."
+          },
+          {
+            "baslik": "Bütün Bedeni Yıkamak",
+            "icerik": "Tepeden tırnağa tüm vücudu, saç dipleri ve kulak kıvrımları dahil olmak üzere iğne ucu kadar kuru yer kalmayacak şekilde yıkamaktır."
+          }
+        ];
+        return ListView.builder(
+          itemCount: farzlar.length,
+          itemBuilder: (context, index) {
+            final farz = farzlar[index];
+            return Card(
+              elevation: dark ? 2 : 3,
+              color: dark ? const Color(0xFF131D31) : const Color(0xFFFDF7F7),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: const Color(0xFFD9534F).withOpacity(dark ? 0.2 : 0.1),
+                ),
+              ),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: const Color(0xFFD9534F),
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            farz['baslik']!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.5,
+                              color: dark ? Colors.white : const Color(0xFFAC2925),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            farz['icerik']!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.4,
+                              color: dark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+
+      case 2: // Guslün Sünnetleri
+        final List<String> sunnetler = [
+          "Gusle besmele ve niyet ile başlamak.",
+          "Elleri bileklere kadar yıkamak.",
+          "Avret yerlerini yıkamak ve bedende varsa pislikleri temizlemek.",
+          "Gusletmeden önce normal namaz abdesti gibi abdest almak.",
+          "Suyu dökünmeye baştan başlamak, sonra sağ omza ve sol omza dökmek.",
+          "Başa ve omuzlara dökülen suyu üçer defa tekrarlamak.",
+          "Başa ve omuzlara dökülen suyu ovalamak (Dalk yapmak).",
+          "Gusül sırasında fazla su israf etmemek.",
+          "Guslederken kıbleye doğru dönmemek.",
+          "Gusül yaparken konuşmamak."
+        ];
+        return _buildBulletListCard(sunnetler, dark);
+
+      case 3: // Gerektiren Haller
+        final List<String> gerektirenler = [
+          "Cünüplük hali: İster uyku halinde (rüyalanma) ister uyanıkken şehvetle meninin gelmesi.",
+          "Cinsel ilişki (Meni gelmese dahi sünnet yerlerinin birleşmesiyle gusül farz olur).",
+          "Kadınlarda adet (hayız) kanamasının sona ermesi.",
+          "Kadınlarda lohusalık (nifas) durumunun sona ermesi."
+        ];
+        return _buildBulletListCard(gerektirenler, dark);
+
+      default:
+        return const SizedBox();
+    }
   }
 
   // 25. Teyemmüm Rehberi
@@ -6343,6 +8085,7 @@ out center body;
   }
 
   Widget _buildEzkar() {
+    final bool dark = _isDark;
     return Column(
       children: [
         Row(
@@ -6350,8 +8093,8 @@ out center body;
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _ezkarTab == 0 ? const Color(0xFF27A770) : Colors.white,
-                  foregroundColor: _ezkarTab == 0 ? Colors.white : const Color(0xFF1E5E43),
+                  backgroundColor: _ezkarTab == 0 ? const Color(0xFF27A770) : (dark ? const Color(0xFF1F2E47) : Colors.white),
+                  foregroundColor: _ezkarTab == 0 ? Colors.white : (dark ? Colors.white70 : const Color(0xFF1E5E43)),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 1,
                 ),
@@ -6363,8 +8106,8 @@ out center body;
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _ezkarTab == 1 ? const Color(0xFF27A770) : Colors.white,
-                  foregroundColor: _ezkarTab == 1 ? Colors.white : const Color(0xFF1E5E43),
+                  backgroundColor: _ezkarTab == 1 ? const Color(0xFF27A770) : (dark ? const Color(0xFF1F2E47) : Colors.white),
+                  foregroundColor: _ezkarTab == 1 ? Colors.white : (dark ? Colors.white70 : const Color(0xFF1E5E43)),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   elevation: 1,
                 ),
@@ -6387,21 +8130,22 @@ out center body;
     List<Map<String, dynamic>> ezkar,
     List<int> countList,
   ) {
+    final bool dark = _isDark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1E5E43),
+            color: dark ? Colors.white : const Color(0xFF1E5E43),
           ),
         ),
         const SizedBox(height: 4),
-        const Text(
+        Text(
           "Kartların üzerine dokunarak zikirlerinizi çekebilirsiniz.",
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: dark ? Colors.white60 : Colors.grey),
         ),
         const SizedBox(height: 12),
         Expanded(
@@ -6416,9 +8160,14 @@ out center body;
               final currentCount = countList[index];
 
               return Card(
-                elevation: 1,
+                color: dark ? const Color(0xFF131D31) : Colors.white,
+                elevation: dark ? 0 : 1.5,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: dark ? Colors.white.withOpacity(0.08) : Colors.transparent,
+                    width: 1,
+                  ),
                 ),
                 margin: const EdgeInsets.only(bottom: 12),
                 child: InkWell(
@@ -6454,10 +8203,10 @@ out center body;
                             Expanded(
                               child: Text(
                                 name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
-                                  color: Color(0xFF1E5E43),
+                                  color: dark ? Colors.white : const Color(0xFF1E5E43),
                                 ),
                               ),
                             ),
@@ -6469,7 +8218,7 @@ out center body;
                               decoration: BoxDecoration(
                                 color: currentCount >= hedef
                                     ? const Color(0xFF27A770)
-                                    : const Color(0xFF27A770).withOpacity(0.1),
+                                    : (dark ? const Color(0xFF27A770).withOpacity(0.2) : const Color(0xFF27A770).withOpacity(0.1)),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -6479,7 +8228,7 @@ out center body;
                                   fontWeight: FontWeight.bold,
                                   color: currentCount >= hedef
                                       ? Colors.white
-                                      : const Color(0xFF1E5E43),
+                                      : (dark ? const Color(0xFF81C784) : const Color(0xFF1E5E43)),
                                 ),
                               ),
                             ),
@@ -6503,9 +8252,9 @@ out center body;
                         const SizedBox(height: 6),
                         Text(
                           anlam,
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: Colors.black54,
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: dark ? Colors.white70 : Colors.black54,
                             height: 1.3,
                           ),
                         ),
@@ -6663,13 +8412,243 @@ out center body;
 
   // 48. İslam'ın Şartları
   Widget _buildIslaminSartlari() {
-    return _buildListSection("İslam'ın 5 Temel Şartı", [
-      "1. Kelime-i Şehadet Getirmek: 'Eşhedü en lâ ilâhe illallah ve eşhedü enne Muhammeden abdühû ve resûlüh' diyerek Allah'ın birliğini ve Hz. Muhammed'in O'nun elçisi olduğunu kalben onaylayıp dil ile ikrar etmek.",
-      "2. Namaz Kılmak: Günde 5 vakit namazı vaktinde ve şartlarına uygun olarak kılmak.",
-      "3. Zekat Vermek: Dinen zengin sayılan kişilerin yılda bir kez mallarının %2.5'ini yoksul Müslümanlara vermesi.",
-      "4. Oruç Tutmak: Ramazan ayında imsak vaktinden akşam vaktine kadar ibadet niyetiyle yemekten, içmekten ve nefsani arzulardan uzak durmak.",
-      "5. Hacca Gitmek: Maddi ve fiziki durumu yeten Müslümanların ömründe bir kez Mekke'deki Kabe'yi ve kutsal mekanları ziyaret etmesi.",
-    ]);
+    final bool dark = _isDark;
+    
+    final List<Map<String, dynamic>> sartlar = [
+      {
+        "no": "1",
+        "baslik": "Kelime-i Şehadet Getirmek",
+        "kisa": "İslam'ın kapısını açan, Allah'ın birliğini ve Hz. Muhammed'in elçiliğini ikrar eden şahadet sözüdür.",
+        "detay": "Kelime-i Şehadet: \"Eşhedü en lâ ilâhe illallah ve eşhedü enne Muhammeden abdühû ve resûlüh\" demektir.\n\n"
+            "Anlamı: \"Ben şehadet ederim ki, Allah'tan başka hiçbir ilah yoktur. Ve yine şehadet ederim ki, Hz. Muhammed O'nun kulu ve elçisidir.\"\n\n"
+            "Önemi: İslam dinine girmenin ilk ve en temel şartıdır. Kalp ile inanıp dil ile ikrar edilmesi gerekir. Müslüman olan kişi, Allah'ın tek yaratıcı olduğunu ve Hz. Muhammed'in (s.a.v.) O'nun son peygamberi olduğunu kabul etmiş olur.",
+        "icon": "✨",
+        "color": "0xFFEAF4FB",
+        "arapca": "أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللّٰهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ"
+      },
+      {
+        "no": "2",
+        "baslik": "Namaz Kılmak",
+        "kisa": "Günde 5 vakit Rabbimizin huzuruna çıkarak secde ettiğimiz, dinin direği olan ibadettir.",
+        "detay": "Namaz, akıl sağlığı yerinde ve ergenlik çağına gelmiş her Müslümana farz-ı ayındır.\n\n"
+            "Namaz Vakitleri:\n"
+            "• Sabah Namazı: Gün ağarmadan kılınır.\n"
+            "• Öğle Namazı: Güneş tepe noktasını geçince kılınır.\n"
+            "• İkindi Namazı: Öğle vakti bitip akşam vaktine kadar olan sürede kılınır.\n"
+            "• Akşam Namazı: Güneş battıktan hemen sonra kılınır.\n"
+            "• Yatsı Namazı: Akşam karanlığı tamamen çöktüğünde kılınır.\n\n"
+            "Önemi: Peygamberimiz (s.a.v.) 'Namaz dinin direğidir' buyurmuştur. Kul ile Allah arasındaki en yakın bağ secde anıdır. Namaz insanı kötülüklerden ve hayasızlıktan korur.",
+        "icon": "🕌",
+        "color": "0xFFEAF7F1",
+      },
+      {
+        "no": "3",
+        "baslik": "Zekat Vermek",
+        "kisa": "Yılda bir kez, dinen zengin sayılan Müslümanların mallarının %2.5'ini yoksullarla paylaşmasıdır.",
+        "detay": "Zekat, dinen zengin (nisap miktarına ulaşmış) olan kişilerin yılda bir kez mallarının yüzde 2.5'ini (kırkta birini) yoksul Müslümanlara vermesidir.\n\n"
+            "Zekatın Şartları:\n"
+            "• Müslüman, akıllı ve ergen olmak.\n"
+            "• Nisap miktarı (80.18 gram altın veya eşdeğeri) mala sahip olmak.\n"
+            "• Malın üzerinden 1 tam yıl geçmiş olması.\n"
+            "• Borçtan ve temel ihtiyaçlardan fazla olması.\n\n"
+            "Önemi: Toplumdaki gelir adaletsizliğini giderir, zengin ile fakir arasında sevgi köprüsü kurar. Malı temizler ve bereketlendirir.",
+        "icon": "💰",
+        "color": "0xFFFFF7EA",
+      },
+      {
+        "no": "4",
+        "baslik": "Oruç Tutmak",
+        "kisa": "Ramazan ayında, imsak vaktinden akşam vaktine kadar yeme, içme ve nefsani arzulardan uzak durmaktır.",
+        "detay": "Oruç, Ramazan ayında imsak vaktinden akşam ezanına kadar niyet ederek yemekten, içmekten ve orucu bozan davranışlardan uzak durmaktır.\n\n"
+            "Orucun Faydaları:\n"
+            "• Nefsi terbiye eder, iradeyi güçlendirir.\n"
+            "• Yoksulların ve aç kalanların halini anlamamızı sağlar, merhamet duygusunu geliştirir.\n"
+            "• Vücudu dinlendirir, maddi ve manevi temizlik sağlar.\n\n"
+            "Önemi: Kuran-ı Kerim bu ayda indirilmiştir. Oruç ibadeti, sadece bedensel bir açlık değil, dilimizi yalandan, elimizi haramdan koruyarak ahlakımızı güzelleştirdiğimiz külli bir ibadettir.",
+        "icon": "🌙",
+        "color": "0xFFFBEAEA",
+      },
+      {
+        "no": "5",
+        "baslik": "Hacca Gitmek",
+        "kisa": "Maddi ve bedeni gücü yetenlerin, ömründe bir kez kutsal toprakları ziyaret edip tavaf etmesidir.",
+        "detay": "Hac, durumu yeten Müslümanların ömürlerinde bir defa Zilhicce ayında Mekke'deki Kabe-i Muazzama'yı ve kutsal mekanları ziyaret ederek ibadet etmesidir.\n\n"
+            "Haccın Temel Rükünleri:\n"
+            "• İhrama Girmek: Belirli yasaklara uymak üzere ihram kıyafetine bürünmek.\n"
+            "• Kabe'yi Tavaf Etmek: Kabe'nin etrafında dualarla 7 kez dönmek.\n"
+            "• Arafat'ta Vakfe Yapmak: Arafat tepesinde dua ve yakarışta bulunmak.\n\n"
+            "Önemi: Dünyanın dört bir yanından gelen milyonlarca Müslümanı ırk, dil, renk ayrımı gözetmeksizin eşitlik içinde bir araya getirir. Birlik ve beraberlik şuurunu en üst seviyeye taşır.",
+        "icon": "🕋",
+        "color": "0xFFEAF4FB",
+      }
+    ];
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        children: [
+          // Header Card
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: dark
+                    ? [const Color(0xFF1E2D4A), const Color(0xFF131D31)]
+                    : [const Color(0xFFEAF7F1), const Color(0xFFFFFFFF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFF27A770).withOpacity(dark ? 0.3 : 0.15),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Text(
+                  "⭐",
+                  style: TextStyle(fontSize: 28),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "İslam'ın Şartları",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: dark ? Colors.white : const Color(0xFF1E5E43),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "İslam dininin üzerine kurulduğu beş temel esası ve hükümlerini buradan inceleyebilirsiniz.",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: dark ? Colors.white70 : Colors.black87,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Pillars list
+          ...sartlar.map((sart) {
+            final String no = sart['no'];
+            final String baslik = sart['baslik'];
+            final String kisa = sart['kisa'];
+            final String detay = sart['detay'];
+            final String iconStr = sart['icon'];
+            final String? arapca = sart['arapca'];
+            final String colorVal = sart['color'];
+            final Color baseBgColor = Color(int.parse(colorVal));
+
+            return Card(
+              color: dark ? const Color(0xFF131D31) : Colors.white,
+              elevation: dark ? 0 : 1.5,
+              shadowColor: Colors.black.withOpacity(0.08),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: dark 
+                      ? baseBgColor.withOpacity(0.15)
+                      : Colors.transparent,
+                  width: 1,
+                ),
+              ),
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Theme(
+                data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  iconColor: const Color(0xFF27A770),
+                  collapsedIconColor: dark ? Colors.white60 : Colors.black54,
+                  leading: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      color: dark 
+                          ? Colors.white.withOpacity(0.08)
+                          : baseBgColor.withOpacity(0.7),
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      iconStr,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  title: Text(
+                    "$no. $baslik",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.5,
+                      color: dark ? Colors.white : const Color(0xFF1E5E43),
+                    ),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      kisa,
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        color: dark ? Colors.white60 : Colors.grey[600],
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                  children: [
+                    const Divider(height: 1, indent: 16, endIndent: 16, color: Colors.white10),
+                    if (arapca != null) ...[
+                      Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFF3F8F5),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFF27A770).withOpacity(dark ? 0.3 : 0.15),
+                          ),
+                        ),
+                        child: Text(
+                          arapca,
+                          style: const TextStyle(
+                            fontFamily: 'Traditional Arabic',
+                            fontSize: 18,
+                            height: 1.6,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF27A770),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 8, 18, 18),
+                      child: Text(
+                        detay,
+                        style: TextStyle(
+                          fontSize: 13,
+                          height: 1.5,
+                          color: dark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
   }
 
   // 49. İmanın Şartları
@@ -6985,7 +8964,7 @@ out center body;
     ]);
   }
 
-  // 21. Dini Hoca AI Chat
+  // 21. Dini Danışman AI Chat
   Widget _buildDiniHoca() {
     _initDiniHoca();
     final bool dark = _isDark;
@@ -7028,7 +9007,7 @@ out center body;
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Dini Hoca AI Danışmanı",
+                      "Dini Danışman",
                       style: TextStyle(
                         fontSize: 14.5,
                         fontWeight: FontWeight.bold,
@@ -7037,7 +9016,9 @@ out center body;
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      "Sorularınıza fıkıh kaynaklı yapay zeka yanıtları alın.",
+                      _useGeminiAI
+                          ? "Yapay Zeka Modu Aktif."
+                          : "Sorularınıza fıkıh kaynaklı yapay zeka yanıtları alın.",
                       style: TextStyle(
                         fontSize: 11.5,
                         color: _subtitleColor,
@@ -7089,7 +9070,7 @@ out center body;
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              "Dini Hoca yazıyor ",
+                              "Dini Danışman yazıyor ",
                               style: TextStyle(
                                 fontSize: 13,
                                 color: _subtitleColor,
@@ -7226,7 +9207,7 @@ out center body;
                       controller: _diniHocaInputController,
                       style: TextStyle(color: _textColor),
                       decoration: const InputDecoration(
-                        hintText: "Dini Hoca'ya sor...",
+                        hintText: "Dini Danışman'a sor...",
                         hintStyle: TextStyle(color: Colors.grey),
                         border: InputBorder.none,
                       ),
@@ -7297,6 +9278,69 @@ out center body;
     );
   }
 
+  void _addDiniHocaReply(String reply) {
+    if (!mounted) return;
+    setState(() {
+      _diniHocaIsTyping = false;
+      _diniHocaMessages.add({
+        'isMe': false,
+        'text': reply,
+        'time': DateTime.now(),
+      });
+    });
+    _scrollToBottomDiniHoca();
+  }
+
+  Future<void> _callGeminiApi(String prompt) async {
+    final url = Uri.parse(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$_geminiApiKey");
+    
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "contents": [
+            {
+              "parts": [
+                {"text": prompt}
+              ]
+            }
+          ],
+          "systemInstruction": {
+            "parts": [
+              {
+                "text":
+                    "Sen saygın, bilgili ve fıkıh kaynaklarına hakim bir İslam Dini Danışmanısın. Kullanıcıların ibadetler (namaz, abdest, oruç, zekat vb.), dualar, sureler ve dini hayat hakkındaki sorularını ehli sünnet itikadına uygun, saygılı, açıklayıcı ve güvenilir kaynaklara (Kur'an, sahih hadisler, muteber fıkıh kitapları) dayandırarak Türkçe olarak yanıtla. Siyasi, tartışmalı veya din dışı konularda yorum yapmaktan kaçın. Yanıtlarında Markdown kalın yazı (**kalın**) gibi biçimlendirmeleri güzelce kullan."
+              }
+            ]
+          }
+        }),
+      ).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final String text = data['candidates']?[0]?['content']?['parts']?[0]?['text']?.toString() ?? "";
+        if (text.isNotEmpty) {
+          _addDiniHocaReply(text);
+          return;
+        }
+      }
+      
+      String errorMsg = "Bilinmeyen hata";
+      try {
+        final Map<String, dynamic> errData = json.decode(response.body);
+        errorMsg = errData['error']?['message']?.toString() ?? "API status: ${response.statusCode}";
+      } catch (_) {}
+      
+      throw Exception("API status ${response.statusCode}: $errorMsg");
+    } catch (e) {
+      debugPrint("Gemini error: $e");
+      final fallbackReply = _getDiniHocaResponse(prompt);
+      _addDiniHocaReply(fallbackReply);
+    }
+  }
+
   void _handleDiniHocaSend(String text) {
     if (text.trim().isEmpty) return;
 
@@ -7314,20 +9358,14 @@ out center body;
 
     _scrollToBottomDiniHoca();
 
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      if (!mounted) return;
-
-      final reply = _getDiniHocaResponse(userMsg);
-      setState(() {
-        _diniHocaIsTyping = false;
-        _diniHocaMessages.add({
-          'isMe': false,
-          'text': reply,
-          'time': DateTime.now(),
-        });
+    if (_useGeminiAI && _geminiApiKey.isNotEmpty) {
+      _callGeminiApi(userMsg);
+    } else {
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        final reply = _getDiniHocaResponse(userMsg);
+        _addDiniHocaReply(reply);
       });
-      _scrollToBottomDiniHoca();
-    });
+    }
   }
 
   void _scrollToBottomDiniHoca() {
@@ -7348,6 +9386,56 @@ out center body;
 
   String _getDiniHocaResponse(String query) {
     final q = _normalize(query);
+
+    if (q.contains("selam") ||
+        q.contains("merhaba") ||
+        q.contains("hey") ||
+        q.contains("nasilsin") ||
+        q.contains("nasılsın") ||
+        q == "sa" ||
+        q == "as" ||
+        q.contains("aleykum") ||
+        q.contains("aleyküm")) {
+      return """Ve Aleyküm Selam mümin kardeşim, hoş geldin. 😊 
+
+Sana nasıl yardımcı olabilirim? İslamiyet, ibadetler (abdest, namaz, oruç, zekat vb.), dualar veya sureler hakkında merak ettiğin konuları bana sorabilirsin.""";
+    }
+
+    if (q.contains("peygamber") || q.contains("muhammed") || q.contains("resulullah") || q.contains("cocuk") || q.contains("çocuk")) {
+      return """**Peygamber Efendimiz Hz. Muhammed (s.a.v.)'in Çocukları ve Hayatı** 🌹
+
+Peygamber Efendimizin Hz. Hatice (r.anha) annemizden 6 çocuğu, Hz. Mâriye (r.anha) annemizden ise 1 çocuğu (İbrahim) olmak üzere toplam **7 çocuğu** olmuştur.
+
+*Erkek Çocukları:*
+1. **Kasım** (İlk çocuğudur, küçük yaşta vefat etmiştir.)
+2. **Abdullah** (Küçük yaşta vefat etmiştir.)
+3. **İbrahim** (Medine'de doğmuş ve küçük yaşta vefat etmiştir.)
+
+*Kız Çocukları:*
+4. **Zeynep** (En büyük kız çocuğudur.)
+5. **Rukiye** (Hz. Osman ile evlenmiştir.)
+6. **Ümmü Gülsüm** (Rukiye'nin vefatından sonra Hz. Osman ile evlenmiştir.)
+7. **Fatıma** (Peygamberimizin soyunu devam ettiren, Hz. Ali ile evlenen en sevgili kızıdır.)""";
+    }
+
+    if (q.contains("sart") || q.contains("şart") || q.contains("iman") || q.contains("islam")) {
+      return """**İslam'ın ve İmanın Şartları** 🕌
+
+**A) İslam'ın Şartları (5'tir):**
+1. Kelime-i Şehadet getirmek.
+2. Namaz kılmak.
+3. Zekat vermek.
+4. Oruç tutmak.
+5. Hacca gitmek.
+
+**B) İmanın Şartları (6'dır):**
+1. Allah'ın varlığına ve birliğine inanmak.
+2. Meleklere inanmak.
+3. Kitaplara inanmak.
+4. Peygamberlere inanmak.
+5. Ahiret gününe inanmak.
+6. Kadere, hayır ve şerrin Allah'tan geldiğine inanmak.""";
+    }
 
     if (q.contains("abdest")) {
       return """**Abdest Nasıl Alınır?** 💧
@@ -8401,4 +10489,430 @@ class _KibleRadarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+// ==========================================
+// YENİ EKLENEN YARDIMCI BİLEŞENLER VE ÇİZİCİLER
+// ==========================================
+
+class QuranEqualizer extends StatefulWidget {
+  final bool isPlaying;
+  const QuranEqualizer({super.key, required this.isPlaying});
+
+  @override
+  State<QuranEqualizer> createState() => _QuranEqualizerState();
+}
+
+class _QuranEqualizerState extends State<QuranEqualizer> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  final List<double> _heightMultiplier = List.generate(10, (index) => 0.2 + (index * 0.08));
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
+    if (widget.isPlaying) {
+      _controller.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant QuranEqualizer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isPlaying && !_controller.isAnimating) {
+      _controller.repeat(reverse: true);
+    } else if (!widget.isPlaying && _controller.isAnimating) {
+      _controller.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: List.generate(10, (index) {
+              final double value = widget.isPlaying
+                  ? math.sin(_controller.value * math.pi * 2 + (index * 0.8))
+                  : 0.0;
+              final double height = 10 + (value.abs() * 35 * (0.5 + 0.5 * _heightMultiplier[index]));
+              return Container(
+                width: 4,
+                height: height,
+                margin: const EdgeInsets.symmetric(horizontal: 2),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF27A770), Color(0xFFD4AF37)],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              );
+            }),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class NamazPosturePainter extends CustomPainter {
+  final String posture;
+  final bool isErkek;
+  final bool isDark;
+
+  NamazPosturePainter({
+    required this.posture,
+    required this.isErkek,
+    required this.isDark,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double w = size.width;
+    final double h = size.height;
+    final double cx = w / 2;
+
+    // Background Grid
+    final gridPaint = Paint()
+      ..color = isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.02)
+      ..strokeWidth = 1;
+    const double gridSize = 20.0;
+    for (double i = 0; i < w; i += gridSize) {
+      canvas.drawLine(Offset(i, 0), Offset(i, h), gridPaint);
+    }
+    for (double i = 0; i < h; i += gridSize) {
+      canvas.drawLine(Offset(0, i), Offset(w, i), gridPaint);
+    }
+
+    // Floor Line
+    final floorPaint = Paint()
+      ..color = isDark ? Colors.white24 : Colors.black26
+      ..strokeWidth = 2;
+    canvas.drawLine(Offset(10, h - 20), Offset(w - 10, h - 20), floorPaint);
+
+    final strokeColor = const Color(0xFF27A770);
+    final accentColor = const Color(0xFFD4AF37);
+
+    final linePaint = Paint()
+      ..color = strokeColor
+      ..strokeWidth = 4.5
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final clothesPaint = Paint()
+      ..color = strokeColor.withOpacity(0.12)
+      ..style = PaintingStyle.fill;
+
+    final headPaint = Paint()
+      ..color = accentColor
+      ..style = PaintingStyle.fill;
+
+    final headOutlinePaint = Paint()
+      ..color = strokeColor
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    const double headRadius = 14.0;
+
+    if (posture.contains('Tekbir') || posture.contains('Niyet')) {
+      final headCenter = Offset(cx, 40);
+      final shoulderY = 60.0;
+      final hipY = 110.0;
+      final footY = h - 20.0;
+
+      final Path clothesPath = Path()
+        ..moveTo(cx - 15, shoulderY)
+        ..lineTo(cx + 15, shoulderY)
+        ..lineTo(cx + 20, hipY)
+        ..lineTo(cx + 25, footY)
+        ..lineTo(cx - 25, footY)
+        ..lineTo(cx - 20, hipY)
+        ..close();
+      canvas.drawPath(clothesPath, clothesPaint);
+
+      canvas.drawLine(Offset(cx, shoulderY), Offset(cx, hipY), linePaint);
+      canvas.drawLine(Offset(cx - 10, hipY), Offset(cx - 12, footY), linePaint);
+      canvas.drawLine(Offset(cx + 10, hipY), Offset(cx + 12, footY), linePaint);
+
+      if (isErkek) {
+        canvas.drawLine(Offset(cx - 15, shoulderY), Offset(cx - 30, shoulderY - 10), linePaint);
+        canvas.drawLine(Offset(cx - 30, shoulderY - 10), Offset(cx - 25, headCenter.dy), linePaint);
+        canvas.drawLine(Offset(cx + 15, shoulderY), Offset(cx + 30, shoulderY - 10), linePaint);
+        canvas.drawLine(Offset(cx + 30, shoulderY - 10), Offset(cx + 25, headCenter.dy), linePaint);
+      } else {
+        canvas.drawLine(Offset(cx - 15, shoulderY), Offset(cx - 22, shoulderY + 5), linePaint);
+        canvas.drawLine(Offset(cx - 22, shoulderY + 5), Offset(cx - 18, shoulderY - 10), linePaint);
+        canvas.drawLine(Offset(cx + 15, shoulderY), Offset(cx + 22, shoulderY + 5), linePaint);
+        canvas.drawLine(Offset(cx + 22, shoulderY + 5), Offset(cx + 18, shoulderY - 10), linePaint);
+      }
+
+      canvas.drawCircle(headCenter, headRadius, headPaint);
+      canvas.drawCircle(headCenter, headRadius, headOutlinePaint);
+
+    } else if (posture.contains('Kıyam') || posture.contains('Kıraat') || posture.contains('Ayakta')) {
+      final headCenter = Offset(cx, 40);
+      final shoulderY = 60.0;
+      final hipY = 110.0;
+      final footY = h - 20.0;
+
+      final Path clothesPath = Path()
+        ..moveTo(cx - 15, shoulderY)
+        ..lineTo(cx + 15, shoulderY)
+        ..lineTo(cx + 20, hipY)
+        ..lineTo(cx + 25, footY)
+        ..lineTo(cx - 25, footY)
+        ..lineTo(cx - 20, hipY)
+        ..close();
+      canvas.drawPath(clothesPath, clothesPaint);
+
+      canvas.drawLine(Offset(cx, shoulderY), Offset(cx, hipY), linePaint);
+      canvas.drawLine(Offset(cx - 10, hipY), Offset(cx - 10, footY), linePaint);
+      canvas.drawLine(Offset(cx + 10, hipY), Offset(cx + 10, footY), linePaint);
+
+      final handsY = isErkek ? 90.0 : 72.0;
+      canvas.drawLine(Offset(cx - 15, shoulderY), Offset(cx, handsY), linePaint);
+      canvas.drawLine(Offset(cx + 15, shoulderY), Offset(cx - 2, handsY), linePaint);
+
+      canvas.drawCircle(headCenter, headRadius, headPaint);
+      canvas.drawCircle(headCenter, headRadius, headOutlinePaint);
+
+    } else if (posture.contains('Rükû') || posture.contains('Eğilmek')) {
+      final double shoulderX = isErkek ? cx - 35 : cx - 25;
+      final double shoulderY = isErkek ? 85 : 80;
+      final double headX = isErkek ? shoulderX - 18 : shoulderX - 14;
+      final double headY = isErkek ? shoulderY : shoulderY - 8;
+      final double hipX = cx + 20;
+      final double hipY = 85;
+      final double footY = h - 20.0;
+
+      final Path clothesPath = Path()
+        ..moveTo(shoulderX, shoulderY)
+        ..lineTo(hipX, hipY)
+        ..lineTo(hipX - 10, footY)
+        ..lineTo(hipX - 25, footY)
+        ..close();
+      canvas.drawPath(clothesPath, clothesPaint);
+
+      canvas.drawLine(Offset(shoulderX, shoulderY), Offset(hipX, hipY), linePaint);
+      canvas.drawLine(Offset(hipX - 10, hipY), Offset(hipX - 15, footY), linePaint);
+
+      final double kneeX = hipX - 15;
+      final double kneeY = (hipY + footY) / 2;
+      canvas.drawLine(Offset(shoulderX, shoulderY), Offset(kneeX - 10, kneeY), linePaint);
+
+      canvas.drawCircle(Offset(headX, headY), headRadius, headPaint);
+      canvas.drawCircle(Offset(headX, headY), headRadius, headOutlinePaint);
+
+    } else if (posture.contains('Secde') || posture.contains('Yere')) {
+      final double headX = cx - 50;
+      final double headY = h - 28;
+      final double shoulderX = cx - 28;
+      final double shoulderY = h - 42;
+      final double hipX = cx + 22;
+      final double hipY = isErkek ? h - 55 : h - 35;
+      final double kneeX = cx + 15;
+      final double kneeY = h - 20;
+
+      final Path clothesPath = Path()
+        ..moveTo(shoulderX, shoulderY)
+        ..lineTo(hipX, hipY)
+        ..lineTo(kneeX, kneeY)
+        ..close();
+      canvas.drawPath(clothesPath, clothesPaint);
+
+      canvas.drawLine(Offset(shoulderX, shoulderY), Offset(hipX, hipY), linePaint);
+      canvas.drawLine(Offset(hipX, hipY), Offset(kneeX, kneeY), linePaint);
+      canvas.drawLine(Offset(kneeX, kneeY), Offset(cx + 38, h - 20), linePaint);
+
+      if (isErkek) {
+        canvas.drawLine(Offset(shoulderX, shoulderY), Offset(shoulderX - 10, h - 35), linePaint);
+        canvas.drawLine(Offset(shoulderX - 10, h - 35), Offset(headX + 10, h - 20), linePaint);
+      } else {
+        canvas.drawLine(Offset(shoulderX, shoulderY), Offset(shoulderX - 5, h - 20), linePaint);
+        canvas.drawLine(Offset(shoulderX - 5, h - 20), Offset(headX + 10, h - 20), linePaint);
+      }
+
+      canvas.drawCircle(Offset(headX, headY), headRadius, headPaint);
+      canvas.drawCircle(Offset(headX, headY), headRadius, headOutlinePaint);
+
+    } else {
+      // Oturuş
+      final headCenter = Offset(cx - 10, 50);
+      final double shoulderX = cx - 8;
+      final double shoulderY = 70;
+      final double hipX = cx + 10;
+      final double hipY = h - 45;
+      final double kneeX = cx - 25;
+      final double kneeY = h - 20;
+
+      final Path clothesPath = Path()
+        ..moveTo(shoulderX, shoulderY)
+        ..lineTo(hipX, hipY)
+        ..lineTo(kneeX, kneeY)
+        ..close();
+      canvas.drawPath(clothesPath, clothesPaint);
+
+      canvas.drawLine(Offset(shoulderX, shoulderY), Offset(hipX, hipY), linePaint);
+      canvas.drawLine(Offset(hipX, hipY), Offset(kneeX, kneeY), linePaint);
+      canvas.drawLine(Offset(kneeX, kneeY), Offset(cx + 10, h - 20), linePaint);
+      canvas.drawLine(Offset(shoulderX, shoulderY), Offset(kneeX + 10, kneeY - 8), linePaint);
+
+      canvas.drawCircle(headCenter, headRadius, headPaint);
+      canvas.drawCircle(headCenter, headRadius, headOutlinePaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant NamazPosturePainter oldDelegate) {
+    return oldDelegate.posture != posture || oldDelegate.isErkek != isErkek || oldDelegate.isDark != isDark;
+  }
+}
+
+class AbdestIconPainter extends CustomPainter {
+  final String stepTitle;
+  final bool isDark;
+
+  AbdestIconPainter({required this.stepTitle, required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double w = size.width;
+    final double h = size.height;
+    final double cx = w / 2;
+    final double cy = h / 2;
+
+    final paintMain = Paint()
+      ..color = const Color(0xFF27A770)
+      ..strokeWidth = 3.5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final paintFill = Paint()
+      ..color = const Color(0xFF27A770).withOpacity(0.12)
+      ..style = PaintingStyle.fill;
+
+    final paintAccent = Paint()
+      ..color = const Color(0xFFD4AF37)
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final paintAccentFill = Paint()
+      ..color = const Color(0xFFD4AF37).withOpacity(0.12)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawCircle(Offset(cx, cy), cx - 10, paintFill);
+    canvas.drawCircle(Offset(cx, cy), cx - 10, Paint()..color = const Color(0xFF27A770).withOpacity(0.25)..strokeWidth = 1..style = PaintingStyle.stroke);
+
+    if (stepTitle.contains("Niyet") || stepTitle.contains("El") || stepTitle.contains("Temizlik")) {
+      canvas.drawCircle(Offset(cx, cy - 25), 4, Paint()..color = const Color(0xFFD4AF37)..style = PaintingStyle.fill);
+      canvas.drawCircle(Offset(cx - 15, cy - 18), 3, Paint()..color = const Color(0xFFD4AF37)..style = PaintingStyle.fill);
+      canvas.drawCircle(Offset(cx + 15, cy - 18), 3, Paint()..color = const Color(0xFFD4AF37)..style = PaintingStyle.fill);
+
+      final leftHand = Path()
+        ..moveTo(cx - 25, cy + 15)
+        ..quadraticBezierTo(cx - 25, cy - 5, cx - 10, cy - 5)
+        ..quadraticBezierTo(cx - 5, cy - 5, cx - 5, cy + 5)
+        ..lineTo(cx - 5, cy + 15);
+      canvas.drawPath(leftHand, paintMain);
+
+      final rightHand = Path()
+        ..moveTo(cx + 25, cy + 15)
+        ..quadraticBezierTo(cx + 25, cy - 5, cx + 10, cy - 5)
+        ..quadraticBezierTo(cx + 5, cy - 5, cx + 5, cy + 5)
+        ..lineTo(cx + 5, cy + 15);
+      canvas.drawPath(rightHand, paintMain);
+    } else if (stepTitle.contains("Ağız") || stepTitle.contains("Ağıza") || stepTitle.contains("ağız")) {
+      final mouthPath = Path()
+        ..moveTo(cx - 20, cy)
+        ..quadraticBezierTo(cx, cy - 12, cx + 20, cy)
+        ..quadraticBezierTo(cx, cy + 12, cx - 20, cy)
+        ..close();
+      canvas.drawPath(mouthPath, paintMain);
+      canvas.drawPath(mouthPath, paintAccentFill);
+
+      canvas.drawArc(Rect.fromCircle(center: Offset(cx + 12, cy - 15), radius: 6), 0, 4, false, paintAccent);
+      canvas.drawArc(Rect.fromCircle(center: Offset(cx - 12, cy - 15), radius: 6), 1, 4, false, paintAccent);
+    } else if (stepTitle.contains("Burun") || stepTitle.contains("Burna") || stepTitle.contains("burun")) {
+      final nosePath = Path()
+        ..moveTo(cx - 8, cy - 15)
+        ..lineTo(cx - 8, cy + 5)
+        ..quadraticBezierTo(cx, cy + 15, cx + 8, cy + 5)
+        ..lineTo(cx + 8, cy - 15);
+      canvas.drawPath(nosePath, paintMain);
+
+      final dropPath = Path()
+        ..moveTo(cx, cy + 18)
+        ..quadraticBezierTo(cx - 5, cy + 26, cx, cy + 30)
+        ..quadraticBezierTo(cx + 5, cy + 26, cx, cy + 18)
+        ..close();
+      canvas.drawPath(dropPath, Paint()..color = const Color(0xFFD4AF37)..style = PaintingStyle.fill);
+    } else if (stepTitle.contains("Yüzü") || stepTitle.contains("Yüz") || stepTitle.contains("Beden")) {
+      canvas.drawOval(Rect.fromCenter(center: Offset(cx, cy), width: 34, height: 44), paintMain);
+      canvas.drawArc(Rect.fromCenter(center: Offset(cx, cy - 12), width: 30, height: 18), 3.14, 3.14, false, paintAccent);
+      canvas.drawLine(Offset(cx - 10, cy - 2), Offset(cx - 4, cy - 2), paintMain);
+      canvas.drawLine(Offset(cx + 4, cy - 2), Offset(cx + 10, cy - 2), paintMain);
+    } else if (stepTitle.contains("Kol") || stepTitle.contains("Kolları")) {
+      final armPath = Path()
+        ..moveTo(cx - 25, cy - 15)
+        ..lineTo(cx + 15, cy - 15)
+        ..quadraticBezierTo(cx + 25, cy - 15, cx + 25, cy)
+        ..quadraticBezierTo(cx + 25, cy + 15, cx + 15, cy + 15)
+        ..lineTo(cx - 25, cy + 15);
+      canvas.drawPath(armPath, paintMain);
+      canvas.drawCircle(Offset(cx + 10, cy), 5, Paint()..color = const Color(0xFFD4AF37)..style = PaintingStyle.fill);
+    } else if (stepTitle.contains("Baş") || stepTitle.contains("Başı") || stepTitle.contains("bütün")) {
+      canvas.drawArc(Rect.fromCenter(center: Offset(cx, cy + 10), width: 44, height: 44), 3.14, 3.14, false, paintMain);
+      canvas.drawArc(Rect.fromCenter(center: Offset(cx, cy + 8), width: 52, height: 52), 3.4, 2.5, false, paintAccent);
+    } else if (stepTitle.contains("Kulak") || stepTitle.contains("Kulakları")) {
+      final earPath = Path()
+        ..moveTo(cx - 10, cy - 20)
+        ..cubicTo(cx + 15, cy - 25, cx + 15, cy + 5, cx - 5, cy + 15)
+        ..quadraticBezierTo(cx - 15, cy + 20, cx - 12, cy + 5);
+      canvas.drawPath(earPath, paintMain);
+      canvas.drawCircle(Offset(cx + 2, cy - 3), 4, Paint()..color = const Color(0xFFD4AF37)..style = PaintingStyle.fill);
+    } else if (stepTitle.contains("Boyun") || stepTitle.contains("Boynu")) {
+      final neckPath = Path()
+        ..moveTo(cx - 25, cy + 20)
+        ..lineTo(cx - 15, cy + 10)
+        ..lineTo(cx - 15, cy - 15)
+        ..lineTo(cx + 15, cy - 15)
+        ..lineTo(cx + 15, cy + 10)
+        ..lineTo(cx + 25, cy + 20);
+      canvas.drawPath(neckPath, paintMain);
+      canvas.drawLine(Offset(cx - 8, cy - 5), Offset(cx - 8, cy + 5), paintAccent);
+      canvas.drawLine(Offset(cx + 8, cy - 5), Offset(cx + 8, cy + 5), paintAccent);
+    } else {
+      // Ayaklar veya diğer
+      final footPath = Path()
+        ..moveTo(cx - 20, cy - 10)
+        ..lineTo(cx - 5, cy - 10)
+        ..lineTo(cx + 15, cy + 15)
+        ..lineTo(cx - 15, cy + 15)
+        ..close();
+      canvas.drawPath(footPath, paintMain);
+      canvas.drawCircle(Offset(cx + 5, cy + 5), 4, Paint()..color = const Color(0xFFD4AF37)..style = PaintingStyle.fill);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant AbdestIconPainter oldDelegate) {
+    return oldDelegate.stepTitle != stepTitle || oldDelegate.isDark != isDark;
+  }
 }

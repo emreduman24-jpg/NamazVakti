@@ -292,4 +292,38 @@ class NotificationService {
       notificationDetails: platformDetails,
     );
   }
+
+  // Show a general notification
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'announcements_channel',
+      'Duyurular ve Günlük Ayetler',
+      channelDescription: 'Yöneticiden gelen duyuru ve günlük ayet bildirimleri.',
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+    );
+
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentSound: true,
+      presentAlert: true,
+      presentBadge: true,
+    );
+
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: platformDetails,
+    );
+  }
 }
