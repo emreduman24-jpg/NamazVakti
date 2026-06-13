@@ -94,6 +94,12 @@ class NotificationService {
     final bool aksamEnabled = prefs.getBool('notification_prayer_aksam') ?? true;
     final bool yatsiEnabled = prefs.getBool('notification_prayer_yatsi') ?? true;
     final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? true;
+    final bool imsakSound = prefs.getBool('notification_sound_imsak') ?? true;
+    final bool sabahSound = prefs.getBool('notification_sound_sabah') ?? true;
+    final bool ogleSound = prefs.getBool('notification_sound_ogle') ?? true;
+    final bool ikindiSound = prefs.getBool('notification_sound_ikindi') ?? true;
+    final bool aksamSound = prefs.getBool('notification_sound_aksam') ?? true;
+    final bool yatsiSound = prefs.getBool('notification_sound_yatsi') ?? true;
     final int offset = prefs.getInt('notification_timing_offset') ?? 0;
 
     final now = DateTime.now();
@@ -169,10 +175,25 @@ class NotificationService {
         if (scheduledDate.isAfter(now)) {
           final tzScheduledDate = tz.TZDateTime.from(scheduledDate, tz.local);
 
+          bool isSoundForThisPrayerEnabled = soundEnabled;
+          if (prayerName == 'İmsak') {
+            isSoundForThisPrayerEnabled = soundEnabled && imsakSound;
+          } else if (prayerName == 'Güneş') {
+            isSoundForThisPrayerEnabled = soundEnabled && sabahSound;
+          } else if (prayerName == 'Öğle') {
+            isSoundForThisPrayerEnabled = soundEnabled && ogleSound;
+          } else if (prayerName == 'İkindi') {
+            isSoundForThisPrayerEnabled = soundEnabled && ikindiSound;
+          } else if (prayerName == 'Akşam') {
+            isSoundForThisPrayerEnabled = soundEnabled && aksamSound;
+          } else if (prayerName == 'Yatsı') {
+            isSoundForThisPrayerEnabled = soundEnabled && yatsiSound;
+          }
+
           // Configure sound - use separate channels for adhan vs default
           // Android notification channels are immutable after creation,
           // so we need different channel IDs for different sound configs
-          final AndroidNotificationDetails androidDetails = soundEnabled
+          final AndroidNotificationDetails androidDetails = isSoundForThisPrayerEnabled
               ? const AndroidNotificationDetails(
                   'ezan_sound_channel_new',
                   'Ezan Alarmları (Ezan Sesli)',
@@ -197,7 +218,7 @@ class NotificationService {
           // iOS custom sound config (expects ezan_bildirim.mp3 / parilti_bildirim.mp3 in App Bundle resources)
           final DarwinNotificationDetails iosDetails =
               DarwinNotificationDetails(
-                sound: soundEnabled ? 'ezan_bildirim.mp3' : 'parilti_bildirim.mp3',
+                sound: isSoundForThisPrayerEnabled ? 'ezan_bildirim.mp3' : 'parilti_bildirim.mp3',
                 presentSound: true,
                 presentAlert: true,
                 presentBadge: true,

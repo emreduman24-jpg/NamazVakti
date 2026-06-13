@@ -95,7 +95,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     super.dispose();
   }
 
+  Future<void> _savePrayerPreviewSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Save enabled states
+      await prefs.setBool('notification_prayer_imsak', _previewNotifications['İmsak'] != 'kapali');
+      await prefs.setBool('notification_prayer_sabah', _previewNotifications['Güneş'] != 'kapali');
+      await prefs.setBool('notification_prayer_ogle', _previewNotifications['Öğle'] != 'kapali');
+      await prefs.setBool('notification_prayer_ikindi', _previewNotifications['İkindi'] != 'kapali');
+      await prefs.setBool('notification_prayer_aksam', _previewNotifications['Akşam'] != 'kapali');
+      await prefs.setBool('notification_prayer_yatsi', _previewNotifications['Yatsı'] != 'kapali');
+
+      // Save sound states
+      await prefs.setBool('notification_sound_imsak', _previewNotifications['İmsak'] == 'sesli');
+      await prefs.setBool('notification_sound_sabah', _previewNotifications['Güneş'] == 'sesli');
+      await prefs.setBool('notification_sound_ogle', _previewNotifications['Öğle'] == 'sesli');
+      await prefs.setBool('notification_sound_ikindi', _previewNotifications['İkindi'] == 'sesli');
+      await prefs.setBool('notification_sound_aksam', _previewNotifications['Akşam'] == 'sesli');
+      await prefs.setBool('notification_sound_yatsi', _previewNotifications['Yatsı'] == 'sesli');
+
+      // Reschedule alarms immediately with these settings
+      if (_prayerTimes.isNotEmpty) {
+        await _notificationService.schedulePrayerAlarms(_prayerTimes);
+      }
+      debugPrint("Onboarding: Saved custom prayer times notifications successfully!");
+    } catch (e) {
+      debugPrint("Error saving prayer preview settings: $e");
+    }
+  }
+
   void _goToNextPage() {
+    if (_activePage == 7) {
+      _savePrayerPreviewSettings();
+    }
     if (_activePage < 8) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
@@ -767,56 +800,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             ],
           ),
 
-          // Top Header Bar (Permanent with dynamic opacity and IgnorePointer)
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 8,
-            left: 20,
-            right: 20,
-            child: AnimatedOpacity(
-              opacity: (isPremiumPage || _activePage == 0 || _activePage == 1 || _activePage == 3 || _activePage == 4 || _activePage == 5 || _activePage == 6) ? 0.0 : 1.0,
-              duration: const Duration(milliseconds: 300),
-              child: IgnorePointer(
-                ignoring: isPremiumPage || _activePage == 0 || _activePage == 1 || _activePage == 3 || _activePage == 4 || _activePage == 5 || _activePage == 6,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Display time/status
-                    const Text(
-                      "16:04",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                      ),
-                    ),
-                    // Minimalist pill matching screenshot
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white10),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.mosque, color: Color(0xFF8AA996), size: 14),
-                          SizedBox(width: 6),
-                          Icon(Icons.arrow_forward_ios, color: Colors.white, size: 10),
-                        ],
-                      ),
-                    ),
-                    const Row(
-                      children: [
-                        Icon(Icons.wifi, color: Colors.white, size: 16),
-                        SizedBox(width: 6),
-                        Icon(Icons.battery_full, color: Color(0xFF27A770), size: 20),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // Mock top status bar removed per user requests
 
           // Pagination Dots indicator disabled from here since we build them directly under illustrations
           const SizedBox.shrink(),
@@ -1360,7 +1344,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
           Row(
             children: [
               Text(
-                label == "İkindi" && isHighlighted ? "59 dk içinde" : value,
+                value,
                 style: TextStyle(
                   color: isHighlighted ? const Color(0xFF90B49C) : Colors.white,
                   fontWeight: FontWeight.bold,
