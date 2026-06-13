@@ -207,6 +207,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onLocationChanged() {
+    LocationCacheService().prefetchLocationAndMosques();
     setState(() {
       _locationSelected = true;
     });
@@ -223,6 +224,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onOnboardingComplete() {
+    LocationCacheService().prefetchLocationAndMosques();
     setState(() {
       _locationSelected = true;
     });
