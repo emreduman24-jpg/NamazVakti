@@ -174,30 +174,30 @@ class NotificationService {
           // so we need different channel IDs for different sound configs
           final AndroidNotificationDetails androidDetails = soundEnabled
               ? const AndroidNotificationDetails(
-                  'adhan_sound_channel',
+                  'ezan_sound_channel_new',
                   'Ezan Alarmları (Ezan Sesli)',
                   channelDescription:
                       'Ezan vakitlerinde ezan sesi ile bildirim gönderir.',
                   importance: Importance.max,
                   priority: Priority.high,
-                  sound: RawResourceAndroidNotificationSound('adhan'),
+                  sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
                   playSound: true,
                 )
               : const AndroidNotificationDetails(
-                  'adhan_sparkle_channel',
+                  'ezan_sparkle_channel_new',
                   'Ezan Alarmları (Pırıltı Sesli)',
                   channelDescription:
                       'Ezan vakitlerinde pırıltı sesi ile bildirim gönderir.',
                   importance: Importance.max,
                   priority: Priority.high,
-                  sound: RawResourceAndroidNotificationSound('sparkle'),
+                  sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
                   playSound: true,
                 );
 
-          // iOS custom sound config (expects adhan.wav / sparkle.mp3 in App Bundle resources)
+          // iOS custom sound config (expects ezan_bildirim.mp3 / parilti_bildirim.mp3 in App Bundle resources)
           final DarwinNotificationDetails iosDetails =
               DarwinNotificationDetails(
-                sound: soundEnabled ? 'adhan.wav' : 'sparkle.mp3',
+                sound: soundEnabled ? 'ezan_bildirim.mp3' : 'parilti_bildirim.mp3',
                 presentSound: true,
                 presentAlert: true,
                 presentBadge: true,
@@ -258,9 +258,9 @@ class NotificationService {
     try {
       await _audioPlayer.stop();
       if (soundEnabled) {
-        await _audioPlayer.play(AssetSource('adhan.mp3'));
+        await _audioPlayer.play(AssetSource('Ezan_Bildirim.mp3'));
       } else {
-        await _audioPlayer.play(AssetSource('sparkle.mp3'));
+        await _audioPlayer.play(AssetSource('Parıltı_bildirim.mp3'));
       }
     } catch (e) {
       print("Error playing foreground test sound: $e");
@@ -269,28 +269,28 @@ class NotificationService {
     // Use separate channels for adhan vs sparkle sound (Android channels are immutable)
     final AndroidNotificationDetails androidDetails = soundEnabled
         ? const AndroidNotificationDetails(
-            'test_adhan_channel',
+            'test_adhan_channel_new',
             'Test Bildirimleri (Ezan Sesli)',
             channelDescription:
                 'Ezan bildirim sesini test etmek için kullanılır.',
             importance: Importance.max,
             priority: Priority.high,
-            sound: RawResourceAndroidNotificationSound('adhan'),
+            sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
             playSound: true,
           )
         : const AndroidNotificationDetails(
-            'test_sparkle_channel',
+            'test_sparkle_channel_new',
             'Test Bildirimleri (Pırıltı Sesli)',
             channelDescription:
                 'Pırıltı bildirim sesini test etmek için kullanılır.',
             importance: Importance.max,
             priority: Priority.high,
-            sound: RawResourceAndroidNotificationSound('sparkle'),
+            sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
             playSound: true,
           );
 
     final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-      sound: soundEnabled ? 'adhan.wav' : 'sparkle.mp3',
+      sound: soundEnabled ? 'ezan_bildirim.mp3' : 'parilti_bildirim.mp3',
       presentSound: true,
       presentAlert: true,
       presentBadge: true,

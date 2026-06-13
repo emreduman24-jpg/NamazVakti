@@ -543,7 +543,6 @@ class _NotificationSettingsScreenState
   Widget _buildInfoSection(bool dark) {
     const infoItems = [
       'Bildirimlerin tam vaktinde ulaşabilmesi için uygulamanın arka planda çalışmasına izin verilmelidir.',
-      'Telefonun pil tasarrufu modundan muaf tutulması, bildirimlerin gecikmesini önler.',
       'Seçtiğiniz ayarlar anında kaydedilir ve bir sonraki namaz vaktinde geçerli olur.',
     ];
 

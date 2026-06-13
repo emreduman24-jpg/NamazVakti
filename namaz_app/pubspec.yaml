@@ -95,6 +95,8 @@ flutter:
     - assets/onboarding_notifications.png
     - assets/onboarding_setup.png
     - assets/sparkle.mp3
+    - assets/Ezan_Bildirim.mp3
+    - assets/Parıltı_bildirim.mp3
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
