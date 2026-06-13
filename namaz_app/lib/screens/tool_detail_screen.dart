@@ -10,6 +10,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../services/location_cache_service.dart';
 import '../data/prayer_data.dart';
 import '../data/prayer_repository.dart';
 import '../data/quran_data.dart';
@@ -238,6 +239,23 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
     return degree * math.pi / 180;
   }
 
+  double _calculateQiblaAngle(double lat, double lon) {
+    final double latRad = lat * math.pi / 180.0;
+    final double lonRad = lon * math.pi / 180.0;
+    final double meccaLatRad = 21.4225 * math.pi / 180.0;
+    final double meccaLonRad = 39.8262 * math.pi / 180.0;
+
+    final double lonDiff = meccaLonRad - lonRad;
+
+    final double y = math.sin(lonDiff);
+    final double x = math.cos(latRad) * math.tan(meccaLatRad) - math.sin(latRad) * math.cos(lonDiff);
+
+    double qiblaAngle = math.atan2(y, x);
+    qiblaAngle = qiblaAngle * 180.0 / math.pi;
+
+    return (qiblaAngle + 360.0) % 360.0;
+  }
+
   void _initMosques() {
     _dynamicMosquesList = [];
   }
@@ -363,6 +381,12 @@ out center body;
                 setState(() {
                   _dynamicMosquesList = mosques;
                 });
+              }
+              // Update LocationCacheService cache
+              final cacheService = LocationCacheService();
+              cacheService.dynamicMosquesList = mosques;
+              if (_currentPosition != null) {
+                cacheService.currentPosition = _currentPosition;
               }
               debugPrint('Found ${mosques.length} mosques within ${radius}m');
               return; // success – stop expanding radius
@@ -490,6 +514,28 @@ out center body;
   }
 
   Future<void> _getUserLocation({bool forceRefresh = false}) async {
+    final cacheService = LocationCacheService();
+    bool canUseCache = false;
+    if (!forceRefresh && cacheService.currentPosition != null) {
+      if (_activeToolId == 'kible-bulucu') {
+        canUseCache = true;
+      } else if (_activeToolId == 'yakindaki-camiler' && cacheService.dynamicMosquesList.isNotEmpty) {
+        canUseCache = true;
+      }
+    }
+
+    if (canUseCache) {
+      debugPrint("Using pre-fetched location/mosques from LocationCacheService immediately!");
+      setState(() {
+        _currentPosition = cacheService.currentPosition;
+        if (cacheService.dynamicMosquesList.isNotEmpty) {
+          _dynamicMosquesList = List.from(cacheService.dynamicMosquesList);
+        }
+        _loadingLocation = false;
+      });
+      return;
+    }
+
     setState(() {
       _loadingLocation = true;
     });
@@ -3793,13 +3839,18 @@ out center body;
   // 10. Kıble Bulucu Compass
   // 10. Kıble Bulucu V2 (Qibla Radar)
   Widget _buildKibleBulucu() {
-    const double qiblaAngle = 137.0; // Angle for Istanbul/Turkey approx.
-
     return StreamBuilder<CompassEvent>(
       stream: FlutterCompass.events,
       builder: (context, snapshot) {
         double? heading = snapshot.data?.heading;
         final bool dark = _isDark;
+
+        double qiblaAngle = 137.0;
+        String qiblaCityName = "İstanbul";
+        if (_currentPosition != null) {
+          qiblaAngle = _calculateQiblaAngle(_currentPosition!.latitude, _currentPosition!.longitude);
+          qiblaCityName = _currentLocationName.isNotEmpty ? _currentLocationName : "Konumunuz";
+        }
 
         // If no sensor detected, display a beautiful fallback message
         if (heading == null) {
@@ -4064,7 +4115,7 @@ out center body;
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Hedef Açısı:", style: TextStyle(fontSize: 13, color: _subtitleColor)),
-                          Text("${qiblaAngle.toInt()}° (İstanbul)", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: _greenColor)),
+                          Text("${qiblaAngle.round()}° ($qiblaCityName)", style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: _greenColor)),
                         ],
                       ),
                       const SizedBox(height: 10),

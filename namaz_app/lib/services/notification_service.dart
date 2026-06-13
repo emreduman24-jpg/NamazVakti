@@ -3,6 +3,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -11,6 +12,7 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   Future<void> init() async {
     // 1. Initialize timezone database
@@ -182,19 +184,20 @@ class NotificationService {
                   playSound: true,
                 )
               : const AndroidNotificationDetails(
-                  'adhan_default_channel',
-                  'Ezan Alarmları (Varsayılan Ses)',
+                  'adhan_sparkle_channel',
+                  'Ezan Alarmları (Pırıltı Sesli)',
                   channelDescription:
-                      'Ezan vakitlerinde varsayılan bildirim sesi ile bildirim gönderir.',
+                      'Ezan vakitlerinde pırıltı sesi ile bildirim gönderir.',
                   importance: Importance.max,
                   priority: Priority.high,
+                  sound: RawResourceAndroidNotificationSound('sparkle'),
                   playSound: true,
                 );
 
-          // iOS custom sound config (expects adhan.mp3 in App Bundle resources)
+          // iOS custom sound config (expects adhan.wav / sparkle.mp3 in App Bundle resources)
           final DarwinNotificationDetails iosDetails =
               DarwinNotificationDetails(
-                sound: soundEnabled ? 'adhan.wav' : 'default',
+                sound: soundEnabled ? 'adhan.wav' : 'sparkle.mp3',
                 presentSound: true,
                 presentAlert: true,
                 presentBadge: true,
@@ -251,7 +254,19 @@ class NotificationService {
     final prefs = await SharedPreferences.getInstance();
     final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? true;
 
-    // Use separate channels for adhan vs default sound (Android channels are immutable)
+    // Play foreground sound using audioplayers for instant feedback (even in silent/mute/foreground on iOS)
+    try {
+      await _audioPlayer.stop();
+      if (soundEnabled) {
+        await _audioPlayer.play(AssetSource('adhan.mp3'));
+      } else {
+        await _audioPlayer.play(AssetSource('sparkle.mp3'));
+      }
+    } catch (e) {
+      print("Error playing foreground test sound: $e");
+    }
+
+    // Use separate channels for adhan vs sparkle sound (Android channels are immutable)
     final AndroidNotificationDetails androidDetails = soundEnabled
         ? const AndroidNotificationDetails(
             'test_adhan_channel',
@@ -264,17 +279,18 @@ class NotificationService {
             playSound: true,
           )
         : const AndroidNotificationDetails(
-            'test_default_channel',
-            'Test Bildirimleri (Varsayılan Ses)',
+            'test_sparkle_channel',
+            'Test Bildirimleri (Pırıltı Sesli)',
             channelDescription:
-                'Varsayılan bildirim sesini test etmek için kullanılır.',
+                'Pırıltı bildirim sesini test etmek için kullanılır.',
             importance: Importance.max,
             priority: Priority.high,
+            sound: RawResourceAndroidNotificationSound('sparkle'),
             playSound: true,
           );
 
     final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-      sound: soundEnabled ? 'adhan.wav' : 'default',
+      sound: soundEnabled ? 'adhan.wav' : 'sparkle.mp3',
       presentSound: true,
       presentAlert: true,
       presentBadge: true,
@@ -287,8 +303,8 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.show(
       id: 999,
-      title: 'Ezan Sesi Testi',
-      body: 'Kısa ezan sesi başarıyla çalınıyor.',
+      title: soundEnabled ? 'Ezan Sesi Testi' : 'Bildirim Sesi Testi',
+      body: soundEnabled ? 'Ezan sesi başarıyla çalınıyor.' : 'Pırıltı bildirim sesi başarıyla çalınıyor.',
       notificationDetails: platformDetails,
     );
   }

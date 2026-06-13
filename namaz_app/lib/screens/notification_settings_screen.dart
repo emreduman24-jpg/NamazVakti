@@ -527,9 +527,9 @@ class _NotificationSettingsScreenState
                     ),
                   ),
                   icon: const Icon(Icons.play_arrow_rounded, size: 20),
-                  label: const Text(
-                    'Ezan Sesini Test Et',
-                    style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold),
+                  label: Text(
+                    _soundEnabled ? 'Ezan Sesini Test Et' : 'Pırıltı Sesini Test Et',
+                    style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'data/prayer_repository.dart';
 import 'services/notification_service.dart';
+import 'services/location_cache_service.dart';
 import 'screens/main_screen.dart';
 import 'screens/prayer_tracker_screen.dart';
 import 'screens/tools_screen.dart';
@@ -157,6 +158,9 @@ class _MyAppState extends State<MyApp> {
     final isLocSet = await _repository.isLocationSelected();
     await _checkBlockStatus();
     await _checkPremiumStatus();
+
+    // Prefetch location and mosques in background on app startup
+    LocationCacheService().prefetchLocationAndMosques();
 
     setState(() {
       _themeMode = _parseThemeMode(themeStr);
@@ -361,6 +365,8 @@ class _MainAppContainerState extends State<MainAppContainer> {
   void _handleLocationChanged() {
     _mainScreenKey.currentState?.loadData();
     _settingsScreenKey.currentState?.loadSettings();
+    // Re-prefetch location & mosques for the new location
+    LocationCacheService().prefetchLocationAndMosques();
   }
 
   @override
