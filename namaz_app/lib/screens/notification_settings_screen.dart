@@ -515,7 +515,7 @@ class _NotificationSettingsScreenState
                 ),
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    NotificationService().playTestNotification();
+                    NotificationService().playTestNotification(isSoundEnabledOverride: _soundEnabled);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,

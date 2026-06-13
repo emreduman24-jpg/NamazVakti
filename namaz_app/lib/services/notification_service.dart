@@ -247,12 +247,12 @@ class NotificationService {
   }
 
   // Play test alarm for user feedback
-  Future<void> playTestNotification() async {
+  Future<void> playTestNotification({bool? isSoundEnabledOverride}) async {
     // Request permission first to ensure dialog pops up if needed
     await requestPermissions();
 
     final prefs = await SharedPreferences.getInstance();
-    final bool soundEnabled = prefs.getBool('notification_sound_enabled') ?? true;
+    final bool soundEnabled = isSoundEnabledOverride ?? (prefs.getBool('notification_sound_enabled') ?? true);
 
     // Play foreground sound using audioplayers for instant feedback (even in silent/mute/foreground on iOS)
     try {
