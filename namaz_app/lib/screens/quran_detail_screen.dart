@@ -504,8 +504,20 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
         await _audioPlayer.play(UrlSource(url));
       }
     } catch (e) {
+      final String errMsg = e.toString().toLowerCase();
+      final String displayMsg = (errMsg.contains('socket') || 
+                                 errMsg.contains('connection') || 
+                                 errMsg.contains('failed') || 
+                                 errMsg.contains('http') ||
+                                 errMsg.contains('network') ||
+                                 errMsg.contains('host')) 
+          ? "İnternet bağlantısı çevrimdışı gözüküyor." 
+          : "Ses çalınırken bir hata oluştu. Lütfen internet bağlantınızı kontrol edin.";
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Ses çalma hatası: $e"), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(displayMsg),
+          backgroundColor: const Color(0xFFC94A4A),
+        ),
       );
     }
   }

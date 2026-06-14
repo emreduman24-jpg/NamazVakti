@@ -1189,9 +1189,21 @@ out center body;
         await _audioPlayer!.play(UrlSource(url));
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Ses çalma hatası: $e")));
+      final String errMsg = e.toString().toLowerCase();
+      final String displayMsg = (errMsg.contains('socket') || 
+                                 errMsg.contains('connection') || 
+                                 errMsg.contains('failed') || 
+                                 errMsg.contains('http') ||
+                                 errMsg.contains('network') ||
+                                 errMsg.contains('host')) 
+          ? "İnternet bağlantısı çevrimdışı gözüküyor." 
+          : "Ses çalınırken bir hata oluştu. Lütfen internet bağlantınızı kontrol edin.";
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(displayMsg),
+          backgroundColor: const Color(0xFFC94A4A),
+        ),
+      );
     }
   }
 
@@ -1216,8 +1228,20 @@ out center body;
       setState(() {
         _isRadioLoading = false;
       });
+      final String errMsg = e.toString().toLowerCase();
+      final String displayMsg = (errMsg.contains('socket') || 
+                                 errMsg.contains('connection') || 
+                                 errMsg.contains('failed') || 
+                                 errMsg.contains('http') ||
+                                 errMsg.contains('network') ||
+                                 errMsg.contains('host')) 
+          ? "İnternet bağlantısı çevrimdışı gözüküyor." 
+          : "Radyo yayını başlatılamadı. Lütfen internet bağlantınızı kontrol edin.";
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Radyo yayını başlatılamadı: $e"))
+        SnackBar(
+          content: Text(displayMsg),
+          backgroundColor: const Color(0xFFC94A4A),
+        ),
       );
     }
   }
