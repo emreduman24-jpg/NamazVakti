@@ -69,9 +69,10 @@ class PrayerRepository {
   // Fetch and Cache Prayer Times
   Future<List<Map<String, dynamic>>> getPrayerTimes(String districtId, {bool forceRefresh = false}) async {
     final prefs = await SharedPreferences.getInstance();
+    final String districtKey = '${keyPrayerTimes}_$districtId';
     
     if (!forceRefresh) {
-      final cached = prefs.getString(keyPrayerTimes);
+      final cached = prefs.getString(districtKey) ?? prefs.getString(keyPrayerTimes);
       if (cached != null) {
         final List<dynamic> decoded = json.decode(cached);
         return decoded.map((e) => Map<String, dynamic>.from(e)).toList();
@@ -84,7 +85,8 @@ class PrayerRepository {
         final List<dynamic> data = json.decode(response.body);
         final List<Map<String, dynamic>> times = data.map((e) => Map<String, dynamic>.from(e)).toList();
         
-        // Cache in SharedPreferences
+        // Cache in SharedPreferences: both district-specific and global
+        await prefs.setString(districtKey, json.encode(times));
         await prefs.setString(keyPrayerTimes, json.encode(times));
         return times;
       }
@@ -93,14 +95,14 @@ class PrayerRepository {
     }
 
     // Try reading cached again in case we did a forceRefresh and failed
-    final cached = prefs.getString(keyPrayerTimes);
+    final cached = prefs.getString(districtKey) ?? prefs.getString(keyPrayerTimes);
     if (cached != null) {
       final List<dynamic> decoded = json.decode(cached);
       return decoded.map((e) => Map<String, dynamic>.from(e)).toList();
     }
 
-    // Fallback to static mock offline times (Istanbul Fatih)
-    final List<dynamic> fallbackData = OFFLINE_VAKITLER["9541"] ?? [];
+    // Fallback to static mock offline times (Istanbul Fatih or specific district if available)
+    final List<dynamic> fallbackData = OFFLINE_VAKITLER[districtId] ?? OFFLINE_VAKITLER["9541"] ?? [];
     return fallbackData.map((e) => Map<String, dynamic>.from(e)).toList();
   }
 
@@ -134,7 +136,14 @@ class PrayerRepository {
     await prefs.remove(keyCityId);
     await prefs.remove(keyDistrictName);
     await prefs.remove(keyDistrictId);
-    await prefs.remove(keyPrayerTimes);
+    
+    // Clear all cached prayer times keys
+    final keys = prefs.getKeys();
+    for (final key in keys) {
+      if (key.startsWith(keyPrayerTimes)) {
+        await prefs.remove(key);
+      }
+    }
   }
 
   Future<bool> isNotificationEnabled() async {

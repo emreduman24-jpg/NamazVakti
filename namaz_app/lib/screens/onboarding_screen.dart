@@ -67,7 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   // Preview notifications settings (Feedback 2)
   final Map<String, String> _previewNotifications = {
     'İmsak': 'sesli',
-    'Güneş': 'kapali',
+    'Güneş': 'sesli',
     'Öğle': 'sesli',
     'İkindi': 'sesli',
     'Akşam': 'sesli',
@@ -519,6 +519,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         districtId,
         forceRefresh: true,
       );
+
+      setState(() {
+        _prayerTimes = times;
+        _originalPrayerTimes = List<Map<String, dynamic>>.from(times.map((item) => Map<String, dynamic>.from(item)));
+      });
 
       await _repository.saveLocation(cityName, cityId, districtName, districtId);
 
@@ -1232,14 +1237,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
     final hasLocation = _location['districtId'] != null;
 
-    // Use fetched times if loaded, or fallback to mock offline Istanbul times
-    final Map<String, dynamic> today = (_prayerTimes.isNotEmpty) ? _prayerTimes.first : {
-      'Imsak': '03:33',
-      'Gunes': '05:27',
-      'Ogle': '13:05',
-      'Ikindi': '16:54',
-      'Aksam': '20:34',
-      'Yatsi': '22:20',
+    // Find today's prayer times from the fetched list
+    Map<String, dynamic>? todayMap;
+    if (_prayerTimes.isNotEmpty) {
+      final now = DateTime.now();
+      final String nowStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}";
+      for (var item in _prayerTimes) {
+        if (item['MiladiTarihKisa'] == nowStr) {
+          todayMap = item;
+          break;
+        }
+      }
+      // If not found, fallback to first item
+      todayMap ??= _prayerTimes.first;
+    }
+
+    final Map<String, dynamic> today = todayMap ?? {
+      'Imsak': '03:24',
+      'Gunes': '05:24',
+      'Ogle': '13:09',
+      'Ikindi': '17:09',
+      'Aksam': '20:44',
+      'Yatsi': '22:35',
     };
 
     return Padding(
