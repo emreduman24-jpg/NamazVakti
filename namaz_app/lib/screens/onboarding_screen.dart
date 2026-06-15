@@ -1501,7 +1501,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        height: 180, // Fixed height for vertical layout!
+        height: 270, // Tall card to show large preview image!
         width: double.infinity,
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF162544) : const Color(0xFF101B31),
@@ -1520,68 +1520,63 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 ]
               : null,
         ),
-        child: Row(
+        child: Column(
           children: [
-            // Preview Image (Left side)
+            // Large Preview Image
             Expanded(
-              flex: 5,
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,
                     alignment: Alignment.topCenter,
+                    width: double.infinity,
                   ),
                 ),
               ),
             ),
             
-            // Divider (Vertical)
-            Container(width: 1, color: Colors.white10),
+            // Thin Divider
+            const Divider(color: Colors.white10, height: 1),
             
-            // Selector Label (Right side)
-            Expanded(
-              flex: 4,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: isSelected ? const Color(0xFF90B49C) : Colors.white38,
-                          width: 2,
-                        ),
-                        color: isSelected ? const Color(0xFF90B49C) : Colors.transparent,
+            // Selector Label at bottom
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? const Color(0xFF90B49C) : Colors.white30,
+                        width: 1.5,
                       ),
-                      child: isSelected
-                          ? const Icon(
-                              Icons.check,
-                              size: 14,
-                              color: Color(0xFF0F1B31),
-                            )
-                          : null,
+                      color: isSelected ? const Color(0xFF90B49C) : Colors.transparent,
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.white70,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        fontSize: 15,
-                      ),
+                    child: isSelected
+                        ? const Icon(
+                            Icons.check,
+                            size: 10,
+                            color: Color(0xFF0F1B31),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white70,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontSize: 13, // Smaller text!
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
