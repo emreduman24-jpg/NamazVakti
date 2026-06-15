@@ -51,7 +51,7 @@ class _NotificationSettingsScreenState
     });
   }
 
-  Future<void> _saveSettings() async {
+  Future<void> _saveSettingsSilently() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('notification_timing_offset', _timingOffset);
     await prefs.setBool('notification_prayer_imsak', _imsak);
@@ -73,10 +73,6 @@ class _NotificationSettingsScreenState
       } catch (e) {
         debugPrint("Error rescheduling alarms on save: $e");
       }
-    }
-
-    if (mounted) {
-      Navigator.of(context).pop();
     }
   }
 
@@ -139,10 +135,6 @@ class _NotificationSettingsScreenState
                       
                       // 4. Alert/Info Banner
                       _buildInfoSection(dark),
-                      const SizedBox(height: 24),
-                      
-                      // 5. Submit Button
-                      _buildSaveButton(dark),
                       const SizedBox(height: 32),
                     ],
                   ),
@@ -220,7 +212,12 @@ class _NotificationSettingsScreenState
   Widget _buildTimingCard(String label, int value, IconData icon, Color color, bool dark) {
     final bool isSelected = _timingOffset == value;
     return GestureDetector(
-      onTap: () => setState(() => _timingOffset = value),
+      onTap: () {
+        if (!isSelected) {
+          setState(() => _timingOffset = value);
+          _saveSettingsSilently();
+        }
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -303,42 +300,60 @@ class _NotificationSettingsScreenState
               _buildPrayerSwitchRow(
                 title: 'İmsak',
                 value: _imsak,
-                onChanged: (v) => setState(() => _imsak = v),
+                onChanged: (v) {
+                  setState(() => _imsak = v);
+                  _saveSettingsSilently();
+                },
                 gradientColors: [const Color(0xFF3F51B5), const Color(0xFF9C27B0)],
                 icon: Icons.nights_stay_rounded,
               ),
               _buildPrayerSwitchRow(
                 title: 'Sabah',
                 value: _sabah,
-                onChanged: (v) => setState(() => _sabah = v),
+                onChanged: (v) {
+                  setState(() => _sabah = v);
+                  _saveSettingsSilently();
+                },
                 gradientColors: [const Color(0xFFEC407A), const Color(0xFFFF7043)],
                 icon: Icons.wb_twilight_rounded,
               ),
               _buildPrayerSwitchRow(
                 title: 'Öğle',
                 value: _ogle,
-                onChanged: (v) => setState(() => _ogle = v),
+                onChanged: (v) {
+                  setState(() => _ogle = v);
+                  _saveSettingsSilently();
+                },
                 gradientColors: [const Color(0xFFFFB300), const Color(0xFFF57C00)],
                 icon: Icons.wb_sunny_rounded,
               ),
               _buildPrayerSwitchRow(
                 title: 'İkindi',
                 value: _ikindi,
-                onChanged: (v) => setState(() => _ikindi = v),
+                onChanged: (v) {
+                  setState(() => _ikindi = v);
+                  _saveSettingsSilently();
+                },
                 gradientColors: [const Color(0xFFE64A19), const Color(0xFF8D6E63)],
                 icon: Icons.filter_drama_rounded,
               ),
               _buildPrayerSwitchRow(
                 title: 'Akşam',
                 value: _aksam,
-                onChanged: (v) => setState(() => _aksam = v),
+                onChanged: (v) {
+                  setState(() => _aksam = v);
+                  _saveSettingsSilently();
+                },
                 gradientColors: [const Color(0xFFD84315), const Color(0xFF37474F)],
                 icon: Icons.brightness_medium_rounded,
               ),
               _buildPrayerSwitchRow(
                 title: 'Yatsı',
                 value: _yatsi,
-                onChanged: (v) => setState(() => _yatsi = v),
+                onChanged: (v) {
+                  setState(() => _yatsi = v);
+                  _saveSettingsSilently();
+                },
                 gradientColors: [const Color(0xFF1A237E), const Color(0xFF0D47A1)],
                 icon: Icons.brightness_2_rounded,
                 isLast: true,
@@ -408,7 +423,7 @@ class _NotificationSettingsScreenState
         if (!isLast)
           Divider(
             height: 1,
-            indent: 68, // Align with text start, skipping the icon
+            indent: 68,
             color: dark ? Colors.white.withOpacity(0.05) : const Color(0xFFE0EBE4),
           ),
       ],
@@ -448,90 +463,49 @@ class _NotificationSettingsScreenState
               ),
             ],
           ),
-          child: Column(
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFE0F2F1), Color(0xFF80CBC4)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.volume_up_rounded, color: Color(0xFF00796B), size: 18),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Ezan Sesi',
-                          style: TextStyle(
-                            color: dark ? Colors.white : const Color(0xFF1E5E43),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15.5,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Vakit geldiğinde ezan sesiyle uyarılın',
-                          style: TextStyle(color: dark ? Colors.white60 : Colors.grey[600], fontSize: 11.5),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Switch.adaptive(
-                    value: _soundEnabled,
-                    activeColor: _primaryGreen,
-                    onChanged: (bool value) {
-                      setState(() => _soundEnabled = value);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
               Container(
-                width: double.infinity,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
+                    colors: [Color(0xFFE0F2F1), Color(0xFF80CBC4)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _primaryGreen.withOpacity(0.25),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.volume_up_rounded, color: Color(0xFF00796B), size: 18),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ezan Sesi',
+                      style: TextStyle(
+                        color: dark ? Colors.white : const Color(0xFF1E5E43),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Vakit geldiğinde ezan sesiyle uyarılın',
+                      style: TextStyle(color: dark ? Colors.white60 : Colors.grey[600], fontSize: 11.5),
                     ),
                   ],
                 ),
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    NotificationService().playTestNotification(isSoundEnabledOverride: _soundEnabled);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  icon: const Icon(Icons.play_arrow_rounded, size: 20),
-                  label: Text(
-                    _soundEnabled ? 'Ezan Sesini Test Et' : 'Pırıltı Sesini Test Et',
-                    style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              ),
+              Switch.adaptive(
+                value: _soundEnabled,
+                activeColor: _primaryGreen,
+                onChanged: (bool value) {
+                  setState(() => _soundEnabled = value);
+                  _saveSettingsSilently();
+                },
               ),
             ],
           ),
@@ -609,44 +583,6 @@ class _NotificationSettingsScreenState
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSaveButton(bool dark) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF27A770).withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: _saveSettings,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 0,
-        ),
-        child: const Text(
-          'Değişiklikleri Kaydet',
-          style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.bold),
-        ),
       ),
     );
   }

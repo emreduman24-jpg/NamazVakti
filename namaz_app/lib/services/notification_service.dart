@@ -176,19 +176,6 @@ class NotificationService {
           final tzScheduledDate = tz.TZDateTime.from(scheduledDate, tz.local);
 
           bool isSoundForThisPrayerEnabled = soundEnabled;
-          if (prayerName == 'İmsak') {
-            isSoundForThisPrayerEnabled = soundEnabled && imsakSound;
-          } else if (prayerName == 'Güneş') {
-            isSoundForThisPrayerEnabled = soundEnabled && sabahSound;
-          } else if (prayerName == 'Öğle') {
-            isSoundForThisPrayerEnabled = soundEnabled && ogleSound;
-          } else if (prayerName == 'İkindi') {
-            isSoundForThisPrayerEnabled = soundEnabled && ikindiSound;
-          } else if (prayerName == 'Akşam') {
-            isSoundForThisPrayerEnabled = soundEnabled && aksamSound;
-          } else if (prayerName == 'Yatsı') {
-            isSoundForThisPrayerEnabled = soundEnabled && yatsiSound;
-          }
 
           // Configure sound - use separate channels for adhan vs default
           // Android notification channels are immutable after creation,
