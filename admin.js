@@ -1180,9 +1180,20 @@ function closeUserModal() {
 }
 
 async function handleUserPremiumToggle(e) {
-  if (!activeInspectUser) return;
+  if (!activeInspectUser) {
+    console.error("handleUserPremiumToggle: No activeInspectUser found!");
+    return;
+  }
   const isPremium = e.target.checked;
-  const docId = activeInspectUser.docId; // Firestore doc ID (email or guest_uuid)
+  const docId = activeInspectUser.docId || activeInspectUser.uid || activeInspectUser.email;
+  console.log("handleUserPremiumToggle: Toggling premium to", isPremium, "for docId =", docId, "user =", activeInspectUser);
+
+  if (!docId) {
+    console.error("handleUserPremiumToggle: docId, uid, and email are all undefined!");
+    showToast("Kullanıcı kimliği bulunamadı!", "danger");
+    e.target.checked = !isPremium;
+    return;
+  }
 
   try {
     const docRef = doc(db, "users", docId);
@@ -1214,6 +1225,7 @@ async function handleUserPremiumToggle(e) {
     e.target.checked = !isPremium; // Revert
   }
 }
+
 
 // ==================== TAB 7: BİLDİRİM GÖNDER ====================
 function renderBildirimGonder() {
