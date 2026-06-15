@@ -1455,30 +1455,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               height: 1.55,
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 24),
           
-          // Theme Options (Light & Dark Side by Side)
+          // Theme Options (Light & Dark Stacked / Top and Bottom)
           Expanded(
-            child: Row(
-              children: [
-                // Light Mode Option
-                Expanded(
-                  child: _buildThemeCard(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  // Light Mode Option
+                  _buildThemeCard(
                     themeMode: 'light',
-                    title: "Aydınlık",
-                    imagePath: 'assets/Aydınlık_tema.png',
+                    title: "Aydınlık Tema",
+                    imagePath: 'assets/aydınlık_tema.png',
                   ),
-                ),
-                const SizedBox(width: 16),
-                // Dark Mode Option
-                Expanded(
-                  child: _buildThemeCard(
+                  const SizedBox(height: 16),
+                  // Dark Mode Option
+                  _buildThemeCard(
                     themeMode: 'dark',
-                    title: "Karanlık",
-                    imagePath: 'assets/Karanlık_tema.png',
+                    title: "Karanlık Tema",
+                    imagePath: 'assets/karanlık_tema.png',
                   ),
-                ),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 140), // Spacer for footer buttons
@@ -1501,6 +1501,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
+        height: 180, // Fixed height for vertical layout!
+        width: double.infinity,
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF162544) : const Color(0xFF101B31),
           borderRadius: BorderRadius.circular(20),
@@ -1518,14 +1520,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 ]
               : null,
         ),
-        child: Column(
+        child: Row(
           children: [
-            // Preview Image
+            // Preview Image (Left side)
             Expanded(
+              flex: 5,
               child: Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
+                padding: const EdgeInsets.all(12.0),
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,
@@ -1535,43 +1538,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               ),
             ),
             
-            // Divider & Selector Label
-            const Divider(color: Colors.white10, height: 1),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    width: 18,
-                    height: 18,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected ? const Color(0xFF90B49C) : Colors.white38,
-                        width: 2,
+            // Divider (Vertical)
+            Container(width: 1, color: Colors.white10),
+            
+            // Selector Label (Right side)
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? const Color(0xFF90B49C) : Colors.white38,
+                          width: 2,
+                        ),
+                        color: isSelected ? const Color(0xFF90B49C) : Colors.transparent,
                       ),
-                      color: isSelected ? const Color(0xFF90B49C) : Colors.transparent,
+                      child: isSelected
+                          ? const Icon(
+                              Icons.check,
+                              size: 14,
+                              color: Color(0xFF0F1B31),
+                            )
+                          : null,
                     ),
-                    child: isSelected
-                        ? const Icon(
-                            Icons.check,
-                            size: 12,
-                            color: Color(0xFF0F1B31),
-                          )
-                        : null,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white70,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 14,
+                    const SizedBox(height: 10),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.white70,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontSize: 15,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
