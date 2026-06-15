@@ -1182,10 +1182,10 @@ function closeUserModal() {
 async function handleUserPremiumToggle(e) {
   if (!activeInspectUser) return;
   const isPremium = e.target.checked;
-  const email = activeInspectUser.email; // Firestore doc ID is email
+  const docId = activeInspectUser.docId; // Firestore doc ID (email or guest_uuid)
 
   try {
-    const docRef = doc(db, "users", email);
+    const docRef = doc(db, "users", docId);
     await updateDoc(docRef, { isPremium: isPremium });
     
     showToast(`Premium durum başarıyla güncellendi: ${isPremium ? 'PRO' : 'Standart'}`, "success");
