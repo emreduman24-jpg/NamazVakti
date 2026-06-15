@@ -433,7 +433,28 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
 
     // Milestones math
     final int nextGoal = _getNextMilestone(_currentStreak);
-    final double milestoneProgress = (_currentStreak / nextGoal).clamp(0.0, 1.0);
+    
+    double getMilestoneProgress(int streak) {
+      if (streak <= 3) return 0.0;
+      if (streak <= 7) {
+        return 0.0 + 0.2 * ((streak - 3) / (7 - 3));
+      }
+      if (streak <= 14) {
+        return 0.2 + 0.2 * ((streak - 7) / (14 - 7));
+      }
+      if (streak <= 30) {
+        return 0.4 + 0.2 * ((streak - 14) / (30 - 14));
+      }
+      if (streak <= 100) {
+        return 0.6 + 0.2 * ((streak - 30) / (100 - 30));
+      }
+      if (streak <= 365) {
+        return 0.8 + 0.2 * ((streak - 100) / (365 - 100));
+      }
+      return 1.0;
+    }
+    
+    final double milestoneProgress = getMilestoneProgress(_currentStreak);
 
     return Scaffold(
       backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
@@ -1071,14 +1092,19 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
 
   Widget _buildMilestoneText(int nodeVal, int current, bool dark) {
     final bool isActiveOrPassed = current >= nodeVal;
-    return Expanded(
-      child: Center(
-        child: Text(
-          nodeVal.toString(),
-          style: TextStyle(
-            color: isActiveOrPassed ? const Color(0xFFD4AF37) : (dark ? Colors.white30 : Colors.black38),
-            fontSize: 11,
-            fontWeight: isActiveOrPassed ? FontWeight.bold : FontWeight.normal,
+    return SizedBox(
+      width: 14, // Same width as the node container
+      child: OverflowBox(
+        minWidth: 0,
+        maxWidth: 40,
+        child: Center(
+          child: Text(
+            nodeVal.toString(),
+            style: TextStyle(
+              color: isActiveOrPassed ? const Color(0xFFD4AF37) : (dark ? Colors.white30 : Colors.black38),
+              fontSize: 11,
+              fontWeight: isActiveOrPassed ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
         ),
       ),
