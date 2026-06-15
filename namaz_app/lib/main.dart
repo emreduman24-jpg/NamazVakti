@@ -134,21 +134,21 @@ class _MyAppState extends State<MyApp> {
       final prefs = await SharedPreferences.getInstance();
       final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
       
-      User? currentUser = FirebaseAuth.instance.currentUser;
+      String? docId;
       
-      if (currentUser == null) {
-        try {
-          final userCredential = await FirebaseAuth.instance.signInAnonymously();
-          currentUser = userCredential.user;
-          print("Signed in anonymously as Guest: ${currentUser?.uid}");
-        } catch (authErr) {
-          print("Anonymous sign in failed: $authErr");
+      if (isLoggedIn) {
+        docId = prefs.getString('user_email');
+      } else {
+        // Guest user - get or create guest UUID
+        docId = prefs.getString('guest_uuid');
+        if (docId == null || docId.isEmpty) {
+          final random = "${DateTime.now().millisecondsSinceEpoch}_${1000 + (DateTime.now().microsecond % 9000)}";
+          docId = "guest_$random";
+          await prefs.setString('guest_uuid', docId);
         }
       }
       
-      if (currentUser != null) {
-        final String docId = isLoggedIn ? (prefs.getString('user_email') ?? currentUser.uid) : currentUser.uid;
-        
+      if (docId != null && docId.isNotEmpty) {
         final doc = await FirebaseFirestore.instance
             .collection('users')
             .doc(docId)
@@ -160,10 +160,11 @@ class _MyAppState extends State<MyApp> {
           final localIsPremium = prefs.getBool('is_premium') ?? false;
           if (isPremium != localIsPremium) {
             await prefs.setBool('is_premium', isPremium);
-            print("Premium status updated dynamically from Firestore: $isPremium");
+            print("Premium status updated dynamically from Firestore for $docId: $isPremium");
           }
         } else {
-          if (currentUser.isAnonymous) {
+          // If guest document doesn't exist, create it as Standard (free) user
+          if (!isLoggedIn) {
             String ipAddress = '192.168.1.105';
             try {
               final response = await http.get(Uri.parse('https://api.ipify.org')).timeout(const Duration(seconds: 3));
@@ -172,7 +173,7 @@ class _MyAppState extends State<MyApp> {
               }
             } catch (_) {}
             
-            await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).set({
+            await FirebaseFirestore.instance.collection('users').doc(docId).set({
               'name': 'Misafir Kullanıcı',
               'email': null,
               'isPremium': false,
@@ -181,11 +182,11 @@ class _MyAppState extends State<MyApp> {
               'lastActive': DateTime.now().toIso8601String(),
               'ipAddress': ipAddress,
               'platform': Platform.isIOS ? 'iOS' : 'Android',
-              'uid': currentUser.uid,
+              'uid': docId,
             }).timeout(const Duration(seconds: 3));
             
             await prefs.setBool('is_premium', false);
-            print("Created new guest user document in Firestore with Standard access.");
+            print("Created new guest user document in Firestore ($docId) with Standard access.");
           }
         }
       }

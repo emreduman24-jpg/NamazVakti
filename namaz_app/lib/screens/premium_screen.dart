@@ -779,10 +779,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_premium', true);
       
-      // Update Firestore if user is logged in or anonymous guest session exists
+      // Update Firestore if user is logged in or local guest session exists
       final String? email = prefs.getString('user_email');
-      final currentUser = FirebaseAuth.instance.currentUser;
-      final String? docId = (email != null && email.isNotEmpty) ? email : currentUser?.uid;
+      final String? guestUuid = prefs.getString('guest_uuid');
+      final String? docId = (email != null && email.isNotEmpty) ? email : guestUuid;
       
       if (docId != null) {
         try {
