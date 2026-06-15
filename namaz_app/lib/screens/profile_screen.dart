@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import '../data/prayer_tracker_state.dart';
 
@@ -245,6 +246,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (confirm == true) {
       setState(() => _isLoading = true);
       try {
+        await FirebaseAuth.instance.signOut();
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('is_logged_in', false);
         await prefs.remove('user_name');
@@ -360,6 +362,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final String platform = Platform.isIOS ? 'iOS' : 'Android';
 
         try {
+          // 0. Delete from Firebase Auth first
+          final user = FirebaseAuth.instance.currentUser;
+          await user?.delete();
+
           // 1. Log account deletion to the admin logs
           await FirebaseFirestore.instance.collection('registrations_log').add({
             'name': _nameController.text.trim(),
@@ -392,6 +398,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (mounted) {
             _showSnackBar("Hesabınız ve verileriniz başarıyla silindi.", success: true);
             Navigator.pop(context); // Pop back to settings screen
+          }
+        } on FirebaseAuthException catch (authEx) {
+          if (authEx.code == 'requires-recent-login') {
+            _showSnackBar("Güvenlik nedeniyle bu işlemi yapmadan önce çıkış yapıp tekrar giriş yapmalısınız.");
+          } else {
+            _showSnackBar("Hesap silinirken bir hata oluştu: ${authEx.message}");
           }
         } catch (e) {
           _showSnackBar("Hesap silinirken sunucu hatası oluştu: $e");

@@ -11,6 +11,7 @@ import 'notification_settings_screen.dart';
 import 'premium_screen.dart';
 import 'auth_screen.dart';
 import 'profile_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback onThemeChanged;
@@ -843,6 +844,11 @@ class SettingsScreenState extends State<SettingsScreen> {
             ),
             onPressed: () async {
               Navigator.pop(context); // Close dialog
+              try {
+                await FirebaseAuth.instance.signOut();
+              } catch (e) {
+                debugPrint("Firebase logout error: $e");
+              }
               final prefs = await SharedPreferences.getInstance();
               await prefs.setBool('is_logged_in', false);
               await prefs.remove('user_name');

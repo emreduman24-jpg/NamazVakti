@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class AuthScreen extends StatefulWidget {
@@ -22,10 +23,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   final TextEditingController _registerNameController = TextEditingController();
   final TextEditingController _registerEmailController = TextEditingController();
   final TextEditingController _registerPasswordController = TextEditingController();
+  final TextEditingController _registerConfirmPasswordController = TextEditingController();
 
   String _selectedGender = 'erkek';
   bool _obscureLoginPassword = true;
   bool _obscureRegisterPassword = true;
+  bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
   @override
@@ -45,6 +48,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     _registerNameController.dispose();
     _registerEmailController.dispose();
     _registerPasswordController.dispose();
+    _registerConfirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -68,14 +72,12 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
   }
 
   bool _isValidEmail(String email) {
-    // 1. Check regex format
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}$');
     if (!emailRegex.hasMatch(email)) return false;
 
     final lower = email.toLowerCase().trim();
     final domain = lower.split('@').last;
     
-    // 2. Blacklist of temporary/junk/obviously-fake email domains
     const blacklistedDomains = {
       'tempmail.com', 'yopmail.com', 'mailinator.com', '10minutemail.com',
       'guerrillamail.com', 'sharklasers.com', 'dispostable.com', 'getairmail.com',
@@ -90,11 +92,10 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       return false;
     }
 
-    // 3. Ensure parts have reasonable sizes
     final parts = domain.split('.');
     if (parts.length < 2) return false;
-    if (parts.last.length < 2) return false; // e.g. .c is invalid, needs .co, .com
-    if (parts.first.length < 2) return false; // e.g. a.com is invalid
+    if (parts.last.length < 2) return false;
+    if (parts.first.length < 2) return false;
 
     return true;
   }
@@ -106,7 +107,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         return response.body.trim();
       }
     } catch (_) {}
-    return '192.168.1.105'; // Fallback local mock IP if offline
+    return '192.168.1.105';
   }
 
   Future<void> _handleLogin() async {
@@ -114,20 +115,25 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
     setState(() => _isLoading = true);
     final String email = _loginEmailController.text.trim();
-    final String fallbackName = email.split('@')[0];
-    final String formattedName = fallbackName[0].toUpperCase() + fallbackName.substring(1);
-
-    String name = formattedName;
-    String gender = 'erkek';
-    bool isPremium = false;
+    final String password = _loginPasswordController.text;
 
     final String ipAddress = await _getPublicIp();
     final String platform = Platform.isIOS ? 'iOS' : 'Android';
 
     try {
-      final prefs = await SharedPreferences.getInstance();
+      // 1. Sign in using Firebase Auth
+      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      // Connect to Firestore to sync user details
+      final prefs = await SharedPreferences.getInstance();
+      String name = email.split('@')[0];
+      name = name[0].toUpperCase() + name.substring(1);
+      String gender = 'erkek';
+      bool isPremium = false;
+
+      // 2. Fetch or create details in Firestore
       try {
         final docRef = FirebaseFirestore.instance.collection('users').doc(email);
         final docSnap = await docRef.get().timeout(const Duration(seconds: 3));
@@ -138,14 +144,13 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             gender = data['gender'] ?? gender;
             isPremium = data['isPremium'] ?? false;
           }
-          // Update active status
           await docRef.update({
             'lastActive': DateTime.now().toIso8601String(),
             'ipAddress': ipAddress,
             'platform': platform,
           }).timeout(const Duration(seconds: 2));
         } else {
-          // Register in Firestore if didn't exist
+          // Document might be missing if registered via Firebase console directly
           await docRef.set({
             'name': name,
             'email': email,
@@ -156,18 +161,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             'ipAddress': ipAddress,
             'usageDuration': 5,
             'platform': platform,
-          }).timeout(const Duration(seconds: 3));
-
-          // Log registration to the admin panel logs
-          await FirebaseFirestore.instance.collection('registrations_log').add({
-            'name': name,
-            'email': email,
-            'gender': gender,
-            'ipAddress': ipAddress,
-            'platform': platform,
-            'created': DateTime.now().toIso8601String(),
-            'appVersion': '1.0.0',
-            'action': 'login_register_auto',
+            'uid': userCredential.user?.uid,
           }).timeout(const Duration(seconds: 3));
         }
       } catch (firestoreErr) {
@@ -185,9 +179,20 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         _showSnackBar("Giriş başarılı! Hoş geldiniz.", success: true);
         Navigator.pop(context, true);
       }
+    } on FirebaseAuthException catch (authEx) {
+      if (mounted) setState(() => _isLoading = false);
+      String errMsg = "Giriş yaparken hata oluştu. Lütfen bilgilerinizi kontrol edin.";
+      if (authEx.code == 'invalid-credential' || authEx.code == 'wrong-password' || authEx.code == 'user-not-found') {
+        errMsg = "E-posta adresi veya şifre hatalı.";
+      } else if (authEx.code == 'invalid-email') {
+        errMsg = "Geçersiz e-posta adresi.";
+      } else if (authEx.code == 'user-disabled') {
+        errMsg = "Bu hesap askıya alınmıştır.";
+      }
+      _showSnackBar(errMsg);
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
-      _showSnackBar("Giriş yaparken hata oluştu.");
+      _showSnackBar("Giriş yaparken bilinmeyen bir hata oluştu.");
     }
   }
 
@@ -197,11 +202,18 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
     setState(() => _isLoading = true);
     final String name = _registerNameController.text.trim();
     final String email = _registerEmailController.text.trim();
+    final String password = _registerPasswordController.text;
 
     final String ipAddress = await _getPublicIp();
     final String platform = Platform.isIOS ? 'iOS' : 'Android';
 
     try {
+      // 1. Create User in Firebase Auth
+      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
       final prefs = await SharedPreferences.getInstance();
 
       // Register locally
@@ -211,7 +223,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
       await prefs.setString('user_email', email);
       await prefs.setBool('is_premium', false);
 
-      // Register in Firestore
+      // 2. Register in Firestore
       try {
         await FirebaseFirestore.instance.collection('users').doc(email).set({
           'name': name,
@@ -223,9 +235,10 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           'ipAddress': ipAddress,
           'usageDuration': 0,
           'platform': platform,
+          'uid': userCredential.user?.uid,
         }).timeout(const Duration(seconds: 3));
 
-        // Log registration to the admin panel logs
+        // Log registration for admin panel
         await FirebaseFirestore.instance.collection('registrations_log').add({
           'name': name,
           'email': email,
@@ -235,6 +248,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           'created': DateTime.now().toIso8601String(),
           'appVersion': '1.0.0',
           'action': 'register',
+          'uid': userCredential.user?.uid,
         }).timeout(const Duration(seconds: 3));
       } catch (firestoreErr) {
         print("Firestore registration sync failed: $firestoreErr");
@@ -245,10 +259,121 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
         _showSnackBar("Hesabınız başarıyla oluşturuldu!", success: true);
         Navigator.pop(context, true);
       }
+    } on FirebaseAuthException catch (authEx) {
+      if (mounted) setState(() => _isLoading = false);
+      String errMsg = "Kayıt olurken hata oluştu.";
+      if (authEx.code == 'email-already-in-use') {
+        errMsg = "Bu e-posta adresiyle kayıtlı bir hesap zaten var.";
+      } else if (authEx.code == 'invalid-email') {
+        errMsg = "Geçersiz e-posta adresi.";
+      } else if (authEx.code == 'weak-password') {
+        errMsg = "Şifreniz çok zayıf. Lütfen daha güçlü bir şifre girin.";
+      }
+      _showSnackBar(errMsg);
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
-      _showSnackBar("Kayıt olurken hata oluştu.");
+      _showSnackBar("Kayıt olurken bilinmeyen bir hata oluştu.");
     }
+  }
+
+  Future<void> _showForgotPasswordDialog() async {
+    final TextEditingController emailResetController = TextEditingController();
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+                side: BorderSide(
+                  color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
+                  width: 1.2,
+                ),
+              ),
+              title: Text(
+                'Şifremi Unuttum',
+                style: TextStyle(
+                  color: dark ? Colors.white : const Color(0xFF1E5E43),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Şifre sıfırlama bağlantısı almak için e-posta adresinizi girin.',
+                    style: TextStyle(
+                      color: dark ? Colors.white70 : Colors.black87,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: emailResetController,
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(color: dark ? Colors.white : Colors.black87, fontSize: 14),
+                    decoration: _buildInputDecoration(
+                      labelText: "E-posta Adresi",
+                      icon: Icons.email_outlined,
+                      dark: dark,
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('İptal', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF27A770),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () async {
+                    final String email = emailResetController.text.trim();
+                    if (email.isEmpty) {
+                      _showSnackBar("E-posta alanı boş bırakılamaz.");
+                      return;
+                    }
+                    if (!_isValidEmail(email)) {
+                      _showSnackBar("Lütfen geçerli bir e-posta adresi girin.");
+                      return;
+                    }
+
+                    try {
+                      // Call real Firebase Auth reset email
+                      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        _showSnackBar("Şifre sıfırlama bağlantısı başarıyla gönderildi. Lütfen e-postanızı kontrol edin.", success: true);
+                      }
+                    } on FirebaseAuthException catch (authEx) {
+                      String err = "E-posta gönderilirken bir hata oluştu.";
+                      if (authEx.code == 'user-not-found') {
+                        err = "Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.";
+                      } else if (authEx.code == 'invalid-email') {
+                        err = "Geçersiz e-posta adresi.";
+                      }
+                      _showSnackBar(err);
+                    } catch (e) {
+                      _showSnackBar("İşlem başarısız oldu. Lütfen tekrar deneyin.");
+                    }
+                  },
+                  child: const Text('Gönder', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -446,7 +571,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
                           ),
                         ),
 
-                        // Social Logins (Visual embellishment to look professional)
+                        // Social Logins (Visual mockup)
                         const SizedBox(height: 28),
                         Row(
                           children: [
@@ -568,7 +693,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) return "Lütfen e-posta adresinizi girin.";
-              if (!_isValidEmail(value)) return "Lütfen gerçek ve geçerli bir e-posta adresi girin.";
+              if (!_isValidEmail(value)) return "Lütfen gerçek bir e-posta adresi girin.";
               return null;
             },
           ),
@@ -598,7 +723,22 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
               return null;
             },
           ),
-          const SizedBox(height: 20),
+          // Forgot Password link
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: _showForgotPasswordDialog,
+              child: Text(
+                "Şifremi Unuttum",
+                style: TextStyle(
+                  color: const Color(0xFF27A770),
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
               gradient: const LinearGradient(
@@ -664,7 +804,7 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) return "Lütfen e-posta adresinizi girin.";
-              if (!_isValidEmail(value)) return "Lütfen gerçek ve geçerli bir e-posta adresi girin.";
+              if (!_isValidEmail(value)) return "Lütfen gerçek bir e-posta adresi girin.";
               return null;
             },
           ),
@@ -691,6 +831,33 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
             validator: (value) {
               if (value == null || value.isEmpty) return "Lütfen bir şifre girin.";
               if (value.length < 6) return "Şifre en az 6 karakter olmalıdır.";
+              return null;
+            },
+          ),
+          const SizedBox(height: 14),
+          // Confirm Password field
+          TextFormField(
+            controller: _registerConfirmPasswordController,
+            obscureText: _obscureConfirmPassword,
+            style: TextStyle(color: dark ? Colors.white : Colors.black87, fontSize: 14),
+            decoration: _buildInputDecoration(
+              labelText: "Şifre Tekrarı",
+              icon: Icons.lock_clock_outlined,
+              dark: dark,
+              suffix: IconButton(
+                icon: Icon(
+                  _obscureConfirmPassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                  color: Colors.grey,
+                  size: 20,
+                ),
+                onPressed: () {
+                  setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
+                },
+              ),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) return "Lütfen şifrenizi tekrar girin.";
+              if (value != _registerPasswordController.text) return "Şifreler eşleşmiyor.";
               return null;
             },
           ),
