@@ -1071,17 +1071,20 @@ class SettingsScreenState extends State<SettingsScreen> {
                                     color: dark ? Colors.white38 : Colors.grey[500],
                                   ),
                                   const SizedBox(width: 4),
-                                  Text(
-                                    _isLoggedIn
-                                        ? "Profili Düzenlemek İçin Dokunun"
-                                        : "Giriş Yapmak veya Kayıt Olmak İçin Dokunun",
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: dark ? Colors.white38 : Colors.grey[500],
+                                  Expanded(
+                                    child: Text(
+                                      _isLoggedIn
+                                          ? "Profili Düzenlemek İçin Dokunun"
+                                          : "Giriş Yapmak veya Kayıt Olmak İçin Dokunun",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: dark ? Colors.white38 : Colors.grey[500],
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
+
                             ],
                           ),
                         ),
