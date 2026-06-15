@@ -223,6 +223,7 @@ class _ToolDetailScreenState extends State<ToolDetailScreen> {
   bool _loadingLocation = false;
   bool _qiblaWasAligned = false; // Track Qibla alignment for haptic feedback
   List<Map<String, dynamic>> _dynamicMosquesList = [];
+  int _qiblaStreamKey = 0;
 
   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     const r = 6371; // Earth radius in km
@@ -667,6 +668,7 @@ out center body;
         setState(() {
           _currentPosition = pos;
           _loadingLocation = false;
+          _qiblaStreamKey++; // Refresh Qibla stream when GPS location updates successfully
         });
       }
 
@@ -3864,6 +3866,7 @@ out center body;
   // 10. Kıble Bulucu V2 (Qibla Radar)
   Widget _buildKibleBulucu() {
     return StreamBuilder<CompassEvent>(
+      key: ValueKey(_qiblaStreamKey),
       stream: FlutterCompass.events,
       builder: (context, snapshot) {
         double? heading = snapshot.data?.heading;
@@ -3876,7 +3879,7 @@ out center body;
           qiblaCityName = _currentLocationName.isNotEmpty ? _currentLocationName : "Konumunuz";
         }
 
-        // If no sensor detected, display a beautiful fallback message
+        // If no sensor detected, display a beautiful fallback message with a retry option
         if (heading == null) {
           return Center(
             child: Padding(
@@ -3891,7 +3894,7 @@ out center body;
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "Pusula Sensörü Bulunamadı",
+                    "Pusula Sensörü Başlatılıyor",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -3900,9 +3903,26 @@ out center body;
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    "Cihazınızda manyetik pusula sensörü tespit edilemedi. Kıble Radar özelliğini kullanabilmek için lütfen pusula desteği olan bir mobil cihaz kullanın.",
+                    "Cihazınızda manyetik pusula sensörü aranıyor veya başlatılıyor. Lütfen cihazınızı düz bir zeminde tutun. Eğer uzun süre açılmazsa aşağıdaki butona basarak pusulayı ve konum servislerini yeniden başlatabilirsiniz.",
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 13, color: Colors.grey, height: 1.4),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _qiblaStreamKey++;
+                      });
+                      _getUserLocation(forceRefresh: true);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _greenColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.refresh_rounded, size: 18),
+                    label: const Text("Pusula & Konumu Yeniden Başlat", style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -4125,14 +4145,47 @@ out center body;
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "KIBLE RADAR VERİLERİ",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
-                          color: _subtitleColor,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "KIBLE RADAR VERİLERİ",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.0,
+                              color: _subtitleColor,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _qiblaStreamKey++;
+                              });
+                              _getUserLocation(forceRefresh: true);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Pusula ve konum yenileniyor..."),
+                                  duration: Duration(milliseconds: 800),
+                                ),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Icon(Icons.refresh_rounded, color: _greenColor, size: 14),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "Yenile",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: _greenColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       const Divider(height: 20),
                       Row(
