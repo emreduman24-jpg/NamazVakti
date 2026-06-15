@@ -10,6 +10,7 @@ import '../services/notification_service.dart';
 import 'notification_settings_screen.dart';
 import 'premium_screen.dart';
 import 'auth_screen.dart';
+import 'profile_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback onThemeChanged;
@@ -800,214 +801,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _showProfileDialog() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String currentName = prefs.getString('user_name') ?? '';
-    final String currentGender = prefs.getString('user_gender') ?? 'erkek';
-    
-    final TextEditingController nameController = TextEditingController(text: currentName);
-    String selectedGender = currentGender;
-    
-    if (!mounted) return;
-    final bool dark = Theme.of(context).brightness == Brightness.dark;
-    
-    await showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          return AlertDialog(
-            backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-              side: BorderSide(
-                color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
-                width: 1.2,
-              ),
-            ),
-            title: Text(
-              'Profilimi Düzenle',
-              style: TextStyle(
-                color: dark ? Colors.white : const Color(0xFF1E5E43),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Adınız Soyadınız',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white70 : Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: nameController,
-                    style: TextStyle(color: dark ? Colors.white : Colors.black87),
-                    decoration: InputDecoration(
-                      hintText: 'Örn. Ahmet Yılmaz',
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      filled: true,
-                      fillColor: dark ? Colors.white.withOpacity(0.04) : Colors.grey[100],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF27A770), width: 1.5),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Cinsiyetiniz',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: dark ? Colors.white70 : Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      // Male selection card
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setDialogState(() {
-                              selectedGender = 'erkek';
-                            });
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: selectedGender == 'erkek'
-                                  ? const Color(0xFF27A770).withOpacity(0.12)
-                                  : (dark ? Colors.white.withOpacity(0.04) : Colors.grey[100]),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: selectedGender == 'erkek'
-                                    ? const Color(0xFF27A770)
-                                    : (dark ? Colors.white10 : Colors.grey[300]!),
-                                width: 2,
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  '👨',
-                                  style: TextStyle(fontSize: 24),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Erkek',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                    color: selectedGender == 'erkek'
-                                        ? const Color(0xFF27A770)
-                                        : (dark ? Colors.white70 : Colors.black87),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Female selection card
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setDialogState(() {
-                              selectedGender = 'kadin';
-                            });
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: selectedGender == 'kadin'
-                                  ? const Color(0xFFE5A93B).withOpacity(0.12)
-                                  : (dark ? Colors.white.withOpacity(0.04) : Colors.grey[100]),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: selectedGender == 'kadin'
-                                    ? const Color(0xFFE5A93B)
-                                    : (dark ? Colors.white10 : Colors.grey[300]!),
-                                width: 2,
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  '👩',
-                                  style: TextStyle(fontSize: 24),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'Kadın',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                    color: selectedGender == 'kadin'
-                                        ? const Color(0xFFE5A93B)
-                                        : (dark ? Colors.white70 : Colors.black87),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('İptal', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF27A770),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                ),
-                onPressed: () async {
-                  final String name = nameController.text.trim();
-                  if (name.isEmpty) {
-                    _showSnackBar('Lütfen adınızı giriniz.');
-                    return;
-                  }
-                  await prefs.setString('user_name', name);
-                  await prefs.setString('user_gender', selectedGender);
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    _showSnackBar('Profil bilgileri başarıyla güncellendi.', success: true);
-                  }
-                  await loadSettings(showLoading: false);
-                },
-                child: const Text('Kaydet', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+
 
   Future<void> _showLogoutConfirmationDialog() async {
     final bool dark = Theme.of(context).brightness == Brightness.dark;
@@ -1140,17 +934,23 @@ class SettingsScreenState extends State<SettingsScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: InkWell(
-                  onTap: _isLoggedIn
-                      ? _showProfileDialog
-                      : () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const AuthScreen()),
-                          );
-                          if (result == true) {
-                            await loadSettings(showLoading: false);
-                          }
-                        },
+                  onTap: () async {
+                    if (_isLoggedIn) {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                      );
+                      await loadSettings(showLoading: false);
+                    } else {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AuthScreen()),
+                      );
+                      if (result == true) {
+                        await loadSettings(showLoading: false);
+                      }
+                    }
+                  },
                   borderRadius: BorderRadius.circular(24),
                   child: Container(
                     padding: const EdgeInsets.all(20),
