@@ -428,7 +428,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             left: 0,
             right: 0,
             child: Container(
-              height: 220,
+              height: 300,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
@@ -728,47 +728,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
 
                         const SizedBox(height: 24),
-
-                        // Info & Sync Card
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: dark ? const Color(0xFF131D31).withOpacity(0.5) : Colors.grey[100],
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.cloud_done_rounded, color: const Color(0xFF27A770), size: 20),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Verileriniz Firestore ile senkronize.",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: dark ? Colors.white : Colors.black87,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      "Son Eşitleme: Bugün $_lastSyncTime",
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: dark ? Colors.white38 : Colors.grey[600],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Danger zone options
-                        const SizedBox(height: 32),
                         OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.transparent,
