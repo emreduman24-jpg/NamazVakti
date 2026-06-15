@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'data/prayer_repository.dart';
 import 'services/notification_service.dart';
 import 'services/location_cache_service.dart';
@@ -130,21 +133,59 @@ class _MyAppState extends State<MyApp> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
-      if (isLoggedIn) {
-        final email = prefs.getString('user_email');
-        if (email != null && email.isNotEmpty) {
-          final doc = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(email)
-              .get()
-              .timeout(const Duration(seconds: 2));
-          if (doc.exists) {
-            final isPremium = doc.data()?['isPremium'] ?? false;
-            final localIsPremium = prefs.getBool('is_premium') ?? false;
-            if (isPremium != localIsPremium) {
-              await prefs.setBool('is_premium', isPremium);
-              print("Premium status updated dynamically from Firestore: $isPremium");
-            }
+      
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      
+      if (currentUser == null) {
+        try {
+          final userCredential = await FirebaseAuth.instance.signInAnonymously();
+          currentUser = userCredential.user;
+          print("Signed in anonymously as Guest: ${currentUser?.uid}");
+        } catch (authErr) {
+          print("Anonymous sign in failed: $authErr");
+        }
+      }
+      
+      if (currentUser != null) {
+        final String docId = isLoggedIn ? (prefs.getString('user_email') ?? currentUser.uid) : currentUser.uid;
+        
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(docId)
+            .get()
+            .timeout(const Duration(seconds: 2));
+            
+        if (doc.exists) {
+          final isPremium = doc.data()?['isPremium'] ?? false;
+          final localIsPremium = prefs.getBool('is_premium') ?? false;
+          if (isPremium != localIsPremium) {
+            await prefs.setBool('is_premium', isPremium);
+            print("Premium status updated dynamically from Firestore: $isPremium");
+          }
+        } else {
+          if (currentUser.isAnonymous) {
+            String ipAddress = '192.168.1.105';
+            try {
+              final response = await http.get(Uri.parse('https://api.ipify.org')).timeout(const Duration(seconds: 3));
+              if (response.statusCode == 200) {
+                ipAddress = response.body.trim();
+              }
+            } catch (_) {}
+            
+            await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).set({
+              'name': 'Misafir Kullanıcı',
+              'email': null,
+              'isPremium': false,
+              'isAnonymous': true,
+              'created': DateTime.now().toIso8601String(),
+              'lastActive': DateTime.now().toIso8601String(),
+              'ipAddress': ipAddress,
+              'platform': Platform.isIOS ? 'iOS' : 'Android',
+              'uid': currentUser.uid,
+            }).timeout(const Duration(seconds: 3));
+            
+            await prefs.setBool('is_premium', false);
+            print("Created new guest user document in Firestore with Standard access.");
           }
         }
       }

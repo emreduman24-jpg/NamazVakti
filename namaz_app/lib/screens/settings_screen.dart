@@ -846,6 +846,7 @@ class SettingsScreenState extends State<SettingsScreen> {
               Navigator.pop(context); // Close dialog
               try {
                 await FirebaseAuth.instance.signOut();
+                await FirebaseAuth.instance.signInAnonymously();
               } catch (e) {
                 debugPrint("Firebase logout error: $e");
               }

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PremiumScreen extends StatefulWidget {
   final bool isFromOnboarding;
@@ -248,7 +249,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         _buildPackageOption(
                           id: 'monthly',
                           title: "Aylık Plan",
-                          badge: "Deneme Süresi Yok",
+                          badge: "7 Gün Ücretsiz Deneme Dahil",
                           priceMonthly: "₺149,00 /ay",
                           priceTotal: "₺1.788,00 /yıl değerinde",
                         ),
@@ -466,7 +467,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                           ),
                           onPressed: _handlePurchase,
                           child: Text(
-                            _selectedPackage == 'yearly' ? "7 Gün Ücretsiz Deneme Başlat" : "Şimdi Katıl",
+                            "7 Gün Ücretsiz Deneme Başlat",
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -778,11 +779,14 @@ class _PremiumScreenState extends State<PremiumScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_premium', true);
       
-      // Update Firestore if user is logged in
+      // Update Firestore if user is logged in or anonymous guest session exists
       final String? email = prefs.getString('user_email');
-      if (email != null && email.isNotEmpty) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      final String? docId = (email != null && email.isNotEmpty) ? email : currentUser?.uid;
+      
+      if (docId != null) {
         try {
-          await FirebaseFirestore.instance.collection('users').doc(email).update({
+          await FirebaseFirestore.instance.collection('users').doc(docId).update({
             'isPremium': true,
             'premiumType': _selectedPackage,
             'premiumDate': DateTime.now().toIso8601String(),

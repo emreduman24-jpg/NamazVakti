@@ -247,6 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => _isLoading = true);
       try {
         await FirebaseAuth.instance.signOut();
+        await FirebaseAuth.instance.signInAnonymously();
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('is_logged_in', false);
         await prefs.remove('user_name');
@@ -365,6 +366,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // 0. Delete from Firebase Auth first
           final user = FirebaseAuth.instance.currentUser;
           await user?.delete();
+          await FirebaseAuth.instance.signInAnonymously();
 
           // 1. Log account deletion to the admin logs
           await FirebaseFirestore.instance.collection('registrations_log').add({
