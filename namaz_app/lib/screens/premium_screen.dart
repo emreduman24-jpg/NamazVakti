@@ -20,7 +20,7 @@ class PremiumScreen extends StatefulWidget {
 
 class _PremiumScreenState extends State<PremiumScreen> {
   // Billing options
-  String _selectedPackage = 'yearly'; // 'yearly', 'monthly', 'lifetime'
+  String _selectedPackage = 'yearly'; // 'yearly', 'monthly'
 
   // Testimonials Carousel
   final PageController _reviewController = PageController();
@@ -233,14 +233,14 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         
                         const SizedBox(height: 28),
 
-                        // 2. Billing Selection Options Stacked (Monthly, Yearly, Lifetime)
+                        // 2. Billing Selection Options Stacked (Monthly, Yearly)
                         _buildPackageOption(
                           id: 'yearly',
                           title: "Yıllık Plan",
                           badge: "7 Gün Ücretsiz Deneme Dahil",
-                          priceMonthly: "₺125,00 /ay",
-                          priceTotal: "₺1.499,99 /yıl faturalandırılır",
-                          discountTag: "%75 İNDİRİM",
+                          priceMonthly: "₺74,50 /ay",
+                          priceTotal: "₺894,00 /yıl faturalandırılır",
+                          discountTag: "%50 İNDİRİM",
                           isPopular: true,
                         ),
                         const SizedBox(height: 12),
@@ -249,18 +249,8 @@ class _PremiumScreenState extends State<PremiumScreen> {
                           id: 'monthly',
                           title: "Aylık Plan",
                           badge: "Deneme Süresi Yok",
-                          priceMonthly: "₺499,99 /ay",
-                          priceTotal: "₺5.999,88 /yıl değerinde",
-                        ),
-                        const SizedBox(height: 12),
-                        
-                        _buildPackageOption(
-                          id: 'lifetime',
-                          title: "Ömür Boyu",
-                          badge: "Sonsuza Dek Sınırsız Kullanım",
-                          priceMonthly: "₺2.499,99",
-                          priceTotal: "Tek seferlik ödeme",
-                          discountTag: "EN İYİ FIRSAT",
+                          priceMonthly: "₺149,00 /ay",
+                          priceTotal: "₺1.788,00 /yıl değerinde",
                         ),
 
                         const SizedBox(height: 32),
