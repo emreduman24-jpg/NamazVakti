@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/quran_data.dart';
+import 'premium_screen.dart';
 
 class QuranDetailScreen extends StatefulWidget {
   final QuranSurah surah;
@@ -321,6 +322,16 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
       });
       await _updateLastReadForActiveVerse();
       if (playImmediately || _playerState == PlayerState.playing) {
+        final isAllowed = await _checkPremiumRequirement();
+        if (!isAllowed) {
+          if (_playerState == PlayerState.playing) {
+            await _audioPlayer.stop();
+            setState(() {
+              _playerState = PlayerState.stopped;
+            });
+          }
+          return;
+        }
         await _audioPlayer.stop();
         final verse = _verses[index];
         final suraNo = verse.surahNumber ?? widget.surah.number;
@@ -486,22 +497,55 @@ class _QuranDetailScreenState extends State<QuranDetailScreen> {
     }
   }
 
+  Future<bool> _checkPremiumRequirement() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isPremium = prefs.getBool('is_premium') ?? false;
+    if (isPremium) return true;
+
+    bool isRestricted = false;
+    if (widget.isJuz) {
+      if (widget.juz != null && widget.juz!.number > 12) {
+        isRestricted = true;
+      }
+    } else {
+      if (widget.surah.number > 10) {
+        isRestricted = true;
+      }
+    }
+
+    if (isRestricted) {
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const PremiumScreen()),
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
   Future<void> _toggleAudio() async {
     try {
       if (_playerState == PlayerState.playing) {
         await _audioPlayer.pause();
-      } else if (_playerState == PlayerState.paused) {
-        await _audioPlayer.resume();
       } else {
-        String url;
-        if (_verses.isNotEmpty) {
-          final verse = _verses[_activeVerseIndex];
-          final suraNo = verse.surahNumber ?? widget.surah.number;
-          url = _getVerseAudioUrl(suraNo, verse.number);
+        final isAllowed = await _checkPremiumRequirement();
+        if (!isAllowed) return;
+
+        if (_playerState == PlayerState.paused) {
+          await _audioPlayer.resume();
         } else {
-          url = widget.isJuz ? widget.juz!.audioUrl : _getVerseAudioUrl(widget.surah.number, 1);
+          String url;
+          if (_verses.isNotEmpty) {
+            final verse = _verses[_activeVerseIndex];
+            final suraNo = verse.surahNumber ?? widget.surah.number;
+            url = _getVerseAudioUrl(suraNo, verse.number);
+          } else {
+            url = widget.isJuz ? widget.juz!.audioUrl : _getVerseAudioUrl(widget.surah.number, 1);
+          }
+          await _audioPlayer.play(UrlSource(url));
         }
-        await _audioPlayer.play(UrlSource(url));
       }
     } catch (e) {
       final String errMsg = e.toString().toLowerCase();

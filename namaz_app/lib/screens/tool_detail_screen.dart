@@ -15,6 +15,7 @@ import '../data/prayer_data.dart';
 import '../data/prayer_repository.dart';
 import '../data/quran_data.dart';
 import 'quran_detail_screen.dart';
+import 'premium_screen.dart';
 
 class ToolDetailScreen extends StatefulWidget {
   final String toolId;
@@ -5868,7 +5869,25 @@ out center body;
                                       children: [
                                         if (audio.isNotEmpty && _dualarTab != 1)
                                           GestureDetector(
-                                            onTap: () => _playAudio(audio, title),
+                                            onTap: () async {
+                                              if (!isPlaying) {
+                                                final prefs = await SharedPreferences.getInstance();
+                                                final isPremium = prefs.getBool('is_premium') ?? false;
+                                                if (!isPremium) {
+                                                  final allowedIds = ["kuran_1", "kuran_2", "kuran_3", "kuran_4", "kuran_5", "kuran_6"];
+                                                  if (!allowedIds.contains(id)) {
+                                                    if (context.mounted) {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(builder: (_) => const PremiumScreen()),
+                                                      );
+                                                    }
+                                                    return;
+                                                  }
+                                                }
+                                              }
+                                              _playAudio(audio, title);
+                                            },
                                             child: Container(
                                               width: 38,
                                               height: 38,
