@@ -1466,7 +1466,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   child: _buildThemeCard(
                     themeMode: 'light',
                     title: "Aydınlık",
-                    imagePath: 'assets/theme_light.png',
+                    imagePath: 'assets/Aydınlık_tema.png',
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -1475,7 +1475,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   child: _buildThemeCard(
                     themeMode: 'dark',
                     title: "Karanlık",
-                    imagePath: 'assets/theme_dark.png',
+                    imagePath: 'assets/Karanlık_tema.png',
                   ),
                 ),
               ],
