@@ -39,6 +39,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   bool _saving = false;
   bool _loadingLocation = false;
   OverlayEntry? _activeNotificationOverlay;
+  String _selectedThemeMode = 'dark';
 
   // Setup/Loading states
   String _setupStatusText = "Namaz vakitleri hesaplanıyor ...";
@@ -125,11 +126,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     }
   }
 
+  Future<void> _saveThemeSelection() async {
+    try {
+      await _repository.setThemeMode(_selectedThemeMode);
+      widget.onThemeChanged();
+      debugPrint("Onboarding: Theme selection saved successfully: $_selectedThemeMode");
+    } catch (e) {
+      debugPrint("Error saving theme selection: $e");
+    }
+  }
+
   void _goToNextPage() {
     if (_activePage == 7) {
       _savePrayerPreviewSettings();
+    } else if (_activePage == 8) {
+      _saveThemeSelection();
     }
-    if (_activePage < 8) {
+    if (_activePage < 9) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -764,7 +777,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     // Hide dots and buttons when in loading/setup/checkout screens
-    final bool isPremiumPage = _activePage == 8;
+    final bool isPremiumPage = _activePage == 9;
     final bool hideFooter = isPremiumPage;
 
     return Scaffold(
@@ -801,6 +814,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               _buildPageNotificationRequest(),
               _buildPageNotificationCustomize(),
               _buildPagePrayerTimesPreview(), // Shows after setup loading dialog!
+              _buildPageThemeSelection(), // New Theme Selection Screen!
               PremiumScreen(isFromOnboarding: true, onComplete: _handleComplete), // Stunning Botanical Premium Screen!
             ],
           ),
@@ -1307,8 +1321,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   const Divider(color: Colors.white10, height: 1),
                   _buildPreviewTimeRow("Öğle", today['Ogle'] ?? '13:05', false),
                   const Divider(color: Colors.white10, height: 1),
-                  // Highlight next prayer (İkindi) in green just like the screenshot!
-                  _buildPreviewTimeRow("İkindi", today['Ikindi'] ?? '16:54', true),
+                  _buildPreviewTimeRow("İkindi", today['Ikindi'] ?? '16:54', false),
                   const Divider(color: Colors.white10, height: 1),
                   _buildPreviewTimeRow("Akşam", today['Aksam'] ?? '20:34', false),
                   const Divider(color: Colors.white10, height: 1),
@@ -1398,6 +1411,171 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  // SCREEN 8: Theme Selection (Tema Seçimi)
+  Widget _buildPageThemeSelection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        children: [
+          const SizedBox(height: 70),
+          // Category/Indicator
+          const Text(
+            "GÖRÜNÜM TERCİHİ",
+            style: TextStyle(
+              color: Color(0xFF8AA996),
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 10),
+          // Title
+          const Text(
+            "Nasıl görünmesini\nistersiniz?",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              height: 1.25,
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Description
+          const Text(
+            "Uygulamanın temasını seçin. Bu ayarı dilediğiniz zaman ayarlardan değiştirebilirsiniz.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 14,
+              height: 1.55,
+            ),
+          ),
+          const SizedBox(height: 30),
+          
+          // Theme Options (Light & Dark Side by Side)
+          Expanded(
+            child: Row(
+              children: [
+                // Light Mode Option
+                Expanded(
+                  child: _buildThemeCard(
+                    themeMode: 'light',
+                    title: "Aydınlık",
+                    imagePath: 'assets/theme_light.png',
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Dark Mode Option
+                Expanded(
+                  child: _buildThemeCard(
+                    themeMode: 'dark',
+                    title: "Karanlık",
+                    imagePath: 'assets/theme_dark.png',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 140), // Spacer for footer buttons
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeCard({
+    required String themeMode,
+    required String title,
+    required String imagePath,
+  }) {
+    final bool isSelected = _selectedThemeMode == themeMode;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedThemeMode = themeMode;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF162544) : const Color(0xFF101B31),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? const Color(0xFF90B49C) : Colors.white10,
+            width: isSelected ? 2.5 : 1.0,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF90B49C).withOpacity(0.15),
+                    blurRadius: 12,
+                    spreadRadius: 2,
+                  )
+                ]
+              : null,
+        ),
+        child: Column(
+          children: [
+            // Preview Image
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 12, right: 12, top: 12),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  child: Image.asset(
+                    imagePath,
+                    fit: BoxFit.cover,
+                    alignment: Alignment.topCenter,
+                  ),
+                ),
+              ),
+            ),
+            
+            // Divider & Selector Label
+            const Divider(color: Colors.white10, height: 1),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isSelected ? const Color(0xFF90B49C) : Colors.white38,
+                        width: 2,
+                      ),
+                      color: isSelected ? const Color(0xFF90B49C) : Colors.transparent,
+                    ),
+                    child: isSelected
+                        ? const Icon(
+                            Icons.check,
+                            size: 12,
+                            color: Color(0xFF0F1B31),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white70,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

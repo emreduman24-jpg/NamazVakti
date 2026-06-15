@@ -97,6 +97,8 @@ flutter:
     - assets/sparkle.mp3
     - assets/Ezan_Bildirim.mp3
     - assets/Parıltı_bildirim.mp3
+    - assets/theme_light.png
+    - assets/theme_dark.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
