@@ -774,48 +774,38 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
                   ),
                   const SizedBox(height: 20),
 
-                  // Horizontal Stepper Bar
+                  // Horizontal Stepper Bar (Unified Stack of Columns)
                   Stack(
-                    alignment: Alignment.center,
                     children: [
                       // Loading Track
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: SizedBox(
-                          height: 6,
-                          child: LinearProgressIndicator(
-                            value: milestoneProgress,
-                            backgroundColor: dark ? Colors.white10 : Colors.black.withOpacity(0.05),
-                            color: const Color(0xFFD4AF37),
+                      Positioned(
+                        left: 7, // Center of first node (14 / 2 = 7)
+                        right: 7, // Center of last node
+                        top: 4, // Center vertically with 14-height node: (14 - 6) / 2 = 4
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: SizedBox(
+                            height: 6,
+                            child: LinearProgressIndicator(
+                              value: milestoneProgress,
+                              backgroundColor: dark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                              color: const Color(0xFFD4AF37),
+                            ),
                           ),
                         ),
                       ),
-                      // Stepper Nodes (3, 7, 14, 30, 100, 365)
+                      // Milestone Columns (Node + Label)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildMilestoneNode(3, _currentStreak, dark),
-                          _buildMilestoneNode(7, _currentStreak, dark),
-                          _buildMilestoneNode(14, _currentStreak, dark),
-                          _buildMilestoneNode(30, _currentStreak, dark),
-                          _buildMilestoneNode(100, _currentStreak, dark),
-                          _buildMilestoneNode(365, _currentStreak, dark),
+                          _buildMilestoneColumn(3, _currentStreak, dark),
+                          _buildMilestoneColumn(7, _currentStreak, dark),
+                          _buildMilestoneColumn(14, _currentStreak, dark),
+                          _buildMilestoneColumn(30, _currentStreak, dark),
+                          _buildMilestoneColumn(100, _currentStreak, dark),
+                          _buildMilestoneColumn(365, _currentStreak, dark),
                         ],
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  
-                  // Label row for nodes
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildMilestoneText(3, _currentStreak, dark),
-                      _buildMilestoneText(7, _currentStreak, dark),
-                      _buildMilestoneText(14, _currentStreak, dark),
-                      _buildMilestoneText(30, _currentStreak, dark),
-                      _buildMilestoneText(100, _currentStreak, dark),
-                      _buildMilestoneText(365, _currentStreak, dark),
                     ],
                   ),
                 ],
@@ -1090,24 +1080,22 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
     );
   }
 
-  Widget _buildMilestoneText(int nodeVal, int current, bool dark) {
+  Widget _buildMilestoneColumn(int nodeVal, int current, bool dark) {
     final bool isActiveOrPassed = current >= nodeVal;
-    return SizedBox(
-      width: 14, // Same width as the node container
-      child: OverflowBox(
-        minWidth: 0,
-        maxWidth: 40,
-        child: Center(
-          child: Text(
-            nodeVal.toString(),
-            style: TextStyle(
-              color: isActiveOrPassed ? const Color(0xFFD4AF37) : (dark ? Colors.white30 : Colors.black38),
-              fontSize: 11,
-              fontWeight: isActiveOrPassed ? FontWeight.bold : FontWeight.normal,
-            ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildMilestoneNode(nodeVal, current, dark),
+        const SizedBox(height: 6),
+        Text(
+          nodeVal.toString(),
+          style: TextStyle(
+            color: isActiveOrPassed ? const Color(0xFFD4AF37) : (dark ? Colors.white30 : Colors.black38),
+            fontSize: 11,
+            fontWeight: isActiveOrPassed ? FontWeight.bold : FontWeight.normal,
           ),
         ),
-      ),
+      ],
     );
   }
 }
