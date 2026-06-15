@@ -1501,7 +1501,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        height: 270, // Tall card to show large preview image!
+        height: 330, // Tall card to show even larger preview image!
         width: double.infinity,
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF162544) : const Color(0xFF101B31),
