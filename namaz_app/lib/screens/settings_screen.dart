@@ -9,9 +9,7 @@ import '../data/prayer_repository.dart';
 import '../services/notification_service.dart';
 import 'notification_settings_screen.dart';
 import 'premium_screen.dart';
-import 'auth_screen.dart';
 import 'profile_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback onThemeChanged;
@@ -38,7 +36,6 @@ class SettingsScreenState extends State<SettingsScreen> {
   bool _loading = true;
   String _userName = '';
   String _userGender = 'erkek';
-  bool _isLoggedIn = false;
   bool _isPremium = false;
 
   @override
@@ -56,14 +53,12 @@ class SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     final name = prefs.getString('user_name') ?? '';
     final gender = prefs.getString('user_gender') ?? 'erkek';
-    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
     final isPremium = prefs.getBool('is_premium') ?? false;
     setState(() {
       _themeMode = theme;
       _location = loc;
       _userName = name;
       _userGender = gender;
-      _isLoggedIn = isLoggedIn;
       _isPremium = isPremium;
       _loading = false;
     });
@@ -804,66 +799,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
 
 
-  Future<void> _showLogoutConfirmationDialog() async {
-    final bool dark = Theme.of(context).brightness == Brightness.dark;
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide(
-            color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
-            width: 1.2,
-          ),
-        ),
-        title: Text(
-          'Oturumu Kapat',
-          style: TextStyle(
-            color: dark ? Colors.white : const Color(0xFF1E5E43),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
-          style: TextStyle(
-            color: dark ? Colors.white70 : Colors.black87,
-            fontSize: 14.5,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Vazgeç', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEB5757),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () async {
-              Navigator.pop(context); // Close dialog
-              try {
-                await FirebaseAuth.instance.signOut();
-              } catch (e) {
-                debugPrint("Firebase logout error: $e");
-              }
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('is_logged_in', false);
-              await prefs.remove('user_name');
-              await prefs.remove('user_gender');
-              await prefs.remove('user_email');
-              
-              await loadSettings(showLoading: false);
-              _showSnackBar("Oturum kapatıldı.", success: true);
-            },
-            child: const Text('Çıkış Yap', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Future<void> _launchURL(String urlString) async {
     final Uri url = Uri.parse(urlString);
@@ -941,21 +877,11 @@ class SettingsScreenState extends State<SettingsScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: InkWell(
                   onTap: () async {
-                    if (_isLoggedIn) {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                      );
-                      await loadSettings(showLoading: false);
-                    } else {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const AuthScreen()),
-                      );
-                      if (result == true) {
-                        await loadSettings(showLoading: false);
-                      }
-                    }
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                    );
+                    await loadSettings(showLoading: false);
                   },
                   borderRadius: BorderRadius.circular(24),
                   child: Container(
@@ -1001,16 +927,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                             ],
                           ),
                           child: Center(
-                            child: _isLoggedIn
-                                ? Text(
-                                    _userGender == 'kadin' ? '👩' : '👨',
-                                    style: const TextStyle(fontSize: 32),
-                                  )
-                                : const Icon(
-                                    Icons.person_rounded,
-                                    size: 32,
-                                    color: Colors.white,
-                                  ),
+                            child: Text(
+                              _userGender == 'kadin' ? '👩' : '👨',
+                              style: const TextStyle(fontSize: 32),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -1020,7 +940,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _isLoggedIn ? "Hayırlı Günler," : "Hoş Geldiniz,",
+                                "Hayırlı Günler,",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: dark ? Colors.white60 : Colors.grey[600],
@@ -1033,9 +953,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                                 children: [
                                   Flexible(
                                     child: Text(
-                                      _isLoggedIn
-                                          ? (_userName.isNotEmpty ? _userName : "Değerli Kardeşimiz")
-                                          : "Misafir Kullanıcı",
+                                      _userName.isNotEmpty ? _userName : "Kullanıcı",
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 18,
@@ -1072,16 +990,14 @@ class SettingsScreenState extends State<SettingsScreen> {
                               Row(
                                 children: [
                                   Icon(
-                                    _isLoggedIn ? Icons.edit_outlined : Icons.login_rounded,
+                                    Icons.edit_outlined,
                                     size: 12,
                                     color: dark ? Colors.white38 : Colors.grey[500],
                                   ),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      _isLoggedIn
-                                          ? "Profili Düzenlemek İçin Dokunun"
-                                          : "Giriş Yapmak veya Kayıt Olmak İçin Dokunun",
+                                      "Profili Düzenlemek İçin Dokunun",
                                       style: TextStyle(
                                         fontSize: 11,
                                         color: dark ? Colors.white38 : Colors.grey[500],
@@ -1377,52 +1293,27 @@ class SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
 
-              _buildCardGroup(
-                title: "DESTEK & HESAP",
-                children: [
-                  _buildSettingRow(
-                    icon: Icons.workspace_premium_rounded,
-                    title: _isPremium ? "Namaz Vakti Pro" : "Reklamlardan Kurtul",
-                    subtitle: _isPremium ? "Premium üyelik aktif" : "Sadece 30 saniyenizi ayırarak destek olun",
-                    gradientColors: _isPremium
-                        ? [const Color(0xFFD4AF37), const Color(0xFF996515)]
-                        : [const Color(0xFFE2B93C), const Color(0xFFD4AF37)],
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PremiumScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _isLoggedIn
-                      ? _buildSettingRow(
-                          icon: Icons.power_settings_new_rounded,
-                          title: "Oturumu Kapat",
-                          subtitle: "Hesabınızdan güvenli çıkış yapın",
-                          gradientColors: [const Color(0xFFEB5757), const Color(0xFFFF8A8A)],
-                          onTap: _showLogoutConfirmationDialog,
-                          isLast: true,
-                        )
-                      : _buildSettingRow(
-                          icon: Icons.login_rounded,
-                          title: "Giriş Yap / Üye Ol",
-                          subtitle: "Hesabınıza giriş yapın",
-                          gradientColors: [const Color(0xFF27A770), const Color(0xFF80ED99)],
-                          onTap: () async {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const AuthScreen()),
-                            );
-                            if (result == true) {
-                              await loadSettings(showLoading: false);
-                            }
-                          },
-                          isLast: true,
-                        ),
-                ],
-              ),
+              if (!_isPremium)
+                _buildCardGroup(
+                  title: "DESTEK & HESAP",
+                  children: [
+                    _buildSettingRow(
+                      icon: Icons.workspace_premium_rounded,
+                      title: "Reklamlardan Kurtul",
+                      subtitle: "Sadece 30 saniyenizi ayırarak destek olun",
+                      gradientColors: [const Color(0xFFE2B93C), const Color(0xFFD4AF37)],
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PremiumScreen(),
+                          ),
+                        );
+                      },
+                      isLast: true,
+                    ),
+                  ],
+                ),
 
               // 4. About Section Card Group
               _buildCardGroup(

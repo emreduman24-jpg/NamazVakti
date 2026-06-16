@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:442515189721:android:96a4f45567019d458633c8",
+        "android_client_info": {
+          "package_name": "com.emreduman.namazvakitleri"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFeOjK5-GVWG2uvl5RVBt1M_KfslRSlss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:442515189721:android:d683fd9b5074edef8633c8",
         "android_client_info": {
           "package_name": "com.example.namazvakitleri.namaz_app"

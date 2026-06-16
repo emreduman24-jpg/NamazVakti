@@ -1,4 +1,4 @@
-package com.example.namazvakitleri.namaz_app
+package com.emreduman.namazvakitleri
 
 import io.flutter.embedding.android.FlutterActivity
 

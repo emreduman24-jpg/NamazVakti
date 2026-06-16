@@ -190,6 +190,7 @@ class NotificationService {
                   priority: Priority.high,
                   sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
                   playSound: true,
+                  largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
                 )
               : const AndroidNotificationDetails(
                   'ezan_sparkle_channel_new',
@@ -200,6 +201,7 @@ class NotificationService {
                   priority: Priority.high,
                   sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
                   playSound: true,
+                  largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
                 );
 
           // iOS custom sound config (expects ezan_bildirim.mp3 / parilti_bildirim.mp3 in App Bundle resources)
@@ -216,12 +218,30 @@ class NotificationService {
             iOS: iosDetails,
           );
 
+          String displayTitle = 'Namaz Vakti';
+          String displayBody = '';
+
+          if (prayerName == 'İmsak') {
+            displayBody = 'İmsak Vakti Geldi';
+          } else if (prayerName == 'Güneş') {
+            displayBody = 'Sabah Namazı Vakti Geldi';
+          } else if (prayerName == 'Öğle') {
+            displayBody = 'Öğle Namazı Vakti Geldi';
+          } else if (prayerName == 'İkindi') {
+            displayBody = 'İkindi Namazı Vakti Geldi';
+          } else if (prayerName == 'Akşam') {
+            displayBody = 'Akşam Namazı Vakti Geldi';
+          } else if (prayerName == 'Yatsı') {
+            displayBody = 'Yatsı Namazı Vakti Geldi';
+          } else {
+            displayBody = '$prayerName Namazı Vakti Geldi';
+          }
+
           try {
             await flutterLocalNotificationsPlugin.zonedSchedule(
               id: notificationId++,
-              title: 'Ezan Vakti ($prayerName)',
-              body:
-                  'Günün bu kutsal vaktinde ibadete davet. $prayerName vakti girdi.',
+              title: displayTitle,
+              body: displayBody,
               scheduledDate: tzScheduledDate,
               notificationDetails: platformDetails,
               androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
@@ -232,9 +252,8 @@ class NotificationService {
             try {
               await flutterLocalNotificationsPlugin.zonedSchedule(
                 id: notificationId - 1,
-                title: 'Ezan Vakti ($prayerName)',
-                body:
-                    'Günün bu kutsal vaktinde ibadete davet. $prayerName vakti girdi.',
+                title: displayTitle,
+                body: displayBody,
                 scheduledDate: tzScheduledDate,
                 notificationDetails: platformDetails,
                 androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
@@ -285,6 +304,7 @@ class NotificationService {
             priority: Priority.high,
             sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
             playSound: true,
+            largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
           )
         : const AndroidNotificationDetails(
             'test_sparkle_channel_new',
@@ -295,6 +315,7 @@ class NotificationService {
             priority: Priority.high,
             sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
             playSound: true,
+            largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
           );
 
     final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -330,6 +351,7 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
+      largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
     );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(

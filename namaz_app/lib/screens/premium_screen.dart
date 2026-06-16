@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import '../services/billing_service.dart';
+
 
 class PremiumScreen extends StatefulWidget {
   final bool isFromOnboarding;
@@ -28,6 +31,22 @@ class _PremiumScreenState extends State<PremiumScreen> {
   int _activeReview = 0;
   Timer? _reviewTimer;
   bool _isLoading = false;
+  List<Package> _packages = [];
+
+  Package? _getPackage(String id) {
+    if (_packages.isEmpty) return null;
+    if (id == 'yearly') {
+      for (var p in _packages) {
+        if (p.packageType == PackageType.annual) return p;
+      }
+    } else if (id == 'monthly') {
+      for (var p in _packages) {
+        if (p.packageType == PackageType.monthly) return p;
+      }
+    }
+    return null;
+  }
+
 
   final List<Map<String, String>> _testimonials = [
     {
@@ -61,7 +80,23 @@ class _PremiumScreenState extends State<PremiumScreen> {
         );
       }
     });
+
+    _loadOfferings();
   }
+
+  Future<void> _loadOfferings() async {
+    try {
+      final packages = await BillingService.fetchOfferings();
+      if (packages.isNotEmpty) {
+        setState(() {
+          _packages = packages;
+        });
+      }
+    } catch (e) {
+      print("Error loading RevenueCat offerings: $e");
+    }
+  }
+
 
   @override
   void dispose() {
@@ -235,24 +270,43 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         const SizedBox(height: 28),
 
                         // 2. Billing Selection Options Stacked (Monthly, Yearly)
-                        _buildPackageOption(
-                          id: 'yearly',
-                          title: "Yıllık Plan",
-                          badge: "7 Gün Ücretsiz Deneme Dahil",
-                          priceMonthly: "₺74,50 /ay",
-                          priceTotal: "₺894,00 /yıl faturalandırılır",
-                          discountTag: "%50 İNDİRİM",
-                          isPopular: true,
-                        ),
-                        const SizedBox(height: 12),
-                        
-                        _buildPackageOption(
-                          id: 'monthly',
-                          title: "Aylık Plan",
-                          badge: "7 Gün Ücretsiz Deneme Dahil",
-                          priceMonthly: "₺149,00 /ay",
-                          priceTotal: "₺1.788,00 /yıl değerinde",
-                        ),
+                        () {
+                          final yearlyPkg = _getPackage('yearly');
+                          final monthlyPkg = _getPackage('monthly');
+
+                          final yearlyPrice = yearlyPkg?.storeProduct.priceString ?? "₺894,00";
+                          final monthlyPrice = monthlyPkg?.storeProduct.priceString ?? "₺149,00";
+                          
+                          String yearlyMonthlyPrice = "₺74,50 /ay";
+                          if (yearlyPkg != null) {
+                            final monthlyVal = (yearlyPkg.storeProduct.price / 12).toStringAsFixed(2);
+                            final symbol = yearlyPkg.storeProduct.priceString.replaceAll(RegExp(r'[0-9.,\s]'), '');
+                            yearlyMonthlyPrice = symbol.isNotEmpty ? "$symbol$monthlyVal /ay" : "${yearlyPkg.storeProduct.currencyCode} $monthlyVal /ay";
+                          }
+
+                          return Column(
+                            children: [
+                              _buildPackageOption(
+                                id: 'yearly',
+                                title: "Yıllık Plan",
+                                badge: "7 Gün Ücretsiz Deneme Dahil",
+                                priceMonthly: yearlyMonthlyPrice,
+                                priceTotal: "$yearlyPrice/yıl faturalandırılır",
+                                discountTag: "%50 İNDİRİM",
+                                isPopular: true,
+                              ),
+                              const SizedBox(height: 12),
+                              _buildPackageOption(
+                                id: 'monthly',
+                                title: "Aylık Plan",
+                                badge: "7 Gün Ücretsiz Deneme Dahil",
+                                priceMonthly: monthlyPrice,
+                                priceTotal: "₺1.788,00 /yıl değerinde",
+                              ),
+                            ],
+                          );
+                        }(),
+
 
                         const SizedBox(height: 32),
 
@@ -340,7 +394,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         const SizedBox(height: 16),
 
                         SizedBox(
-                          height: 124,
+                          height: 180,
                           child: PageView.builder(
                             controller: _reviewController,
                             onPageChanged: (int index) {
@@ -772,44 +826,84 @@ class _PremiumScreenState extends State<PremiumScreen> {
   }
 
   Future<void> _handlePurchase() async {
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 1500)); // Simulated purchase secure delay
-
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('is_premium', true);
-      
-      // Update Firestore if user is logged in or local guest session exists
-      final String? email = prefs.getString('user_email');
-      final String? guestUuid = prefs.getString('guest_uuid');
-      final String? docId = (email != null && email.isNotEmpty) ? email : guestUuid;
-      
-      if (docId != null) {
-        try {
-          await FirebaseFirestore.instance.collection('users').doc(docId).update({
-            'isPremium': true,
-            'premiumType': _selectedPackage,
-            'premiumDate': DateTime.now().toIso8601String(),
-          }).timeout(const Duration(seconds: 3));
-        } catch (firestoreErr) {
-          print("Firestore premium purchase sync failed: $firestoreErr");
+    final selectedPkg = _getPackage(_selectedPackage);
+    
+    if (selectedPkg != null) {
+      setState(() => _isLoading = true);
+      try {
+        final success = await BillingService.purchase(selectedPkg);
+        if (success) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            _showSnackBar("Namaz Pro üyeliğiniz başarıyla başlatıldı! Teşekkür ederiz.", success: true);
+            _handleClose();
+          }
+        } else {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            _showSnackBar("Ödeme işlemi iptal edildi veya tamamlanamadı.");
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          _showSnackBar("Ödeme işlemi tamamlanırken hata oluştu.");
         }
       }
-      
-      if (mounted) {
-        setState(() => _isLoading = false);
-        _showSnackBar("Namaz Pro üyeliğiniz başarıyla başlatıldı! Teşekkür ederiz.", success: true);
-        _handleClose();
+    } else {
+      // Fallback: If RevenueCat package is not loaded, do the previous simulated purchase
+      setState(() => _isLoading = true);
+      await Future.delayed(const Duration(milliseconds: 1500));
+
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('is_premium', true);
+        
+        // Update Firestore if user is logged in or local guest session exists
+        final String? email = prefs.getString('user_email');
+        final String? guestUuid = prefs.getString('guest_uuid');
+        final String? docId = (email != null && email.isNotEmpty) ? email : guestUuid;
+        
+        if (docId != null) {
+          try {
+            await FirebaseFirestore.instance.collection('users').doc(docId).update({
+              'isPremium': true,
+              'premiumType': _selectedPackage,
+              'premiumDate': DateTime.now().toIso8601String(),
+            }).timeout(const Duration(seconds: 3));
+          } catch (firestoreErr) {
+            print("Firestore premium purchase sync failed: $firestoreErr");
+          }
+        }
+        
+        if (mounted) {
+          setState(() => _isLoading = false);
+          _showSnackBar("Namaz Pro üyeliğiniz başarıyla başlatıldı! (Simüle)", success: true);
+          _handleClose();
+        }
+      } catch (e) {
+        if (mounted) setState(() => _isLoading = false);
+        _showSnackBar("Ödeme işlemi tamamlanırken hata oluştu.");
       }
-    } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
-      _showSnackBar("Ödeme işlemi tamamlanırken hata oluştu.");
     }
   }
 
   // Handle Restore
-  void _handleRestore() {
-    _showSnackBar("Aboneliğiniz App Store üzerinden geri yükleniyor...");
+  Future<void> _handleRestore() async {
+    setState(() => _isLoading = true);
+    try {
+      final success = await BillingService.restorePurchases();
+      setState(() => _isLoading = false);
+      if (success) {
+        _showSnackBar("Premium üyeliğiniz başarıyla geri yüklendi!", success: true);
+        _handleClose();
+      } else {
+        _showSnackBar("Geri yüklenecek aktif bir abonelik bulunamadı.");
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showSnackBar("Abonelik geri yüklenirken hata oluştu.");
+    }
   }
 }
 

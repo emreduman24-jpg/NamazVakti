@@ -16,6 +16,9 @@ import 'screens/tools_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/tool_detail_screen.dart';
 import 'screens/splash_screen.dart';
+import 'services/billing_service.dart';
+import 'services/ad_service.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +33,9 @@ void main() async {
   // Initialize Notification Service
   final notificationService = NotificationService();
   await notificationService.init();
+
+  // Initialize AdMob
+  await AdService.initialize();
 
   runApp(const MyApp());
 }
@@ -132,23 +138,24 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkPremiumStatus() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
       
-      String? docId;
-      
-      if (isLoggedIn) {
-        docId = prefs.getString('user_email');
-      } else {
-        // Guest user - get or create guest UUID
-        docId = prefs.getString('guest_uuid');
-        if (docId == null || docId.isEmpty) {
-          final random = "${DateTime.now().millisecondsSinceEpoch}_${1000 + (DateTime.now().microsecond % 9000)}";
-          docId = "guest_$random";
-          await prefs.setString('guest_uuid', docId);
-        }
+      String? docId = prefs.getString('guest_uuid');
+      if (docId == null || docId.isEmpty) {
+        final random = "${DateTime.now().millisecondsSinceEpoch}_${1000 + (DateTime.now().microsecond % 9000)}";
+        docId = "guest_$random";
+        await prefs.setString('guest_uuid', docId);
       }
       
-      if (docId != null && docId.isNotEmpty) {
+      final guestUuid = prefs.getString('guest_uuid') ?? '';
+      // Initialize RevenueCat billing service always using guestUuid
+      if (guestUuid.isNotEmpty) {
+          try {
+            await BillingService.initialize(guestUuid);
+          } catch (e) {
+            print("RevenueCat initialization error in main.dart: $e");
+          }
+        }
+
         final doc = await FirebaseFirestore.instance
             .collection('users')
             .doc(docId)
@@ -163,33 +170,34 @@ class _MyAppState extends State<MyApp> {
             print("Premium status updated dynamically from Firestore for $docId: $isPremium");
           }
         } else {
-          // If guest document doesn't exist, create it as Standard (free) user
-          if (!isLoggedIn) {
-            String ipAddress = '192.168.1.105';
-            try {
-              final response = await http.get(Uri.parse('https://api.ipify.org')).timeout(const Duration(seconds: 3));
-              if (response.statusCode == 200) {
-                ipAddress = response.body.trim();
-              }
-            } catch (_) {}
-            
-            await FirebaseFirestore.instance.collection('users').doc(docId).set({
-              'name': 'Misafir Kullanıcı',
-              'email': null,
-              'isPremium': false,
-              'isAnonymous': true,
-              'created': DateTime.now().toIso8601String(),
-              'lastActive': DateTime.now().toIso8601String(),
-              'ipAddress': ipAddress,
-              'platform': Platform.isIOS ? 'iOS' : 'Android',
-              'uid': docId,
-            }).timeout(const Duration(seconds: 3));
-            
-            await prefs.setBool('is_premium', false);
-            print("Created new guest user document in Firestore ($docId) with Standard access.");
-          }
+          // If guest document doesn't exist, create it in Firestore preserving current premium status
+          String ipAddress = '192.168.1.105';
+          try {
+            final response = await http.get(Uri.parse('https://api.ipify.org')).timeout(const Duration(seconds: 3));
+            if (response.statusCode == 200) {
+              ipAddress = response.body.trim();
+            }
+          } catch (_) {}
+          
+          final localIsPremium = prefs.getBool('is_premium') ?? false;
+          final currentName = prefs.getString('user_name') ?? 'Kullanıcı';
+          final currentGender = prefs.getString('user_gender') ?? 'erkek';
+          
+          await FirebaseFirestore.instance.collection('users').doc(docId).set({
+            'name': currentName,
+            'email': null,
+            'gender': currentGender,
+            'isPremium': localIsPremium,
+            'isAnonymous': true,
+            'created': DateTime.now().toIso8601String(),
+            'lastActive': DateTime.now().toIso8601String(),
+            'ipAddress': ipAddress,
+            'platform': Platform.isIOS ? 'iOS' : 'Android',
+            'uid': docId,
+          }).timeout(const Duration(seconds: 3));
+          
+          print("Created new guest user document in Firestore ($docId) preserving Premium=$localIsPremium");
         }
-      }
     } catch (e) {
       print("Premium status check error: $e");
     }

@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../data/prayer_tracker_state.dart';
+import '../services/ad_service.dart';
 
 class PrayerTrackerScreen extends StatefulWidget {
   const PrayerTrackerScreen({super.key});
@@ -14,6 +18,11 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
   // DB map of "YYYY-MM-DD" -> [Sabah, Öğle, İkindi, Akşam, Yatsı]
   Map<String, List<bool>> _history = {};
   bool _loading = true;
+
+  bool _isPremium = false;
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
+  Timer? _premiumCheckTimer;
 
   @override
   bool get wantKeepAlive => true;
@@ -40,11 +49,14 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
     _focusedMonth = DateTime.now();
     _trackerState.addListener(_onStateChanged);
     _onStateChanged();
+    _initPremiumAndAds();
   }
 
   @override
   void dispose() {
     _trackerState.removeListener(_onStateChanged);
+    _premiumCheckTimer?.cancel();
+    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -813,6 +825,11 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
             ),
             const SizedBox(height: 16),
 
+            if (!_isPremium && _isBannerAdLoaded && _bannerAd != null) ...[
+              _buildAdMobBannerCard(),
+              const SizedBox(height: 16),
+            ],
+
             // 5. EDITABLE MONTHLY CALENDAR CARD
             Container(
               width: double.infinity,
@@ -1076,6 +1093,96 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
                 )
               ]
             : null,
+      ),
+    );
+  }
+
+  void _initPremiumAndAds() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isPremium = prefs.getBool('is_premium') ?? false;
+    setState(() {
+      _isPremium = isPremium;
+    });
+
+    if (!_isPremium) {
+      _loadBannerAd();
+    }
+
+    _premiumCheckTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      if (mounted) {
+        final prefs = await SharedPreferences.getInstance();
+        final localIsPremium = prefs.getBool('is_premium') ?? false;
+        if (localIsPremium != _isPremium) {
+          setState(() {
+            _isPremium = localIsPremium;
+          });
+          if (localIsPremium) {
+            _bannerAd?.dispose();
+            _bannerAd = null;
+            _isBannerAdLoaded = false;
+          } else {
+            _loadBannerAd();
+          }
+        }
+      }
+    });
+  }
+
+  void _loadBannerAd() async {
+    final showAds = await AdService.shouldShowAds();
+    if (!showAds) {
+      if (_bannerAd != null) {
+        _bannerAd!.dispose();
+        _bannerAd = null;
+        setState(() {
+          _isBannerAdLoaded = false;
+        });
+      }
+      return;
+    }
+
+    if (_bannerAd != null) return; // Already loading/loaded
+
+    _bannerAd = BannerAd(
+      adUnitId: AdService.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          ad.dispose();
+          _bannerAd = null;
+          setState(() {
+            _isBannerAdLoaded = false;
+          });
+        },
+      ),
+    )..load();
+  }
+
+  Widget _buildAdMobBannerCard() {
+    if (!_isBannerAdLoaded || _bannerAd == null) {
+      return const SizedBox.shrink();
+    }
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: dark ? const Color(0xFF131D31) : Colors.white,
+      child: Container(
+        width: double.infinity,
+        height: _bannerAd!.size.height.toDouble() + 16,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        alignment: Alignment.center,
+        child: SizedBox(
+          width: _bannerAd!.size.width.toDouble(),
+          height: _bannerAd!.size.height.toDouble(),
+          child: AdWidget(ad: _bannerAd!),
+        ),
       ),
     );
   }

@@ -10,6 +10,9 @@ import '../data/prayer_tracker_state.dart';
 import '../services/notification_service.dart';
 import 'notification_settings_screen.dart';
 import 'premium_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/ad_service.dart';
 
 class MainScreen extends StatefulWidget {
   final Function(int) onTabChange;
@@ -33,6 +36,9 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
   final PrayerRepository _repository = PrayerRepository();
   final NotificationService _notificationService = NotificationService();
   final PrayerTrackerState _trackerState = PrayerTrackerState();
+  bool _isPremium = false;
+  BannerAd? _bannerAd;
+  bool _isBannerAdLoaded = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -675,9 +681,26 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
     super.initState();
     loadData();
     _dayIndex = (DateTime.now().day + DateTime.now().month * 30) % VAKTIN_AYETLERI.length; // To rotate daily cards across 60 items
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (mounted && _todayTimes != null) {
         _updateCountdown();
+      }
+      
+      if (mounted) {
+        final prefs = await SharedPreferences.getInstance();
+        final localIsPremium = prefs.getBool('is_premium') ?? false;
+        if (localIsPremium != _isPremium) {
+          setState(() {
+            _isPremium = localIsPremium;
+          });
+          if (localIsPremium) {
+            _bannerAd?.dispose();
+            _bannerAd = null;
+            _isBannerAdLoaded = false;
+          } else {
+            _loadBannerAd();
+          }
+        }
       }
     });
     _trackerState.addListener(_onTrackerStateChanged);
@@ -687,7 +710,44 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
   void dispose() {
     _timer?.cancel();
     _trackerState.removeListener(_onTrackerStateChanged);
+    _bannerAd?.dispose();
     super.dispose();
+  }
+
+  void _loadBannerAd() async {
+    final showAds = await AdService.shouldShowAds();
+    if (!showAds) {
+      if (_bannerAd != null) {
+        _bannerAd!.dispose();
+        _bannerAd = null;
+        setState(() {
+          _isBannerAdLoaded = false;
+        });
+      }
+      return;
+    }
+
+    if (_bannerAd != null) return; // Already loading/loaded
+
+    _bannerAd = BannerAd(
+      adUnitId: AdService.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          ad.dispose();
+          _bannerAd = null;
+          setState(() {
+            _isBannerAdLoaded = false;
+          });
+        },
+      ),
+    )..load();
   }
 
   void _onTrackerStateChanged() {
@@ -701,11 +761,26 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
       _loading = true;
     });
 
+    final prefs = await SharedPreferences.getInstance();
+    final isPremium = prefs.getBool('is_premium') ?? false;
+
+    // Load or dispose of the banner ad based on premium status
+    if (!isPremium) {
+      _loadBannerAd();
+    } else {
+      if (_bannerAd != null) {
+        _bannerAd!.dispose();
+        _bannerAd = null;
+        _isBannerAdLoaded = false;
+      }
+    }
+
     final loc = await _repository.getSavedLocation();
     final districtId = loc['districtId'];
     if (districtId != null) {
       final times = await _repository.getPrayerTimes(districtId);
       setState(() {
+        _isPremium = isPremium;
         _location = loc;
         _prayerTimes = times;
 
@@ -729,6 +804,7 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
       _updateCountdown();
     } else {
       setState(() {
+        _isPremium = isPremium;
         _loading = false;
       });
     }
@@ -1244,16 +1320,23 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
                   _buildHomePrayerTrackerCard(),
                   const SizedBox(height: 16),
 
+                  if (!_isPremium && _isBannerAdLoaded && _bannerAd != null) ...[
+                    _buildAdMobBannerCard(),
+                    const SizedBox(height: 16),
+                  ],
+
                   // 2. Geliştirici Mesajı Banner (formerly 5th, now in the middle of Namaz Takibi and Günün Ayeti)
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PremiumScreen(),
-                        ),
-                      );
-                    },
+                    onTap: _isPremium
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const PremiumScreen(),
+                              ),
+                            );
+                          },
                     child: Card(
                       elevation: 3,
                       color: dark ? const Color(0xFF16251C) : const Color(0xFFEAF7F1), // Soft green banner bg
@@ -1798,6 +1881,29 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdMobBannerCard() {
+    if (!_isBannerAdLoaded || _bannerAd == null) {
+      return const SizedBox.shrink();
+    }
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: dark ? const Color(0xFF131D31) : Colors.white,
+      child: Container(
+        width: double.infinity,
+        height: _bannerAd!.size.height.toDouble() + 16,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        alignment: Alignment.center,
+        child: SizedBox(
+          width: _bannerAd!.size.width.toDouble(),
+          height: _bannerAd!.size.height.toDouble(),
+          child: AdWidget(ad: _bannerAd!),
         ),
       ),
     );

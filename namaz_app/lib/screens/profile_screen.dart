@@ -1,8 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import '../data/prayer_tracker_state.dart';
 
@@ -13,7 +14,8 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final PrayerTrackerState _trackerState = PrayerTrackerState();
@@ -22,26 +24,71 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _gender = 'erkek';
   bool _isPremium = false;
   bool _isLoading = false;
-  String _lastSyncTime = 'Bilinmiyor';
 
   // Statistics
   int _currentStreak = 0;
   int _totalCompletedDays = 0;
   int _weeklyCompletedDays = 0;
 
+  // Animations
+  late AnimationController _headerAnimController;
+  late AnimationController _cardsAnimController;
+  late Animation<double> _headerFadeIn;
+  late Animation<Offset> _headerSlideIn;
+  late Animation<double> _cardsFadeIn;
+
   @override
   void initState() {
     super.initState();
+
+    _headerAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _cardsAnimController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+
+    _headerFadeIn = CurvedAnimation(
+      parent: _headerAnimController,
+      curve: Curves.easeOut,
+    );
+    _headerSlideIn = Tween<Offset>(
+      begin: const Offset(0, -0.15),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _headerAnimController,
+      curve: Curves.easeOutCubic,
+    ));
+    _cardsFadeIn = CurvedAnimation(
+      parent: _cardsAnimController,
+      curve: Curves.easeOut,
+    );
+
+    _nameController.addListener(_onNameTextChanged);
     _loadProfileData();
     _trackerState.addListener(_onTrackerChanged);
     _calculateTrackerMetrics();
+
+    _headerAnimController.forward();
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _cardsAnimController.forward();
+    });
   }
 
   @override
   void dispose() {
+    _headerAnimController.dispose();
+    _cardsAnimController.dispose();
+    _nameController.removeListener(_onNameTextChanged);
     _trackerState.removeListener(_onTrackerChanged);
     _nameController.dispose();
     super.dispose();
+  }
+
+  void _onNameTextChanged() {
+    setState(() {});
   }
 
   void _onTrackerChanged() {
@@ -53,15 +100,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _loadProfileData() async {
     final prefs = await SharedPreferences.getInstance();
+    final savedName = prefs.getString('user_name') ?? '';
+    final guestUuid = prefs.getString('guest_uuid') ?? '';
     setState(() {
-      _email = prefs.getString('user_email') ?? '';
+      _email = guestUuid;
       _gender = prefs.getString('user_gender') ?? 'erkek';
       _isPremium = prefs.getBool('is_premium') ?? false;
-      _nameController.text = prefs.getString('user_name') ?? '';
-      
-      // Load last sync time (using current time as initial last sync)
-      final now = DateTime.now();
-      _lastSyncTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+      _nameController.text = savedName.isNotEmpty ? savedName : "Kullanıcı";
     });
   }
 
@@ -136,24 +181,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 13.5),
+        content: Row(
+          children: [
+            Icon(
+              success ? Icons.check_circle_rounded : Icons.error_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  fontSize: 13.5,
+                ),
+              ),
+            ),
+          ],
         ),
-        backgroundColor: success ? const Color(0xFF27A770) : Colors.redAccent,
+        backgroundColor: success ? const Color(0xFF27A770) : const Color(0xFFE53935),
         duration: const Duration(seconds: 3),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        elevation: 8,
       ),
     );
   }
 
   Future<String> _getPublicIp() async {
     try {
-      final response = await http.get(Uri.parse('https://api.ipify.org')).timeout(const Duration(seconds: 3));
+      final response = await http
+          .get(Uri.parse('https://api.ipify.org'))
+          .timeout(const Duration(seconds: 3));
       if (response.statusCode == 200) {
         return response.body.trim();
       }
@@ -165,6 +229,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
+    HapticFeedback.mediumImpact();
+
     final String newName = _nameController.text.trim();
     final String ipAddress = await _getPublicIp();
     final String platform = Platform.isIOS ? 'iOS' : 'Android';
@@ -174,270 +240,100 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await prefs.setString('user_name', newName);
       await prefs.setString('user_gender', _gender);
 
-      // Sync with Firestore
-      if (_email.isNotEmpty) {
-        await FirebaseFirestore.instance.collection('users').doc(_email).update({
+      // Sync with Firestore using guest_uuid
+      final guestUuid = prefs.getString('guest_uuid') ?? '';
+      if (guestUuid.isNotEmpty) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(guestUuid)
+            .set({
           'name': newName,
           'gender': _gender,
           'lastActive': DateTime.now().toIso8601String(),
           'ipAddress': ipAddress,
           'platform': platform,
-        }).timeout(const Duration(seconds: 3));
+        }, SetOptions(merge: true)).timeout(const Duration(seconds: 3));
       }
-
-      final now = DateTime.now();
-      setState(() {
-        _lastSyncTime = "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
-      });
 
       _showSnackBar("Profil başarıyla güncellendi!", success: true);
     } catch (e) {
-      _showSnackBar("Profil güncellenirken bulut senkronizasyon hatası oluştu.");
+      _showSnackBar("Profil güncellenirken senkronizasyon hatası oluştu.");
     } finally {
       setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _logout() async {
-    final bool dark = Theme.of(context).brightness == Brightness.dark;
-    final bool? confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide(
-            color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
-            width: 1.2,
-          ),
-        ),
-        title: Text(
-          'Oturumu Kapat',
-          style: TextStyle(
-            color: dark ? Colors.white : const Color(0xFF1E5E43),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
-          style: TextStyle(
-            color: dark ? Colors.white70 : Colors.black87,
-            fontSize: 14.5,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('İptal', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEB5757),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Çıkış Yap', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm == true) {
-      setState(() => _isLoading = true);
-      try {
-        await FirebaseAuth.instance.signOut();
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('is_logged_in', false);
-        await prefs.remove('user_name');
-        await prefs.remove('user_gender');
-        await prefs.remove('user_email');
-        await prefs.setBool('is_premium', false);
-
-        if (mounted) {
-          _showSnackBar("Oturum kapatıldı.", success: true);
-          Navigator.pop(context); // Pop back to settings
-        }
-      } catch (_) {
-        _showSnackBar("Oturum kapatılırken bir hata oluştu.");
-      } finally {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _deleteAccount() async {
-    final bool dark = Theme.of(context).brightness == Brightness.dark;
-    final bool? confirm1 = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide(
-            color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
-            width: 1.2,
-          ),
-        ),
-        title: const Text(
-          'Hesabı Sil',
-          style: TextStyle(
-            color: Color(0xFFEB5757),
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          'Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm bulut verileriniz silinecektir.',
-          style: TextStyle(
-            color: dark ? Colors.white70 : Colors.black87,
-            fontSize: 14,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('Vazgeç', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEB5757),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Devam Et', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirm1 == true) {
-      // Secondary confirmation to prevent accidental deletion
-      final bool? confirm2 = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: dark ? const Color(0xFF131D31) : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-            side: BorderSide(
-              color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
-              width: 1.2,
-            ),
-          ),
-          title: const Text(
-            'Son Onay',
-            style: TextStyle(
-              color: Color(0xFFEB5757),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Text(
-            'Hesabınız kalıcı olarak silinecektir. Lütfen işlemi onaylayın.',
-            style: TextStyle(
-              color: dark ? Colors.white70 : Colors.black87,
-              fontSize: 14,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text('Vazgeç', style: TextStyle(color: dark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.bold)),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFEB5757),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Kalıcı Olarak Sil', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      );
-
-      if (confirm2 == true) {
-        setState(() => _isLoading = true);
-        final String ipAddress = await _getPublicIp();
-        final String platform = Platform.isIOS ? 'iOS' : 'Android';
-
-        try {
-          // 0. Delete from Firebase Auth first
-          final user = FirebaseAuth.instance.currentUser;
-          await user?.delete();
-
-          // 1. Log account deletion to the admin logs
-          await FirebaseFirestore.instance.collection('registrations_log').add({
-            'name': _nameController.text.trim(),
-            'email': _email,
-            'gender': _gender,
-            'ipAddress': ipAddress,
-            'platform': platform,
-            'created': DateTime.now().toIso8601String(),
-            'appVersion': '1.0.0',
-            'action': 'delete_account',
-          }).timeout(const Duration(seconds: 3));
-
-          // 2. Delete user document from Firestore users collection
-          if (_email.isNotEmpty) {
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(_email)
-                .delete()
-                .timeout(const Duration(seconds: 3));
-          }
-
-          // 3. Clear local preferences
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool('is_logged_in', false);
-          await prefs.remove('user_name');
-          await prefs.remove('user_gender');
-          await prefs.remove('user_email');
-          await prefs.setBool('is_premium', false);
-
-          if (mounted) {
-            _showSnackBar("Hesabınız ve verileriniz başarıyla silindi.", success: true);
-            Navigator.pop(context); // Pop back to settings screen
-          }
-        } on FirebaseAuthException catch (authEx) {
-          if (authEx.code == 'requires-recent-login') {
-            _showSnackBar("Güvenlik nedeniyle bu işlemi yapmadan önce çıkış yapıp tekrar giriş yapmalısınız.");
-          } else {
-            _showSnackBar("Hesap silinirken bir hata oluştu: ${authEx.message}");
-          }
-        } catch (e) {
-          _showSnackBar("Hesap silinirken sunucu hatası oluştu: $e");
-        } finally {
-          setState(() => _isLoading = false);
-        }
-      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final bool dark = Theme.of(context).brightness == Brightness.dark;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Color palette
+    final Color bg = dark ? const Color(0xFF0A0E1A) : const Color(0xFFF5F7FA);
+    final Color cardBg = dark ? const Color(0xFF141B2D) : Colors.white;
+    final Color cardBorder = dark
+        ? Colors.white.withOpacity(0.07)
+        : const Color(0xFFE8ECF0);
+    final Color textPrimary = dark ? Colors.white : const Color(0xFF1A2332);
+    final Color textSecondary = dark ? Colors.white60 : const Color(0xFF6B7B8D);
+    const Color accent = Color(0xFF27A770);
+    const Color accentDark = Color(0xFF1E5E43);
 
     return Scaffold(
-      backgroundColor: dark ? const Color(0xFF090E17) : const Color(0xFFF0F5F2),
+      backgroundColor: bg,
       body: Stack(
         children: [
-          // Banner background
+          // ── Gradient Header Background ──
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: Container(
-              height: 300,
-              decoration: const BoxDecoration(
+              height: 320,
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  colors: dark
+                      ? [const Color(0xFF0F2D20), const Color(0xFF0A0E1A)]
+                      : [const Color(0xFF27A770), const Color(0xFF1B8A5A)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
+              ),
+            ),
+          ),
+
+          // ── Decorative Pattern Overlay ──
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 320,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: const Alignment(0.7, -0.5),
+                  radius: 1.2,
+                  colors: [
+                    Colors.white.withOpacity(dark ? 0.03 : 0.12),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // ── Bottom Curve ──
+          Positioned(
+            top: 280,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 60,
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(36),
+                  topRight: Radius.circular(36),
                 ),
               ),
             ),
@@ -446,309 +342,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SafeArea(
             child: Column(
               children: [
-                // Header navigation bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
-                        onPressed: () => Navigator.pop(context),
+                // ── Header Nav Bar ──
+                SlideTransition(
+                  position: _headerSlideIn,
+                  child: FadeTransition(
+                    opacity: _headerFadeIn,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
+                      child: Row(
+                        children: [
+                          _buildHeaderButton(
+                            icon: Icons.arrow_back_ios_new_rounded,
+                            onTap: () => Navigator.pop(context),
+                          ),
+                          const Spacer(),
+                          const Text(
+                            "Profilim",
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const Spacer(),
+                          const SizedBox(width: 48),
+                        ],
                       ),
-                      const Spacer(),
-                      const Text(
-                        "Profilim",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const Spacer(),
-                      const SizedBox(width: 48),
-                    ],
+                    ),
                   ),
                 ),
 
+                // ── Body Content ──
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Column(
                       children: [
-                        const SizedBox(height: 12),
-                        // Avatar Card
-                        Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 96,
-                                height: 96,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: dark ? const Color(0xFF131D31) : Colors.white,
-                                  border: Border.all(color: const Color(0xFFD4AF37), width: 3),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 6),
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    _gender == 'kadin' ? '👩' : '👨',
-                                    style: const TextStyle(fontSize: 48),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 14),
-                              Text(
-                                _nameController.text.isNotEmpty ? _nameController.text : "Değerli Kardeşimiz",
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _email,
-                                style: TextStyle(
-                                  fontSize: 12.5,
-                                  color: Colors.white.withOpacity(0.8),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              // Premium state badge
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                decoration: BoxDecoration(
-                                  gradient: _isPremium
-                                      ? const LinearGradient(colors: [Color(0xFFD4AF37), Color(0xFF996515)])
-                                      : null,
-                                  color: _isPremium ? null : Colors.white24,
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: _isPremium ? const Color(0xFFD4AF37) : Colors.white30,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Text(
-                                  _isPremium ? "PRO ÜYE" : "STANDART HESAP",
-                                  style: TextStyle(
-                                    color: _isPremium ? Colors.white : Colors.white70,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 0.6,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 8),
 
-                        // Stats Grid (Professional Tracking stats)
-                        _buildStatsGrid(dark),
-
-                        const SizedBox(height: 24),
-
-                        // Profile details editing Card
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: dark ? const Color(0xFF131D31) : Colors.white,
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                              color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
-                              width: 1.2,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(dark ? 0.2 : 0.03),
-                                blurRadius: 15,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.badge_outlined, color: const Color(0xFF27A770), size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      "Profil Bilgileri",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: dark ? Colors.white : const Color(0xFF1E5E43),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 18),
-                                TextFormField(
-                                  controller: _nameController,
-                                  style: TextStyle(color: dark ? Colors.white : Colors.black87, fontSize: 14),
-                                  decoration: _buildInputDecoration(
-                                    labelText: "Adınız Soyadınız",
-                                    icon: Icons.person_outline_rounded,
-                                    dark: dark,
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) return "Ad alanı boş bırakılamaz.";
-                                    if (value.trim().length < 3) return "Ad en az 3 karakter olmalıdır.";
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  "Cinsiyet",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: dark ? Colors.white70 : Colors.grey[700],
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () => setState(() => _gender = 'erkek'),
-                                        child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 200),
-                                          padding: const EdgeInsets.symmetric(vertical: 10),
-                                          decoration: BoxDecoration(
-                                            color: _gender == 'erkek'
-                                                ? const Color(0xFF27A770).withOpacity(0.12)
-                                                : (dark ? Colors.white.withOpacity(0.04) : Colors.grey[50]),
-                                            borderRadius: BorderRadius.circular(12),
-                                            border: Border.all(
-                                              color: _gender == 'erkek'
-                                                  ? const Color(0xFF27A770)
-                                                  : (dark ? Colors.white10 : Colors.grey[200]!),
-                                              width: 1.5,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              const Text('👨', style: TextStyle(fontSize: 16)),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                'Erkek',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13,
-                                                  color: _gender == 'erkek'
-                                                      ? const Color(0xFF27A770)
-                                                      : (dark ? Colors.white70 : Colors.black87),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () => setState(() => _gender = 'kadin'),
-                                        child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 200),
-                                          padding: const EdgeInsets.symmetric(vertical: 10),
-                                          decoration: BoxDecoration(
-                                            color: _gender == 'kadin'
-                                                ? const Color(0xFFE5A93B).withOpacity(0.12)
-                                                : (dark ? Colors.white.withOpacity(0.04) : Colors.grey[50]),
-                                            borderRadius: BorderRadius.circular(12),
-                                            border: Border.all(
-                                              color: _gender == 'kadin'
-                                                  ? const Color(0xFFE5A93B)
-                                                  : (dark ? Colors.white10 : Colors.grey[200]!),
-                                              width: 1.5,
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              const Text('👩', style: TextStyle(fontSize: 16)),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                'Kadın',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13,
-                                                  color: _gender == 'kadin'
-                                                      ? const Color(0xFFE5A93B)
-                                                      : (dark ? Colors.white70 : Colors.black87),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 24),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [Color(0xFF27A770), Color(0xFF1E5E43)],
-                                    ),
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(vertical: 13),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                    ),
-                                    onPressed: _saveProfileChanges,
-                                    child: const Text("Bilgileri Güncelle", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        // ── Avatar Section ──
+                        FadeTransition(
+                          opacity: _headerFadeIn,
+                          child: _buildAvatarSection(dark, textSecondary),
                         ),
 
-                        const SizedBox(height: 24),
-                        OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            foregroundColor: const Color(0xFFEB5757),
-                            side: const BorderSide(color: Color(0xFFEB5757), width: 1.2),
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                          ),
-                          icon: const Icon(Icons.logout_rounded, size: 18),
-                          label: const Text("Oturumu Kapat", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5)),
-                          onPressed: _logout,
+                        const SizedBox(height: 28),
+
+                        // ── Stats Section ──
+                        FadeTransition(
+                          opacity: _cardsFadeIn,
+                          child: _buildStatsSection(dark, cardBg, cardBorder,
+                              textPrimary, textSecondary),
                         ),
-                        const SizedBox(height: 12),
-                        TextButton.icon(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.grey[500],
-                          ),
-                          icon: const Icon(Icons.delete_forever_rounded, size: 16),
-                          label: const Text("Hesabımı Kalıcı Olarak Sil", style: TextStyle(fontSize: 12, decoration: TextDecoration.underline)),
-                          onPressed: _deleteAccount,
+
+                        const SizedBox(height: 20),
+
+                        // ── Profile Form Section ──
+                        FadeTransition(
+                          opacity: _cardsFadeIn,
+                          child: _buildProfileForm(
+                              dark, cardBg, cardBorder, textPrimary, textSecondary),
                         ),
+
+                        // ── Device ID Section ──
+                        const SizedBox(height: 16),
+                        FadeTransition(
+                          opacity: _cardsFadeIn,
+                          child: _buildDeviceIdCard(
+                              dark, cardBg, cardBorder, textSecondary),
+                        ),
+
                         const SizedBox(height: 48),
                       ],
                     ),
@@ -758,13 +424,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
 
-          // Loading overlay
+          // ── Loading Overlay ──
           if (_isLoading)
             Positioned.fill(
               child: Container(
-                color: Colors.black.withOpacity(0.55),
-                child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF27A770)),
+                color: Colors.black.withOpacity(0.5),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      color: dark
+                          ? const Color(0xFF1A2332)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(
+                          color: accent,
+                          strokeWidth: 3,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          "Güncelleniyor...",
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -773,62 +471,381 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildStatsGrid(bool dark) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 1.0,
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ── Widget Builders ──
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Widget _buildHeaderButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.15),
+              width: 1,
+            ),
+          ),
+          child: Icon(icon, color: Colors.white, size: 18),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatarSection(bool dark, Color textSecondary) {
+    return Column(
       children: [
-        _buildStatCard("Günlük Seri", "$_currentStreak Gün", "🔥", const Color(0xFFEB5757), dark),
-        _buildStatCard("Bu Ay Takip", "$_totalCompletedDays Gün", "✅", const Color(0xFF27A770), dark),
-        _buildStatCard("Haftalık İbadet", "$_weeklyCompletedDays/7 Gün", "🕋", const Color(0xFFE5A93B), dark),
+        // Avatar with glow ring
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // Outer glow
+            Container(
+              width: 112,
+              height: 112,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: _isPremium
+                        ? const Color(0xFFD4AF37).withOpacity(0.3)
+                        : const Color(0xFF27A770).withOpacity(0.25),
+                    blurRadius: 30,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+            ),
+            // Avatar border ring
+            Container(
+              width: 104,
+              height: 104,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: _isPremium
+                    ? const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFFD4AF37),
+                          Color(0xFFF5D76E),
+                          Color(0xFFD4AF37),
+                        ],
+                      )
+                    : const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(0xFF34D399),
+                          Color(0xFF27A770),
+                          Color(0xFF1E5E43),
+                        ],
+                      ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(3.5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: dark ? const Color(0xFF141B2D) : Colors.white,
+                  ),
+                  child: Center(
+                    child: Text(
+                      _gender == 'kadin' ? '👩' : '👨',
+                      style: const TextStyle(fontSize: 44),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Pro badge overlay
+            if (_isPremium)
+              Positioned(
+                bottom: 2,
+                right: 2,
+                child: Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFD4AF37), Color(0xFF996515)],
+                    ),
+                    border: Border.all(
+                      color: dark ? const Color(0xFF141B2D) : Colors.white,
+                      width: 3,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFD4AF37).withOpacity(0.4),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.workspace_premium_rounded,
+                      color: Colors.white,
+                      size: 15,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        // Name
+        Text(
+          _nameController.text.isNotEmpty ? _nameController.text : "Kullanıcı",
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            letterSpacing: 0.2,
+          ),
+        ),
+
+        const SizedBox(height: 8),
+
+        // Status badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+          decoration: BoxDecoration(
+            gradient: _isPremium
+                ? const LinearGradient(
+                    colors: [Color(0xFFD4AF37), Color(0xFFC49B28)],
+                  )
+                : null,
+            color: _isPremium ? null : Colors.white.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _isPremium
+                  ? const Color(0xFFD4AF37).withOpacity(0.6)
+                  : Colors.white.withOpacity(0.25),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                _isPremium
+                    ? Icons.diamond_rounded
+                    : Icons.person_rounded,
+                color: Colors.white,
+                size: 13,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                _isPremium ? "PRO ÜYE" : "STANDART HESAP",
+                style: TextStyle(
+                  color: Colors.white.withOpacity(_isPremium ? 1.0 : 0.85),
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildStatCard(String title, String value, String emoji, Color accentColor, bool dark) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: dark ? const Color(0xFF131D31) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4),
-          width: 1.2,
+  Widget _buildStatsSection(
+    bool dark,
+    Color cardBg,
+    Color cardBorder,
+    Color textPrimary,
+    Color textSecondary,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF27A770),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "İstatistikler",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
         ),
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCardNew(
+                emoji: "🔥",
+                title: "Günlük Seri",
+                value: "$_currentStreak",
+                unit: "gün",
+                progress: _currentStreak / 30,
+                color: const Color(0xFFEF5350),
+                dark: dark,
+                cardBg: cardBg,
+                cardBorder: cardBorder,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildStatCardNew(
+                emoji: "📅",
+                title: "Bu Ay",
+                value: "$_totalCompletedDays",
+                unit: "gün",
+                progress: _totalCompletedDays / 30,
+                color: const Color(0xFF27A770),
+                dark: dark,
+                cardBg: cardBg,
+                cardBorder: cardBorder,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildStatCardNew(
+                emoji: "🕌",
+                title: "Haftalık",
+                value: "$_weeklyCompletedDays",
+                unit: "/7",
+                progress: _weeklyCompletedDays / 7,
+                color: const Color(0xFFE5A93B),
+                dark: dark,
+                cardBg: cardBg,
+                cardBorder: cardBorder,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCardNew({
+    required String emoji,
+    required String title,
+    required String value,
+    required String unit,
+    required double progress,
+    required Color color,
+    required bool dark,
+    required Color cardBg,
+    required Color cardBorder,
+    required Color textPrimary,
+    required Color textSecondary,
+  }) {
+    final clampedProgress = progress.clamp(0.0, 1.0);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cardBorder, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(dark ? 0.2 : 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(dark ? 0.08 : 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(dark ? 0.15 : 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 22)),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: dark ? Colors.white : const Color(0xFF1E5E43),
+          // Mini circular progress
+          SizedBox(
+            width: 52,
+            height: 52,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 52,
+                  height: 52,
+                  child: CustomPaint(
+                    painter: _CircularProgressPainter(
+                      progress: clampedProgress,
+                      color: color,
+                      bgColor: dark
+                          ? Colors.white.withOpacity(0.06)
+                          : color.withOpacity(0.1),
+                      strokeWidth: 4,
+                    ),
+                  ),
+                ),
+                Text(emoji, style: const TextStyle(fontSize: 20)),
+              ],
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 10),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: value,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: textPrimary,
+                  ),
+                ),
+                TextSpan(
+                  text: " $unit",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 3),
           Text(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 10,
-              color: dark ? Colors.white38 : Colors.grey[500],
-              fontWeight: FontWeight.w500,
+              fontSize: 10.5,
+              color: textSecondary,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
             ),
           ),
         ],
@@ -836,44 +853,426 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  InputDecoration _buildInputDecoration({
-    required String labelText,
-    required IconData icon,
-    required bool dark,
-  }) {
-    return InputDecoration(
-      labelText: labelText,
-      labelStyle: TextStyle(color: dark ? Colors.white60 : Colors.grey[600], fontSize: 13),
-      filled: true,
-      fillColor: dark ? Colors.white.withOpacity(0.04) : Colors.grey[50],
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: dark ? Colors.white.withOpacity(0.08) : const Color(0xFFE0EBE4),
-          width: 1,
+  Widget _buildProfileForm(
+    bool dark,
+    Color cardBg,
+    Color cardBorder,
+    Color textPrimary,
+    Color textSecondary,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: cardBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(dark ? 0.15 : 0.03),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Section header
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF27A770).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.edit_rounded,
+                    color: Color(0xFF27A770),
+                    size: 18,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  "Profil Bilgileri",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 22),
+
+            // Name field
+            _buildModernTextField(dark, textPrimary, textSecondary),
+            const SizedBox(height: 18),
+
+            // Gender selector label
+            Text(
+              "Cinsiyet",
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: textSecondary,
+                letterSpacing: 0.3,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Gender toggles
+            Row(
+              children: [
+                Expanded(
+                  child: _buildGenderOption(
+                    emoji: '👨',
+                    label: 'Erkek',
+                    value: 'erkek',
+                    color: const Color(0xFF27A770),
+                    dark: dark,
+                    textPrimary: textPrimary,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildGenderOption(
+                    emoji: '👩',
+                    label: 'Kadın',
+                    value: 'kadin',
+                    color: const Color(0xFFE5A93B),
+                    dark: dark,
+                    textPrimary: textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 26),
+
+            // Save button
+            _buildSaveButton(dark),
+          ],
         ),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: dark ? Colors.white.withOpacity(0.08) : const Color(0xFFE0EBE4),
-          width: 1,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFF27A770), width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
-      ),
-      prefixIcon: Icon(icon, color: const Color(0xFF27A770), size: 18),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
+  }
+
+  Widget _buildModernTextField(
+      bool dark, Color textPrimary, Color textSecondary) {
+    return TextFormField(
+      controller: _nameController,
+      style: TextStyle(
+        color: textPrimary,
+        fontSize: 14.5,
+        fontWeight: FontWeight.w600,
+      ),
+      decoration: InputDecoration(
+        labelText: "Adınız Soyadınız",
+        labelStyle: TextStyle(
+          color: textSecondary,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+        filled: true,
+        fillColor: dark
+            ? Colors.white.withOpacity(0.04)
+            : const Color(0xFFF8FAF9),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: dark
+                ? Colors.white.withOpacity(0.08)
+                : const Color(0xFFE0EBE4),
+            width: 1.2,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: Color(0xFF27A770),
+            width: 2,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: Color(0xFFE53935),
+            width: 1.2,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: Color(0xFFE53935),
+            width: 2,
+          ),
+        ),
+        prefixIcon: Container(
+          margin: const EdgeInsets.all(10),
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: const Color(0xFF27A770).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(
+            Icons.person_outline_rounded,
+            color: Color(0xFF27A770),
+            size: 17,
+          ),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "Ad alanı boş bırakılamaz.";
+        }
+        if (value.trim().length < 3) return "Ad en az 3 karakter olmalıdır.";
+        return null;
+      },
+    );
+  }
+
+  Widget _buildGenderOption({
+    required String emoji,
+    required String label,
+    required String value,
+    required Color color,
+    required bool dark,
+    required Color textPrimary,
+  }) {
+    final isSelected = _gender == value;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() => _gender = value);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? color.withOpacity(dark ? 0.15 : 0.08)
+              : (dark ? Colors.white.withOpacity(0.03) : const Color(0xFFF8FAF9)),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected
+                ? color
+                : (dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE0EBE4)),
+            width: isSelected ? 2 : 1.2,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 18)),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                fontSize: 13.5,
+                color: isSelected ? color : (dark ? Colors.white60 : textPrimary),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaveButton(bool dark) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF27A770), Color(0xFF1E8F5E)],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF27A770).withOpacity(0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        onPressed: _isLoading ? null : _saveProfileChanges,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.save_rounded, size: 18),
+            const SizedBox(width: 8),
+            const Text(
+              "Bilgileri Güncelle",
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 14.5,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeviceIdCard(
+    bool dark,
+    Color cardBg,
+    Color cardBorder,
+    Color textSecondary,
+  ) {
+    // Show shortened device ID
+    final shortId = _email.length > 12
+        ? '${_email.substring(0, 6)}...${_email.substring(_email.length - 4)}'
+        : _email;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: cardBorder, width: 1),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Icon(
+              Icons.fingerprint_rounded,
+              color: textSecondary,
+              size: 19,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Cihaz Kimliği",
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: textSecondary,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  shortId,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: dark ? Colors.white70 : const Color(0xFF3D4F5F),
+                    fontFamily: 'monospace',
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: _email));
+                HapticFeedback.lightImpact();
+                _showSnackBar("Cihaz kimliği kopyalandı!", success: true);
+              },
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF27A770).withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.copy_rounded,
+                  size: 16,
+                  color: Color(0xFF27A770),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ── Custom Circular Progress Painter ──
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+class _CircularProgressPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color bgColor;
+  final double strokeWidth;
+
+  _CircularProgressPainter({
+    required this.progress,
+    required this.color,
+    required this.bgColor,
+    required this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - strokeWidth) / 2;
+
+    // Background circle
+    final bgPaint = Paint()
+      ..color = bgColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+    canvas.drawCircle(center, radius, bgPaint);
+
+    // Progress arc
+    final progressPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -pi / 2,
+      2 * pi * progress,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _CircularProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.color != color;
   }
 }

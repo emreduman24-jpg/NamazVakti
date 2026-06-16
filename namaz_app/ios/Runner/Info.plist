@@ -72,5 +72,7 @@
 	<string>Namaz vakitlerini ve yakındaki camileri doğru hesaplayabilmek için konumunuza ihtiyaç duyuyoruz.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Namaz vakitlerini ve yakındaki camileri doğru hesaplayabilmek için konumunuza ihtiyaç duyuyoruz.</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-8869776194218180~9395155190</string>
 </dict>
 </plist>
