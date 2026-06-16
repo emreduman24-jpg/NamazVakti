@@ -1056,7 +1056,8 @@ function renderUsersList() {
   if (searchText) {
     list = list.filter(u => 
       (u.name || '').toLowerCase().includes(searchText) || 
-      (u.email || '').toLowerCase().includes(searchText)
+      (u.email || '').toLowerCase().includes(searchText) ||
+      (u.registeredEmail || '').toLowerCase().includes(searchText)
     );
   }
 
@@ -1086,13 +1087,19 @@ function renderUsersList() {
     const createdDate = formatDate(user.created);
     const lastActiveDate = formatDate(user.lastActive);
 
+    // Email / Registration status
+    let emailHtml = escapeHTML(user.email || '');
+    if (user.registeredEmail) {
+      emailHtml = `<span class="text-success" style="font-size: 11px; font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Üye Oldu: ${escapeHTML(user.registeredEmail)}</span>`;
+    }
+
     tr.innerHTML = `
       <td>
         <div class="user-info-cell">
           <div class="user-avatar-small">${avatarEmoji}</div>
           <div class="user-meta-info">
             <span class="user-meta-name">${escapeHTML(user.name || 'İsimsiz Kullanıcı')}</span>
-            <span class="user-meta-email">${escapeHTML(user.email || '')}</span>
+            <span class="user-meta-email">${emailHtml}</span>
           </div>
         </div>
       </td>

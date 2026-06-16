@@ -216,12 +216,28 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
 
       final prefs = await SharedPreferences.getInstance();
 
+      // Guest transition logic
+      final guestUuid = prefs.getString('guest_uuid') ?? '';
+      bool guestIsPremium = prefs.getBool('is_premium') ?? false;
+
+      if (guestUuid.isNotEmpty) {
+        try {
+          final guestDoc = await FirebaseFirestore.instance.collection('users').doc(guestUuid).get().timeout(const Duration(seconds: 2));
+          if (guestDoc.exists) {
+            final guestData = guestDoc.data();
+            if (guestData != null && (guestData['isPremium'] ?? false) == true) {
+              guestIsPremium = true;
+            }
+          }
+        } catch (_) {}
+      }
+
       // Register locally
       await prefs.setBool('is_logged_in', true);
       await prefs.setString('user_name', name);
       await prefs.setString('user_gender', _selectedGender);
       await prefs.setString('user_email', email);
-      await prefs.setBool('is_premium', false);
+      await prefs.setBool('is_premium', guestIsPremium);
 
       // 2. Register in Firestore
       try {
@@ -229,14 +245,27 @@ class _AuthScreenState extends State<AuthScreen> with SingleTickerProviderStateM
           'name': name,
           'email': email,
           'gender': _selectedGender,
-          'isPremium': false,
+          'isPremium': guestIsPremium,
           'created': DateTime.now().toIso8601String(),
           'lastActive': DateTime.now().toIso8601String(),
           'ipAddress': ipAddress,
           'usageDuration': 0,
           'platform': platform,
           'uid': userCredential.user?.uid,
+          'previousGuestUuid': guestUuid.isNotEmpty ? guestUuid : null,
         }).timeout(const Duration(seconds: 3));
+
+        // Update the old guest document in Firestore to refer to this email
+        if (guestUuid.isNotEmpty) {
+          try {
+            await FirebaseFirestore.instance.collection('users').doc(guestUuid).update({
+              'registeredEmail': email,
+              'isPremium': false,
+              'isAnonymous': false,
+              'lastActive': DateTime.now().toIso8601String(),
+            }).timeout(const Duration(seconds: 2));
+          } catch (_) {}
+        }
 
         // Log registration for admin panel
         await FirebaseFirestore.instance.collection('registrations_log').add({
