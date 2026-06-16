@@ -1227,8 +1227,10 @@ async function handleUserPremiumToggle(e) {
     
     showToast(`Premium durum başarıyla güncellendi: ${isPremium ? 'PRO' : 'Standart'}`, "success");
     
-    // Update local cache item
-    activeInspectUser.isPremium = isPremium;
+    // Update local cache item safely
+    if (activeInspectUser) {
+      activeInspectUser.isPremium = isPremium;
+    }
     
     // Update active modal indicators safely
     if (els.inspectUserPremiumBadge) {
