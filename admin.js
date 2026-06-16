@@ -441,40 +441,52 @@ async function checkAndSeedBlockStatus() {
 }
 
 function updateSidebarBadges() {
+  if (!cache.duas || !cache.questions || !cache.tools || !cache.users) return;
+
   // 1. Pending prayers count
   const pendingPrayers = cache.duas.filter(d => d.durum === 'bekliyor').length;
-  if (pendingPrayers > 0) {
-    els.badgePendingPrayers.textContent = pendingPrayers;
-    els.badgePendingPrayers.style.display = 'inline-flex';
-  } else {
-    els.badgePendingPrayers.style.display = 'none';
+  if (els.badgePendingPrayers) {
+    if (pendingPrayers > 0) {
+      els.badgePendingPrayers.textContent = pendingPrayers;
+      els.badgePendingPrayers.style.display = 'inline-flex';
+    } else {
+      els.badgePendingPrayers.style.display = 'none';
+    }
   }
 
   // 2. Pending questions count
   const pendingQuestions = cache.questions.filter(q => !q.cevap || q.cevap.trim() === '').length;
-  if (pendingQuestions > 0) {
-    els.badgePendingQuestions.textContent = pendingQuestions;
-    els.badgePendingQuestions.style.display = 'inline-flex';
-  } else {
-    els.badgePendingQuestions.style.display = 'none';
+  if (els.badgePendingQuestions) {
+    if (pendingQuestions > 0) {
+      els.badgePendingQuestions.textContent = pendingQuestions;
+      els.badgePendingQuestions.style.display = 'inline-flex';
+    } else {
+      els.badgePendingQuestions.style.display = 'none';
+    }
   }
 
   // 3. Tools count
-  els.badgeToolsCount.textContent = cache.tools.length;
+  if (els.badgeToolsCount) {
+    els.badgeToolsCount.textContent = cache.tools.length;
+  }
 
   // 4. Block status badge
-  if (cache.blockStatus) {
-    els.badgeBlockStatus.style.display = 'inline-flex';
-  } else {
-    els.badgeBlockStatus.style.display = 'none';
+  if (els.badgeBlockStatus) {
+    if (cache.blockStatus) {
+      els.badgeBlockStatus.style.display = 'inline-flex';
+    } else {
+      els.badgeBlockStatus.style.display = 'none';
+    }
   }
 
   // 5. Users count badge
-  if (cache.users.length > 0) {
-    els.badgeUsersCount.textContent = cache.users.length;
-    els.badgeUsersCount.style.display = 'inline-flex';
-  } else {
-    els.badgeUsersCount.style.display = 'none';
+  if (els.badgeUsersCount) {
+    if (cache.users.length > 0) {
+      els.badgeUsersCount.textContent = cache.users.length;
+      els.badgeUsersCount.style.display = 'inline-flex';
+    } else {
+      els.badgeUsersCount.style.display = 'none';
+    }
   }
 }
 
@@ -1026,9 +1038,11 @@ function renderUsersTab() {
 }
 
 function renderUsersList() {
+  if (!els.usersTableBody) return;
   const activeFilterBtn = document.querySelector('[data-user-filter].active');
   const activeFilter = activeFilterBtn ? activeFilterBtn.getAttribute('data-user-filter') : 'all';
-  const searchText = els.searchUserInput.value.toLowerCase().trim();
+  const searchText = els.searchUserInput ? els.searchUserInput.value.toLowerCase().trim() : '';
+
 
   // Filter
   let list = cache.users;
@@ -1130,33 +1144,45 @@ function openUserModal(docId) {
 
   const user = activeInspectUser;
 
-  els.inspectUserAvatar.textContent = user.gender === 'kadin' ? '👩' : '👨';
-  els.inspectUserName.textContent = user.name || 'İsimsiz Kullanıcı';
-  els.inspectUserEmail.textContent = user.email || '';
+  if (els.inspectUserAvatar) els.inspectUserAvatar.textContent = user.gender === 'kadin' ? '👩' : '👨';
+  if (els.inspectUserName) els.inspectUserName.textContent = user.name || 'İsimsiz Kullanıcı';
+  if (els.inspectUserEmail) els.inspectUserEmail.textContent = user.email || '';
   
-  if (user.isPremium) {
-    els.inspectUserPremiumBadge.textContent = 'PREMIUM (PRO) ÜYE';
-    els.inspectUserPremiumBadge.className = 'premium-badge-status premium';
-    els.inspectUserPremiumToggle.checked = true;
-    els.inspectToggleStatusLabel.textContent = 'Premium / Aktif';
-    els.inspectToggleStatusLabel.className = 'toggle-status-label premium-active';
-  } else {
-    els.inspectUserPremiumBadge.textContent = 'STANDART ÜYE';
-    els.inspectUserPremiumBadge.className = 'premium-badge-status';
-    els.inspectUserPremiumToggle.checked = false;
-    els.inspectToggleStatusLabel.textContent = 'Standart';
-    els.inspectToggleStatusLabel.className = 'toggle-status-label';
+  if (els.inspectUserPremiumBadge) {
+    if (user.isPremium) {
+      els.inspectUserPremiumBadge.textContent = 'PREMIUM (PRO) ÜYE';
+      els.inspectUserPremiumBadge.className = 'premium-badge-status premium';
+    } else {
+      els.inspectUserPremiumBadge.textContent = 'STANDART ÜYE';
+      els.inspectUserPremiumBadge.className = 'premium-badge-status';
+    }
   }
 
-  els.inspectUserGender.textContent = user.gender === 'kadin' ? 'Kadın' : 'Erkek';
+  if (els.inspectUserPremiumToggle) {
+    els.inspectUserPremiumToggle.checked = !!user.isPremium;
+  }
+
+  if (els.inspectToggleStatusLabel) {
+    if (user.isPremium) {
+      els.inspectToggleStatusLabel.textContent = 'Premium / Aktif';
+      els.inspectToggleStatusLabel.className = 'toggle-status-label premium-active';
+    } else {
+      els.inspectToggleStatusLabel.textContent = 'Standart';
+      els.inspectToggleStatusLabel.className = 'toggle-status-label';
+    }
+  }
+
+  if (els.inspectUserGender) els.inspectUserGender.textContent = user.gender === 'kadin' ? 'Kadın' : 'Erkek';
   
   const platform = (user.platform || 'android').toLowerCase();
   const platformIcon = platform === 'ios' ? 'fa-apple' : 'fa-android';
-  els.inspectUserPlatform.innerHTML = `<i class="fa-brands ${platformIcon}"></i> ${platform === 'ios' ? 'iOS' : 'Android'}`;
+  if (els.inspectUserPlatform) {
+    els.inspectUserPlatform.innerHTML = `<i class="fa-brands ${platformIcon}"></i> ${platform === 'ios' ? 'iOS' : 'Android'}`;
+  }
   
-  els.inspectUserCreatedDate.textContent = formatDate(user.created);
-  els.inspectUserLastActive.textContent = formatDate(user.lastActive);
-  els.inspectUserIp.textContent = user.ipAddress || user.ip || 'Bilinmiyor';
+  if (els.inspectUserCreatedDate) els.inspectUserCreatedDate.textContent = formatDate(user.created);
+  if (els.inspectUserLastActive) els.inspectUserLastActive.textContent = formatDate(user.lastActive);
+  if (els.inspectUserIp) els.inspectUserIp.textContent = user.ipAddress || user.ip || 'Bilinmiyor';
   
   // App usage duration format
   let durationText = '0 Dakika';
@@ -1169,9 +1195,9 @@ function openUserModal(docId) {
       durationText = `${seconds} saniye`;
     }
   }
-  els.inspectUserDuration.textContent = durationText;
+  if (els.inspectUserDuration) els.inspectUserDuration.textContent = durationText;
 
-  els.userInspectModal.style.display = 'flex';
+  if (els.userInspectModal) els.userInspectModal.style.display = 'flex';
 }
 
 function closeUserModal() {
@@ -1204,24 +1230,21 @@ async function handleUserPremiumToggle(e) {
     // Update local cache item
     activeInspectUser.isPremium = isPremium;
     
-    // Update active modal indicators
-    if (isPremium) {
-      els.inspectUserPremiumBadge.textContent = 'PREMIUM (PRO) ÜYE';
-      els.inspectUserPremiumBadge.className = 'premium-badge-status premium';
-      els.inspectToggleStatusLabel.textContent = 'Premium / Aktif';
-      els.inspectToggleStatusLabel.className = 'toggle-status-label premium-active';
-    } else {
-      els.inspectUserPremiumBadge.textContent = 'STANDART ÜYE';
-      els.inspectUserPremiumBadge.className = 'premium-badge-status';
-      els.inspectToggleStatusLabel.textContent = 'Standart';
-      els.inspectToggleStatusLabel.className = 'toggle-status-label';
+    // Update active modal indicators safely
+    if (els.inspectUserPremiumBadge) {
+      els.inspectUserPremiumBadge.textContent = isPremium ? 'PREMIUM (PRO) ÜYE' : 'STANDART ÜYE';
+      els.inspectUserPremiumBadge.className = isPremium ? 'premium-badge-status premium' : 'premium-badge-status';
+    }
+    if (els.inspectToggleStatusLabel) {
+      els.inspectToggleStatusLabel.textContent = isPremium ? 'Premium / Aktif' : 'Standart';
+      els.inspectToggleStatusLabel.className = isPremium ? 'toggle-status-label premium-active' : 'toggle-status-label';
     }
 
     await refreshAllData();
     renderUsersList();
   } catch (err) {
     console.error("Error updating user premium status:", err);
-    showToast("Premium durum güncellenirken hata oluştu!", "danger");
+    showToast("Premium durum güncellenirken hata oluştu: " + (err.message || err), "danger");
     e.target.checked = !isPremium; // Revert
   }
 }
