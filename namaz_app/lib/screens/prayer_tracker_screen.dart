@@ -1154,6 +1154,7 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
           });
         },
         onAdFailedToLoad: (ad, err) {
+          print("AdMob Banner load failed in prayer_tracker_screen: ${err.code} - ${err.message}");
           ad.dispose();
           _bannerAd = null;
           setState(() {

@@ -740,6 +740,7 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
           });
         },
         onAdFailedToLoad: (ad, err) {
+          print("AdMob Banner load failed in main_screen: ${err.code} - ${err.message}");
           ad.dispose();
           _bannerAd = null;
           setState(() {

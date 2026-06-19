@@ -74,5 +74,12 @@
 	<string>Namaz vakitlerini ve yakındaki camileri doğru hesaplayabilmek için konumunuza ihtiyaç duyuyoruz.</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-8869776194218180~9395155190</string>
+	<key>SKAdNetworkItems</key>
+	<array>
+		<dict>
+			<key>SKAdNetworkIdentifier</key>
+			<string>cstr6suwn9.skadnetwork</string>
+		</dict>
+	</array>
 </dict>
 </plist>
