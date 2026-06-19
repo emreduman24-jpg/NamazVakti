@@ -41,12 +41,15 @@ class AdService {
     }
   }
 
+  // Set to true to test ad placements on physical devices in release/TestFlight builds.
+  // Set to false before publishing to the App Store / Play Store.
+  static const bool _forceTestAdsInRelease = true;
+
   /// Returns the appropriate Banner Ad Unit ID based on platform and debug mode
   static String get bannerAdUnitId {
-    if (kDebugMode) {
+    if (kDebugMode || _forceTestAdsInRelease) {
       return Platform.isAndroid ? _androidTestBannerId : _iosTestBannerId;
     } else {
-      // In production, return real IDs (currently set to test IDs, can be updated later)
       return Platform.isAndroid ? _androidRealBannerId : _iosRealBannerId;
     }
   }

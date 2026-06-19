@@ -22,6 +22,7 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
   bool _isPremium = false;
   BannerAd? _bannerAd;
   bool _isBannerAdLoaded = false;
+  String? _adLoadError;
   Timer? _premiumCheckTimer;
 
   @override
@@ -825,7 +826,7 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
             ),
             const SizedBox(height: 16),
 
-            if (!_isPremium && _isBannerAdLoaded && _bannerAd != null) ...[
+            if (!_isPremium && (_isBannerAdLoaded || _adLoadError != null)) ...[
               _buildAdMobBannerCard(),
               const SizedBox(height: 16),
             ],
@@ -1151,6 +1152,7 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
         onAdLoaded: (ad) {
           setState(() {
             _isBannerAdLoaded = true;
+            _adLoadError = null;
           });
         },
         onAdFailedToLoad: (ad, err) {
@@ -1159,6 +1161,7 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
           _bannerAd = null;
           setState(() {
             _isBannerAdLoaded = false;
+            _adLoadError = "${err.code}: ${err.message}";
           });
         },
       ),
@@ -1166,10 +1169,50 @@ class _PrayerTrackerScreenState extends State<PrayerTrackerScreen> with Automati
   }
 
   Widget _buildAdMobBannerCard() {
+    final bool dark = Theme.of(context).brightness == Brightness.dark;
+    if (_adLoadError != null) {
+      return Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFFEE2E2),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Reklam Yüklenemedi (Test Bilgisi)",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      color: dark ? Colors.white : Colors.red[900],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "Hata Detayı: $_adLoadError\n\nBu bilgi sadece geliştirme/test aşamasında gösterilmektedir.",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: dark ? Colors.white70 : Colors.red[800],
+                  height: 1.35,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (!_isBannerAdLoaded || _bannerAd == null) {
       return const SizedBox.shrink();
     }
-    final bool dark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
