@@ -1407,6 +1407,48 @@ function renderNotificationsList() {
   });
 }
 
+async function sendFcmMessage(serviceAccount, accessToken, targetType, targetValue, title, body) {
+  const projectId = serviceAccount.project_id || "namaz-vakti-app-2026";
+  const url = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
+  const payload = {
+    message: {
+      [targetType]: targetValue,
+      notification: {
+        title: title,
+        body: body
+      },
+      data: {
+        title: title,
+        body: body,
+        type: "announcement"
+      },
+      android: {
+        priority: "HIGH",
+        notification: {
+          channel_id: "announcements_channel"
+        }
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: "default"
+          }
+        }
+      }
+    }
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${accessToken}`
+    },
+    body: JSON.stringify(payload)
+  });
+  return response;
+}
+
 async function handleSendNotification(e) {
   e.preventDefault();
   const title = els.notifTitle.value.trim();
@@ -1459,50 +1501,34 @@ async function handleSendNotification(e) {
         if (isServiceAccount) {
           // FCM HTTP v1 API
           const accessToken = await generateGoogleOAuth2Token(serviceAccount);
-          const projectId = serviceAccount.project_id || "namaz-vakti-app-2026";
-          const url = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
-          const payload = {
-            message: {
-              topic: "announcements",
-              notification: {
-                title: title,
-                body: body
-              },
-              data: {
-                title: title,
-                body: body,
-                type: "announcement"
-              },
-              android: {
-                priority: "HIGH",
-                notification: {
-                  channel_id: "announcements_channel"
-                }
-              },
-              apns: {
-                payload: {
-                  aps: {
-                    sound: "default"
-                  }
-                }
-              }
-            }
-          };
-
-          const response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${accessToken}`
-            },
-            body: JSON.stringify(payload)
-          });
-
-          if (response.ok) {
+          
+          // A. Send to Topic
+          const topicResponse = await sendFcmMessage(serviceAccount, accessToken, "topic", "announcements", title, body);
+          if (topicResponse.ok) {
             pushSent = true;
           } else {
-            const text = await response.text();
-            pushError = `HTTP ${response.status}: ${text}`;
+            const text = await topicResponse.text();
+            pushError = `Topic error: ${topicResponse.status} - ${text}`;
+          }
+
+          // B. Send directly to each individual device token (for emulators & devices whose topic subscription failed)
+          const tokens = cache.users
+            .map(u => u.fcmToken)
+            .filter(t => t && t.trim() !== '');
+          
+          console.log(`Sending direct FCM notifications to ${tokens.length} tokens...`);
+          for (const token of tokens) {
+            try {
+              const tokenResponse = await sendFcmMessage(serviceAccount, accessToken, "token", token, title, body);
+              if (!tokenResponse.ok) {
+                const text = await tokenResponse.text();
+                console.warn(`Direct send to token failed: ${token}, status: ${tokenResponse.status}, message: ${text}`);
+              } else {
+                console.log(`Successfully sent direct notification to token: ${token}`);
+              }
+            } catch (err) {
+              console.error("Error sending direct notification to token:", token, err);
+            }
           }
         } else {
           // Legacy API Fallback
