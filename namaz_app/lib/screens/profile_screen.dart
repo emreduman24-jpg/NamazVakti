@@ -407,8 +407,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                               dark, cardBg, cardBorder, textPrimary, textSecondary),
                         ),
 
+                        const SizedBox(height: 20),
+
                         // ── Device ID Section ──
-                        const SizedBox(height: 16),
                         FadeTransition(
                           opacity: _cardsFadeIn,
                           child: _buildDeviceIdCard(

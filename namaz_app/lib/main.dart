@@ -293,9 +293,8 @@ class _MyAppState extends State<MyApp> {
               : child ?? const SizedBox();
         },
         home: const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(color: Color(0xFF27A770)),
-          ),
+          backgroundColor: Color(0xFFFDFBF7),
+          body: SizedBox(),
         ),
       );
     }

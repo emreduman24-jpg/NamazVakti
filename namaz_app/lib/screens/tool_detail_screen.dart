@@ -837,6 +837,21 @@ out center body;
   final TextEditingController _questionNameController = TextEditingController();
   final TextEditingController _qaInputController = TextEditingController();
 
+  String _guestUuid = '';
+  int _duaTabSelection = 0; // 0 for Tüm Dualar, 1 for Dualarım
+  int _qaTabSelection = 0; // 0 for Soru-Cevap, 1 for Sorularım
+  bool _duaFormExpanded = false;
+  bool _qaFormExpanded = false;
+
+  Future<void> _loadGuestUuid() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _guestUuid = prefs.getString('guest_uuid') ?? '';
+      });
+    }
+  }
+
   // Canli Dini Sohbet State
   final List<Map<String, String>> _chatMessages = [
     {
@@ -947,6 +962,7 @@ out center body;
     _loadZikirCompletedDates();
     _loadDualarFavorites();
     _initDiniHoca();
+    _loadGuestUuid();
     if (widget.toolId == 'namaz-vakitleri-aylik') {
       _loadMonthlyTimes();
     }
@@ -1109,7 +1125,7 @@ out center body;
     final list = await _repository.getDuaList();
     if (mounted) {
       setState(() {
-        _duaList = list.where((d) => d['durum'] == 'yayinda').toList();
+        _duaList = list;
       });
     }
   }
@@ -1122,7 +1138,7 @@ out center body;
     _duaNameController.clear();
     _duaTextController.clear();
 
-    await _repository.addDua(name.isEmpty ? "Anonim" : name, text);
+    await _repository.addDua(name.isEmpty ? "Anonim" : name, text, _guestUuid);
     await _loadDuaList();
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1149,9 +1165,7 @@ out center body;
     final list = await _repository.getQuestionList();
     if (mounted) {
       setState(() {
-        _questionList = list
-            .where((q) => q['cevap'] != null && q['cevap'].toString().trim().isNotEmpty)
-            .toList();
+        _questionList = list;
       });
     }
   }
@@ -1164,7 +1178,7 @@ out center body;
     _questionNameController.clear();
     _qaInputController.clear();
 
-    await _repository.sendQuestion(name.isEmpty ? "Anonim" : name, text);
+    await _repository.sendQuestion(name.isEmpty ? "Anonim" : name, text, _guestUuid);
     await _loadQuestionList();
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1891,361 +1905,920 @@ out center body;
   }
 
   // 2. Dua İste
-  Widget _buildDuaIste() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Card(
-          elevation: 2,
+  // Redesigned Q&A and Prayer Request shared helper methods
+  Widget _buildPillTabs({
+    required int selectedIndex,
+    required List<String> titles,
+    required Function(int) onTap,
+  }) {
+    final bool dark = _isDark;
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: dark ? const Color(0xFF0F1B2A) : const Color(0xFFEEF2F6),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: dark ? Colors.white.withOpacity(0.05) : const Color(0xFFE2E8F0),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: List.generate(titles.length, (idx) {
+          final isSelected = selectedIndex == idx;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                onTap(idx);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: isSelected
+                      ? const Color(0xFF27A770)
+                      : Colors.transparent,
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: const Color(0xFF27A770).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          )
+                        ]
+                      : null,
+                ),
+                child: Text(
+                  titles[idx],
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                    color: isSelected ? Colors.white : (dark ? Colors.white60 : const Color(0xFF4A5568)),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _buildCollapsibleFormHeader({
+    required String title,
+    required bool isExpanded,
+    required VoidCallback onTap,
+    required IconData icon,
+  }) {
+    final bool dark = _isDark;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isExpanded
+              ? (dark ? const Color(0xFF1B2D4A) : const Color(0xFFEAF7F1))
+              : _cardBgColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isExpanded
+                ? const Color(0xFF27A770).withOpacity(0.4)
+                : (dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0)),
+            width: 1.2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isExpanded
+                    ? const Color(0xFF27A770).withOpacity(0.15)
+                    : (dark ? Colors.white.withOpacity(0.04) : const Color(0xFFF1F5F9)),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: isExpanded ? const Color(0xFF27A770) : _subtitleColor,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: _textColor,
+                ),
+              ),
+            ),
+            Icon(
+              isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
+              color: _subtitleColor,
+              size: 20,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCustomInputField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData prefixIcon,
+    int maxLines = 1,
+  }) {
+    final bool dark = _isDark;
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      style: TextStyle(
+        color: _textColor,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: TextStyle(
+          color: _subtitleColor.withOpacity(0.5),
+          fontSize: 13.5,
+          fontWeight: FontWeight.w400,
+        ),
+        filled: true,
+        fillColor: dark ? Colors.white.withOpacity(0.03) : const Color(0xFFF8FAF9),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: dark ? Colors.white.withOpacity(0.06) : const Color(0xFFE2E8F0),
+            width: 1.2,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(
+            color: Color(0xFF27A770),
+            width: 1.8,
+          ),
+        ),
+        prefixIcon: Icon(
+          prefixIcon,
+          color: const Color(0xFF27A770),
+          size: 18,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+    );
+  }
+
+  Widget _buildGradientSubmitButton({
+    required String text,
+    required VoidCallback onPressed,
+    required IconData icon,
+  }) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF27A770), Color(0xFF1E8F5E)],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF27A770).withOpacity(0.25),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, color: Colors.white, size: 18),
+        label: Text(
+          text,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            letterSpacing: 0.3,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Dua Talebinde Bulun",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Color(0xFF1E5E43),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _duaNameController,
-                  decoration: InputDecoration(
-                    hintText: "İsminiz (İsteğe bağlı)",
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _duaTextController,
-                  maxLines: 2,
-                  decoration: InputDecoration(
-                    hintText: "Dua talebinizi yazın...",
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _addDua,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF27A770),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      "Dua Talebi Paylaş",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        ),
+      ),
+    );
+  }
+
+  // 2. Dua İste
+  Widget _buildDuaIste() {
+    final bool dark = _isDark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Tab selector
+        _buildPillTabs(
+          selectedIndex: _duaTabSelection,
+          titles: ["Tüm Dualar", "Dualarım"],
+          onTap: (index) {
+            setState(() {
+              _duaTabSelection = index;
+            });
+          },
         ),
         const SizedBox(height: 16),
-        const Text(
-          "Dua Bekleyenler",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E5E43),
+
+        if (_duaTabSelection == 0) ...[
+          // Form header
+          _buildCollapsibleFormHeader(
+            title: "Dua Talebinde Bulun",
+            icon: Icons.volunteer_activism_rounded,
+            isExpanded: _duaFormExpanded,
+            onTap: () {
+              setState(() {
+                _duaFormExpanded = !_duaFormExpanded;
+              });
+            },
           ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _duaList.length,
-            itemBuilder: (context, index) {
-              final item = _duaList[index];
-              return Card(
-                elevation: 1.5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          if (_duaFormExpanded) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _cardBgColor,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+                  width: 1,
                 ),
-                margin: const EdgeInsets.only(bottom: 10),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item['yazar'] ?? 'Anonim',
+              ),
+              child: Column(
+                children: [
+                  _buildCustomInputField(
+                    controller: _duaNameController,
+                    hintText: "İsminiz (İsteğe bağlı)",
+                    prefixIcon: Icons.person_rounded,
+                  ),
+                  const SizedBox(height: 12),
+                  _buildCustomInputField(
+                    controller: _duaTextController,
+                    hintText: "Dua talebinizi yazın...",
+                    prefixIcon: Icons.chat_bubble_outline_rounded,
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildGradientSubmitButton(
+                    text: "Dua Talebi Paylaş",
+                    icon: Icons.send_rounded,
+                    onPressed: () {
+                      if (_duaTextController.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Dua metni boş olamaz!")),
+                        );
+                        return;
+                      }
+                      _addDua();
+                      setState(() {
+                        _duaFormExpanded = false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 20),
+
+          // Header
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF27A770),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "Dua Bekleyenler",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: _textColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Stream / List of approved duas
+          Expanded(
+            child: _buildDuaListWall(isMyDuas: false),
+          ),
+        ] else ...[
+          // My Duas tab
+          Expanded(
+            child: _buildDuaListWall(isMyDuas: true),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildDuaListWall({required bool isMyDuas}) {
+    final bool dark = _isDark;
+    final List<Map<String, dynamic>> filteredList = isMyDuas
+        ? _duaList.where((d) => d['senderId'] == _guestUuid).toList()
+        : _duaList.where((d) => d['durum'] == 'yayinda').toList();
+
+    if (filteredList.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: dark ? const Color(0xFF131D31) : const Color(0xFFF1F5F9),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isMyDuas ? Icons.history_edu_rounded : Icons.volunteer_activism_rounded,
+                size: 40,
+                color: _subtitleColor.withOpacity(0.5),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              isMyDuas ? "Henüz dua talebinde bulunmadınız." : "Yayınlanmış dua talebi bulunmuyor.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: _subtitleColor,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.only(bottom: 24),
+      itemCount: filteredList.length,
+      itemBuilder: (context, index) {
+        final item = filteredList[index];
+        final String author = item['yazar'] ?? 'Anonim';
+        final String text = item['dua'] ?? '';
+        final String date = item['tarih'] ?? '';
+        final int aminCount = item['amin'] ?? 0;
+        final String status = item['durum'] ?? 'bekliyor';
+
+        // Find actual index in parent list to update correct item in Firestore
+        final actualIndex = _duaList.indexWhere((element) => element['id'] == item['id']);
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _cardBgColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(dark ? 0.05 : 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF27A770).withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        author.isNotEmpty ? author[0].toUpperCase() : 'A',
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
                           color: Color(0xFF27A770),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item['dua'] ?? '',
-                        style: const TextStyle(fontSize: 13, height: 1.35),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "${item['amin'] ?? 0} kişi Amin dedi",
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          author,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.5,
+                            color: _textColor,
                           ),
-                          ElevatedButton.icon(
-                            onPressed: () => _aminDua(index),
-                            icon: const Icon(
-                              Icons.favorite,
-                              size: 14,
-                              color: Colors.red,
-                            ),
-                            label: const Text(
-                              "Amin de",
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0xFF1E5E43),
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFEAF4FB),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          date,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: _subtitleColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isMyDuas) ...[
+                    // Status Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: status == 'yayinda'
+                            ? const Color(0xFF27A770).withOpacity(0.12)
+                            : const Color(0xFFFFB300).withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: status == 'yayinda'
+                              ? const Color(0xFF27A770).withOpacity(0.3)
+                              : const Color(0xFFFFB300).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _PulsingDot(
+                            color: status == 'yayinda' ? const Color(0xFF27A770) : const Color(0xFFFFB300),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            status == 'yayinda' ? "Yayında" : "Onay Bekliyor",
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.bold,
+                              color: status == 'yayinda' ? const Color(0xFF27A770) : const Color(0xFFFFB300),
                             ),
                           ),
                         ],
                       ),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Dua text
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  color: _textColor.withOpacity(0.9),
+                  height: 1.45,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Divider(height: 1),
+              const SizedBox(height: 10),
+              // Amin button row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.favorite_rounded,
+                        size: 15,
+                        color: aminCount > 0 ? Colors.redAccent : _subtitleColor.withOpacity(0.5),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        "$aminCount kişi Amin dedi",
+                        style: TextStyle(
+                          color: _subtitleColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              );
-            },
+                  if (!isMyDuas && actualIndex != -1)
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => _aminDua(actualIndex),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF27A770).withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFF27A770).withOpacity(0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.volunteer_activism_rounded,
+                                size: 14,
+                                color: Color(0xFF27A770),
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                "Amin de",
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF27A770),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
   // 3. Soru Cevap
   Widget _buildSoruCevap() {
+    final bool dark = _isDark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Ask Question Form Card
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+        // Tab selector
+        _buildPillTabs(
+          selectedIndex: _qaTabSelection,
+          titles: ["Soru-Cevap", "Sorularım"],
+          onTap: (index) {
+            setState(() {
+              _qaTabSelection = index;
+            });
+          },
+        ),
+        const SizedBox(height: 16),
+
+        if (_qaTabSelection == 0) ...[
+          // Form header
+          _buildCollapsibleFormHeader(
+            title: "Dini Danışmana Soru Sor",
+            icon: Icons.help_outline_rounded,
+            isExpanded: _qaFormExpanded,
+            onTap: () {
+              setState(() {
+                _qaFormExpanded = !_qaFormExpanded;
+              });
+            },
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Soru Talebinde Bulun",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                    color: Color(0xFF1E5E43),
-                  ),
+          if (_qaFormExpanded) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: _cardBgColor,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+                  width: 1,
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _questionNameController,
-                  decoration: InputDecoration(
+              ),
+              child: Column(
+                children: [
+                  _buildCustomInputField(
+                    controller: _questionNameController,
                     hintText: "İsminiz (İsteğe bağlı)",
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
+                    prefixIcon: Icons.person_rounded,
                   ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _qaInputController,
-                  maxLines: 2,
-                  decoration: InputDecoration(
+                  const SizedBox(height: 12),
+                  _buildCustomInputField(
+                    controller: _qaInputController,
                     hintText: "Dini sorunuzu yazın...",
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
+                    prefixIcon: Icons.question_answer_rounded,
+                    maxLines: 3,
                   ),
+                  const SizedBox(height: 16),
+                  _buildGradientSubmitButton(
+                    text: "Soru Talebi Gönder",
+                    icon: Icons.send_rounded,
+                    onPressed: () {
+                      if (_qaInputController.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Soru metni boş olamaz!")),
+                        );
+                        return;
+                      }
+                      _addQuestion();
+                      setState(() {
+                        _qaFormExpanded = false;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 20),
+
+          // Header
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF27A770),
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _addQuestion,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF27A770),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text(
-                      "Soru Talebi Gönder",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "Cevaplanan Sorular",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: _textColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Answers list
+          Expanded(
+            child: _buildQuestionListWall(isMyQuestions: false),
+          ),
+        ] else ...[
+          // My Questions tab
+          Expanded(
+            child: _buildQuestionListWall(isMyQuestions: true),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildQuestionListWall({required bool isMyQuestions}) {
+    final bool dark = _isDark;
+    final List<Map<String, dynamic>> filteredList = isMyQuestions
+        ? _questionList.where((q) => q['senderId'] == _guestUuid).toList()
+        : _questionList.where((q) => q['cevap'] != null && q['cevap'].toString().trim().isNotEmpty).toList();
+
+    if (filteredList.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: dark ? const Color(0xFF131D31) : const Color(0xFFF1F5F9),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isMyQuestions ? Icons.question_mark_rounded : Icons.chat_rounded,
+                size: 40,
+                color: _subtitleColor.withOpacity(0.5),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              isMyQuestions ? "Henüz soru sormadınız." : "Cevaplanmış soru bulunmuyor.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: _subtitleColor,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.only(bottom: 24),
+      itemCount: filteredList.length,
+      itemBuilder: (context, index) {
+        final item = filteredList[index];
+        final String author = item['yazar'] ?? 'Anonim';
+        final String questionText = item['soru'] ?? '';
+        final String answerText = item['cevap'] ?? '';
+        final String date = item['tarih'] ?? '';
+        final bool isAnswered = answerText.trim().isNotEmpty;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: _cardBgColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: dark ? const Color(0xFF1E2D4A) : const Color(0xFFE2E8F0),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(dark ? 0.05 : 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Left status indicator bar
+                Container(
+                  width: 5,
+                  color: isAnswered ? const Color(0xFF27A770) : const Color(0xFFFFB300),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Header
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              author,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF27A770),
+                                fontSize: 13,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  date,
+                                  style: TextStyle(
+                                    color: _subtitleColor,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                                if (isMyQuestions) ...[
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: isAnswered
+                                          ? const Color(0xFF27A770).withOpacity(0.12)
+                                          : const Color(0xFFFFB300).withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        _PulsingDot(
+                                          color: isAnswered ? const Color(0xFF27A770) : const Color(0xFFFFB300),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          isAnswered ? "Cevaplandı" : "Cevap Bekliyor",
+                                          style: TextStyle(
+                                            fontSize: 9.5,
+                                            fontWeight: FontWeight.bold,
+                                            color: isAnswered ? const Color(0xFF27A770) : const Color(0xFFFFB300),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        // Question block
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Soru: ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: dark ? const Color(0xFF81C784) : const Color(0xFF1E5E43),
+                                fontSize: 13.5,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                questionText,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: _textColor.withOpacity(0.9),
+                                  fontSize: 13.5,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (isAnswered) ...[
+                          const SizedBox(height: 12),
+                          const Divider(height: 1),
+                          const SizedBox(height: 12),
+                          // Answer block
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: dark ? const Color(0xFF1B2A47) : const Color(0xFFEAF7F1),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: dark ? const Color(0xFF25395B) : const Color(0xFFD4ECD9),
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle_outline_rounded,
+                                      size: 15,
+                                      color: dark ? const Color(0xFF81C784) : const Color(0xFF1E5E43),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      "Cevap:",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: dark ? const Color(0xFF81C784) : const Color(0xFF1E5E43),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  answerText,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: _textColor.withOpacity(0.85),
+                                    height: 1.45,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
           ),
-        ),
-        const SizedBox(height: 16),
-        const Text(
-          "Cevaplanan Sorular",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E5E43),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: _questionList.isEmpty
-              ? const Center(
-                  child: Text(
-                    "Cevaplanmış soru bulunmuyor.",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: _questionList.length,
-                  itemBuilder: (context, index) {
-                    final item = _questionList[index];
-                    return Card(
-                      elevation: 1.5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      margin: const EdgeInsets.only(bottom: 12),
-                      clipBehavior: Clip.antiAlias,
-                      child: IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Left border line indicator
-                            Container(
-                              width: 4,
-                              color: const Color(0xFF27A770),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Soru header (Writer & Date)
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          item['yazar'] ?? 'Anonim',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF27A770),
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                        Text(
-                                          item['tarih'] ?? '',
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    // Question
-                                    Text(
-                                      "Soru: ${item['soru'] ?? ''}",
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                    const Divider(height: 20),
-                                    // Answer box
-                                    Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFEAF7F1),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            "Cevap:",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF1E5E43),
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            item['cevap'] ?? '',
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.black87,
-                                              height: 1.4,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -11061,5 +11634,56 @@ class AbdestIconPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant AbdestIconPainter oldDelegate) {
     return oldDelegate.stepTitle != stepTitle || oldDelegate.isDark != isDark;
+  }
+}
+
+class _PulsingDot extends StatefulWidget {
+  final Color color;
+  const _PulsingDot({required this.color});
+
+  @override
+  State<_PulsingDot> createState() => _PulsingDotState();
+}
+
+class _PulsingDotState extends State<_PulsingDot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.4, end: 1.0).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _animation,
+      child: Container(
+        width: 7,
+        height: 7,
+        decoration: BoxDecoration(
+          color: widget.color,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: widget.color.withOpacity(0.4),
+              blurRadius: 4,
+              spreadRadius: 1,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

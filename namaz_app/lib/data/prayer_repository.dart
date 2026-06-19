@@ -294,6 +294,7 @@ class PrayerRepository {
           'amin': data['amin'] ?? 0,
           'durum': data['durum'] ?? 'bekliyor',
           'tarih': data['tarih'] ?? '',
+          'senderId': data['senderId'] ?? '',
         };
       }).toList();
       
@@ -322,7 +323,7 @@ class PrayerRepository {
     return defaultList;
   }
 
-  Future<void> addDua(String author, String text) async {
+  Future<void> addDua(String author, String text, String senderId) async {
     try {
       final id = DateTime.now().millisecondsSinceEpoch;
       final now = DateTime.now();
@@ -335,6 +336,7 @@ class PrayerRepository {
         "durum": "bekliyor",
         "amin": 0,
         "tarih": dateStr,
+        "senderId": senderId,
       }).timeout(const Duration(seconds: 4));
     } catch (e) {
       print('Error adding dua to Firestore: $e');
@@ -375,6 +377,7 @@ class PrayerRepository {
           'cevap': data['cevap'] ?? '',
           'yazar': data['yazar'] ?? 'Anonim',
           'tarih': data['tarih'] ?? '',
+          'senderId': data['senderId'] ?? '',
         };
       }).toList();
       
@@ -398,12 +401,13 @@ class PrayerRepository {
         "soru": "Oruçlu iken diş fırçalamak orucu bozar mı?",
         "cevap": "Diyanet İşleri Başkanlığı'nın fetvasına göre, boğaza su kaçırmamak şartıyla macunlu veya macunsuz diş fırçalamak orucu bozmaz. Ancak macunun yutulması durumunda oruç bozulur ve kaza gerekir.",
         "tarih": "20.05.2026 14:32",
-        "yazar": "Ahmet Yılmaz"
+        "yazar": "Ahmet Yılmaz",
+        "senderId": ""
       }
     ];
   }
 
-  Future<void> sendQuestion(String author, String text) async {
+  Future<void> sendQuestion(String author, String text, String senderId) async {
     try {
       final id = DateTime.now().millisecondsSinceEpoch;
       final now = DateTime.now();
@@ -415,6 +419,7 @@ class PrayerRepository {
         "soru": text,
         "cevap": "",
         "tarih": dateStr,
+        "senderId": senderId,
       }).timeout(const Duration(seconds: 4));
     } catch (e) {
       print('Error sending question to Firestore: $e');
