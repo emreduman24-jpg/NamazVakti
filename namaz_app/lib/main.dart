@@ -258,19 +258,29 @@ class _MyAppState extends State<MyApp> {
 
       print('FCM Permission authorizationStatus: ${settings.authorizationStatus}');
 
-      // 2. Subscribe to announcements topic
-      await messaging.subscribeToTopic('announcements');
-      print('Subscribed to announcements topic');
+      // 2. Get FCM Token first and save to Firestore
+      try {
+        String? token = await messaging.getToken();
+        if (token != null) {
+          print('FCM Token: $token');
+          await FirebaseFirestore.instance.collection('users').doc(docId).update({
+            'fcmToken': token,
+          }).catchError((err) {
+            print('Error updating fcmToken in Firestore: $err');
+          });
+        } else {
+          print('FCM Token is null');
+        }
+      } catch (tokenError) {
+        print("Error getting FCM Token: $tokenError");
+      }
 
-      // 3. Get FCM Token
-      String? token = await messaging.getToken();
-      if (token != null) {
-        print('FCM Token: $token');
-        await FirebaseFirestore.instance.collection('users').doc(docId).update({
-          'fcmToken': token,
-        }).catchError((err) {
-          print('Error updating fcmToken in Firestore: $err');
-        });
+      // 3. Subscribe to announcements topic with safety try-catch
+      try {
+        await messaging.subscribeToTopic('announcements');
+        print('Subscribed to announcements topic');
+      } catch (topicError) {
+        print('Error subscribing to topic announcements: $topicError');
       }
 
       // 4. Set up foreground message handler

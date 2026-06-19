@@ -208,7 +208,6 @@ class NotificationService {
                   priority: Priority.high,
                   sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
                   playSound: true,
-                  largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
                 )
               : const AndroidNotificationDetails(
                   'ezan_sparkle_channel_new',
@@ -219,7 +218,6 @@ class NotificationService {
                   priority: Priority.high,
                   sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
                   playSound: true,
-                  largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
                 );
 
           // iOS custom sound config (expects ezan_bildirim.mp3 / parilti_bildirim.mp3 in App Bundle resources)
@@ -322,7 +320,6 @@ class NotificationService {
             priority: Priority.high,
             sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
             playSound: true,
-            largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
           )
         : const AndroidNotificationDetails(
             'test_sparkle_channel_new',
@@ -333,7 +330,6 @@ class NotificationService {
             priority: Priority.high,
             sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
             playSound: true,
-            largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
           );
 
     final DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -369,7 +365,6 @@ class NotificationService {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      largeIcon: DrawableResourceAndroidBitmap('ic_launcher'),
     );
 
     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
