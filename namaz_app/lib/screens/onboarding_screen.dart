@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -232,11 +233,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   }
 
   Future<void> _launchStore() async {
-    final Uri url = Uri.parse("https://play.google.com/store/apps/details?id=com.example.namazvakitleri.namaz_app");
+    final String storeUrl = Platform.isIOS
+        ? "https://apps.apple.com/app/id6670732890"
+        : "https://play.google.com/store/apps/details?id=com.emreduman.namazvakitleri";
+    final Uri url = Uri.parse(storeUrl);
     try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      }
+      await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
       debugPrint("Launch store error: $e");
     }
@@ -907,6 +909,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                       ),
                       const SizedBox(height: 20),
                       // Interactive Stars
+                      // Interactive Stars
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(5, (index) {
@@ -916,42 +919,76 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                               setState(() {
                                 _selectedStars = index + 1;
                               });
-                              _showSnackBar("Değerlendirmeniz için çok teşekkür ederiz! Mağazaya yönlendiriliyorsunuz...", success: true);
-                              // Quick dynamic rating feedback
-                              Future.delayed(const Duration(milliseconds: 500), () {
-                                setState(() {
-                                  _showRatingDialog = false;
-                                });
-                                _launchStore(); // Launch App Store / Play Store!
-                                _goToNextPage(); // Go to next onboarding step
-                              });
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 6.0),
                               child: Icon(
                                 isLit ? Icons.star : Icons.star_border,
-                                color: isLit ? const Color(0xFFE5A93B) : const Color(0xFF327CF6),
-                                size: 36,
+                                color: isLit ? const Color(0xFFE5A93B) : Colors.white24,
+                                size: 40,
                               ),
                             ),
                           );
                         }),
                       ),
                       const SizedBox(height: 24),
-                      // "Şimdi Değil" Flat Button
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _showRatingDialog = false;
-                          });
-                          _goToNextPage(); // Go to step 6 (Notification)
-                        },
-                        child: const Text(
-                          "Şimdi Değil",
-                          style: TextStyle(
-                            color: Color(0xFF327CF6),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                      // "Bizi Değerlendir" Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF90B49C),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed: () {
+                            _showSnackBar("Değerlendirmeniz için çok teşekkür ederiz! Mağazaya yönlendiriliyorsunuz...", success: true);
+                            Future.delayed(const Duration(milliseconds: 500), () {
+                              setState(() {
+                                _showRatingDialog = false;
+                              });
+                              _launchStore(); // Launch App Store / Play Store!
+                              _goToNextPage(); // Go to next onboarding step
+                            });
+                          },
+                          child: const Text(
+                            "Bizi Değerlendir",
+                            style: TextStyle(
+                              color: Color(0xFF0F1B31),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // "Şimdi Değil" Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.white24),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showRatingDialog = false;
+                            });
+                            _goToNextPage(); // Go to step 6 (Notification)
+                          },
+                          child: const Text(
+                            "Şimdi Değil",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                       ),

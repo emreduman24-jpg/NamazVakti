@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
@@ -5628,31 +5629,105 @@ out center body;
                               ],
                             ),
                             onTap: () async {
-                              final urlStr = camii['harita'] ?? '';
-                              if (urlStr.isNotEmpty) {
-                                final uri = Uri.parse(urlStr);
-                                try {
-                                  if (await canLaunchUrl(uri)) {
-                                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                  } else {
+                              final double mLat = camii['lat'] as double;
+                              final double mLon = camii['lon'] as double;
+                              final String mName = camii['ad'] as String;
+                              
+                              if (Platform.isIOS) {
+                                final bool isDark = Theme.of(context).brightness == Brightness.dark;
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: isDark ? const Color(0xFF131D31) : Colors.white,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  builder: (BuildContext bc) {
+                                    final textStyle = TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? Colors.white : Colors.black87,
+                                    );
+                                    return SafeArea(
+                                      child: Wrap(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Text(
+                                              "Harita Uygulaması Seçin",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: isDark ? Colors.white70 : Colors.black54,
+                                              ),
+                                            ),
+                                          ),
+                                          ListTile(
+                                            leading: const Icon(Icons.map_rounded, color: Color(0xFF27A770)),
+                                            title: Text('Apple Haritalar', style: textStyle),
+                                            onTap: () async {
+                                              Navigator.pop(bc);
+                                              final appleMapsUrl = Uri.parse('http://maps.apple.com/?daddr=$mLat,$mLon&q=$mName');
+                                              try {
+                                                await launchUrl(appleMapsUrl, mode: LaunchMode.externalApplication);
+                                              } catch (e) {
+                                                if (bc.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    const SnackBar(content: Text("Apple Haritalar açılamadı.")),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                          ),
+                                          ListTile(
+                                            leading: const Icon(Icons.location_on_rounded, color: Color(0xFF4285F4)),
+                                            title: Text('Google Haritalar', style: textStyle),
+                                            onTap: () async {
+                                              Navigator.pop(bc);
+                                              final googleMapsUrl = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$mLat,$mLon');
+                                              try {
+                                                await launchUrl(googleMapsUrl, mode: LaunchMode.externalApplication);
+                                              } catch (e) {
+                                                if (bc.mounted) {
+                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                    const SnackBar(content: Text("Google Haritalar açılamadı.")),
+                                                  );
+                                                }
+                                              }
+                                            },
+                                          ),
+                                          const SizedBox(height: 16),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              } else {
+                                final urlStr = camii['harita'] ?? '';
+                                if (urlStr.isNotEmpty) {
+                                  final uri = Uri.parse(urlStr);
+                                  try {
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                    } else {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text("Harita uygulaması açılamadı."),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  } catch (e) {
+                                    debugPrint("Launch map error: $e");
                                     if (context.mounted) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
-                                          content: Text("Harita uygulaması açılamadı."),
+                                          content: Text("Harita açılırken bir hata oluştu."),
                                           backgroundColor: Colors.red,
                                         ),
                                       );
                                     }
-                                  }
-                                } catch (e) {
-                                  debugPrint("Launch map error: $e");
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("Harita açılırken bir hata oluştu."),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
                                   }
                                 }
                               }

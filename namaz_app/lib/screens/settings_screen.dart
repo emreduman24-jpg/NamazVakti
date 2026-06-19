@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
@@ -828,7 +829,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _shareApp() async {
     await Clipboard.setData(const ClipboardData(
-      text: "Namaz Vakitleri & Dini Rehber uygulamasını indir: https://namazvakti.com/indir",
+      text: "Vakit Dua: Namaz & Kıble uygulamasını indir: https://www.vakitdua.com.tr",
     ));
     _showSnackBar("Uygulama indirme bağlantısı kopyalandı! Dilediğiniz yerde paylaşabilirsiniz.", success: true);
   }
@@ -868,14 +869,6 @@ class SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFF1E5E43),
         iconTheme: const IconThemeData(color: Colors.white),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              Navigator.of(context).maybePop();
-            },
-          ),
-        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -1336,7 +1329,12 @@ class SettingsScreenState extends State<SettingsScreen> {
                     title: "Değerlendir",
                     subtitle: "Uygulamamıza puan verin",
                     gradientColors: [const Color(0xFFFFB300), const Color(0xFFF57C00)],
-                    onTap: () => _launchURL("https://play.google.com/store/apps/details?id=com.namazvakti.app"),
+                    onTap: () {
+                      final String storeUrl = Platform.isIOS
+                          ? "https://apps.apple.com/app/id6670732890"
+                          : "https://play.google.com/store/apps/details?id=com.emreduman.namazvakitleri";
+                      _launchURL(storeUrl);
+                    },
                   ),
                   _buildSettingRow(
                     icon: Icons.share_rounded,
@@ -1350,23 +1348,21 @@ class SettingsScreenState extends State<SettingsScreen> {
                     title: "Bize Ulaş",
                     subtitle: "Görüş ve önerilerinizi iletin",
                     gradientColors: [const Color(0xFF00C9FF), const Color(0xFF00796B)],
-                    onTap: () => _launchURL("mailto:destek@namazvakti.com?subject=Namaz%20Vakitleri%20Geri%20Bildirim"),
+                    onTap: () => _launchURL("mailto:destek@vakitdua.com.tr?subject=Vakit%20Dua%20Geri%20Bildirim"),
                   ),
                   _buildSettingRow(
                     icon: Icons.language_rounded,
                     title: "Web Sitesi",
                     subtitle: "Resmi internet sitemizi ziyaret edin",
                     gradientColors: [const Color(0xFF27A770), const Color(0xFF1E5E43)],
-                    onTap: () => _launchURL("https://namazvakti.com"),
+                    onTap: () => _launchURL("https://www.vakitdua.com.tr"),
                   ),
                   _buildSettingRow(
                     icon: Icons.security_rounded,
                     title: "Gizlilik Politikası",
                     subtitle: "Veri politikası ve koşullar",
                     gradientColors: [const Color(0xFF80CBC4), const Color(0xFF00796B)],
-                    onTap: () {
-                      _showSnackBar('Gizlilik Politikası yakında eklenecektir.');
-                    },
+                    onTap: () => _launchURL("https://www.vakitdua.com.tr/gizlilik-politikasi"),
                     isLast: true,
                   ),
                 ],

@@ -34,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   int _quranBookmarkCount = 0;
   String _quranLastReadText = "Bulunmuyor";
   int _quranLastPercent = 0;
+  int _quranLastSuraNo = 0;
 
   // Animations
   late AnimationController _headerAnimController;
@@ -123,6 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     final lastSuraName = prefs.getString('quran_last_sura_name');
     final lastAyahNo = prefs.getInt('quran_last_ayah_no');
     final lastPercent = prefs.getInt('quran_last_percent') ?? 0;
+    final lastSuraNo = prefs.getInt('quran_last_sura_no') ?? 0;
     
     String lastReadText = "Bulunmuyor";
     if (lastSuraName != null && lastAyahNo != null) {
@@ -140,6 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       _quranBookmarkCount = quranBookmarks.length;
       _quranLastReadText = lastReadText;
       _quranLastPercent = lastPercent;
+      _quranLastSuraNo = lastSuraNo;
     });
   }
 
@@ -662,12 +665,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                 : null,
             color: _isPremium
                 ? null
-                : (dark ? Colors.white.withOpacity(0.15) : const Color(0xFF1E5E43).withOpacity(0.15)),
+                : (dark ? Colors.white.withOpacity(0.15) : Colors.white),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: _isPremium
                   ? const Color(0xFFD4AF37).withOpacity(0.6)
-                  : (dark ? Colors.white.withOpacity(0.25) : const Color(0xFF1E5E43).withOpacity(0.35)),
+                  : (dark ? Colors.white.withOpacity(0.25) : Colors.white.withOpacity(0.85)),
               width: 1,
             ),
           ),
@@ -835,10 +838,10 @@ class _ProfileScreenState extends State<ProfileScreen>
             Expanded(
               child: _buildStatCardNew(
                 emoji: "📖",
-                title: "Kaydedilen sureler",
-                value: "$_quranBookmarkCount",
-                unit: "sure",
-                progress: _quranBookmarkCount / 10,
+                title: "Hatim ilerlemesi",
+                value: "${(_quranLastSuraNo / 114.0 * 100).toInt()}",
+                unit: "%",
+                progress: _quranLastSuraNo / 114.0,
                 color: const Color(0xFF2D9CDB),
                 dark: dark,
                 cardBg: cardBg,
