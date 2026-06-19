@@ -163,6 +163,7 @@ const els = {
   inspectUserLastActive: document.getElementById('inspect-user-last-active'),
   inspectUserIp: document.getElementById('inspect-user-ip'),
   inspectUserDuration: document.getElementById('inspect-user-duration'),
+  inspectUserDeviceId: document.getElementById('inspect-user-device-id'),
   inspectUserPremiumToggle: document.getElementById('inspect-user-premium-toggle'),
   inspectToggleStatusLabel: document.getElementById('inspect-toggle-status-label'),
 
@@ -296,6 +297,91 @@ function bindEvents() {
   if (els.notificationForm) {
     els.notificationForm.addEventListener('submit', handleSendNotification);
   }
+
+  // FCM Settings Collapse Toggle
+  const fcmHeader = document.getElementById('fcm-settings-header');
+  const fcmBody = document.getElementById('fcm-settings-body');
+  if (fcmHeader && fcmBody) {
+    fcmHeader.addEventListener('click', () => {
+      const isHidden = fcmBody.style.display === 'none';
+      fcmBody.style.display = isHidden ? 'block' : 'none';
+      const icon = fcmHeader.querySelector('.fa-chevron-down, .fa-chevron-up');
+      if (icon) {
+        icon.className = isHidden ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+        icon.style.fontSize = '12px';
+      }
+    });
+  }
+
+  // FCM JSON File Upload Selector
+  const fcmJsonFile = document.getElementById('fcm-json-file');
+  const fcmJsonFileName = document.getElementById('fcm-json-file-name');
+  const inputFcmServerKey = document.getElementById('fcm-server-key');
+  if (fcmJsonFile && fcmJsonFileName && inputFcmServerKey) {
+    fcmJsonFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        fcmJsonFileName.textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          try {
+            const json = JSON.parse(evt.target.result);
+            if (json.type !== 'service_account' || !json.private_key || !json.client_email) {
+              showToast("Geçersiz Firebase Service Account JSON dosyası!", "warning");
+              return;
+            }
+            inputFcmServerKey.value = JSON.stringify(json, null, 2);
+          } catch (err) {
+            showToast("JSON dosyası ayrıştırılamadı!", "danger");
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+  }
+
+  // FCM Settings Save Action
+  const btnSaveFcmKey = document.getElementById('btn-save-fcm-key');
+  if (btnSaveFcmKey && inputFcmServerKey) {
+    btnSaveFcmKey.addEventListener('click', async () => {
+      const keyVal = inputFcmServerKey.value.trim();
+      if (!keyVal) {
+        showToast("Lütfen bir anahtar girin!", "warning");
+        return;
+      }
+
+      // If it looks like JSON, validate it
+      if (keyVal.startsWith('{')) {
+        try {
+          const json = JSON.parse(keyVal);
+          if (json.type !== 'service_account' || !json.private_key || !json.client_email) {
+            showToast("Girdiğiniz veri geçerli bir Firebase Service Account JSON yapısı değil!", "warning");
+            return;
+          }
+        } catch (err) {
+          showToast("Girdiğiniz veri geçerli bir JSON formatında değil!", "warning");
+          return;
+        }
+      }
+
+      btnSaveFcmKey.disabled = true;
+      const originalText = btnSaveFcmKey.innerHTML;
+      btnSaveFcmKey.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Kaydediliyor...`;
+      try {
+        await setDoc(doc(db, "settings", "fcm"), { serviceAccountJson: keyVal });
+        showToast("FCM Hizmet Hesabı anahtarı başarıyla kaydedildi.", "success");
+        if (fcmBody) fcmBody.style.display = 'none';
+        const icon = fcmHeader ? fcmHeader.querySelector('.fa-chevron-down, .fa-chevron-up') : null;
+        if (icon) icon.className = 'fa-solid fa-chevron-down';
+      } catch (err) {
+        console.error("Error saving FCM key:", err);
+        showToast("Anahtar kaydedilirken hata oluştu!", "danger");
+      } finally {
+        btnSaveFcmKey.disabled = false;
+        btnSaveFcmKey.innerHTML = originalText;
+      }
+    });
+  }
 }
 
 // ==================== AUTHENTICATION ACTIONS ====================
@@ -369,42 +455,60 @@ async function initializeData() {
 
 async function refreshAllData() {
   try {
-    // 1. Fetch block status
-    const blockSnap = await getDoc(doc(db, "block_status", "global"));
+    // Fetch all collections concurrently using Promise.all
+    const [
+      blockSnap,
+      toolsSnap,
+      duasSnap,
+      questionsSnap,
+      usersSnap,
+      announcementsSnap,
+      fcmSnap
+    ] = await Promise.all([
+      getDoc(doc(db, "block_status", "global")),
+      getDocs(query(collection(db, "tools"), orderBy("sira", "asc"))),
+      getDocs(collection(db, "duas")),
+      getDocs(collection(db, "questions")),
+      getDocs(collection(db, "users")),
+      getDocs(collection(db, "announcements")),
+      getDoc(doc(db, "settings", "fcm"))
+    ]);
+
+    // 1. Process block status
     if (blockSnap.exists()) {
       cache.blockStatus = blockSnap.data().blocked || false;
     }
 
-    // 2. Fetch tools
-    const toolsSnap = await getDocs(query(collection(db, "tools"), orderBy("sira", "asc")));
+    // 2. Process tools
     cache.tools = toolsSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
 
-    // 3. Fetch prayers (duas)
-    const duasSnap = await getDocs(collection(db, "duas"));
+    // 3. Process prayers (duas)
     cache.duas = duasSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
-    // Sort duas: newest first by id field (timestamp)
     cache.duas.sort((a, b) => (b.id || 0) - (a.id || 0));
 
-    // 4. Fetch Q&A questions
-    const questionsSnap = await getDocs(collection(db, "questions"));
+    // 4. Process Q&A questions
     cache.questions = questionsSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
-    // Sort questions: newest first by id field (timestamp)
     cache.questions.sort((a, b) => (b.id || 0) - (a.id || 0));
 
-    // 5. Fetch registered users
-    const usersSnap = await getDocs(collection(db, "users"));
+    // 5. Process registered users
     cache.users = usersSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
-    // Sort users: newest first by registration date (created)
     cache.users.sort((a, b) => {
       const aTime = a.created ? new Date(a.created).getTime() : 0;
       const bTime = b.created ? new Date(b.created).getTime() : 0;
       return bTime - aTime;
     });
 
-    // 6. Fetch sent announcements
-    const announcementsSnap = await getDocs(collection(db, "announcements"));
+    // 6. Process sent announcements
     cache.announcements = announcementsSnap.docs.map(d => ({ docId: d.id, ...d.data() }));
     cache.announcements.sort((a, b) => (b.id || 0) - (a.id || 0));
+
+    // 7. Process FCM Key Settings
+    if (fcmSnap.exists()) {
+      const inputFcmServerKey = document.getElementById('fcm-server-key');
+      if (inputFcmServerKey) {
+        inputFcmServerKey.value = fcmSnap.data().serviceAccountJson || fcmSnap.data().serverKey || '';
+      }
+    }
 
     updateSidebarBadges();
   } catch (err) {
@@ -1057,7 +1161,9 @@ function renderUsersList() {
     list = list.filter(u => 
       (u.name || '').toLowerCase().includes(searchText) || 
       (u.email || '').toLowerCase().includes(searchText) ||
-      (u.registeredEmail || '').toLowerCase().includes(searchText)
+      (u.registeredEmail || '').toLowerCase().includes(searchText) ||
+      (u.docId || '').toLowerCase().includes(searchText) ||
+      (u.uid || '').toLowerCase().includes(searchText)
     );
   }
 
@@ -1087,6 +1193,20 @@ function renderUsersList() {
     const createdDate = formatDate(user.created);
     const lastActiveDate = formatDate(user.lastActive);
 
+    // Calculate online status (active in the last 5 minutes, timezone-robust)
+    let isOnline = false;
+    if (user.lastActive) {
+      try {
+        const lastActiveTime = new Date(user.lastActive).getTime();
+        const diffMinutes = Math.abs(Date.now() - lastActiveTime) / 1000 / 60;
+        // True difference < 5 minutes OR offset timezone difference < 5 minutes (due to UTC vs local parsing, i.e. 2 or 3 hours shift)
+        isOnline = diffMinutes < 5 || Math.abs(diffMinutes - 180) < 5 || Math.abs(diffMinutes - 120) < 5;
+      } catch (_) {}
+    }
+    const statusDotHtml = isOnline
+      ? `<span class="status-dot online" title="Çevrimiçi (Aktif)"></span>`
+      : `<span class="status-dot offline" title="Çevrimdışı (Son Görülme: ${lastActiveDate})"></span>`;
+
     // Email / Registration status
     let emailHtml = escapeHTML(user.email || '');
     if (user.registeredEmail) {
@@ -1098,7 +1218,7 @@ function renderUsersList() {
         <div class="user-info-cell">
           <div class="user-avatar-small">${avatarEmoji}</div>
           <div class="user-meta-info">
-            <span class="user-meta-name">${escapeHTML(user.name || 'İsimsiz Kullanıcı')}</span>
+            <span class="user-meta-name">${escapeHTML(user.name || 'İsimsiz Kullanıcı')} ${statusDotHtml}</span>
             <span class="user-meta-email">${emailHtml}</span>
           </div>
         </div>
@@ -1203,6 +1323,7 @@ function openUserModal(docId) {
     }
   }
   if (els.inspectUserDuration) els.inspectUserDuration.textContent = durationText;
+  if (els.inspectUserDeviceId) els.inspectUserDeviceId.textContent = user.docId || '-';
 
   if (els.userInspectModal) els.userInspectModal.style.display = 'flex';
 }
@@ -1315,10 +1436,123 @@ async function handleSendNotification(e) {
   };
 
   try {
-    // Save to Firestore 'announcements' using newId as document name
+    // 1. Save to Firestore 'announcements' using newId as document name
     await setDoc(doc(db, "announcements", newId.toString()), announcementDoc);
     
-    showToast("Bildirim başarıyla gönderildi ve yayına alındı.", "success");
+    // 2. Try to dispatch FCM Push Notification
+    let pushSent = false;
+    let pushError = null;
+    const fcmServerKeyInput = document.getElementById('fcm-server-key');
+    const fcmConfigStr = fcmServerKeyInput ? fcmServerKeyInput.value.trim() : '';
+
+    if (fcmConfigStr) {
+      try {
+        let isServiceAccount = false;
+        let serviceAccount = null;
+        try {
+          serviceAccount = JSON.parse(fcmConfigStr);
+          if (serviceAccount.type === 'service_account' && serviceAccount.private_key && serviceAccount.client_email) {
+            isServiceAccount = true;
+          }
+        } catch (_) {}
+
+        if (isServiceAccount) {
+          // FCM HTTP v1 API
+          const accessToken = await generateGoogleOAuth2Token(serviceAccount);
+          const projectId = serviceAccount.project_id || "namaz-vakti-app-2026";
+          const url = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
+          const payload = {
+            message: {
+              topic: "announcements",
+              notification: {
+                title: title,
+                body: body
+              },
+              data: {
+                title: title,
+                body: body,
+                type: "announcement"
+              },
+              android: {
+                priority: "high"
+              },
+              apns: {
+                payload: {
+                  aps: {
+                    sound: "default"
+                  }
+                }
+              }
+            }
+          };
+
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${accessToken}`
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            pushSent = true;
+          } else {
+            const text = await response.text();
+            pushError = `HTTP ${response.status}: ${text}`;
+          }
+        } else {
+          // Legacy API Fallback
+          const url = "https://fcm.googleapis.com/fcm/send";
+          const payload = {
+            to: "/topics/announcements",
+            notification: {
+              title: title,
+              body: body,
+              sound: "default"
+            },
+            data: {
+              title: title,
+              body: body,
+              type: "announcement",
+              click_action: "FLUTTER_NOTIFICATION_CLICK"
+            },
+            priority: "high"
+          };
+
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `key=${fcmConfigStr}`
+            },
+            body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+            pushSent = true;
+          } else {
+            const text = await response.text();
+            pushError = `HTTP ${response.status}: ${text}`;
+          }
+        }
+      } catch (e) {
+        pushError = e.message || e;
+      }
+    }
+
+    // 3. Feedback to user
+    if (fcmConfigStr) {
+      if (pushSent) {
+        showToast("Bildirim yayınlandı ve tüm cihazlara anlık push bildirimi (HTTP v1) gönderildi.", "success");
+      } else {
+        console.error("FCM push error:", pushError);
+        showToast("Bildirim kaydedildi ancak push bildirimi gönderilemedi: " + pushError, "warning");
+      }
+    } else {
+      showToast("Bildirim kaydedildi (FCM anahtarı tanımlanmadığı için çevrimdışı push gönderilmedi).", "warning");
+    }
+
     els.notifTitle.value = '';
     els.notifBody.value = '';
     
@@ -1331,4 +1565,96 @@ async function handleSendNotification(e) {
     btn.disabled = false;
     btn.innerHTML = originalHtml;
   }
+}
+
+// Helper to generate Google OAuth2 Access Token in-browser using Service Account JSON via Web Crypto API
+async function generateGoogleOAuth2Token(serviceAccount) {
+  function base64url(source) {
+    let base64 = "";
+    if (typeof source === "string") {
+      base64 = btoa(unescape(encodeURIComponent(source)));
+    } else {
+      const bytes = new Uint8Array(source);
+      let binary = "";
+      for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      base64 = btoa(binary);
+    }
+    return base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  }
+
+  async function importPrivateKey(pemStr) {
+    const pemHeader = "-----BEGIN PRIVATE KEY-----";
+    const pemFooter = "-----END PRIVATE KEY-----";
+    const pemContents = pemStr
+      .replace(pemHeader, "")
+      .replace(pemFooter, "")
+      .replace(/\s+/g, "");
+    
+    const binaryDerString = window.atob(pemContents);
+    const binaryDer = new Uint8Array(binaryDerString.length);
+    for (let i = 0; i < binaryDerString.length; i++) {
+      binaryDer[i] = binaryDerString.charCodeAt(i);
+    }
+
+    return await window.crypto.subtle.importKey(
+      "pkcs8",
+      binaryDer.buffer,
+      {
+        name: "RSASSA-PKCS1-v1_5",
+        hash: { name: "SHA-256" }
+      },
+      false,
+      ["sign"]
+    );
+  }
+
+  const header = {
+    alg: "RS256",
+    typ: "JWT"
+  };
+
+  const nowInSeconds = Math.floor(Date.now() / 1000);
+  const expiryInSeconds = nowInSeconds + 3600;
+
+  const claims = {
+    iss: serviceAccount.client_email,
+    scope: "https://www.googleapis.com/auth/firebase.messaging",
+    aud: "https://oauth2.googleapis.com/token",
+    exp: expiryInSeconds,
+    iat: nowInSeconds
+  };
+
+  const signatureInput = base64url(JSON.stringify(header)) + "." + base64url(JSON.stringify(claims));
+
+  const importedKey = await importPrivateKey(serviceAccount.private_key);
+  const encoder = new TextEncoder();
+  const signatureInputBytes = encoder.encode(signatureInput);
+  const signatureBuffer = await window.crypto.subtle.sign(
+    "RSASSA-PKCS1-v1_5",
+    importedKey,
+    signatureInputBytes
+  );
+
+  const jwt = signatureInput + "." + base64url(signatureBuffer);
+
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion: jwt
+    })
+  });
+
+  if (!tokenResponse.ok) {
+    const errorText = await tokenResponse.text();
+    throw new Error(`Google OAuth2 Token error: ${tokenResponse.status} - ${errorText}`);
+  }
+
+  const tokenData = await tokenResponse.json();
+  return tokenData.access_token;
 }

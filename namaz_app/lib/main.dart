@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
@@ -19,12 +20,21 @@ import 'services/billing_service.dart';
 import 'services/ad_service.dart';
 
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  try {
+    await Firebase.initializeApp();
+  } catch (_) {}
+  print("Background push message received: ${message.messageId}");
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize Firebase
   try {
     await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   } catch (e) {
     print("Firebase initialization error: $e");
   }
@@ -54,6 +64,8 @@ class _MyAppState extends State<MyApp> {
   bool _locationSelected = false;
   bool _isBlocked = false;
   Timer? _blockTimer;
+  DateTime? _lastActiveUpdate;
+  bool _pushNotificationsSetup = false;
 
   @override
   void initState() {
@@ -72,8 +84,29 @@ class _MyAppState extends State<MyApp> {
     _blockTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
       _checkBlockStatus();
       _checkPremiumStatus();
-      _checkAnnouncements();
+      
+      // Periodically update lastActive (throttled to 2 minutes)
+      final prefs = await SharedPreferences.getInstance();
+      final docId = prefs.getString('guest_uuid');
+      if (docId != null && docId.isNotEmpty) {
+        _updateLastActive(docId);
+      }
     });
+  }
+
+  Future<void> _updateLastActive(String docId) async {
+    final now = DateTime.now();
+    if (_lastActiveUpdate == null || now.difference(_lastActiveUpdate!) > const Duration(minutes: 2)) {
+      _lastActiveUpdate = now;
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(docId).update({
+          'lastActive': now.toUtc().toIso8601String(),
+        });
+        print("Updated lastActive in Firestore for $docId");
+      } catch (e) {
+        print("Error updating lastActive: $e");
+      }
+    }
   }
 
   Future<void> _checkAnnouncements() async {
@@ -188,8 +221,8 @@ class _MyAppState extends State<MyApp> {
             'gender': currentGender,
             'isPremium': localIsPremium,
             'isAnonymous': true,
-            'created': DateTime.now().toIso8601String(),
-            'lastActive': DateTime.now().toIso8601String(),
+            'created': DateTime.now().toUtc().toIso8601String(),
+            'lastActive': DateTime.now().toUtc().toIso8601String(),
             'ipAddress': ipAddress,
             'platform': Platform.isIOS ? 'iOS' : 'Android',
             'uid': docId,
@@ -197,8 +230,62 @@ class _MyAppState extends State<MyApp> {
           
           print("Created new guest user document in Firestore ($docId) preserving Premium=$localIsPremium");
         }
+
+        // Setup FCM Push Notifications and register token (run once)
+        if (!_pushNotificationsSetup) {
+          _pushNotificationsSetup = true;
+          _setupPushNotifications(docId);
+        }
     } catch (e) {
       print("Premium status check error: $e");
+    }
+  }
+
+  Future<void> _setupPushNotifications(String docId) async {
+    try {
+      final FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+      // 1. Request permissions
+      NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      print('FCM Permission authorizationStatus: ${settings.authorizationStatus}');
+
+      // 2. Subscribe to announcements topic
+      await messaging.subscribeToTopic('announcements');
+      print('Subscribed to announcements topic');
+
+      // 3. Get FCM Token
+      String? token = await messaging.getToken();
+      if (token != null) {
+        print('FCM Token: $token');
+        await FirebaseFirestore.instance.collection('users').doc(docId).update({
+          'fcmToken': token,
+        }).catchError((err) {
+          print('Error updating fcmToken in Firestore: $err');
+        });
+      }
+
+      // 4. Set up foreground message handler
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print('Foreground push message received: ${message.messageId}');
+        if (message.notification != null) {
+          NotificationService().showNotification(
+            id: message.hashCode,
+            title: message.notification!.title ?? 'Yeni Bildirim',
+            body: message.notification!.body ?? '',
+          );
+        }
+      });
+    } catch (e) {
+      print("Error setting up push notifications: $e");
     }
   }
 
@@ -207,6 +294,7 @@ class _MyAppState extends State<MyApp> {
     final isLocSet = await _repository.isLocationSelected();
     await _checkBlockStatus();
     await _checkPremiumStatus();
+    await _checkAnnouncements(); // Fetch once on startup
 
     // Prefetch location and mosques in background on app startup
     LocationCacheService().prefetchLocationAndMosques();

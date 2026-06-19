@@ -249,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             .set({
           'name': newName,
           'gender': _gender,
-          'lastActive': DateTime.now().toIso8601String(),
+          'lastActive': DateTime.now().toUtc().toIso8601String(),
           'ipAddress': ipAddress,
           'platform': platform,
         }, SetOptions(merge: true)).timeout(const Duration(seconds: 3));
