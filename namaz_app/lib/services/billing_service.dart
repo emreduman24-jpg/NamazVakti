@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BillingService {
   // TODO: Replace with your actual RevenueCat API keys
-  static const String _androidApiKey = 'test_sHyuWwiVtBtLuGuHVLsnUWRFXTw';
-  static const String _iosApiKey = 'test_sHyuWwiVtBtLuGuHVLsnUWRFXTw';
+  static const String _androidApiKey = 'goog_cPOiFOCxSoLwLFVxIGhlFlIcUCg';
+  static const String _iosApiKey = 'appl_wnROoObgCRUkrjUuVKcJaMxEIVC';
   static const String _entitlementId = 'pro';
 
   static bool _isInitialized = false;
