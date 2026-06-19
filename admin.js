@@ -1474,7 +1474,10 @@ async function handleSendNotification(e) {
                 type: "announcement"
               },
               android: {
-                priority: "high"
+                priority: "HIGH",
+                notification: {
+                  channel_id: "announcements_channel"
+                }
               },
               apns: {
                 payload: {

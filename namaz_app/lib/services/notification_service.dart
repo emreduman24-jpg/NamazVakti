@@ -46,6 +46,24 @@ class NotificationService {
         print("Notification clicked: ${details.payload}");
       },
     );
+
+    // 5. Create default channels for Android background/FCM notifications
+    if (Platform.isAndroid) {
+      final androidPlugin = flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      if (androidPlugin != null) {
+        const AndroidNotificationChannel announcementsChannel = AndroidNotificationChannel(
+          'announcements_channel',
+          'Duyurular ve Günlük Ayetler',
+          description: 'Yöneticiden gelen duyuru ve günlük ayet bildirimleri.',
+          importance: Importance.max,
+          playSound: true,
+        );
+        await androidPlugin.createNotificationChannel(announcementsChannel);
+        print("Created Android notification channel: announcements_channel");
+      }
+    }
   }
 
   // Request permissions on demand
