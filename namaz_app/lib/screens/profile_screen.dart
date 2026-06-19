@@ -29,6 +29,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   int _currentStreak = 0;
   int _totalCompletedDays = 0;
   int _weeklyCompletedDays = 0;
+  int _totalZikirs = 0;
+  int _zikirDays = 0;
+  int _quranBookmarkCount = 0;
+  String _quranLastReadText = "Bulunmuyor";
+  int _quranLastPercent = 0;
 
   // Animations
   late AnimationController _headerAnimController;
@@ -102,11 +107,39 @@ class _ProfileScreenState extends State<ProfileScreen>
     final prefs = await SharedPreferences.getInstance();
     final savedName = prefs.getString('user_name') ?? '';
     final guestUuid = prefs.getString('guest_uuid') ?? '';
+    
+    // Find all keys starting with 'zikir_count_' and sum them up
+    int sumZikirs = 0;
+    final keys = prefs.getKeys();
+    for (final key in keys) {
+      if (key.startsWith('zikir_count_')) {
+        sumZikirs += prefs.getInt(key) ?? 0;
+      }
+    }
+    
+    final zikirDaysList = prefs.getStringList('zikir_completed_dates') ?? [];
+    final quranBookmarks = prefs.getStringList('quran_bookmarks') ?? [];
+    
+    final lastSuraName = prefs.getString('quran_last_sura_name');
+    final lastAyahNo = prefs.getInt('quran_last_ayah_no');
+    final lastPercent = prefs.getInt('quran_last_percent') ?? 0;
+    
+    String lastReadText = "Bulunmuyor";
+    if (lastSuraName != null && lastAyahNo != null) {
+      lastReadText = "$lastSuraName Suresi, $lastAyahNo. Ayet";
+    }
+
     setState(() {
       _email = guestUuid;
       _gender = prefs.getString('user_gender') ?? 'erkek';
       _isPremium = prefs.getBool('is_premium') ?? false;
       _nameController.text = savedName.isNotEmpty ? savedName : "Kullanıcı";
+      
+      _totalZikirs = sumZikirs;
+      _zikirDays = zikirDaysList.length;
+      _quranBookmarkCount = quranBookmarks.length;
+      _quranLastReadText = lastReadText;
+      _quranLastPercent = lastPercent;
     });
   }
 
@@ -619,7 +652,6 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         const SizedBox(height: 8),
 
-        // Status badge
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
           decoration: BoxDecoration(
@@ -628,12 +660,14 @@ class _ProfileScreenState extends State<ProfileScreen>
                     colors: [Color(0xFFD4AF37), Color(0xFFC49B28)],
                   )
                 : null,
-            color: _isPremium ? null : Colors.white.withOpacity(0.15),
+            color: _isPremium
+                ? null
+                : (dark ? Colors.white.withOpacity(0.15) : const Color(0xFF1E5E43).withOpacity(0.15)),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: _isPremium
                   ? const Color(0xFFD4AF37).withOpacity(0.6)
-                  : Colors.white.withOpacity(0.25),
+                  : (dark ? Colors.white.withOpacity(0.25) : const Color(0xFF1E5E43).withOpacity(0.35)),
               width: 1,
             ),
           ),
@@ -644,14 +678,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                 _isPremium
                     ? Icons.diamond_rounded
                     : Icons.person_rounded,
-                color: Colors.white,
+                color: _isPremium
+                    ? Colors.white
+                    : (dark ? Colors.white : const Color(0xFF1E5E43)),
                 size: 13,
               ),
               const SizedBox(width: 5),
               Text(
                 _isPremium ? "PRO ÜYE" : "STANDART HESAP",
                 style: TextStyle(
-                  color: Colors.white.withOpacity(_isPremium ? 1.0 : 0.85),
+                  color: _isPremium
+                      ? Colors.white.withOpacity(1.0)
+                      : (dark ? Colors.white.withOpacity(0.85) : const Color(0xFF1E5E43)),
                   fontSize: 10.5,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.8,
@@ -688,7 +726,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
               const SizedBox(width: 8),
               Text(
-                "İstatistikler",
+                "Namaz İstatistikleri",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -704,7 +742,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             Expanded(
               child: _buildStatCardNew(
                 emoji: "🔥",
-                title: "Günlük Seri",
+                title: "Günlük namaz seri",
                 value: "$_currentStreak",
                 unit: "gün",
                 progress: _currentStreak / 30,
@@ -720,7 +758,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             Expanded(
               child: _buildStatCardNew(
                 emoji: "📅",
-                title: "Bu Ay",
+                title: "Aylık namaz takibi",
                 value: "$_totalCompletedDays",
                 unit: "gün",
                 progress: _totalCompletedDays / 30,
@@ -736,9 +774,9 @@ class _ProfileScreenState extends State<ProfileScreen>
             Expanded(
               child: _buildStatCardNew(
                 emoji: "🕌",
-                title: "Haftalık",
+                title: "Haftalık namaz takibi",
                 value: "$_weeklyCompletedDays",
-                unit: "/7",
+                unit: "gün",
                 progress: _weeklyCompletedDays / 7,
                 color: const Color(0xFFE5A93B),
                 dark: dark,
@@ -750,6 +788,142 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ],
         ),
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8E44AD),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "İbadet & Okuma İstatistikleri",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCardNew(
+                emoji: "📿",
+                title: "Toplam zikir sayısı",
+                value: "$_totalZikirs",
+                unit: "adet",
+                progress: _totalZikirs / 1000,
+                color: const Color(0xFF8E44AD),
+                dark: dark,
+                cardBg: cardBg,
+                cardBorder: cardBorder,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildStatCardNew(
+                emoji: "📖",
+                title: "Kaydedilen sureler",
+                value: "$_quranBookmarkCount",
+                unit: "sure",
+                progress: _quranBookmarkCount / 10,
+                color: const Color(0xFF2D9CDB),
+                dark: dark,
+                cardBg: cardBg,
+                cardBorder: cardBorder,
+                textPrimary: textPrimary,
+                textSecondary: textSecondary,
+              ),
+            ),
+          ],
+        ),
+        if (_quranLastReadText != "Bulunmuyor") ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: cardBorder, width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(dark ? 0.15 : 0.02),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF27A770).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.menu_book_rounded, color: Color(0xFF27A770), size: 18),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Kur'an-ı Kerim Kaldığın Yer",
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: textSecondary,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _quranLastReadText,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_quranLastPercent > 0) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF27A770).withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      "%$_quranLastPercent",
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF27A770),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

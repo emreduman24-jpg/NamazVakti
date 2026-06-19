@@ -237,20 +237,38 @@ class NotificationService {
           String displayTitle = 'Namaz Vakti';
           String displayBody = '';
 
-          if (prayerName == 'İmsak') {
-            displayBody = 'İmsak Vakti Geldi';
-          } else if (prayerName == 'Güneş') {
-            displayBody = 'Sabah Namazı Vakti Geldi';
-          } else if (prayerName == 'Öğle') {
-            displayBody = 'Öğle Namazı Vakti Geldi';
-          } else if (prayerName == 'İkindi') {
-            displayBody = 'İkindi Namazı Vakti Geldi';
-          } else if (prayerName == 'Akşam') {
-            displayBody = 'Akşam Namazı Vakti Geldi';
-          } else if (prayerName == 'Yatsı') {
-            displayBody = 'Yatsı Namazı Vakti Geldi';
+          if (offset > 0) {
+            if (prayerName == 'İmsak') {
+              displayBody = 'İmsak Vaktine $offset dakika kaldı!';
+            } else if (prayerName == 'Güneş') {
+              displayBody = 'Sabah Namazı Vaktine $offset dakika kaldı!';
+            } else if (prayerName == 'Öğle') {
+              displayBody = 'Öğle Namazı Vaktine $offset dakika kaldı!';
+            } else if (prayerName == 'İkindi') {
+              displayBody = 'İkindi Namazı Vaktine $offset dakika kaldı!';
+            } else if (prayerName == 'Akşam') {
+              displayBody = 'Akşam Namazı Vaktine $offset dakika kaldı!';
+            } else if (prayerName == 'Yatsı') {
+              displayBody = 'Yatsı Namazı Vaktine $offset dakika kaldı!';
+            } else {
+              displayBody = '$prayerName Vaktine $offset dakika kaldı!';
+            }
           } else {
-            displayBody = '$prayerName Namazı Vakti Geldi';
+            if (prayerName == 'İmsak') {
+              displayBody = 'İmsak Vakti Geldi';
+            } else if (prayerName == 'Güneş') {
+              displayBody = 'Sabah Namazı Vakti Geldi';
+            } else if (prayerName == 'Öğle') {
+              displayBody = 'Öğle Namazı Vakti Geldi';
+            } else if (prayerName == 'İkindi') {
+              displayBody = 'İkindi Namazı Vakti Geldi';
+            } else if (prayerName == 'Akşam') {
+              displayBody = 'Akşam Namazı Vakti Geldi';
+            } else if (prayerName == 'Yatsı') {
+              displayBody = 'Yatsı Namazı Vakti Geldi';
+            } else {
+              displayBody = '$prayerName Namazı Vakti Geldi';
+            }
           }
 
           try {

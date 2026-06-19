@@ -1277,40 +1277,47 @@ out center body;
           });
         }
       },
-      child: Scaffold(
-        backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
-        appBar: AppBar(
-          automaticallyImplyLeading: !widget.isTab,
-          leading: widget.isTab
-              ? null
-              : IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    if (_activeToolId != widget.toolId) {
-                      setState(() {
-                        _activeToolId = widget.toolId;
-                        _activeToolTitle = widget.toolTitle;
-                      });
-                    } else {
-                      Navigator.of(context).maybePop();
-                    }
-                  },
-                ),
-          title: Text(
-            _activeToolTitle ?? widget.toolTitle,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+      child: GestureDetector(
+        onTap: () {
+          // Dismiss keyboard when tapping anywhere outside text inputs
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
+          backgroundColor: dark ? const Color(0xFF0A1220) : const Color(0xFFF3F8F5),
+          appBar: AppBar(
+            automaticallyImplyLeading: !widget.isTab,
+            leading: widget.isTab
+                ? null
+                : IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (_activeToolId != widget.toolId) {
+                        setState(() {
+                          _activeToolId = widget.toolId;
+                          _activeToolTitle = widget.toolTitle;
+                        });
+                      } else {
+                        Navigator.of(context).maybePop();
+                      }
+                    },
+                  ),
+            title: Text(
+              _activeToolTitle ?? widget.toolTitle,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
+            backgroundColor: dark ? const Color(0xFF111A2E) : const Color(0xFF1E5E43),
+            elevation: 0,
+            iconTheme: const IconThemeData(color: Colors.white),
           ),
-          backgroundColor: dark ? const Color(0xFF111A2E) : const Color(0xFF1E5E43),
-          elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildToolBody(),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _buildToolBody(),
+            ),
           ),
         ),
       ),

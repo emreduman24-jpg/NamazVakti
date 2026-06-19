@@ -804,13 +804,25 @@ class SettingsScreenState extends State<SettingsScreen> {
   Future<void> _launchURL(String urlString) async {
     final Uri url = Uri.parse(urlString);
     try {
-      if (await canLaunchUrl(url)) {
-        await launchUrl(url, mode: LaunchMode.externalApplication);
-      } else {
-        _showSnackBar("Bağlantı açılamadı: $urlString");
+      // Direct launch is more robust in modern Flutter/Android versions and avoids query blockages
+      final launched = await launchUrl(url, mode: LaunchMode.externalApplication);
+      if (!launched) {
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        } else {
+          _showSnackBar("Bağlantı açılamadı: $urlString");
+        }
       }
     } catch (e) {
-      _showSnackBar("Hata oluştu: $e");
+      try {
+        if (await canLaunchUrl(url)) {
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        } else {
+          _showSnackBar("Bağlantı açılamadı: $urlString");
+        }
+      } catch (_) {
+        _showSnackBar("Hata oluştu: $e");
+      }
     }
   }
 
