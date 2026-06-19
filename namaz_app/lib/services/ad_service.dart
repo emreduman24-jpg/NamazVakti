@@ -43,7 +43,7 @@ class AdService {
 
   // Set to true to test ad placements on physical devices in release/TestFlight builds.
   // Set to false before publishing to the App Store / Play Store.
-  static const bool _forceTestAdsInRelease = true;
+  static const bool _forceTestAdsInRelease = false;
 
   /// Returns the appropriate Banner Ad Unit ID based on platform and debug mode
   static String get bannerAdUnitId {
