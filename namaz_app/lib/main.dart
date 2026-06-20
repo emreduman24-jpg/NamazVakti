@@ -289,18 +289,33 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initializeApp() async {
     final themeStr = await _repository.getThemeMode();
     final isLocSet = await _repository.isLocationSelected();
-    await _checkBlockStatus();
-    await _checkPremiumStatus();
-    await _checkAnnouncements(); // Fetch once on startup
 
+    if (mounted) {
+      setState(() {
+        _themeMode = _parseThemeMode(themeStr);
+        _locationSelected = isLocSet;
+        _loading = false;
+      });
+    }
+
+    // Run slow network operations asynchronously in the background
+    _runBackgroundNetworkInit();
+  }
+
+  Future<void> _runBackgroundNetworkInit() async {
     // Prefetch location and mosques in background on app startup
     LocationCacheService().prefetchLocationAndMosques();
 
-    setState(() {
-      _themeMode = _parseThemeMode(themeStr);
-      _locationSelected = isLocSet;
-      _loading = false;
-    });
+    // Run Firestore checkBlockStatus, checkPremiumStatus and checkAnnouncements concurrently
+    try {
+      await Future.wait([
+        _checkBlockStatus(),
+        _checkPremiumStatus(),
+        _checkAnnouncements(),
+      ]);
+    } catch (e) {
+      print("Error in background network init: $e");
+    }
   }
 
   ThemeMode _parseThemeMode(String mode) {
