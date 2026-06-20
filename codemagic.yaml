@@ -4,6 +4,8 @@ workflows:
     instance_type: mac_mini_m1
     max_build_duration: 60
     environment:
+      groups:
+        - app_store_credentials
       flutter: stable
       xcode: latest
     triggering:
@@ -12,12 +14,22 @@ workflows:
       branch_patterns:
         - pattern: 'main'
     scripts:
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "com.emreduman.namazvakitleri" --type IOS_APP_STORE --create
+          keychain add-certificates
       - name: Build Flutter iOS app
         script: |
           cd namaz_app
           flutter pub get
-          flutter build ios --release --no-codesign
-          cd build/ios/iphoneos
-          zip -r Runner.zip Runner.app
+          flutter build ipa --release --export-options-plist=$HOME/export_options.plist
     artifacts:
-      - namaz_app/build/ios/iphoneos/*.zip
+      - namaz_app/build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+
