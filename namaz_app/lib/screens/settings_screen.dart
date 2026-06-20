@@ -1202,13 +1202,14 @@ class SettingsScreenState extends State<SettingsScreen> {
                                                 borderRadius: BorderRadius.circular(30),
                                               ),
                                             ),
-                                            onPressed: () {
-                                              Navigator.push(
+                                            onPressed: () async {
+                                              await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (_) => const PremiumScreen(),
                                                 ),
                                               );
+                                              loadSettings(showLoading: false);
                                             },
                                             child: const Text(
                                               "Şimdi Keşfet",
@@ -1307,13 +1308,14 @@ class SettingsScreenState extends State<SettingsScreen> {
                       title: "Reklamlardan Kurtul",
                       subtitle: "Sadece 30 saniyenizi ayırarak destek olun",
                       gradientColors: [const Color(0xFFE2B93C), const Color(0xFFD4AF37)],
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => const PremiumScreen(),
                           ),
                         );
+                        loadSettings(showLoading: false);
                       },
                       isLast: true,
                     ),
