@@ -23,6 +23,8 @@ workflows:
           keychain initialize
           app-store-connect fetch-signing-files "com.emreduman.namazvakitleri" --type IOS_APP_STORE --create
           keychain add-certificates
+          xcode-project use-profiles
+
       - name: Build Flutter iOS app
         script: |
           cd namaz_app
