@@ -245,19 +245,6 @@ class _MyAppState extends State<MyApp> {
     try {
       final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-      // 1. Request permissions
-      NotificationSettings settings = await messaging.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
-
-      print('FCM Permission authorizationStatus: ${settings.authorizationStatus}');
-
       // 2. Get FCM Token first and save to Firestore
       try {
         String? token = await messaging.getToken();

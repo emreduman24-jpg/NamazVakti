@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
@@ -477,6 +479,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   Future<void> _requestNotificationPermission() async {
     await _notificationService.init();
     await _notificationService.requestPermissions();
+
+    // Also explicitly request Firebase Messaging permission
+    try {
+      final FirebaseMessaging messaging = FirebaseMessaging.instance;
+      await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      
+      // Get the token and save it to Firestore right away
+      final String? token = await messaging.getToken();
+      if (token != null) {
+        final prefs = await SharedPreferences.getInstance();
+        final String? docId = prefs.getString('guest_uuid');
+        if (docId != null && docId.isNotEmpty) {
+          await FirebaseFirestore.instance.collection('users').doc(docId).update({
+            'fcmToken': token,
+            'tokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
+          });
+          print('FCM Token registered after onboarding permission grant: $token');
+        }
+      }
+    } catch (e) {
+      debugPrint("FCM post-onboarding permission error: $e");
+    }
+
     _showSnackBar("Bildirim izni başarıyla alındı.", success: true);
     _goToNextPage();
   }
