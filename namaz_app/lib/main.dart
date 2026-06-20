@@ -196,10 +196,12 @@ class _MyAppState extends State<MyApp> {
             
         if (doc.exists) {
           final isPremium = doc.data()?['isPremium'] ?? false;
+          final isSimulated = prefs.getBool('is_simulated_premium') ?? false;
+          final targetPremium = isPremium || isSimulated;
           final localIsPremium = prefs.getBool('is_premium') ?? false;
-          if (isPremium != localIsPremium) {
-            await prefs.setBool('is_premium', isPremium);
-            print("Premium status updated dynamically from Firestore for $docId: $isPremium");
+          if (targetPremium != localIsPremium) {
+            await prefs.setBool('is_premium', targetPremium);
+            print("Premium status updated dynamically from Firestore for $docId: $targetPremium");
           }
         } else {
           // If guest document doesn't exist, create it in Firestore preserving current premium status

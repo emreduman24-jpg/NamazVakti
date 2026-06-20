@@ -77,13 +77,15 @@ class BillingService {
     try {
       final isActive = customerInfo.entitlements.active.containsKey(_entitlementId);
       final prefs = await SharedPreferences.getInstance();
+      final isSimulated = prefs.getBool('is_simulated_premium') ?? false;
+      final targetActive = isActive || isSimulated;
 
       // 1. Update SharedPreferences
       final localIsPremium = prefs.getBool('is_premium') ?? false;
-      if (localIsPremium != isActive) {
-        await prefs.setBool('is_premium', isActive);
+      if (localIsPremium != targetActive) {
+        await prefs.setBool('is_premium', targetActive);
         if (kDebugMode) {
-          print("RevenueCat: Updated local premium status to: $isActive");
+          print("RevenueCat: Updated local premium status to: $targetActive (Simulated: $isSimulated)");
         }
       }
 
@@ -95,10 +97,10 @@ class BillingService {
         final docSnap = await docRef.get();
         if (docSnap.exists) {
           final dbIsPremium = docSnap.data()?['isPremium'] ?? false;
-          if (dbIsPremium != isActive) {
-            await docRef.update({'isPremium': isActive});
+          if (dbIsPremium != targetActive) {
+            await docRef.update({'isPremium': targetActive});
             if (kDebugMode) {
-              print("RevenueCat: Synchronized premium status ($isActive) with Firestore for $docId");
+              print("RevenueCat: Synchronized premium status ($targetActive) with Firestore for $docId");
             }
           }
         }
