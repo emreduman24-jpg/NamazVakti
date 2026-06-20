@@ -900,6 +900,7 @@ out center body;
 
   // Zekat Hesaplayici State
   final TextEditingController _goldController = TextEditingController();
+  final TextEditingController _goldPriceController = TextEditingController(text: "3000");
   final TextEditingController _cashController = TextEditingController();
   final TextEditingController _businessController = TextEditingController();
   final TextEditingController _debtsController = TextEditingController();
@@ -1051,6 +1052,7 @@ out center body;
     _diniHocaInputController.dispose();
     _diniHocaScrollController.dispose();
     _goldController.dispose();
+    _goldPriceController.dispose();
     _cashController.dispose();
     _businessController.dispose();
     _debtsController.dispose();
@@ -6656,6 +6658,7 @@ out center body;
     required IconData prefixIcon,
     required Color iconColor,
     required bool dark,
+    ValueChanged<String>? onChanged,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -6670,6 +6673,7 @@ out center body;
       child: TextField(
         controller: controller,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: onChanged,
         style: TextStyle(
           color: _textColor,
           fontSize: 14.5,
@@ -6878,8 +6882,8 @@ out center body;
 
   Widget _buildZekatHesaplama() {
     final bool dark = _isDark;
-    const double goldPrice = 3000.0;
-    const double nisapLimit = 80.18 * goldPrice;
+    final double goldPrice = double.tryParse(_goldPriceController.text) ?? 3000.0;
+    final double nisapLimit = 80.18 * goldPrice;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
@@ -6964,6 +6968,27 @@ out center body;
           ),
 
           // 2. Input Fields Section
+          Text(
+            "Hesaplama Ayarları",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: _greenColor,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildZekatInputField(
+            controller: _goldPriceController,
+            labelText: "Altın Gram Fiyatı (TL)",
+            prefixIcon: Icons.currency_lira_rounded,
+            iconColor: _goldColor,
+            dark: dark,
+            onChanged: (_) {
+              setState(() {});
+            },
+          ),
+          const SizedBox(height: 12),
           Text(
             "Zekata Tabi Varlıklarınızı Girin",
             style: TextStyle(
