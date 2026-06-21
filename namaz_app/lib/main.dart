@@ -130,8 +130,11 @@ class _MyAppState extends State<MyApp> {
         final prefs = await SharedPreferences.getInstance();
         final String? lastId = prefs.getString('last_announcement_id');
 
-        if (lastId != announcementId) {
-          // Save the new ID immediately so we don't trigger it again
+        if (lastId == null) {
+          // Ilk kez acilista mevcut son duyuruyu "goruldu" olarak kaydet, bildirim gosterme
+          await prefs.setString('last_announcement_id', announcementId);
+        } else if (lastId != announcementId) {
+          // Sonraki acilislarda yeni bir duyuru gelmisse bildirimi goster
           await prefs.setString('last_announcement_id', announcementId);
 
           // Get integer ID from timestamp for Notification service
