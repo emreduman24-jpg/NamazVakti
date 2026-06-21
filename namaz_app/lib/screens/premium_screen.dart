@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -849,7 +850,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
           _showSnackBar("Ödeme işlemi tamamlanırken hata oluştu.");
         }
       }
-    } else {
+    } else if (kDebugMode) {
       // Fallback: If RevenueCat package is not loaded, do the previous simulated purchase
       setState(() => _isLoading = true);
       await Future.delayed(const Duration(milliseconds: 1500));
@@ -884,6 +885,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
       } catch (e) {
         if (mounted) setState(() => _isLoading = false);
         _showSnackBar("Ödeme işlemi tamamlanırken hata oluştu.");
+      }
+    } else {
+      if (mounted) {
+        _showSnackBar("Ödeme seçenekleri şu anda yüklenemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.");
       }
     }
   }
