@@ -109,53 +109,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<void> _checkAnnouncements() async {
-    try {
-      final querySnapshot = await FirebaseFirestore.instance
-          .collection('announcements')
-          .orderBy('id', descending: true)
-          .limit(1)
-          .get()
-          .timeout(const Duration(seconds: 4));
 
-      if (querySnapshot.docs.isNotEmpty) {
-        final doc = querySnapshot.docs.first;
-        final data = doc.data();
-        final idVal = data['id'];
-        if (idVal == null) return;
-        final String announcementId = idVal.toString();
-        final String title = data['title'] ?? 'Yeni Bildirim';
-        final String body = data['body'] ?? '';
-
-        final prefs = await SharedPreferences.getInstance();
-        final String? lastId = prefs.getString('last_announcement_id');
-
-        if (lastId == null) {
-          // Ilk kez acilista mevcut son duyuruyu "goruldu" olarak kaydet, bildirim gosterme
-          await prefs.setString('last_announcement_id', announcementId);
-        } else if (lastId != announcementId) {
-          // Sonraki acilislarda yeni bir duyuru gelmisse bildirimi goster
-          await prefs.setString('last_announcement_id', announcementId);
-
-          // Get integer ID from timestamp for Notification service
-          final notificationId = int.tryParse(
-                announcementId.substring(
-                  announcementId.length > 6 ? announcementId.length - 6 : 0,
-                ),
-              ) ??
-              999;
-
-          await NotificationService().showNotification(
-            id: notificationId,
-            title: title,
-            body: body,
-          );
-        }
-      }
-    } catch (e) {
-      print("Announcement check error: $e");
-    }
-  }
 
   Future<void> _checkBlockStatus() async {
     try {
@@ -311,12 +265,11 @@ class _MyAppState extends State<MyApp> {
     // Prefetch location and mosques in background on app startup
     LocationCacheService().prefetchLocationAndMosques();
 
-    // Run Firestore checkBlockStatus, checkPremiumStatus and checkAnnouncements concurrently
+    // Run Firestore checkBlockStatus and checkPremiumStatus concurrently
     try {
       await Future.wait([
         _checkBlockStatus(),
         _checkPremiumStatus(),
-        _checkAnnouncements(),
       ]);
     } catch (e) {
       print("Error in background network init: $e");
