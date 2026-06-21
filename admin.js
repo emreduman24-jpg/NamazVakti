@@ -1511,7 +1511,9 @@ async function handleSendNotification(e) {
             pushError = `Topic error: ${topicResponse.status} - ${text}`;
           }
 
+          /*
           // B. Send directly to each individual device token (for emulators & devices whose topic subscription failed)
+          // NOTE: Commented out to prevent duplicate notifications on devices subscribed to the topic.
           const tokens = cache.users
             .map(u => u.fcmToken)
             .filter(t => t && t.trim() !== '');
@@ -1530,6 +1532,7 @@ async function handleSendNotification(e) {
               console.error("Error sending direct notification to token:", token, err);
             }
           }
+          */
         } else {
           // Legacy API Fallback
           const url = "https://fcm.googleapis.com/fcm/send";
