@@ -217,6 +217,13 @@ class _MyAppState extends State<MyApp> {
       );
       debugInfo['requestPermissionStatus'] = requestSettings.authorizationStatus.toString();
 
+      // Ensure foreground notifications are visible natively on iOS
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
       if (Platform.isIOS) {
         final settings = await messaging.getNotificationSettings();
         debugInfo['permissionStatus'] = settings.authorizationStatus.toString();

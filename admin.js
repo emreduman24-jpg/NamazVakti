@@ -1431,7 +1431,8 @@ async function sendFcmMessage(serviceAccount, accessToken, targetType, targetVal
       apns: {
         payload: {
           aps: {
-            sound: "default"
+            sound: "default",
+            "content-available": 1
           }
         }
       }

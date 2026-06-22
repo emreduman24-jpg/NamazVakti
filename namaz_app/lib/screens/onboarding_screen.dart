@@ -489,6 +489,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         sound: true,
       );
       
+      // Ensure foreground notifications are visible natively on iOS
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+      
       // Fetch token and save to Firestore in the background to avoid freezing the UI
       _registerFCMTokenInBackground(messaging);
     } catch (e) {
@@ -544,6 +551,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             await FirebaseFirestore.instance.collection('users').doc(docId).update({
               'notificationDebugInfo': debugInfo,
             });
+          }
+          
+          try {
+            await messaging.subscribeToTopic('announcements');
+            print('Subscribed to announcements topic during onboarding');
+          } catch (e) {
+            print('Error subscribing to topic announcements during onboarding: $e');
           }
         }
       } catch (tokenError) {
