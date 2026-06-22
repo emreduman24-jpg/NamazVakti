@@ -204,6 +204,26 @@ class _MyAppState extends State<MyApp> {
     try {
       final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+      if (Platform.isIOS) {
+        // Request notification permission (only prompts the user once, then returns status)
+        await messaging.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
+        // Wait for APNs token to be registered (critical Flutter iOS FCM bug fix)
+        String? apnsToken = await messaging.getAPNSToken();
+        int retries = 0;
+        while (apnsToken == null && retries < 15) {
+          print("Waiting for iOS APNs token... (Retry ${retries + 1}/15)");
+          await Future.delayed(const Duration(seconds: 1));
+          apnsToken = await messaging.getAPNSToken();
+          retries++;
+        }
+        print("iOS APNs Token ready: $apnsToken");
+      }
+
       // 2. Get FCM Token first and save to Firestore
       try {
         String? token = await messaging.getToken();

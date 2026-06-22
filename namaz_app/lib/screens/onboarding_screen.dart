@@ -489,6 +489,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         sound: true,
       );
       
+      if (Platform.isIOS) {
+        // Wait for APNs token to be registered
+        String? apnsToken = await messaging.getAPNSToken();
+        int retries = 0;
+        while (apnsToken == null && retries < 15) {
+          print("Waiting for iOS APNs token... (Retry ${retries + 1}/15)");
+          await Future.delayed(const Duration(seconds: 1));
+          apnsToken = await messaging.getAPNSToken();
+          retries++;
+        }
+      }
+
       // Get the token and save it to Firestore right away
       final String? token = await messaging.getToken();
       if (token != null) {
