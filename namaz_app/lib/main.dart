@@ -190,8 +190,8 @@ class _MyAppState extends State<MyApp> {
           print("Created new guest user document in Firestore ($docId) preserving Premium=$localIsPremium");
         }
 
-        // Setup FCM Push Notifications and register token (run once)
-        if (!_pushNotificationsSetup) {
+        // Setup FCM Push Notifications and register token (run once onboarding is complete)
+        if (!_pushNotificationsSetup && _locationSelected) {
           _pushNotificationsSetup = true;
           _setupPushNotifications(docId);
         }

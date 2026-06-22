@@ -489,19 +489,33 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         sound: true,
       );
       
+      // Fetch token and save to Firestore in the background to avoid freezing the UI
+      _registerFCMTokenInBackground(messaging);
+    } catch (e) {
+      debugPrint("FCM post-onboarding permission error: $e");
+    }
+
+    _showSnackBar("Bildirim izni başarıyla alındı.", success: true);
+    _goToNextPage();
+  }
+
+  // Background helper to wait for APNs and fetch FCM token asynchronously
+  Future<void> _registerFCMTokenInBackground(FirebaseMessaging messaging) async {
+    try {
       if (Platform.isIOS) {
-        // Wait for APNs token to be registered
+        // Wait for APNs token to be registered (critical iOS FCM bug fix)
         String? apnsToken = await messaging.getAPNSToken();
         int retries = 0;
         while (apnsToken == null && retries < 15) {
-          print("Waiting for iOS APNs token... (Retry ${retries + 1}/15)");
+          print("Onboarding background: Waiting for iOS APNs token... (Retry ${retries + 1}/15)");
           await Future.delayed(const Duration(seconds: 1));
           apnsToken = await messaging.getAPNSToken();
           retries++;
         }
+        print("Onboarding background: iOS APNs Token ready: $apnsToken");
       }
 
-      // Get the token and save it to Firestore right away
+      // Get the token and save it to Firestore
       final String? token = await messaging.getToken();
       if (token != null) {
         final prefs = await SharedPreferences.getInstance();
@@ -511,15 +525,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             'fcmToken': token,
             'tokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
           });
-          print('FCM Token registered after onboarding permission grant: $token');
+          print('FCM Token registered in background after onboarding: $token');
         }
       }
     } catch (e) {
-      debugPrint("FCM post-onboarding permission error: $e");
+      debugPrint("FCM background token registration error: $e");
     }
-
-    _showSnackBar("Bildirim izni başarıyla alındı.", success: true);
-    _goToNextPage();
   }
 
   // Runs the beautiful loading process in a dialog, then completes to Prayer Times Preview!
