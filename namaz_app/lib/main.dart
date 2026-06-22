@@ -208,33 +208,52 @@ class _MyAppState extends State<MyApp> {
         'platform': Platform.isIOS ? 'iOS' : 'Android',
       };
 
+      // 1. Request notification permission
+      final requestSettings = await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+        provisional: false,
+      );
+      debugInfo['requestPermissionStatus'] = requestSettings.authorizationStatus.toString();
+
       if (Platform.isIOS) {
         final settings = await messaging.getNotificationSettings();
         debugInfo['permissionStatus'] = settings.authorizationStatus.toString();
 
-        // Request notification permission (only prompts the user once, then returns status)
-        final requestSettings = await messaging.requestPermission(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
-        debugInfo['requestPermissionStatus'] = requestSettings.authorizationStatus.toString();
-
-        // Wait for APNs token to be registered (critical Flutter iOS FCM bug fix)
+        // Wait for APNs token with exponential backoff
+        // iOS needs time after registerForRemoteNotifications() to get the token from Apple servers
         String? apnsToken = await messaging.getAPNSToken();
         int retries = 0;
-        while (apnsToken == null && retries < 15) {
-          print("Waiting for iOS APNs token... (Retry ${retries + 1}/15)");
-          await Future.delayed(const Duration(seconds: 1));
+        const maxRetries = 20;
+        while (apnsToken == null && retries < maxRetries) {
+          final waitSeconds = retries < 5 ? 1 : (retries < 10 ? 2 : 3);
+          print("Waiting for iOS APNs token... (Retry ${retries + 1}/$maxRetries, wait ${waitSeconds}s)");
+          await Future.delayed(Duration(seconds: waitSeconds));
           apnsToken = await messaging.getAPNSToken();
           retries++;
         }
         debugInfo['apnsToken'] = apnsToken ?? 'null';
         debugInfo['apnsRetries'] = retries;
-        print("iOS APNs Token ready: $apnsToken");
+        print("iOS APNs Token result after $retries retries: $apnsToken");
       }
 
-      // 2. Get FCM Token first and save to Firestore
+      // 2. Set up onTokenRefresh listener BEFORE attempting getToken()
+      // This ensures we capture the token even if it arrives later (async from Apple)
+      messaging.onTokenRefresh.listen((newToken) async {
+        print('FCM Token refreshed: $newToken');
+        try {
+          await FirebaseFirestore.instance.collection('users').doc(docId).update({
+            'fcmToken': newToken,
+            'fcmTokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
+          });
+          print('Saved refreshed FCM token to Firestore');
+        } catch (err) {
+          print('Error saving refreshed FCM token: $err');
+        }
+      });
+
+      // 3. Try to get FCM Token and save to Firestore
       try {
         String? token = await messaging.getToken();
         debugInfo['fcmTokenResult'] = token ?? 'null';
@@ -247,7 +266,7 @@ class _MyAppState extends State<MyApp> {
             print('Error updating fcmToken in Firestore: $err');
           });
         } else {
-          print('FCM Token is null');
+          print('FCM Token is null — will be saved when onTokenRefresh fires');
           await FirebaseFirestore.instance.collection('users').doc(docId).update({
             'notificationDebugInfo': debugInfo,
           }).catchError((err) {
@@ -256,7 +275,7 @@ class _MyAppState extends State<MyApp> {
         }
       } catch (tokenError) {
         debugInfo['fcmTokenError'] = tokenError.toString();
-        print("Error getting FCM Token: $tokenError");
+        print("Error getting FCM Token: $tokenError — will rely on onTokenRefresh");
         await FirebaseFirestore.instance.collection('users').doc(docId).update({
           'notificationDebugInfo': debugInfo,
         }).catchError((err) {
@@ -264,15 +283,26 @@ class _MyAppState extends State<MyApp> {
         });
       }
 
-      // 3. Subscribe to announcements topic with safety try-catch
+      // 4. Subscribe to announcements topic (always attempt, even if token failed)
+      // On iOS, if the APNs token arrives late, Firebase will queue the subscription
+      // and apply it once the token is available.
       try {
         await messaging.subscribeToTopic('announcements');
         print('Subscribed to announcements topic');
       } catch (topicError) {
         print('Error subscribing to topic announcements: $topicError');
+        // Retry topic subscription after a delay
+        Future.delayed(const Duration(seconds: 10), () async {
+          try {
+            await messaging.subscribeToTopic('announcements');
+            print('Subscribed to announcements topic (delayed retry)');
+          } catch (e) {
+            print('Delayed topic subscription also failed: $e');
+          }
+        });
       }
 
-      // 4. Set up foreground message handler
+      // 5. Set up foreground message handler
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         print('Foreground push message received: ${message.messageId}');
         if (message.notification != null) {
