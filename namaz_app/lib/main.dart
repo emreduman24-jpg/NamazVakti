@@ -203,14 +203,22 @@ class _MyAppState extends State<MyApp> {
   Future<void> _setupPushNotifications(String docId) async {
     try {
       final FirebaseMessaging messaging = FirebaseMessaging.instance;
+      Map<String, dynamic> debugInfo = {
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
+        'platform': Platform.isIOS ? 'iOS' : 'Android',
+      };
 
       if (Platform.isIOS) {
+        final settings = await messaging.getNotificationSettings();
+        debugInfo['permissionStatus'] = settings.authorizationStatus.toString();
+
         // Request notification permission (only prompts the user once, then returns status)
-        await messaging.requestPermission(
+        final requestSettings = await messaging.requestPermission(
           alert: true,
           badge: true,
           sound: true,
         );
+        debugInfo['requestPermissionStatus'] = requestSettings.authorizationStatus.toString();
 
         // Wait for APNs token to be registered (critical Flutter iOS FCM bug fix)
         String? apnsToken = await messaging.getAPNSToken();
@@ -221,24 +229,39 @@ class _MyAppState extends State<MyApp> {
           apnsToken = await messaging.getAPNSToken();
           retries++;
         }
+        debugInfo['apnsToken'] = apnsToken ?? 'null';
+        debugInfo['apnsRetries'] = retries;
         print("iOS APNs Token ready: $apnsToken");
       }
 
       // 2. Get FCM Token first and save to Firestore
       try {
         String? token = await messaging.getToken();
+        debugInfo['fcmTokenResult'] = token ?? 'null';
         if (token != null) {
           print('FCM Token: $token');
           await FirebaseFirestore.instance.collection('users').doc(docId).update({
             'fcmToken': token,
+            'notificationDebugInfo': debugInfo,
           }).catchError((err) {
             print('Error updating fcmToken in Firestore: $err');
           });
         } else {
           print('FCM Token is null');
+          await FirebaseFirestore.instance.collection('users').doc(docId).update({
+            'notificationDebugInfo': debugInfo,
+          }).catchError((err) {
+            print('Error updating debugInfo in Firestore: $err');
+          });
         }
       } catch (tokenError) {
+        debugInfo['fcmTokenError'] = tokenError.toString();
         print("Error getting FCM Token: $tokenError");
+        await FirebaseFirestore.instance.collection('users').doc(docId).update({
+          'notificationDebugInfo': debugInfo,
+        }).catchError((err) {
+          print('Error updating debugInfo in Firestore: $err');
+        });
       }
 
       // 3. Subscribe to announcements topic with safety try-catch

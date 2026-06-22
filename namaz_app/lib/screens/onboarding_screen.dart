@@ -502,7 +502,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   // Background helper to wait for APNs and fetch FCM token asynchronously
   Future<void> _registerFCMTokenInBackground(FirebaseMessaging messaging) async {
     try {
+      Map<String, dynamic> debugInfo = {
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
+        'platform': Platform.isIOS ? 'iOS' : 'Android',
+        'context': 'onboarding',
+      };
+
       if (Platform.isIOS) {
+        final settings = await messaging.getNotificationSettings();
+        debugInfo['permissionStatus'] = settings.authorizationStatus.toString();
+
         // Wait for APNs token to be registered (critical iOS FCM bug fix)
         String? apnsToken = await messaging.getAPNSToken();
         int retries = 0;
@@ -512,20 +521,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
           apnsToken = await messaging.getAPNSToken();
           retries++;
         }
+        debugInfo['apnsToken'] = apnsToken ?? 'null';
+        debugInfo['apnsRetries'] = retries;
         print("Onboarding background: iOS APNs Token ready: $apnsToken");
       }
 
       // Get the token and save it to Firestore
-      final String? token = await messaging.getToken();
-      if (token != null) {
+      try {
+        final String? token = await messaging.getToken();
+        debugInfo['fcmTokenResult'] = token ?? 'null';
+        final prefs = await SharedPreferences.getInstance();
+        final String? docId = prefs.getString('guest_uuid');
+        if (docId != null && docId.isNotEmpty) {
+          if (token != null) {
+            await FirebaseFirestore.instance.collection('users').doc(docId).update({
+              'fcmToken': token,
+              'tokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
+              'notificationDebugInfo': debugInfo,
+            });
+            print('FCM Token registered in background after onboarding: $token');
+          } else {
+            await FirebaseFirestore.instance.collection('users').doc(docId).update({
+              'notificationDebugInfo': debugInfo,
+            });
+          }
+        }
+      } catch (tokenError) {
+        debugInfo['fcmTokenError'] = tokenError.toString();
         final prefs = await SharedPreferences.getInstance();
         final String? docId = prefs.getString('guest_uuid');
         if (docId != null && docId.isNotEmpty) {
           await FirebaseFirestore.instance.collection('users').doc(docId).update({
-            'fcmToken': token,
-            'tokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
+            'notificationDebugInfo': debugInfo,
           });
-          print('FCM Token registered in background after onboarding: $token');
         }
       }
     } catch (e) {
