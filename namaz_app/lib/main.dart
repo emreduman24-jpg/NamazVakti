@@ -190,8 +190,8 @@ class _MyAppState extends State<MyApp> {
           print("Created new guest user document in Firestore ($docId) preserving Premium=$localIsPremium");
         }
 
-        // Setup FCM Push Notifications and register token (run once onboarding is complete)
-        if (!_pushNotificationsSetup && _locationSelected) {
+        // Setup FCM Push Notifications and register token (run once user registration is ready)
+        if (!_pushNotificationsSetup) {
           _pushNotificationsSetup = true;
           _setupPushNotifications(docId);
         }
@@ -255,8 +255,12 @@ class _MyAppState extends State<MyApp> {
             'fcmTokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
           });
           print('Saved refreshed FCM token to Firestore');
+
+          // Retry topic subscription as well on token refresh
+          await messaging.subscribeToTopic('announcements');
+          print('Subscribed to announcements topic on token refresh');
         } catch (err) {
-          print('Error saving refreshed FCM token: $err');
+          print('Error saving refreshed FCM token or subscribing to topic: $err');
         }
       });
 

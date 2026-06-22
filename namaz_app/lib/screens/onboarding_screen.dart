@@ -644,6 +644,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       await prefs.setString('notification_reminder', _selectedReminderTime);
 
       await _notificationService.schedulePrayerAlarms(times);
+
+      // Explicitly guarantee announcements topic subscription when onboarding is completed
+      try {
+        await FirebaseMessaging.instance.subscribeToTopic('announcements');
+        print('Announcements topic subscription guaranteed during onboarding complete');
+      } catch (e) {
+        print('Error subscribing to topic announcements on onboarding complete: $e');
+      }
     } catch (e) {
       debugPrint("Setup background save error: $e");
     }

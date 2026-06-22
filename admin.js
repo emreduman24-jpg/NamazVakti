@@ -1429,8 +1429,16 @@ async function sendFcmMessage(serviceAccount, accessToken, targetType, targetVal
         }
       },
       apns: {
+        headers: {
+          "apns-push-type": "alert",
+          "apns-priority": "10"
+        },
         payload: {
           aps: {
+            alert: {
+              title: title,
+              body: body
+            },
             sound: "default",
             "content-available": 1
           }
@@ -1503,37 +1511,57 @@ async function handleSendNotification(e) {
           // FCM HTTP v1 API
           const accessToken = await generateGoogleOAuth2Token(serviceAccount);
           
-          // A. Send to Topic
-          const topicResponse = await sendFcmMessage(serviceAccount, accessToken, "topic", "announcements", title, body);
-          if (topicResponse.ok) {
-            pushSent = true;
-          } else {
-            const text = await topicResponse.text();
-            pushError = `Topic error: ${topicResponse.status} - ${text}`;
-          }
-
-          /*
-          // B. Send directly to each individual device token (for emulators & devices whose topic subscription failed)
-          // NOTE: Commented out to prevent duplicate notifications on devices subscribed to the topic.
+          // Send directly to each individual device token to get direct error tracking and bypass topic subscription lag
           const tokens = cache.users
             .map(u => u.fcmToken)
             .filter(t => t && t.trim() !== '');
-          
+
           console.log(`Sending direct FCM notifications to ${tokens.length} tokens...`);
+          let successCount = 0;
+          let failCount = 0;
+          let iosErrors = [];
+
           for (const token of tokens) {
             try {
               const tokenResponse = await sendFcmMessage(serviceAccount, accessToken, "token", token, title, body);
               if (!tokenResponse.ok) {
-                const text = await tokenResponse.text();
+                const text = await tokenResponse.ok ? "" : await tokenResponse.text();
+                failCount++;
                 console.warn(`Direct send to token failed: ${token}, status: ${tokenResponse.status}, message: ${text}`);
+                try {
+                  const errJson = JSON.parse(text);
+                  const errorMsg = errJson.error ? errJson.error.message : text;
+                  const errorCode = errJson.error ? errJson.error.status : 'UNKNOWN';
+                  if (text.includes("APNS") || text.includes("apns") || text.includes("AUTH") || text.includes("UNREGISTERED") || text.includes("THIRD_PARTY")) {
+                    iosErrors.push(`${errorCode}: ${errorMsg}`);
+                  }
+                } catch (_) {
+                  if (text.includes("APNS") || text.includes("apns") || text.includes("AUTH")) {
+                    iosErrors.push(`Error: ${text}`);
+                  }
+                }
               } else {
+                successCount++;
                 console.log(`Successfully sent direct notification to token: ${token}`);
               }
             } catch (err) {
+              failCount++;
               console.error("Error sending direct notification to token:", token, err);
             }
           }
-          */
+
+          if (successCount > 0) {
+            pushSent = true;
+          }
+
+          if (failCount > 0) {
+            let errorSummary = `Gönderim tamamlandı. Başarılı: ${successCount}, Başarısız: ${failCount}.`;
+            if (iosErrors.length > 0) {
+              const uniqueErrors = [...new Set(iosErrors)].slice(0, 3);
+              errorSummary += ` Tespit edilen hatalar: ${uniqueErrors.join(', ')}`;
+            }
+            pushError = errorSummary;
+          }
         } else {
           // Legacy API Fallback
           const url = "https://fcm.googleapis.com/fcm/send";
@@ -1577,10 +1605,14 @@ async function handleSendNotification(e) {
     // 3. Feedback to user
     if (fcmConfigStr) {
       if (pushSent) {
-        showToast("Bildirim yayınlandı ve tüm cihazlara anlık push bildirimi (HTTP v1) gönderildi.", "success");
+        if (pushError) {
+          showToast(`Bildirim kısmen gönderildi. ${pushError}`, "warning");
+        } else {
+          showToast("Bildirim yayınlandı ve tüm cihazlara anlık push bildirimi (HTTP v1) gönderildi.", "success");
+        }
       } else {
         console.error("FCM push error:", pushError);
-        showToast("Bildirim kaydedildi ancak push bildirimi gönderilemedi: " + pushError, "warning");
+        showToast("Bildirim kaydedildi ancak push bildirimi gönderilemedi: " + pushError, "danger");
       }
     } else {
       showToast("Bildirim kaydedildi (FCM anahtarı tanımlanmadığı için çevrimdışı push gönderilmedi).", "warning");
