@@ -1187,10 +1187,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     _goToNextPage();
                   }
                 } else if (_activePage == 4) {
-                  // Star Rating trigger before transitioning from Join Us to Notification Request
-                  setState(() {
-                    _showRatingDialog = true;
-                  });
+                  // Removed rating dialog trigger on onboarding page 4 to comply with Apple Guideline 5.6.3
+                  _goToNextPage();
                 } else if (_activePage == 5) {
                   _requestNotificationPermission();
                 } else if (_activePage == 6) {
