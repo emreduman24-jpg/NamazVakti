@@ -1266,114 +1266,129 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     final String district = _location['districtName'] ?? '';
     final bool hasLocation = _location['districtId'] != null;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
-          // Dynamic street map illustration
-          Expanded(
-            flex: 4,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    width: double.infinity,
-                    color: const Color(0xFF142442),
-                    child: CustomPaint(
-                      painter: DetectedLocationIllustrationPainter(),
-                    ),
-                  ),
-                ),
-                // Location badge card floating
-                Positioned(
-                  bottom: 16,
-                  child: GestureDetector(
-                    onTap: _showManualLocationModal,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: hasLocation ? Colors.white : const Color(0xFFFFF9E6),
-                        borderRadius: BorderRadius.circular(24),
-                        border: hasLocation
-                            ? Border.all(color: Colors.white)
-                            : Border.all(color: const Color(0xFFF3C06F).withOpacity(0.5)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 12,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isSmallScreen = screenHeight < 750;
+    
+    final double illustrationHeight = isSmallScreen ? screenHeight * 0.28 : screenHeight * 0.36;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 70),
+                    // Dynamic street map illustration
+                    SizedBox(
+                      height: illustrationHeight,
+                      width: double.infinity,
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: [
-                          Icon(
-                            hasLocation ? Icons.my_location : Icons.location_off_outlined,
-                            color: hasLocation ? const Color(0xFF90B49C) : const Color(0xFFE5A93B),
-                            size: 18,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              width: double.infinity,
+                              color: const Color(0xFF142442),
+                              child: CustomPaint(
+                                painter: DetectedLocationIllustrationPainter(),
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            hasLocation
-                                ? "${_formatTurkishCity(city)} / ${_formatTurkishDistrict(district)}"
-                                : "Konum Seçilmedi (Seçmek için Dokunun)",
-                            style: TextStyle(
-                              color: hasLocation ? const Color(0xFF0F1B31) : const Color(0xFF8C6000),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                          // Location badge card floating
+                          Positioned(
+                            bottom: 16,
+                            child: GestureDetector(
+                              onTap: _showManualLocationModal,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: hasLocation ? Colors.white : const Color(0xFFFFF9E6),
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: hasLocation
+                                      ? Border.all(color: Colors.white)
+                                      : Border.all(color: const Color(0xFFF3C06F).withOpacity(0.5)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 6),
+                                    ),
+                                  ],
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      hasLocation ? Icons.my_location : Icons.location_off_outlined,
+                                      color: hasLocation ? const Color(0xFF90B49C) : const Color(0xFFE5A93B),
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      hasLocation
+                                          ? "${_formatTurkishCity(city)} / ${_formatTurkishDistrict(district)}"
+                                          : "Konum Seçilmedi (Seçmek için Dokunun)",
+                                      style: TextStyle(
+                                        color: hasLocation ? const Color(0xFF0F1B31) : const Color(0xFF8C6000),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 32),
+                    // Texts
+                    const Text(
+                      "NAMAZ VAKİTLERİ",
+                      style: TextStyle(
+                        color: Color(0xFF8AA996),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Konumunuz",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Namaz vakitlerini doğru hesaplamak için konumunuzu kullanıyoruz. Ayrıca uygulama ayarlarından konumunuzu manuel olarak değiştirebilirsiniz.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
+                    ),
+                    const Spacer(flex: 1),
+                    const SizedBox(height: 120), // Reserved space for the bottom button
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-          const SizedBox(height: 32),
-          // Texts
-          Expanded(
-            flex: 4,
-            child: Column(
-              children: [
-                const Text(
-                  "NAMAZ VAKİTLERİ",
-                  style: TextStyle(
-                    color: Color(0xFF8AA996),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Konumunuz",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 28,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "Namaz vakitlerini doğru hesaplamak için konumunuzu kullanıyoruz. Ayrıca uygulama ayarlarından konumunuzu manuel olarak değiştirebilirsiniz.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 14,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -1412,74 +1427,85 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       'Yatsi': '22:35',
     };
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
-          // Subtitle and Title
-          const Text(
-            "Namaz vakitleri için",
-            style: TextStyle(color: Colors.white60, fontSize: 14),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            hasLocation ? "$city / $district" : "Konum Seçilmedi",
-            style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            "Diyanet İşleri Başkanlığı",
-            style: TextStyle(color: Color(0xFF90B49C), fontSize: 15, fontWeight: FontWeight.bold),
-          ),
-          const Text(
-            "İmsak: 18° - Yatsı: 17°",
-            style: TextStyle(color: Colors.white38, fontSize: 12),
-          ),
-          const SizedBox(height: 24),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 70),
+                    // Subtitle and Title
+                    const Text(
+                      "Namaz vakitleri için",
+                      style: TextStyle(color: Colors.white60, fontSize: 14),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      hasLocation ? "$city / $district" : "Konum Seçilmedi",
+                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Diyanet İşleri Başkanlığı",
+                      style: TextStyle(color: Color(0xFF90B49C), fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                    const Text(
+                      "İmsak: 18° - Yatsı: 17°",
+                      style: TextStyle(color: Colors.white38, fontSize: 12),
+                    ),
+                    const SizedBox(height: 24),
 
-          // Times Table
-          Expanded(
-            flex: 6,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF142442),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.04)),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildPreviewTimeRow("İmsak", today['Imsak'] ?? '03:33', false),
-                  const Divider(color: Colors.white10, height: 1),
-                  _buildPreviewTimeRow("Güneş", today['Gunes'] ?? '05:27', false),
-                  const Divider(color: Colors.white10, height: 1),
-                  _buildPreviewTimeRow("Öğle", today['Ogle'] ?? '13:05', false),
-                  const Divider(color: Colors.white10, height: 1),
-                  _buildPreviewTimeRow("İkindi", today['Ikindi'] ?? '16:54', false),
-                  const Divider(color: Colors.white10, height: 1),
-                  _buildPreviewTimeRow("Akşam", today['Aksam'] ?? '20:34', false),
-                  const Divider(color: Colors.white10, height: 1),
-                  _buildPreviewTimeRow("Yatsı", today['Yatsi'] ?? '22:20', false),
-                ],
+                    // Times Table
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF142442),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white.withOpacity(0.04)),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildPreviewTimeRow("İmsak", today['Imsak'] ?? '03:33', false),
+                          const Divider(color: Colors.white10, height: 16),
+                          _buildPreviewTimeRow("Güneş", today['Gunes'] ?? '05:27', false),
+                          const Divider(color: Colors.white10, height: 16),
+                          _buildPreviewTimeRow("Öğle", today['Ogle'] ?? '13:05', false),
+                          const Divider(color: Colors.white10, height: 16),
+                          _buildPreviewTimeRow("İkindi", today['Ikindi'] ?? '16:54', false),
+                          const Divider(color: Colors.white10, height: 16),
+                          _buildPreviewTimeRow("Akşam", today['Aksam'] ?? '20:34', false),
+                          const Divider(color: Colors.white10, height: 16),
+                          _buildPreviewTimeRow("Yatsı", today['Yatsi'] ?? '22:20', false),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Bottom text
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        "Her namazın başında hatırlatma alacaksınız. Bunu ayarlardan istediğiniz zaman değiştirebilirsiniz.",
+                        style: TextStyle(color: Colors.white54, fontSize: 12, height: 1.4),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const Spacer(flex: 1),
+                    const SizedBox(height: 140), // Spacer for dot indicators
+                  ],
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          // Bottom text
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              "Her namazın başında hatırlatma alacaksınız. Bunu ayarlardan istediğiniz zaman değiştirebilirsiniz.",
-              style: TextStyle(color: Colors.white54, fontSize: 12, height: 1.4),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 140), // Spacer for dot indicators
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -1554,73 +1580,77 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   // SCREEN 8: Theme Selection (Tema Seçimi)
   Widget _buildPageThemeSelection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        children: [
-          const SizedBox(height: 70),
-          // Category/Indicator
-          const Text(
-            "GÖRÜNÜM TERCİHİ",
-            style: TextStyle(
-              color: Color(0xFF8AA996),
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
-              letterSpacing: 1.5,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-          ),
-          const SizedBox(height: 10),
-          // Title
-          const Text(
-            "Nasıl görünmesini\nistersiniz?",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 28,
-              height: 1.25,
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Description
-          const Text(
-            "Uygulamanın temasını seçin. Bu ayarı dilediğiniz zaman ayarlardan değiştirebilirsiniz.",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-              height: 1.55,
-            ),
-          ),
-          const SizedBox(height: 24),
-          
-          // Theme Options (Light & Dark Stacked / Top and Bottom)
-          Expanded(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  // Light Mode Option
-                  _buildThemeCard(
-                    themeMode: 'light',
-                    title: "Aydınlık Tema",
-                    imagePath: 'assets/aydınlık_tema.png',
-                  ),
-                  const SizedBox(height: 16),
-                  // Dark Mode Option
-                  _buildThemeCard(
-                    themeMode: 'dark',
-                    title: "Karanlık Tema",
-                    imagePath: 'assets/karanlık_tema.png',
-                  ),
-                  const SizedBox(height: 20),
-                ],
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 70),
+                    // Category/Indicator
+                    const Text(
+                      "GÖRÜNÜM TERCİHİ",
+                      style: TextStyle(
+                        color: Color(0xFF8AA996),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Title
+                    const Text(
+                      "Nasıl görünmesini\nistersiniz?",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 28,
+                        height: 1.25,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Description
+                    const Text(
+                      "Uygulamanın temasını seçin. Bu ayarı dilediğiniz zaman ayarlardan değiştirebilirsiniz.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                        height: 1.55,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    
+                    // Light Mode Option
+                    _buildThemeCard(
+                      themeMode: 'light',
+                      title: "Aydınlık Tema",
+                      imagePath: 'assets/aydınlık_tema.png',
+                    ),
+                    const SizedBox(height: 16),
+                    // Dark Mode Option
+                    _buildThemeCard(
+                      themeMode: 'dark',
+                      title: "Karanlık Tema",
+                      imagePath: 'assets/karanlık_tema.png',
+                    ),
+                    const Spacer(flex: 1),
+                    const SizedBox(height: 140), // Spacer for footer buttons
+                  ],
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 140), // Spacer for footer buttons
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -1630,6 +1660,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     required String imagePath,
   }) {
     final bool isSelected = _selectedThemeMode == themeMode;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isSmallScreen = screenHeight < 750;
+    final double cardHeight = isSmallScreen ? 200 : 310;
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -1638,7 +1672,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        height: 330, // Tall card to show even larger preview image!
+        height: cardHeight, // Dynamic card height!
         width: double.infinity,
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF162544) : const Color(0xFF101B31),
@@ -1724,11 +1758,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   // SCREEN 4: Calculation Method (Bir yöntem seçin)
   Widget _buildPageCalculationMethod() {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isSmallScreen = screenHeight < 750;
+    
+    final double imageHeight = isSmallScreen ? screenHeight * 0.28 : screenHeight * 0.4;
+    final double titleFontSize = isSmallScreen ? 24 : 32;
+
     return Column(
       children: [
-        // 40% height full-width image
+        // Responsive height full-width image
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: imageHeight,
           width: double.infinity,
           child: Image.asset(
             'assets/onboarding_calculation.png',
@@ -1757,13 +1797,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 "Bir yöntem seçin",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 32,
+                  fontSize: titleFontSize,
                   height: 1.25,
                 ),
               ),
@@ -1901,107 +1941,127 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   // SCREEN 7: Customize Notifications (Bildirimleri özelleştir)
   Widget _buildPageNotificationCustomize() {
-    return Column(
-      children: [
-        // Image at top - 40% height
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
-          width: double.infinity,
-          child: Image.asset(
-            'assets/onboarding_notifications.png',
-            fit: BoxFit.cover,
-            alignment: Alignment.bottomCenter,
-          ),
-        ),
-        // Dots
-        _buildDotsUnderIllustration(),
-        const Spacer(flex: 1),
-        // Contents
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            children: [
-              const Text(
-                "HATIRLATICI",
-                style: TextStyle(
-                  color: Color(0xFF8AA996),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Bildirimleri özelleştir",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 32,
-                  height: 1.25,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Ne zaman hatırlatalım?",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white60,
-                  fontSize: 16,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Custom selection buttons
-              Row(
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isSmallScreen = screenHeight < 750;
+    
+    final double imageHeight = isSmallScreen ? screenHeight * 0.28 : screenHeight * 0.4;
+    final double titleFontSize = isSmallScreen ? 24 : 32;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: IntrinsicHeight(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: _buildReminderTimeButton(
-                      id: '30',
-                      label: "30 dk.\nönce",
+                  // Image at top
+                  SizedBox(
+                    height: imageHeight,
+                    width: double.infinity,
+                    child: Image.asset(
+                      'assets/onboarding_notifications.png',
+                      fit: BoxFit.cover,
+                      alignment: Alignment.bottomCenter,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildReminderTimeButton(
-                      id: '15',
-                      label: "15 dk.\nönce",
+                  // Dots
+                  _buildDotsUnderIllustration(),
+                  const Spacer(flex: 1),
+                  // Contents
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "HATIRLATICI",
+                          style: TextStyle(
+                            color: Color(0xFF8AA996),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Bildirimleri özelleştir",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: titleFontSize,
+                            height: 1.25,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          "Ne zaman hatırlatalım?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white60,
+                            fontSize: 16,
+                            height: 1.4,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Custom selection buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildReminderTimeButton(
+                                id: '30',
+                                label: "30 dk.\nönce",
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildReminderTimeButton(
+                                id: '15',
+                                label: "15 dk.\nönce",
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _buildReminderTimeButton(
+                                id: 'vaktinde',
+                                label: "Vaktinde",
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        // Flat link button below
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedReminderTime = 'kapali';
+                            });
+                            _runSetupAndComplete();
+                          },
+                          child: Text(
+                            "Hatırlatmaları kapalı tut",
+                            style: TextStyle(
+                              color: _selectedReminderTime == 'kapali' ? const Color(0xFF90B49C) : Colors.white54,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: _buildReminderTimeButton(
-                      id: 'vaktinde',
-                      label: "Vaktinde",
-                    ),
-                  ),
+                  const Spacer(flex: 1),
+                  const SizedBox(height: 120), // Reserved space for bottom action buttons to prevent overlapping
                 ],
               ),
-              const SizedBox(height: 20),
-              // Flat link button below
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedReminderTime = 'kapali';
-                  });
-                  _runSetupAndComplete();
-                },
-                child: Text(
-                  "Hatırlatmaları kapalı tut",
-                  style: TextStyle(
-                    color: _selectedReminderTime == 'kapali' ? const Color(0xFF90B49C) : Colors.white54,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-        const Spacer(flex: 1),
-        const SizedBox(height: 120), // Reserved space for bottom action buttons to prevent overlapping
-      ],
+        );
+      },
     );
   }
 
@@ -2055,97 +2115,118 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     required String desc,
     bool fullWidthPainter = false,
   }) {
-    return Column(
-      children: [
-        if (fullWidthPainter && imagePath != null)
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            width: double.infinity,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-              alignment: Alignment.bottomCenter,
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isSmallScreen = screenHeight < 750;
+    
+    final double imageHeight = isSmallScreen ? screenHeight * 0.28 : screenHeight * 0.38;
+    final double titleFontSize = isSmallScreen ? (fullWidthPainter && imagePath != null ? 24 : 22) : (fullWidthPainter && imagePath != null ? 32 : 28);
+    final double descFontSize = isSmallScreen ? (fullWidthPainter && imagePath != null ? 13 : 12) : (fullWidthPainter && imagePath != null ? 16 : 14);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-          )
-        else ...[
-          if (!fullWidthPainter) const SizedBox(height: 70),
-          // Illustration Box
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: fullWidthPainter ? 0.0 : 24.0),
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.transparent, // Seamless integration with transparent background
-                  borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
-                ),
-                child: ClipRRect(
-                  borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
-                  child: painter != null
-                      ? CustomPaint(
-                          painter: painter,
-                          child: const SizedBox.expand(),
-                        )
-                      : Image.asset(
-                          imagePath!,
-                          fit: fullWidthPainter ? BoxFit.cover : BoxFit.contain,
+            child: IntrinsicHeight(
+              child: Column(
+                children: [
+                  if (fullWidthPainter && imagePath != null)
+                    SizedBox(
+                      height: imageHeight,
+                      width: double.infinity,
+                      child: Image.asset(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.bottomCenter,
+                      ),
+                    )
+                  else ...[
+                    if (!fullWidthPainter) const SizedBox(height: 70),
+                    // Illustration Box
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: fullWidthPainter ? 0.0 : 24.0),
+                        child: Container(
                           width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.transparent, // Seamless integration with transparent background
+                            borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
+                            child: painter != null
+                                ? CustomPaint(
+                                    painter: painter,
+                                    child: const SizedBox.expand(),
+                                  )
+                                : Image.asset(
+                                    imagePath!,
+                                    fit: fullWidthPainter ? BoxFit.cover : BoxFit.contain,
+                                    width: double.infinity,
+                                  ),
+                          ),
                         ),
-                ),
+                      ),
+                    ),
+                  ],
+                  
+                  // Page indicator dots directly under the illustration
+                  _buildDotsUnderIllustration(),
+                  
+                  if (fullWidthPainter && imagePath != null)
+                    const Spacer(flex: 1)
+                  else
+                    const SizedBox(height: 16),
+                  
+                  // Texts Box
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          category,
+                          style: TextStyle(
+                            color: const Color(0xFF8AA996),
+                            fontWeight: FontWeight.bold,
+                            fontSize: (fullWidthPainter && imagePath != null) ? 15 : 13,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: titleFontSize,
+                            height: 1.25,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          desc,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.85),
+                            fontSize: descFontSize,
+                            height: 1.55,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (fullWidthPainter && imagePath != null) const Spacer(flex: 1),
+                  const SizedBox(height: 120), // Reserved space for the bottom button (bottom: 40 + height: 54)
+                ],
               ),
             ),
           ),
-        ],
-        
-        // Page indicator dots directly under the illustration
-        _buildDotsUnderIllustration(),
-        
-        if (fullWidthPainter && imagePath != null)
-          const Spacer(flex: 1)
-        else
-          const SizedBox(height: 16),
-        
-        // Texts Box
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            children: [
-              Text(
-                category,
-                style: TextStyle(
-                  color: const Color(0xFF8AA996),
-                  fontWeight: FontWeight.bold,
-                  fontSize: (fullWidthPainter && imagePath != null) ? 15 : 13,
-                  letterSpacing: 1.5,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: (fullWidthPainter && imagePath != null) ? 32 : 28,
-                  height: 1.25,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                desc,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.85),
-                  fontSize: (fullWidthPainter && imagePath != null) ? 16 : 14,
-                  height: 1.55,
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (fullWidthPainter && imagePath != null) const Spacer(flex: 1),
-        const SizedBox(height: 120), // Reserved space for the bottom button (bottom: 40 + height: 54)
-      ],
+        );
+      },
     );
   }
 
