@@ -182,12 +182,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   void _goToNextPage() {
-    if (_activePage == 7) {
-      _savePrayerPreviewSettings();
-    } else if (_activePage == 8) {
+    if (_activePage == 6) {
       _saveThemeSelection();
     }
-    if (_activePage < 9) {
+    if (_activePage < 7) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -726,6 +724,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       await prefs.setString('calculation_method', _selectedMethod);
       await prefs.setString('notification_reminder', _selectedReminderTime);
 
+      await _savePrayerPreviewSettings();
       await _notificationService.schedulePrayerAlarms(times);
 
       // Explicitly guarantee announcements topic subscription when onboarding is completed
@@ -749,9 +748,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     if (mounted) {
       // Dismiss the dialog
       Navigator.of(context).pop();
-      // Slide to final Prayer Times Preview Screen (now Page 7)
+      // Slide to Theme Selection Screen (now Page 6)
       _pageController.animateToPage(
-        7,
+        6,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
@@ -1012,7 +1011,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     // Hide dots and buttons when in loading/setup/checkout screens
-    final bool isPremiumPage = _activePage == 9;
+    final bool isPremiumPage = _activePage == 7;
     final bool hideFooter = isPremiumPage;
 
     return Scaffold(
@@ -1051,10 +1050,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 _buildPagePermissionRequest(),
                 _buildPageLocationDisplay(),
                 _buildPageCalculationMethod(),
-                _buildPageJoinUs(),
                 _buildPageNotificationRequest(),
                 _buildPageNotificationCustomize(),
-                _buildPagePrayerTimesPreview(), // Shows after setup loading dialog!
                 _buildPageThemeSelection(), // New Theme Selection Screen!
                 PremiumScreen(
                   isFromOnboarding: true,
@@ -1367,11 +1364,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     _goToNextPage();
                   }
                 } else if (_activePage == 4) {
-                  // Removed rating dialog trigger on onboarding page 4 to comply with Apple Guideline 5.6.3
-                  _goToNextPage();
-                } else if (_activePage == 5) {
                   _requestNotificationPermission();
-                } else if (_activePage == 6) {
+                } else if (_activePage == 5) {
                   _runSetupAndComplete(); // Starts loading animation and transitions
                 } else {
                   _goToNextPage();
@@ -1437,13 +1431,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           final widget = Stack(
             alignment: Alignment.center,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  width: double.infinity,
-                  color: const Color(0xFF142442),
-                  child: CustomPaint(
-                    painter: DetectedLocationIllustrationPainter(),
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    width: double.infinity,
+                    color: const Color(0xFF142442),
+                    child: CustomPaint(
+                      painter: DetectedLocationIllustrationPainter(),
+                    ),
                   ),
                 ),
               ),
@@ -1896,7 +1892,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final bool isSelected = _selectedThemeMode == themeMode;
     final double screenHeight = MediaQuery.of(context).size.height;
     final bool isSmallScreen = screenHeight < 750;
-    final double cardHeight = isSmallScreen ? 200 : 310;
+    final double cardHeight = isSmallScreen ? 160 : 220;
 
     return GestureDetector(
       onTap: () {
@@ -2019,7 +2015,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           width: double.infinity,
           child: Image.asset(
             'assets/onboarding_calculation.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             alignment: Alignment.bottomCenter,
           ),
         ),
@@ -2212,7 +2208,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         }) {
           final widget = Image.asset(
             'assets/onboarding_notifications.png',
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             alignment: Alignment.bottomCenter,
           );
 
@@ -2489,10 +2485,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   SizedBox(
                     height: 140,
                     width: double.infinity,
-                    child: Image.asset(
-                      imagePath,
-                      fit: fullWidthPainter ? BoxFit.cover : BoxFit.contain,
-                    ),
+                    child: Image.asset(imagePath, fit: BoxFit.contain),
                   ),
                 _buildDotsUnderIllustration(),
                 const SizedBox(height: 8),
@@ -2548,7 +2541,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   width: double.infinity,
                   child: Image.asset(
                     imagePath,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     alignment: Alignment.bottomCenter,
                   ),
                 ),
@@ -2574,9 +2567,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                             )
                           : Image.asset(
                               imagePath!,
-                              fit: fullWidthPainter
-                                  ? BoxFit.cover
-                                  : BoxFit.contain,
+                              fit: BoxFit.contain,
                               width: double.infinity,
                             ),
                     ),
