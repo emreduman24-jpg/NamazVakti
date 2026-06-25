@@ -30,7 +30,8 @@ class OnboardingScreen extends StatefulWidget {
   _OnboardingScreenState createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerProviderStateMixin {
+class _OnboardingScreenState extends State<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
   final PrayerRepository _repository = PrayerRepository();
   final NotificationService _notificationService = NotificationService();
   final PageController _pageController = PageController();
@@ -60,7 +61,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   // Location details (Screen 3)
   Map<String, String?> _location = {};
   List<Map<String, dynamic>> _prayerTimes = [];
-  List<Map<String, dynamic>> _originalPrayerTimes = []; // Backup of original fetched times
+  List<Map<String, dynamic>> _originalPrayerTimes =
+      []; // Backup of original fetched times
   List<Map<String, dynamic>> _cities = [];
   List<Map<String, dynamic>> _districts = [];
   Map<String, dynamic>? _selectedCity;
@@ -102,28 +104,66 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   Future<void> _savePrayerPreviewSettings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Save enabled states
-      await prefs.setBool('notification_prayer_imsak', _previewNotifications['İmsak'] != 'kapali');
-      await prefs.setBool('notification_prayer_sabah', _previewNotifications['Güneş'] != 'kapali');
-      await prefs.setBool('notification_prayer_ogle', _previewNotifications['Öğle'] != 'kapali');
-      await prefs.setBool('notification_prayer_ikindi', _previewNotifications['İkindi'] != 'kapali');
-      await prefs.setBool('notification_prayer_aksam', _previewNotifications['Akşam'] != 'kapali');
-      await prefs.setBool('notification_prayer_yatsi', _previewNotifications['Yatsı'] != 'kapali');
+      await prefs.setBool(
+        'notification_prayer_imsak',
+        _previewNotifications['İmsak'] != 'kapali',
+      );
+      await prefs.setBool(
+        'notification_prayer_sabah',
+        _previewNotifications['Güneş'] != 'kapali',
+      );
+      await prefs.setBool(
+        'notification_prayer_ogle',
+        _previewNotifications['Öğle'] != 'kapali',
+      );
+      await prefs.setBool(
+        'notification_prayer_ikindi',
+        _previewNotifications['İkindi'] != 'kapali',
+      );
+      await prefs.setBool(
+        'notification_prayer_aksam',
+        _previewNotifications['Akşam'] != 'kapali',
+      );
+      await prefs.setBool(
+        'notification_prayer_yatsi',
+        _previewNotifications['Yatsı'] != 'kapali',
+      );
 
       // Save sound states
-      await prefs.setBool('notification_sound_imsak', _previewNotifications['İmsak'] == 'sesli');
-      await prefs.setBool('notification_sound_sabah', _previewNotifications['Güneş'] == 'sesli');
-      await prefs.setBool('notification_sound_ogle', _previewNotifications['Öğle'] == 'sesli');
-      await prefs.setBool('notification_sound_ikindi', _previewNotifications['İkindi'] == 'sesli');
-      await prefs.setBool('notification_sound_aksam', _previewNotifications['Akşam'] == 'sesli');
-      await prefs.setBool('notification_sound_yatsi', _previewNotifications['Yatsı'] == 'sesli');
+      await prefs.setBool(
+        'notification_sound_imsak',
+        _previewNotifications['İmsak'] == 'sesli',
+      );
+      await prefs.setBool(
+        'notification_sound_sabah',
+        _previewNotifications['Güneş'] == 'sesli',
+      );
+      await prefs.setBool(
+        'notification_sound_ogle',
+        _previewNotifications['Öğle'] == 'sesli',
+      );
+      await prefs.setBool(
+        'notification_sound_ikindi',
+        _previewNotifications['İkindi'] == 'sesli',
+      );
+      await prefs.setBool(
+        'notification_sound_aksam',
+        _previewNotifications['Akşam'] == 'sesli',
+      );
+      await prefs.setBool(
+        'notification_sound_yatsi',
+        _previewNotifications['Yatsı'] == 'sesli',
+      );
 
       // Reschedule alarms immediately with these settings
       if (_prayerTimes.isNotEmpty) {
         await _notificationService.schedulePrayerAlarms(_prayerTimes);
       }
-      debugPrint("Onboarding: Saved custom prayer times notifications successfully!");
+      debugPrint(
+        "Onboarding: Saved custom prayer times notifications successfully!",
+      );
     } catch (e) {
       debugPrint("Error saving prayer preview settings: $e");
     }
@@ -133,7 +173,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     try {
       await _repository.setThemeMode(_selectedThemeMode);
       widget.onThemeChanged();
-      debugPrint("Onboarding: Theme selection saved successfully: $_selectedThemeMode");
+      debugPrint(
+        "Onboarding: Theme selection saved successfully: $_selectedThemeMode",
+      );
     } catch (e) {
       debugPrint("Error saving theme selection: $e");
     }
@@ -164,7 +206,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   void _showSnackBar(String message, {bool success = false}) {
     if (!mounted) return;
-    
+
     // Remove active notification if any to avoid overlapping
     _activeNotificationOverlay?.remove();
     _activeNotificationOverlay = null;
@@ -189,7 +231,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     );
 
     _activeNotificationOverlay = overlayEntry;
-    
+
     // Safely insert overlay
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -200,35 +242,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   void _varyPrayerTimes({required int offsetMinutes}) {
     if (_originalPrayerTimes.isEmpty) return;
-    
+
     setState(() {
       _prayerTimes = _originalPrayerTimes.map((timeMap) {
         final newMap = Map<String, dynamic>.from(timeMap);
-        
+
         String offsetTime(String? timeStr) {
           if (timeStr == null || !timeStr.contains(':')) return timeStr ?? '';
           try {
             final parts = timeStr.split(':');
             final hour = int.parse(parts[0]);
             final minute = int.parse(parts[1]);
-            
+
             final totalMinutes = hour * 60 + minute + offsetMinutes;
             final newHour = (totalMinutes ~/ 60) % 24;
             final newMinute = totalMinutes % 60;
-            
+
             return "${newHour.toString().padLeft(2, '0')}:${newMinute.toString().padLeft(2, '0')}";
           } catch (e) {
             return timeStr;
           }
         }
-        
+
         newMap['Imsak'] = offsetTime(timeMap['Imsak']);
         newMap['Gunes'] = offsetTime(timeMap['Gunes']);
         newMap['Ogle'] = offsetTime(timeMap['Ogle']);
         newMap['Ikindi'] = offsetTime(timeMap['Ikindi']);
         newMap['Aksam'] = offsetTime(timeMap['Aksam']);
         newMap['Yatsi'] = offsetTime(timeMap['Yatsi']);
-        
+
         return newMap;
       }).toList();
     });
@@ -270,8 +312,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     });
   }
 
-
-
   String _formatTurkishCity(String city) {
     if (city.isEmpty) return '';
     return city
@@ -287,7 +327,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   String _formatTurkishDistrict(String district) {
     if (district.isEmpty) return '';
-    
+
     String lower = district
         .replaceAll('İ', 'i')
         .replaceAll('I', 'ı')
@@ -297,16 +337,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         .replaceAll('Ü', 'ü')
         .replaceAll('Ö', 'ö')
         .toLowerCase();
-        
+
     List<String> words = lower.split(' ');
     List<String> formattedWords = [];
-    
+
     for (var word in words) {
       if (word.isEmpty) continue;
-      
+
       String firstChar = word.substring(0, 1);
       String rest = word.substring(1);
-      
+
       String upperFirst = firstChar
           .replaceAll('i', 'İ')
           .replaceAll('ı', 'I')
@@ -316,10 +356,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
           .replaceAll('ü', 'Ü')
           .replaceAll('ö', 'Ö')
           .toUpperCase();
-          
+
       formattedWords.add(upperFirst + rest);
     }
-    
+
     return formattedWords.join(' ');
   }
 
@@ -335,7 +375,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         permission = await Geolocator.requestPermission();
       }
 
-      if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
         bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
         if (!serviceEnabled) {
           _showSnackBar("Lütfen telefonunuzun konum servisini (GPS) açın.");
@@ -366,31 +407,39 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
         if (position != null) {
           final geoUri = Uri.parse(
-              'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.latitude}&longitude=${position.longitude}&localityLanguage=tr');
+            'https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.latitude}&longitude=${position.longitude}&localityLanguage=tr',
+          );
           final geoResponse = await http.get(geoUri);
 
           if (geoResponse.statusCode == 200) {
             final Map<String, dynamic> geoData = json.decode(geoResponse.body);
-            final List<dynamic> adminList = geoData['localityInfo']?['administrative'] ?? [];
-            final List<String> geoNames =
-                adminList.map((item) => normalizeString(item['name']?.toString() ?? '')).toList();
+            final List<dynamic> adminList =
+                geoData['localityInfo']?['administrative'] ?? [];
+            final List<String> geoNames = adminList
+                .map((item) => normalizeString(item['name']?.toString() ?? ''))
+                .toList();
 
-            if (geoData['city'] != null) geoNames.add(normalizeString(geoData['city']));
-            if (geoData['locality'] != null) geoNames.add(normalizeString(geoData['locality']));
+            if (geoData['city'] != null)
+              geoNames.add(normalizeString(geoData['city']));
+            if (geoData['locality'] != null)
+              geoNames.add(normalizeString(geoData['locality']));
             if (geoData['principalSubdivision'] != null) {
               geoNames.add(normalizeString(geoData['principalSubdivision']));
             }
 
             final cities = await _repository.getCities();
             Map<String, dynamic> matchedCity = cities.firstWhere(
-              (city) => geoNames.contains(normalizeString(city['SehirAdi'] ?? '')),
+              (city) =>
+                  geoNames.contains(normalizeString(city['SehirAdi'] ?? '')),
               orElse: () => <String, dynamic>{},
             );
 
-            if (matchedCity.isEmpty && geoData['principalSubdivision'] != null) {
+            if (matchedCity.isEmpty &&
+                geoData['principalSubdivision'] != null) {
               final normSub = normalizeString(geoData['principalSubdivision']);
               matchedCity = cities.firstWhere(
-                (city) => normalizeString(city['SehirAdi'] ?? '').contains(normSub) ||
+                (city) =>
+                    normalizeString(city['SehirAdi'] ?? '').contains(normSub) ||
                     normSub.contains(normalizeString(city['SehirAdi'] ?? '')),
                 orElse: () => <String, dynamic>{},
               );
@@ -401,40 +450,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               final String cityName = matchedCity['SehirAdi'];
 
               final districts = await _repository.getDistricts(cityId);
-              
+
               // Robust Tuzla / Merkez matching logic to avoid "İSTANBUL" district overtaking specific sub-localities
               Map<String, dynamic> matchedDistrict = <String, dynamic>{};
               final String normalizedCityName = normalizeString(cityName);
-              
+
               // 1. Try exact match for geoData's specific locality (e.g., "tuzla") ONLY if it's not the same as the city name
-              final String? locality = geoData['locality'] != null ? normalizeString(geoData['locality']) : null;
+              final String? locality = geoData['locality'] != null
+                  ? normalizeString(geoData['locality'])
+                  : null;
               if (locality != null && locality != normalizedCityName) {
                 matchedDistrict = districts.firstWhere(
                   (dist) => normalizeString(dist['IlceAdi'] ?? '') == locality,
                   orElse: () => <String, dynamic>{},
                 );
               }
-              
+
               // 2. Prioritize sub-locality names in geoNames that are NOT equal to the city-level name matching
               if (matchedDistrict.isEmpty) {
                 matchedDistrict = districts.firstWhere(
-                  (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')) &&
-                            normalizeString(dist['IlceAdi'] ?? '') != normalizedCityName,
+                  (dist) =>
+                      geoNames.contains(
+                        normalizeString(dist['IlceAdi'] ?? ''),
+                      ) &&
+                      normalizeString(dist['IlceAdi'] ?? '') !=
+                          normalizedCityName,
                   orElse: () => <String, dynamic>{},
                 );
               }
-              
+
               // 3. Fallback to any geoNames match
               if (matchedDistrict.isEmpty) {
                 matchedDistrict = districts.firstWhere(
-                  (dist) => geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')),
+                  (dist) =>
+                      geoNames.contains(normalizeString(dist['IlceAdi'] ?? '')),
                   orElse: () => <String, dynamic>{},
                 );
               }
 
               // 4. Default fallback to districts[0]
               if (matchedDistrict.isEmpty) {
-                matchedDistrict = districts.isNotEmpty ? districts[0] : <String, dynamic>{};
+                matchedDistrict = districts.isNotEmpty
+                    ? districts[0]
+                    : <String, dynamic>{};
               }
 
               if (matchedDistrict.isNotEmpty) {
@@ -452,11 +510,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     'districtId': districtId,
                   };
                   _prayerTimes = times;
-                  _originalPrayerTimes = List<Map<String, dynamic>>.from(times.map((item) => Map<String, dynamic>.from(item)));
+                  _originalPrayerTimes = List<Map<String, dynamic>>.from(
+                    times.map((item) => Map<String, dynamic>.from(item)),
+                  );
                   _loadingLocation = false;
                 });
 
-                _showSnackBar("Konum başarıyla belirlendi: ${_formatTurkishCity(cityName)} / ${_formatTurkishDistrict(districtName)}", success: true);
+                _showSnackBar(
+                  "Konum başarıyla belirlendi: ${_formatTurkishCity(cityName)} / ${_formatTurkishDistrict(districtName)}",
+                  success: true,
+                );
                 _goToNextPage();
                 return;
               }
@@ -483,19 +546,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     // Also explicitly request Firebase Messaging permission
     try {
       final FirebaseMessaging messaging = FirebaseMessaging.instance;
-      await messaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-      
+      await messaging.requestPermission(alert: true, badge: true, sound: true);
+
       // Ensure foreground notifications are visible natively on iOS
       await messaging.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
       );
-      
+
       // Fetch token and save to Firestore in the background to avoid freezing the UI
       _registerFCMTokenInBackground(messaging);
     } catch (e) {
@@ -507,7 +566,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   }
 
   // Background helper to wait for APNs and fetch FCM token asynchronously
-  Future<void> _registerFCMTokenInBackground(FirebaseMessaging messaging) async {
+  Future<void> _registerFCMTokenInBackground(
+    FirebaseMessaging messaging,
+  ) async {
     try {
       Map<String, dynamic> debugInfo = {
         'timestamp': DateTime.now().toUtc().toIso8601String(),
@@ -523,7 +584,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         String? apnsToken = await messaging.getAPNSToken();
         int retries = 0;
         while (apnsToken == null && retries < 15) {
-          print("Onboarding background: Waiting for iOS APNs token... (Retry ${retries + 1}/15)");
+          print(
+            "Onboarding background: Waiting for iOS APNs token... (Retry ${retries + 1}/15)",
+          );
           await Future.delayed(const Duration(seconds: 1));
           apnsToken = await messaging.getAPNSToken();
           retries++;
@@ -541,23 +604,31 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         final String? docId = prefs.getString('guest_uuid');
         if (docId != null && docId.isNotEmpty) {
           if (token != null) {
-            await FirebaseFirestore.instance.collection('users').doc(docId).update({
-              'fcmToken': token,
-              'tokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
-              'notificationDebugInfo': debugInfo,
-            });
-            print('FCM Token registered in background after onboarding: $token');
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(docId)
+                .update({
+                  'fcmToken': token,
+                  'tokenUpdatedAt': DateTime.now().toUtc().toIso8601String(),
+                  'notificationDebugInfo': debugInfo,
+                });
+            print(
+              'FCM Token registered in background after onboarding: $token',
+            );
           } else {
-            await FirebaseFirestore.instance.collection('users').doc(docId).update({
-              'notificationDebugInfo': debugInfo,
-            });
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(docId)
+                .update({'notificationDebugInfo': debugInfo});
           }
-          
+
           try {
             await messaging.subscribeToTopic('announcements');
             print('Subscribed to announcements topic during onboarding');
           } catch (e) {
-            print('Error subscribing to topic announcements during onboarding: $e');
+            print(
+              'Error subscribing to topic announcements during onboarding: $e',
+            );
           }
         }
       } catch (tokenError) {
@@ -565,9 +636,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         final prefs = await SharedPreferences.getInstance();
         final String? docId = prefs.getString('guest_uuid');
         if (docId != null && docId.isNotEmpty) {
-          await FirebaseFirestore.instance.collection('users').doc(docId).update({
-            'notificationDebugInfo': debugInfo,
-          });
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(docId)
+              .update({'notificationDebugInfo': debugInfo});
         }
       }
     } catch (e) {
@@ -579,7 +651,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   Future<void> _runSetupAndComplete() async {
     if (_location['districtId'] == null) {
       _showSnackBar("Lütfen devam etmeden önce konumunuzu seçin.");
-      _pageController.animateToPage(2, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      _pageController.animateToPage(
+        2,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
       return;
     }
 
@@ -631,10 +707,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
       setState(() {
         _prayerTimes = times;
-        _originalPrayerTimes = List<Map<String, dynamic>>.from(times.map((item) => Map<String, dynamic>.from(item)));
+        _originalPrayerTimes = List<Map<String, dynamic>>.from(
+          times.map((item) => Map<String, dynamic>.from(item)),
+        );
       });
 
-      await _repository.saveLocation(cityName, cityId, districtName, districtId);
+      await _repository.saveLocation(
+        cityName,
+        cityId,
+        districtName,
+        districtId,
+      );
 
       // Save onboarding preferences
       final prefs = await SharedPreferences.getInstance();
@@ -648,9 +731,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       // Explicitly guarantee announcements topic subscription when onboarding is completed
       try {
         await FirebaseMessaging.instance.subscribeToTopic('announcements');
-        print('Announcements topic subscription guaranteed during onboarding complete');
+        print(
+          'Announcements topic subscription guaranteed during onboarding complete',
+        );
       } catch (e) {
-        print('Error subscribing to topic announcements on onboarding complete: $e');
+        print(
+          'Error subscribing to topic announcements on onboarding complete: $e',
+        );
       }
     } catch (e) {
       debugPrint("Setup background save error: $e");
@@ -663,7 +750,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       // Dismiss the dialog
       Navigator.of(context).pop();
       // Slide to final Prayer Times Preview Screen (now Page 7)
-      _pageController.animateToPage(7, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+      _pageController.animateToPage(
+        7,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
@@ -711,7 +802,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
             return Padding(
-              padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+              padding: EdgeInsets.fromLTRB(
+                24,
+                20,
+                24,
+                MediaQuery.of(context).viewInsets.bottom + 24,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -738,16 +834,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   const SizedBox(height: 8),
                   const Text(
                     "Listeden şehir ve ilçenizi seçin",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.white60,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.white60),
                   ),
                   const SizedBox(height: 24),
 
                   // City Dropdown
                   if (_loadingCities)
-                    const Center(child: CircularProgressIndicator(color: Color(0xFF90B49C)))
+                    const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF90B49C),
+                      ),
+                    )
                   else
                     DropdownButtonFormField<Map<String, dynamic>>(
                       dropdownColor: const Color(0xFF0F1B31),
@@ -761,13 +858,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                           borderRadius: BorderRadius.circular(15),
                           borderSide: BorderSide.none,
                         ),
-                        prefixIcon: const Icon(Icons.location_city, color: Color(0xFF90B49C)),
+                        prefixIcon: const Icon(
+                          Icons.location_city,
+                          color: Color(0xFF90B49C),
+                        ),
                       ),
                       value: _selectedCity,
                       items: _cities.map((city) {
                         return DropdownMenuItem<Map<String, dynamic>>(
                           value: city,
-                          child: Text(city['SehirAdi'] ?? '', style: const TextStyle(color: Colors.white)),
+                          child: Text(
+                            city['SehirAdi'] ?? '',
+                            style: const TextStyle(color: Colors.white),
+                          ),
                         );
                       }).toList(),
                       onChanged: (val) async {
@@ -777,7 +880,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                         });
                         if (val != null) {
                           setModalState(() => _loadingDistricts = true);
-                          final districts = await _repository.getDistricts(val['SehirID'].toString());
+                          final districts = await _repository.getDistricts(
+                            val['SehirID'].toString(),
+                          );
                           setModalState(() {
                             _districts = districts;
                             _loadingDistricts = false;
@@ -790,7 +895,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   // District Dropdown
                   if (_selectedCity != null) ...[
                     if (_loadingDistricts)
-                      const Center(child: CircularProgressIndicator(color: Color(0xFF90B49C)))
+                      const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF90B49C),
+                        ),
+                      )
                     else
                       DropdownButtonFormField<Map<String, dynamic>>(
                         dropdownColor: const Color(0xFF0F1B31),
@@ -803,14 +912,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: BorderSide.none,
-                        ),
-                          prefixIcon: const Icon(Icons.map, color: Color(0xFF90B49C)),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.map,
+                            color: Color(0xFF90B49C),
+                          ),
                         ),
                         value: _selectedDistrict,
                         items: _districts.map((dist) {
                           return DropdownMenuItem<Map<String, dynamic>>(
                             value: dist,
-                            child: Text(dist['IlceAdi'] ?? '', style: const TextStyle(color: Colors.white)),
+                            child: Text(
+                              dist['IlceAdi'] ?? '',
+                              style: const TextStyle(color: Colors.white),
+                            ),
                           );
                         }).toList(),
                         onChanged: (val) {
@@ -833,16 +948,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                           borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                      onPressed: (_selectedCity == null || _selectedDistrict == null)
+                      onPressed:
+                          (_selectedCity == null || _selectedDistrict == null)
                           ? null
                           : () async {
-                              final String cityName = _selectedCity!['SehirAdi'];
-                              final String cityId = _selectedCity!['SehirID'].toString();
-                              final String districtName = _selectedDistrict!['IlceAdi'];
-                              final String districtId = _selectedDistrict!['IlceID'].toString();
+                              final String cityName =
+                                  _selectedCity!['SehirAdi'];
+                              final String cityId = _selectedCity!['SehirID']
+                                  .toString();
+                              final String districtName =
+                                  _selectedDistrict!['IlceAdi'];
+                              final String districtId =
+                                  _selectedDistrict!['IlceID'].toString();
 
                               setState(() => _loadingLocation = true);
-                              final times = await _repository.getPrayerTimes(districtId);
+                              final times = await _repository.getPrayerTimes(
+                                districtId,
+                              );
 
                               setState(() {
                                 _location = {
@@ -852,11 +974,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                                   'districtId': districtId,
                                 };
                                 _prayerTimes = times;
-                                _originalPrayerTimes = List<Map<String, dynamic>>.from(times.map((item) => Map<String, dynamic>.from(item)));
+                                _originalPrayerTimes =
+                                    List<Map<String, dynamic>>.from(
+                                      times.map(
+                                        (item) =>
+                                            Map<String, dynamic>.from(item),
+                                      ),
+                                    );
                                 _loadingLocation = false;
                               });
                               Navigator.pop(context);
-                              _showSnackBar("Konum başarıyla seçildi.", success: true);
+                              _showSnackBar(
+                                "Konum başarıyla seçildi.",
+                                success: true,
+                              );
                             },
                       child: const Text(
                         "Konumu Onayla",
@@ -888,14 +1019,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       backgroundColor: const Color(0xFF0F1B31),
       body: Stack(
         children: [
+          // Force Stack to expand to the maximum incoming constraints (loose constraints resolution)
+          const SizedBox.expand(),
           // Background subtle stars (Permanent with dynamic opacity to avoid Stack reconciliation disposal)
           Positioned.fill(
             child: AnimatedOpacity(
               opacity: isPremiumPage ? 0.0 : 0.12,
               duration: const Duration(milliseconds: 300),
-              child: CustomPaint(
-                painter: TwinklingStarsPainter(),
-              ),
+              child: CustomPaint(painter: TwinklingStarsPainter()),
             ),
           ),
 
@@ -913,7 +1044,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   _activePage = index;
                 });
               },
-              physics: const NeverScrollableScrollPhysics(), // Control through buttons
+              physics:
+                  const NeverScrollableScrollPhysics(), // Control through buttons
               children: [
                 _buildPageWelcome(),
                 _buildPagePermissionRequest(),
@@ -924,7 +1056,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 _buildPageNotificationCustomize(),
                 _buildPagePrayerTimesPreview(), // Shows after setup loading dialog!
                 _buildPageThemeSelection(), // New Theme Selection Screen!
-                PremiumScreen(isFromOnboarding: true, onComplete: _handleComplete), // Stunning Botanical Premium Screen!
+                PremiumScreen(
+                  isFromOnboarding: true,
+                  onComplete: _handleComplete,
+                ), // Stunning Botanical Premium Screen!
               ],
             ),
           ),
@@ -990,7 +1125,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                             borderRadius: BorderRadius.circular(14),
                             child: const Padding(
                               padding: EdgeInsets.all(12.0),
-                              child: Icon(Icons.mosque, color: Color(0xFF90B49C), size: 40),
+                              child: Icon(
+                                Icons.mosque,
+                                color: Color(0xFF90B49C),
+                                size: 40,
+                              ),
                             ),
                           ),
                         ),
@@ -1010,10 +1149,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                       const Text(
                         "App Store'da puanlamak için yıldızlara dokunun.",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white60,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.white60, fontSize: 12),
                       ),
                       const SizedBox(height: 20),
                       // Interactive Stars
@@ -1029,10 +1165,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                               });
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6.0,
+                              ),
                               child: Icon(
                                 isLit ? Icons.star : Icons.star_border,
-                                color: isLit ? const Color(0xFFE5A93B) : Colors.white24,
+                                color: isLit
+                                    ? const Color(0xFFE5A93B)
+                                    : Colors.white24,
                                 size: 40,
                               ),
                             ),
@@ -1053,14 +1193,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                             elevation: 0,
                           ),
                           onPressed: () {
-                            _showSnackBar("Değerlendirmeniz için çok teşekkür ederiz! Mağazaya yönlendiriliyorsunuz...", success: true);
-                            Future.delayed(const Duration(milliseconds: 500), () {
-                              setState(() {
-                                _showRatingDialog = false;
-                              });
-                              _launchStore(); // Launch App Store / Play Store!
-                              _goToNextPage(); // Go to next onboarding step
-                            });
+                            _showSnackBar(
+                              "Değerlendirmeniz için çok teşekkür ederiz! Mağazaya yönlendiriliyorsunuz...",
+                              success: true,
+                            );
+                            Future.delayed(
+                              const Duration(milliseconds: 500),
+                              () {
+                                setState(() {
+                                  _showRatingDialog = false;
+                                });
+                                _launchStore(); // Launch App Store / Play Store!
+                                _goToNextPage(); // Go to next onboarding step
+                              },
+                            );
                           },
                           child: const Text(
                             "Bizi Değerlendir",
@@ -1124,8 +1270,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                       const CircularProgressIndicator(color: Color(0xFF90B49C)),
                       const SizedBox(height: 16),
                       Text(
-                        _saving ? "Ayarlar Kaydediliyor..." : "Konum Yükleniyor...",
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                        _saving
+                            ? "Ayarlar Kaydediliyor..."
+                            : "Konum Yükleniyor...",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextButton(
@@ -1137,7 +1288,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                         },
                         child: const Text(
                           "İptal Et",
-                          style: TextStyle(color: Color(0xFF90B49C), fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Color(0xFF90B49C),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -1149,8 +1303,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       ),
     );
   }
-
-
 
   Widget _buildDotsUnderIllustration() {
     int dotCount = 6;
@@ -1250,7 +1402,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       imagePath: 'assets/onboarding_welcome.png',
       category: "HOŞ GELDİNİZ",
       title: "Namazınıza\nodaklanma zamanı",
-      desc: "Sizi namazlarınızı hatırlatarak ve rehberlik ederek destekliyoruz. Deneyiminizi kişiselleştirelim.",
+      desc:
+          "Sizi namazlarınızı hatırlatarak ve rehberlik ederek destekliyoruz. Deneyiminizi kişiselleştirelim.",
       fullWidthPainter: true,
     );
   }
@@ -1261,7 +1414,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       imagePath: 'assets/onboarding_location.png',
       category: "NAMAZ VAKİTLERİ",
       title: "Doğru konum",
-      desc: "Namaz vakitlerini doğru hesaplayabilmemiz için lütfen konuma erişime izin verin. Alternatif olarak konumunuzu manuel olarak girebilir ve ayarlardan istediğiniz zaman değiştirebilirsiniz.",
+      desc:
+          "Namaz vakitlerini doğru hesaplayabilmemiz için lütfen konuma erişime izin verin. Alternatif olarak konumunuzu manuel olarak girebilir ve ayarlardan istediğiniz zaman değiştirebilirsiniz.",
       fullWidthPainter: true,
     );
   }
@@ -1276,7 +1430,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       builder: (context, constraints) {
         final double availableHeight = constraints.maxHeight;
 
-        Widget buildMapIllustration({required double height, required bool isExpanded}) {
+        Widget buildMapIllustration({
+          required double height,
+          required bool isExpanded,
+        }) {
           final widget = Stack(
             alignment: Alignment.center,
             children: [
@@ -1297,11 +1454,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   onTap: _showManualLocationModal,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: hasLocation ? Colors.white : const Color(0xFFFFF9E6),
+                      color: hasLocation
+                          ? Colors.white
+                          : const Color(0xFFFFF9E6),
                       borderRadius: BorderRadius.circular(24),
                       border: hasLocation
                           ? Border.all(color: Colors.white)
-                          : Border.all(color: const Color(0xFFF3C06F).withOpacity(0.5)),
+                          : Border.all(
+                              color: const Color(0xFFF3C06F).withOpacity(0.5),
+                            ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.15),
@@ -1310,13 +1471,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 12.0,
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          hasLocation ? Icons.my_location : Icons.location_off_outlined,
-                          color: hasLocation ? const Color(0xFF90B49C) : const Color(0xFFE5A93B),
+                          hasLocation
+                              ? Icons.my_location
+                              : Icons.location_off_outlined,
+                          color: hasLocation
+                              ? const Color(0xFF90B49C)
+                              : const Color(0xFFE5A93B),
                           size: 18,
                         ),
                         const SizedBox(width: 8),
@@ -1325,7 +1493,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                               ? "${_formatTurkishCity(city)} / ${_formatTurkishDistrict(district)}"
                               : "Konum Seçilmedi (Seçmek için Dokunun)",
                           style: TextStyle(
-                            color: hasLocation ? const Color(0xFF0F1B31) : const Color(0xFF8C6000),
+                            color: hasLocation
+                                ? const Color(0xFF0F1B31)
+                                : const Color(0xFF8C6000),
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
@@ -1341,7 +1511,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
           if (isExpanded) {
             return Expanded(child: widget);
           } else {
-            return SizedBox(height: height, width: double.infinity, child: widget);
+            return SizedBox(
+              height: height,
+              width: double.infinity,
+              child: widget,
+            );
           }
         }
 
@@ -1442,8 +1616,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   Widget _buildPagePrayerTimesPreview() {
     final String city = _formatTurkishCity(_location['cityName'] ?? '');
     String district = _formatTurkishDistrict(_location['districtName'] ?? '');
-    
-    if ((_location['cityName'] ?? '').trim().toLowerCase() == (_location['districtName'] ?? '').trim().toLowerCase()) {
+
+    if ((_location['cityName'] ?? '').trim().toLowerCase() ==
+        (_location['districtName'] ?? '').trim().toLowerCase()) {
       district = 'Merkez';
     }
 
@@ -1453,7 +1628,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     Map<String, dynamic>? todayMap;
     if (_prayerTimes.isNotEmpty) {
       final now = DateTime.now();
-      final String nowStr = "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}";
+      final String nowStr =
+          "${now.day.toString().padLeft(2, '0')}.${now.month.toString().padLeft(2, '0')}.${now.year}";
       for (var item in _prayerTimes) {
         if (item['MiladiTarihKisa'] == nowStr) {
           todayMap = item;
@@ -1464,14 +1640,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       todayMap ??= _prayerTimes.first;
     }
 
-    final Map<String, dynamic> today = todayMap ?? {
-      'Imsak': '03:24',
-      'Gunes': '05:24',
-      'Ogle': '13:09',
-      'Ikindi': '17:09',
-      'Aksam': '20:44',
-      'Yatsi': '22:35',
-    };
+    final Map<String, dynamic> today =
+        todayMap ??
+        {
+          'Imsak': '03:24',
+          'Gunes': '05:24',
+          'Ogle': '13:09',
+          'Ikindi': '17:09',
+          'Aksam': '20:44',
+          'Yatsi': '22:35',
+        };
 
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
@@ -1488,13 +1666,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             const SizedBox(height: 4),
             Text(
               hasLocation ? "$city / $district" : "Konum Seçilmedi",
-              style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             const Text(
               "Diyanet İşleri Başkanlığı",
-              style: TextStyle(color: Color(0xFF90B49C), fontSize: 15, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Color(0xFF90B49C),
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const Text(
               "İmsak: 18° - Yatsı: 17°",
@@ -1512,17 +1698,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               ),
               child: Column(
                 children: [
-                  _buildPreviewTimeRow("İmsak", today['Imsak'] ?? '03:33', false),
+                  _buildPreviewTimeRow(
+                    "İmsak",
+                    today['Imsak'] ?? '03:33',
+                    false,
+                  ),
                   const Divider(color: Colors.white10, height: 16),
-                  _buildPreviewTimeRow("Güneş", today['Gunes'] ?? '05:27', false),
+                  _buildPreviewTimeRow(
+                    "Güneş",
+                    today['Gunes'] ?? '05:27',
+                    false,
+                  ),
                   const Divider(color: Colors.white10, height: 16),
                   _buildPreviewTimeRow("Öğle", today['Ogle'] ?? '13:05', false),
                   const Divider(color: Colors.white10, height: 16),
-                  _buildPreviewTimeRow("İkindi", today['Ikindi'] ?? '16:54', false),
+                  _buildPreviewTimeRow(
+                    "İkindi",
+                    today['Ikindi'] ?? '16:54',
+                    false,
+                  ),
                   const Divider(color: Colors.white10, height: 16),
-                  _buildPreviewTimeRow("Akşam", today['Aksam'] ?? '20:34', false),
+                  _buildPreviewTimeRow(
+                    "Akşam",
+                    today['Aksam'] ?? '20:34',
+                    false,
+                  ),
                   const Divider(color: Colors.white10, height: 16),
-                  _buildPreviewTimeRow("Yatsı", today['Yatsi'] ?? '22:20', false),
+                  _buildPreviewTimeRow(
+                    "Yatsı",
+                    today['Yatsi'] ?? '22:20',
+                    false,
+                  ),
                 ],
               ),
             ),
@@ -1532,7 +1738,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(
                 "Her namazın başında hatırlatma alacaksınız. Bunu ayarlardan istediğiniz zaman değiştirebilirsiniz.",
-                style: TextStyle(color: Colors.white54, fontSize: 12, height: 1.4),
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 12,
+                  height: 1.4,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -1545,10 +1755,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
 
   Widget _buildPreviewTimeRow(String label, String value, bool isHighlighted) {
     final String mode = _previewNotifications[label] ?? 'sesli';
-    
+
     IconData iconData = Icons.notifications_active_outlined;
     Color iconColor = isHighlighted ? const Color(0xFF90B49C) : Colors.white54;
-    
+
     if (mode == 'sessiz') {
       iconData = Icons.notifications_paused_outlined;
       iconColor = const Color(0xFFE5A93B); // Golden yellow for silent
@@ -1586,23 +1796,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   setState(() {
                     if (mode == 'sesli') {
                       _previewNotifications[label] = 'sessiz';
-                      _showSnackBar("$label vakti bildirimi sessiz olarak ayarlandı.", success: true);
+                      _showSnackBar(
+                        "$label vakti bildirimi sessiz olarak ayarlandı.",
+                        success: true,
+                      );
                     } else if (mode == 'sessiz') {
                       _previewNotifications[label] = 'kapali';
                       _showSnackBar("$label vakti bildirimi kapatıldı.");
                     } else {
                       _previewNotifications[label] = 'sesli';
-                      _showSnackBar("$label vakti bildirimi sesli olarak ayarlandı.", success: true);
+                      _showSnackBar(
+                        "$label vakti bildirimi sesli olarak ayarlandı.",
+                        success: true,
+                      );
                     }
                   });
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Icon(
-                    iconData,
-                    color: iconColor,
-                    size: 20,
-                  ),
+                  child: Icon(iconData, color: iconColor, size: 20),
                 ),
               ),
             ],
@@ -1655,7 +1867,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Light Mode Option
             _buildThemeCard(
               themeMode: 'light',
@@ -1709,7 +1921,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     color: const Color(0xFF90B49C).withOpacity(0.15),
                     blurRadius: 12,
                     spreadRadius: 2,
-                  )
+                  ),
                 ]
               : null,
         ),
@@ -1720,7 +1932,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               child: Padding(
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.cover,
@@ -1730,13 +1944,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 ),
               ),
             ),
-            
+
             // Thin Divider
             const Divider(color: Colors.white10, height: 1),
-            
+
             // Selector Label at bottom
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+              padding: const EdgeInsets.symmetric(
+                vertical: 10.0,
+                horizontal: 12.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -1747,10 +1964,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: isSelected ? const Color(0xFF90B49C) : Colors.white30,
+                        color: isSelected
+                            ? const Color(0xFF90B49C)
+                            : Colors.white30,
                         width: 1.5,
                       ),
-                      color: isSelected ? const Color(0xFF90B49C) : Colors.transparent,
+                      color: isSelected
+                          ? const Color(0xFF90B49C)
+                          : Colors.transparent,
                     ),
                     child: isSelected
                         ? const Icon(
@@ -1765,7 +1986,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     title,
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.white70,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       fontSize: 13, // Smaller text!
                     ),
                   ),
@@ -1782,9 +2005,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   Widget _buildPageCalculationMethod() {
     final double screenHeight = MediaQuery.of(context).size.height;
     final bool isSmallScreen = screenHeight < 750;
-    
-    final double imageHeight = isSmallScreen 
-        ? (screenHeight * 0.22).clamp(100.0, 160.0) 
+
+    final double imageHeight = isSmallScreen
+        ? (screenHeight * 0.22).clamp(100.0, 160.0)
         : (screenHeight * 0.3).clamp(160.0, 260.0);
     final double titleFontSize = isSmallScreen ? 22 : 28;
 
@@ -1800,12 +2023,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             alignment: Alignment.bottomCenter,
           ),
         ),
-        
+
         // Page indicator dots directly under the illustration
         _buildDotsUnderIllustration(),
-        
+
         const SizedBox(height: 16),
-        
+
         // Category + Title
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -1834,9 +2057,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             ],
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // Scrollable list of options
         Expanded(
           child: Padding(
@@ -1847,7 +2070,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 children: [
                   const Text(
                     "ÖNERİLEN",
-                    style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.white60,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   _buildMethodCard(
@@ -1859,7 +2086,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   const SizedBox(height: 12),
                   const Text(
                     "DİĞER",
-                    style: TextStyle(color: Colors.white60, fontSize: 11, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: Colors.white60,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   _buildMethodCard(
@@ -1931,7 +2162,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     subtitle: "İmsak: 18.5° - Yatsı: 90 dk",
                     isRecommended: false,
                   ),
-                   const SizedBox(height: 24), // Breathing room at bottom
+                  const SizedBox(height: 24), // Breathing room at bottom
                 ],
               ),
             ),
@@ -1947,7 +2178,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       imagePath: 'assets/onboarding_join.png',
       category: "BİZE KATIL",
       title: "Dünya çapında birçok\nkişi tarafından kullanılıyor",
-      desc: "Doğru namaz vakitlerine, kıble yönüne ve günlük hatırlatmalara güvenen; nerede olurlarsa olsunlar inançlarıyla bağlı kalmak isteyen büyüyen bir Müslüman topluluğuna katılın.",
+      desc:
+          "Doğru namaz vakitlerine, kıble yönüne ve günlük hatırlatmalara güvenen; nerede olurlarsa olsunlar inançlarıyla bağlı kalmak isteyen büyüyen bir Müslüman topluluğuna katılın.",
       fullWidthPainter: true,
     );
   }
@@ -1958,7 +2190,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       imagePath: 'assets/onboarding_notifications.png',
       category: "HATIRLATICI",
       title: "Bildirimlere izin ver",
-      desc: "Size zamanında hatırlatırız, böylece namazınızı asla kaçırmazsınız.",
+      desc:
+          "Size zamanında hatırlatırız, böylece namazınızı asla kaçırmazsınız.",
       fullWidthPainter: true,
     );
   }
@@ -1973,7 +2206,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
       builder: (context, constraints) {
         final double availableHeight = constraints.maxHeight;
 
-        Widget buildIllustration({required double height, required bool isExpanded}) {
+        Widget buildIllustration({
+          required double height,
+          required bool isExpanded,
+        }) {
           final widget = Image.asset(
             'assets/onboarding_notifications.png',
             fit: BoxFit.cover,
@@ -1983,7 +2219,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
           if (isExpanded) {
             return Expanded(child: widget);
           } else {
-            return SizedBox(height: height, width: double.infinity, child: widget);
+            return SizedBox(
+              height: height,
+              width: double.infinity,
+              child: widget,
+            );
           }
         }
 
@@ -2066,7 +2306,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                         child: Text(
                           "Hatırlatmaları kapalı tut",
                           style: TextStyle(
-                            color: _selectedReminderTime == 'kapali' ? const Color(0xFF90B49C) : Colors.white54,
+                            color: _selectedReminderTime == 'kapali'
+                                ? const Color(0xFF90B49C)
+                                : Colors.white54,
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline,
@@ -2159,7 +2401,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     child: Text(
                       "Hatırlatmaları kapalı tut",
                       style: TextStyle(
-                        color: _selectedReminderTime == 'kapali' ? const Color(0xFF90B49C) : Colors.white54,
+                        color: _selectedReminderTime == 'kapali'
+                            ? const Color(0xFF90B49C)
+                            : Colors.white54,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         decoration: TextDecoration.underline,
@@ -2176,15 +2420,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     );
   }
 
-
-
-
-
   // Customize reminder time choice card button
-  Widget _buildReminderTimeButton({
-    required String id,
-    required String label,
-  }) {
+  Widget _buildReminderTimeButton({required String id, required String label}) {
     final bool isSelected = _selectedReminderTime == id;
 
     return GestureDetector(
@@ -2200,7 +2437,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
           color: isSelected ? const Color(0xFF2E533F) : const Color(0xFF182845),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF90B49C) : Colors.white.withOpacity(0.05),
+            color: isSelected
+                ? const Color(0xFF90B49C)
+                : Colors.white.withOpacity(0.05),
             width: 1.5,
           ),
         ),
@@ -2228,9 +2467,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
   }) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final bool isSmallScreen = screenHeight < 750;
-    
-    final double titleFontSize = isSmallScreen ? (fullWidthPainter && imagePath != null ? 22 : 20) : (fullWidthPainter && imagePath != null ? 28 : 26);
-    final double descFontSize = isSmallScreen ? (fullWidthPainter && imagePath != null ? 13 : 12) : (fullWidthPainter && imagePath != null ? 15 : 14);
+
+    final double titleFontSize = isSmallScreen
+        ? (fullWidthPainter && imagePath != null ? 22 : 20)
+        : (fullWidthPainter && imagePath != null ? 28 : 26);
+    final double descFontSize = isSmallScreen
+        ? (fullWidthPainter && imagePath != null ? 13 : 12)
+        : (fullWidthPainter && imagePath != null ? 15 : 14);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -2314,14 +2557,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               const SizedBox(height: 50),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: fullWidthPainter ? 0.0 : 24.0),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: fullWidthPainter ? 0.0 : 24.0,
+                  ),
                   child: Container(
                     width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                    ),
+                    decoration: const BoxDecoration(color: Colors.transparent),
                     child: ClipRRect(
-                      borderRadius: fullWidthPainter ? BorderRadius.zero : BorderRadius.circular(20),
+                      borderRadius: fullWidthPainter
+                          ? BorderRadius.zero
+                          : BorderRadius.circular(20),
                       child: painter != null
                           ? CustomPaint(
                               painter: painter,
@@ -2329,7 +2574,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                             )
                           : Image.asset(
                               imagePath!,
-                              fit: fullWidthPainter ? BoxFit.cover : BoxFit.contain,
+                              fit: fullWidthPainter
+                                  ? BoxFit.cover
+                                  : BoxFit.contain,
                               width: double.infinity,
                             ),
                     ),
@@ -2337,12 +2584,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 ),
               ),
             ],
-            
+
             // Dots
             _buildDotsUnderIllustration(),
-            
+
             const SizedBox(height: 16),
-            
+
             // Texts Box
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -2354,7 +2601,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                     style: TextStyle(
                       color: const Color(0xFF8AA996),
                       fontWeight: FontWeight.bold,
-                      fontSize: (fullWidthPainter && imagePath != null) ? 14 : 12,
+                      fontSize: (fullWidthPainter && imagePath != null)
+                          ? 14
+                          : 12,
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -2403,9 +2652,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         setState(() {
           _selectedMethod = id;
         });
-        
-        _showSnackBar("Hesaplama yöntemi $title olarak seçildi.", success: true);
-        
+
+        _showSnackBar(
+          "Hesaplama yöntemi $title olarak seçildi.",
+          success: true,
+        );
+
         // Dynamic time adjustment based on method
         if (id == 'bae') {
           _varyPrayerTimes(offsetMinutes: -3);
@@ -2436,7 +2688,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isRecommended ? const Color(0xFF2E533F) : const Color(0xFF1E2E4E))
+              ? (isRecommended
+                    ? const Color(0xFF2E533F)
+                    : const Color(0xFF1E2E4E))
               : const Color(0xFF182845),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -2455,7 +2709,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   Text(
                     title,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+                      color: isSelected
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.8),
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -2474,7 +2730,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
             if (isSelected)
               const Icon(Icons.check_circle, color: Color(0xFF90B49C), size: 20)
             else
-              Icon(Icons.info_outline, color: Colors.white.withOpacity(0.2), size: 20),
+              Icon(
+                Icons.info_outline,
+                color: Colors.white.withOpacity(0.2),
+                size: 20,
+              ),
           ],
         ),
       ),
@@ -2525,16 +2785,18 @@ class IntroIllustrationPainter extends CustomPainter {
     // ─── DECORATIVE STARS ───
     final starPaint = Paint()..color = const Color(0xFFFFFFFF).withOpacity(0.3);
     final starPositions = [
-      [0.12, 0.08, 1.5], [0.35, 0.05, 1.2], [0.08, 0.22, 1.0],
-      [0.92, 0.08, 1.3], [0.55, 0.12, 0.9], [0.45, 0.03, 1.1],
-      [0.82, 0.30, 1.0], [0.18, 0.15, 0.8], [0.68, 0.06, 1.4],
+      [0.12, 0.08, 1.5],
+      [0.35, 0.05, 1.2],
+      [0.08, 0.22, 1.0],
+      [0.92, 0.08, 1.3],
+      [0.55, 0.12, 0.9],
+      [0.45, 0.03, 1.1],
+      [0.82, 0.30, 1.0],
+      [0.18, 0.15, 0.8],
+      [0.68, 0.06, 1.4],
     ];
     for (final star in starPositions) {
-      canvas.drawCircle(
-        Offset(w * star[0], h * star[1]),
-        star[2],
-        starPaint,
-      );
+      canvas.drawCircle(Offset(w * star[0], h * star[1]), star[2], starPaint);
     }
 
     final double yGround = h * 0.82;
@@ -2564,26 +2826,59 @@ class IntroIllustrationPainter extends CustomPainter {
     // Lighter highlight on sun
     final sunHighlight = Paint()
       ..color = const Color(0xFFFFA96B).withOpacity(0.5);
-    canvas.drawCircle(Offset(sunCenter.dx - 3, sunCenter.dy - 3), sunRadius * 0.6, sunHighlight);
+    canvas.drawCircle(
+      Offset(sunCenter.dx - 3, sunCenter.dy - 3),
+      sunRadius * 0.6,
+      sunHighlight,
+    );
 
     // ─── CLOUDS (stylized flat green clouds, matching reference) ───
     final cloudColor = const Color(0xFF3B5E47);
     final cloudLightColor = const Color(0xFF4A7358);
 
     // Cloud group 1 (overlapping sun from below-left)
-    _drawFlatCloud(canvas, Offset(w * 0.62, h * 0.24), w * 0.32, h * 0.055, cloudColor);
-    _drawFlatCloud(canvas, Offset(w * 0.65, h * 0.235), w * 0.22, h * 0.04, cloudLightColor.withOpacity(0.7));
+    _drawFlatCloud(
+      canvas,
+      Offset(w * 0.62, h * 0.24),
+      w * 0.32,
+      h * 0.055,
+      cloudColor,
+    );
+    _drawFlatCloud(
+      canvas,
+      Offset(w * 0.65, h * 0.235),
+      w * 0.22,
+      h * 0.04,
+      cloudLightColor.withOpacity(0.7),
+    );
 
     // Cloud group 2 (overlapping sun from upper-right)
-    _drawFlatCloud(canvas, Offset(w * 0.82, h * 0.14), w * 0.24, h * 0.045, cloudColor);
-    _drawFlatCloud(canvas, Offset(w * 0.85, h * 0.135), w * 0.16, h * 0.032, cloudLightColor.withOpacity(0.6));
+    _drawFlatCloud(
+      canvas,
+      Offset(w * 0.82, h * 0.14),
+      w * 0.24,
+      h * 0.045,
+      cloudColor,
+    );
+    _drawFlatCloud(
+      canvas,
+      Offset(w * 0.85, h * 0.135),
+      w * 0.16,
+      h * 0.032,
+      cloudLightColor.withOpacity(0.6),
+    );
 
     // ─── CRESCENT SYMBOL on cloud (Islamic detail) ───
-    final crescentPaint = Paint()..color = const Color(0xFF8BB89A).withOpacity(0.9);
+    final crescentPaint = Paint()
+      ..color = const Color(0xFF8BB89A).withOpacity(0.9);
     final double cX = w * 0.74;
     final double cY = h * 0.14;
     canvas.drawCircle(Offset(cX, cY), 6.0, crescentPaint);
-    canvas.drawCircle(Offset(cX + 3, cY - 1), 5.0, Paint()..color = cloudColor); // cut crescent
+    canvas.drawCircle(
+      Offset(cX + 3, cY - 1),
+      5.0,
+      Paint()..color = cloudColor,
+    ); // cut crescent
     // Star next to crescent
     canvas.drawCircle(Offset(cX + 10, cY - 2), 1.8, crescentPaint);
 
@@ -2627,7 +2922,10 @@ class IntroIllustrationPainter extends CustomPainter {
       ..quadraticBezierTo(w * 0.25, h * 0.22, w * 0.40, h * 0.28)
       ..quadraticBezierTo(w * 0.55, h * 0.35, w * 0.70, h * 0.55)
       ..lineTo(w * 0.80, yGround);
-    canvas.drawPath(ridgeM2, ridgeStroke..color = const Color(0xFF5B8D6E).withOpacity(0.4));
+    canvas.drawPath(
+      ridgeM2,
+      ridgeStroke..color = const Color(0xFF5B8D6E).withOpacity(0.4),
+    );
 
     // Layer 3: Right side mountain
     final m3Fill = Paint()..color = const Color(0xFF223D4D).withOpacity(0.4);
@@ -2643,10 +2941,13 @@ class IntroIllustrationPainter extends CustomPainter {
       ..moveTo(w * 0.50, yGround)
       ..quadraticBezierTo(w * 0.65, h * 0.38, w * 0.80, h * 0.32)
       ..quadraticBezierTo(w * 0.92, h * 0.42, w, h * 0.58);
-    canvas.drawPath(ridgeM3, Paint()
-      ..color = const Color(0xFF5B8D6E).withOpacity(0.35)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.5);
+    canvas.drawPath(
+      ridgeM3,
+      Paint()
+        ..color = const Color(0xFF5B8D6E).withOpacity(0.35)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
 
     // Layer 4: Foreground hills (closest, darker green)
     final m4Fill = Paint()..color = const Color(0xFF162C3D).withOpacity(0.6);
@@ -2695,17 +2996,37 @@ class IntroIllustrationPainter extends CustomPainter {
     for (double gx = 0; gx < w; gx += w * 0.04) {
       final gy = yGround;
       final grassHeight = 3.0 + (gx.hashCode % 5);
-      canvas.drawLine(Offset(gx, gy), Offset(gx - 2, gy - grassHeight), grassPaint);
-      canvas.drawLine(Offset(gx + 3, gy), Offset(gx + 5, gy - grassHeight * 0.8), grassPaint);
+      canvas.drawLine(
+        Offset(gx, gy),
+        Offset(gx - 2, gy - grassHeight),
+        grassPaint,
+      );
+      canvas.drawLine(
+        Offset(gx + 3, gy),
+        Offset(gx + 5, gy - grassHeight * 0.8),
+        grassPaint,
+      );
     }
 
     // ─── CHARACTER PALETTE ───
-    final robePaint = Paint()..color = const Color(0xFF3D6B50)..style = PaintingStyle.fill;
-    final robeDarkPaint = Paint()..color = const Color(0xFF2E5740)..style = PaintingStyle.fill;
-    final skinPaint = Paint()..color = const Color(0xFFF0C8A0)..style = PaintingStyle.fill;
-    final pantsPaint = Paint()..color = const Color(0xFF1A1A2E)..style = PaintingStyle.fill;
-    final capPaint = Paint()..color = const Color(0xFF5A8D6A)..style = PaintingStyle.fill;
-    final capDarkPaint = Paint()..color = const Color(0xFF4A7A5A)..style = PaintingStyle.fill;
+    final robePaint = Paint()
+      ..color = const Color(0xFF3D6B50)
+      ..style = PaintingStyle.fill;
+    final robeDarkPaint = Paint()
+      ..color = const Color(0xFF2E5740)
+      ..style = PaintingStyle.fill;
+    final skinPaint = Paint()
+      ..color = const Color(0xFFF0C8A0)
+      ..style = PaintingStyle.fill;
+    final pantsPaint = Paint()
+      ..color = const Color(0xFF1A1A2E)
+      ..style = PaintingStyle.fill;
+    final capPaint = Paint()
+      ..color = const Color(0xFF5A8D6A)
+      ..style = PaintingStyle.fill;
+    final capDarkPaint = Paint()
+      ..color = const Color(0xFF4A7A5A)
+      ..style = PaintingStyle.fill;
 
     // Scale factor based on canvas size for responsive characters
     final double sf = h / 400.0;
@@ -2718,15 +3039,29 @@ class IntroIllustrationPainter extends CustomPainter {
 
     // Shadow under character
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(c1x, c1y + 2), width: 70 * sf, height: 8 * sf),
+      Rect.fromCenter(
+        center: Offset(c1x, c1y + 2),
+        width: 70 * sf,
+        height: 8 * sf,
+      ),
       Paint()..color = Colors.black.withOpacity(0.2),
     );
 
     // Feet (showing behind)
     final foot1 = Path()
       ..moveTo(c1x - 30 * sf, c1y)
-      ..quadraticBezierTo(c1x - 35 * sf, c1y - 3 * sf, c1x - 33 * sf, c1y - 10 * sf)
-      ..quadraticBezierTo(c1x - 26 * sf, c1y - 12 * sf, c1x - 24 * sf, c1y - 5 * sf)
+      ..quadraticBezierTo(
+        c1x - 35 * sf,
+        c1y - 3 * sf,
+        c1x - 33 * sf,
+        c1y - 10 * sf,
+      )
+      ..quadraticBezierTo(
+        c1x - 26 * sf,
+        c1y - 12 * sf,
+        c1x - 24 * sf,
+        c1y - 5 * sf,
+      )
       ..close();
     canvas.drawPath(foot1, skinPaint);
 
@@ -2734,9 +3069,24 @@ class IntroIllustrationPainter extends CustomPainter {
     final legs1 = Path()
       ..moveTo(c1x - 26 * sf, c1y)
       ..lineTo(c1x - 30 * sf, c1y - 10 * sf)
-      ..quadraticBezierTo(c1x - 33 * sf, c1y - 22 * sf, c1x - 24 * sf, c1y - 24 * sf)
-      ..quadraticBezierTo(c1x - 8 * sf, c1y - 24 * sf, c1x + 18 * sf, c1y - 18 * sf)
-      ..quadraticBezierTo(c1x + 30 * sf, c1y - 14 * sf, c1x + 32 * sf, c1y - 6 * sf)
+      ..quadraticBezierTo(
+        c1x - 33 * sf,
+        c1y - 22 * sf,
+        c1x - 24 * sf,
+        c1y - 24 * sf,
+      )
+      ..quadraticBezierTo(
+        c1x - 8 * sf,
+        c1y - 24 * sf,
+        c1x + 18 * sf,
+        c1y - 18 * sf,
+      )
+      ..quadraticBezierTo(
+        c1x + 30 * sf,
+        c1y - 14 * sf,
+        c1x + 32 * sf,
+        c1y - 6 * sf,
+      )
       ..quadraticBezierTo(c1x + 32 * sf, c1y + 1, c1x + 24 * sf, c1y)
       ..close();
     canvas.drawPath(legs1, pantsPaint);
@@ -2744,11 +3094,26 @@ class IntroIllustrationPainter extends CustomPainter {
     // Robe / Torso (sitting upright)
     final robe1 = Path()
       ..moveTo(c1x - 24 * sf, c1y - 16 * sf)
-      ..quadraticBezierTo(c1x - 28 * sf, c1y - 55 * sf, c1x - 16 * sf, c1y - 78 * sf)
+      ..quadraticBezierTo(
+        c1x - 28 * sf,
+        c1y - 55 * sf,
+        c1x - 16 * sf,
+        c1y - 78 * sf,
+      )
       ..lineTo(c1x - 4 * sf, c1y - 78 * sf)
-      ..quadraticBezierTo(c1x + 8 * sf, c1y - 62 * sf, c1x + 5 * sf, c1y - 52 * sf)
+      ..quadraticBezierTo(
+        c1x + 8 * sf,
+        c1y - 62 * sf,
+        c1x + 5 * sf,
+        c1y - 52 * sf,
+      )
       ..lineTo(c1x + 22 * sf, c1y - 24 * sf)
-      ..quadraticBezierTo(c1x + 26 * sf, c1y - 18 * sf, c1x + 18 * sf, c1y - 18 * sf)
+      ..quadraticBezierTo(
+        c1x + 26 * sf,
+        c1y - 18 * sf,
+        c1x + 18 * sf,
+        c1y - 18 * sf,
+      )
       ..lineTo(c1x, c1y - 42 * sf)
       ..lineTo(c1x - 4 * sf, c1y - 16 * sf)
       ..close();
@@ -2759,9 +3124,17 @@ class IntroIllustrationPainter extends CustomPainter {
       ..moveTo(c1x - 4 * sf, c1y - 16 * sf)
       ..lineTo(c1x, c1y - 42 * sf)
       ..lineTo(c1x + 5 * sf, c1y - 52 * sf)
-      ..quadraticBezierTo(c1x + 2 * sf, c1y - 38 * sf, c1x + 8 * sf, c1y - 20 * sf)
+      ..quadraticBezierTo(
+        c1x + 2 * sf,
+        c1y - 38 * sf,
+        c1x + 8 * sf,
+        c1y - 20 * sf,
+      )
       ..close();
-    canvas.drawPath(robeShadow1, Paint()..color = const Color(0xFF2E5740).withOpacity(0.3));
+    canvas.drawPath(
+      robeShadow1,
+      Paint()..color = const Color(0xFF2E5740).withOpacity(0.3),
+    );
 
     // Neck
     final neck1 = Path()
@@ -2777,13 +3150,27 @@ class IntroIllustrationPainter extends CustomPainter {
     canvas.drawCircle(headC1, 12.0 * sf, skinPaint);
 
     // Ear
-    canvas.drawCircle(Offset(headC1.dx + 11 * sf, headC1.dy + 2 * sf), 3.0 * sf, skinPaint);
+    canvas.drawCircle(
+      Offset(headC1.dx + 11 * sf, headC1.dy + 2 * sf),
+      3.0 * sf,
+      skinPaint,
+    );
 
     // Cap (prayer cap / takke)
     final cap1 = Path()
       ..moveTo(c1x - 20 * sf, c1y - 100 * sf)
-      ..quadraticBezierTo(c1x - 8 * sf, c1y - 116 * sf, c1x + 4 * sf, c1y - 100 * sf)
-      ..quadraticBezierTo(c1x - 8 * sf, c1y - 96 * sf, c1x - 20 * sf, c1y - 100 * sf)
+      ..quadraticBezierTo(
+        c1x - 8 * sf,
+        c1y - 116 * sf,
+        c1x + 4 * sf,
+        c1y - 100 * sf,
+      )
+      ..quadraticBezierTo(
+        c1x - 8 * sf,
+        c1y - 96 * sf,
+        c1x - 20 * sf,
+        c1y - 100 * sf,
+      )
       ..close();
     canvas.drawPath(cap1, capPaint);
 
@@ -2791,7 +3178,9 @@ class IntroIllustrationPainter extends CustomPainter {
     canvas.drawLine(
       Offset(c1x - 18 * sf, c1y - 100 * sf),
       Offset(c1x + 2 * sf, c1y - 100 * sf),
-      Paint()..color = capDarkPaint.color..strokeWidth = 1.5 * sf,
+      Paint()
+        ..color = capDarkPaint.color
+        ..strokeWidth = 1.5 * sf,
     );
 
     // Hand resting on knee
@@ -2811,30 +3200,64 @@ class IntroIllustrationPainter extends CustomPainter {
 
     // Shadow under character
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(c2x + 5 * sf, c2y + 2), width: 80 * sf, height: 8 * sf),
+      Rect.fromCenter(
+        center: Offset(c2x + 5 * sf, c2y + 2),
+        width: 80 * sf,
+        height: 8 * sf,
+      ),
       Paint()..color = Colors.black.withOpacity(0.2),
     );
 
     // Feet (heels up at back)
     final foot2a = Path()
       ..moveTo(c2x - 45 * sf, c2y)
-      ..quadraticBezierTo(c2x - 50 * sf, c2y - 3 * sf, c2x - 48 * sf, c2y - 10 * sf)
-      ..quadraticBezierTo(c2x - 42 * sf, c2y - 12 * sf, c2x - 40 * sf, c2y - 5 * sf)
+      ..quadraticBezierTo(
+        c2x - 50 * sf,
+        c2y - 3 * sf,
+        c2x - 48 * sf,
+        c2y - 10 * sf,
+      )
+      ..quadraticBezierTo(
+        c2x - 42 * sf,
+        c2y - 12 * sf,
+        c2x - 40 * sf,
+        c2y - 5 * sf,
+      )
       ..close();
     canvas.drawPath(foot2a, skinPaint);
 
     final foot2b = Path()
       ..moveTo(c2x - 38 * sf, c2y)
-      ..quadraticBezierTo(c2x - 43 * sf, c2y - 3 * sf, c2x - 41 * sf, c2y - 9 * sf)
-      ..quadraticBezierTo(c2x - 36 * sf, c2y - 11 * sf, c2x - 34 * sf, c2y - 4 * sf)
+      ..quadraticBezierTo(
+        c2x - 43 * sf,
+        c2y - 3 * sf,
+        c2x - 41 * sf,
+        c2y - 9 * sf,
+      )
+      ..quadraticBezierTo(
+        c2x - 36 * sf,
+        c2y - 11 * sf,
+        c2x - 34 * sf,
+        c2y - 4 * sf,
+      )
       ..close();
     canvas.drawPath(foot2b, skinPaint);
 
     // Legs / Pants (bent in sujud)
     final legs2 = Path()
       ..moveTo(c2x - 42 * sf, c2y)
-      ..quadraticBezierTo(c2x - 50 * sf, c2y - 18 * sf, c2x - 36 * sf, c2y - 28 * sf)
-      ..quadraticBezierTo(c2x - 22 * sf, c2y - 32 * sf, c2x - 10 * sf, c2y - 20 * sf)
+      ..quadraticBezierTo(
+        c2x - 50 * sf,
+        c2y - 18 * sf,
+        c2x - 36 * sf,
+        c2y - 28 * sf,
+      )
+      ..quadraticBezierTo(
+        c2x - 22 * sf,
+        c2y - 32 * sf,
+        c2x - 10 * sf,
+        c2y - 20 * sf,
+      )
       ..lineTo(c2x - 16 * sf, c2y)
       ..close();
     canvas.drawPath(legs2, pantsPaint);
@@ -2842,12 +3265,27 @@ class IntroIllustrationPainter extends CustomPainter {
     // Robe (curved back in prostration)
     final robe2 = Path()
       ..moveTo(c2x - 22 * sf, c2y - 18 * sf)
-      ..quadraticBezierTo(c2x - 28 * sf, c2y - 34 * sf, c2x - 14 * sf, c2y - 42 * sf)
-      ..quadraticBezierTo(c2x + 8 * sf, c2y - 46 * sf, c2x + 25 * sf, c2y - 24 * sf)
+      ..quadraticBezierTo(
+        c2x - 28 * sf,
+        c2y - 34 * sf,
+        c2x - 14 * sf,
+        c2y - 42 * sf,
+      )
+      ..quadraticBezierTo(
+        c2x + 8 * sf,
+        c2y - 46 * sf,
+        c2x + 25 * sf,
+        c2y - 24 * sf,
+      )
       ..lineTo(c2x + 40 * sf, c2y - 8 * sf) // sleeve
       ..quadraticBezierTo(c2x + 44 * sf, c2y - 3 * sf, c2x + 38 * sf, c2y)
       ..lineTo(c2x + 28 * sf, c2y - 16 * sf) // sleeve underside
-      ..quadraticBezierTo(c2x + 14 * sf, c2y - 18 * sf, c2x - 10 * sf, c2y - 16 * sf)
+      ..quadraticBezierTo(
+        c2x + 14 * sf,
+        c2y - 18 * sf,
+        c2x - 10 * sf,
+        c2y - 16 * sf,
+      )
       ..close();
     canvas.drawPath(robe2, robePaint);
 
@@ -2855,9 +3293,17 @@ class IntroIllustrationPainter extends CustomPainter {
     final robeHighlight2 = Path()
       ..moveTo(c2x - 14 * sf, c2y - 42 * sf)
       ..quadraticBezierTo(c2x, c2y - 44 * sf, c2x + 10 * sf, c2y - 38 * sf)
-      ..quadraticBezierTo(c2x + 4 * sf, c2y - 36 * sf, c2x - 8 * sf, c2y - 36 * sf)
+      ..quadraticBezierTo(
+        c2x + 4 * sf,
+        c2y - 36 * sf,
+        c2x - 8 * sf,
+        c2y - 36 * sf,
+      )
       ..close();
-    canvas.drawPath(robeHighlight2, Paint()..color = const Color(0xFF4A8060).withOpacity(0.5));
+    canvas.drawPath(
+      robeHighlight2,
+      Paint()..color = const Color(0xFF4A8060).withOpacity(0.5),
+    );
 
     // Head (touching ground in sujud)
     final headC2 = Offset(c2x + 48 * sf, c2y - 9 * sf);
@@ -2866,8 +3312,18 @@ class IntroIllustrationPainter extends CustomPainter {
     // Cap in sujud position
     final cap2 = Path()
       ..moveTo(c2x + 40 * sf, c2y - 14 * sf)
-      ..quadraticBezierTo(c2x + 50 * sf, c2y - 24 * sf, c2x + 58 * sf, c2y - 12 * sf)
-      ..quadraticBezierTo(c2x + 50 * sf, c2y - 9 * sf, c2x + 40 * sf, c2y - 14 * sf)
+      ..quadraticBezierTo(
+        c2x + 50 * sf,
+        c2y - 24 * sf,
+        c2x + 58 * sf,
+        c2y - 12 * sf,
+      )
+      ..quadraticBezierTo(
+        c2x + 50 * sf,
+        c2y - 9 * sf,
+        c2x + 40 * sf,
+        c2y - 14 * sf,
+      )
       ..close();
     canvas.drawPath(cap2, capPaint);
 
@@ -2894,7 +3350,11 @@ class IntroIllustrationPainter extends CustomPainter {
     // Rug under character 1
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(c1x, c1y + 1), width: 65 * sf, height: 4 * sf),
+        Rect.fromCenter(
+          center: Offset(c1x, c1y + 1),
+          width: 65 * sf,
+          height: 4 * sf,
+        ),
         Radius.circular(2 * sf),
       ),
       rugPaint,
@@ -2902,7 +3362,11 @@ class IntroIllustrationPainter extends CustomPainter {
     // Rug under character 2
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(c2x + 5 * sf, c2y + 1), width: 90 * sf, height: 4 * sf),
+        Rect.fromCenter(
+          center: Offset(c2x + 5 * sf, c2y + 1),
+          width: 90 * sf,
+          height: 4 * sf,
+        ),
         Radius.circular(2 * sf),
       ),
       rugPaint,
@@ -2910,15 +3374,25 @@ class IntroIllustrationPainter extends CustomPainter {
   }
 
   /// Draws a flat, rounded, puffy cloud shape
-  void _drawFlatCloud(Canvas canvas, Offset center, double width, double height, Color color) {
-    final paint = Paint()..color = color..style = PaintingStyle.fill;
+  void _drawFlatCloud(
+    Canvas canvas,
+    Offset center,
+    double width,
+    double height,
+    Color color,
+  ) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
     final path = Path();
 
     // Main body
-    path.addRRect(RRect.fromRectAndRadius(
-      Rect.fromCenter(center: center, width: width, height: height),
-      Radius.circular(height * 0.5),
-    ));
+    path.addRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: center, width: width, height: height),
+        Radius.circular(height * 0.5),
+      ),
+    );
 
     // Puffy bumps on top
     final bumpCount = 3;
@@ -2949,22 +3423,34 @@ class LocationPermissionIllustrationPainter extends CustomPainter {
       ..color = Colors.white.withOpacity(0.04)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
-    
+
     // Draw some stylized contour grid lines to look like a map
     for (int i = 1; i <= 6; i++) {
-      canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.45), i * 36, mapPaint);
+      canvas.drawCircle(
+        Offset(size.width * 0.5, size.height * 0.45),
+        i * 36,
+        mapPaint,
+      );
     }
 
     // Floating location pins in background
     final pinPaint = Paint()..color = const Color(0xFF90B49C).withOpacity(0.2);
-    canvas.drawCircle(Offset(size.width * 0.22, size.height * 0.35), 12, pinPaint);
-    canvas.drawCircle(Offset(size.width * 0.78, size.height * 0.25), 8, pinPaint);
+    canvas.drawCircle(
+      Offset(size.width * 0.22, size.height * 0.35),
+      12,
+      pinPaint,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.78, size.height * 0.25),
+      8,
+      pinPaint,
+    );
 
     // Phone outline container
     final phonePaint = Paint()
       ..color = Colors.black.withOpacity(0.6)
       ..style = PaintingStyle.fill;
-    
+
     final phoneBezelPaint = Paint()
       ..color = const Color(0xFF2C3E5B)
       ..style = PaintingStyle.stroke
@@ -2986,9 +3472,21 @@ class LocationPermissionIllustrationPainter extends CustomPainter {
     final pulsePaint = Paint()
       ..color = const Color(0xFF90B49C).withOpacity(0.2)
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.38), 32, pulsePaint);
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.38), 16, Paint()..color = const Color(0xFF90B49C).withOpacity(0.4));
-    canvas.drawCircle(Offset(size.width * 0.5, size.height * 0.38), 4, Paint()..color = const Color(0xFF90B49C));
+    canvas.drawCircle(
+      Offset(size.width * 0.5, size.height * 0.38),
+      32,
+      pulsePaint,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.5, size.height * 0.38),
+      16,
+      Paint()..color = const Color(0xFF90B49C).withOpacity(0.4),
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.5, size.height * 0.38),
+      4,
+      Paint()..color = const Color(0xFF90B49C),
+    );
 
     // A walking character silhouette
     final robePaint = Paint()..color = const Color(0xFF2E5E43);
@@ -3014,8 +3512,14 @@ class LocationPermissionIllustrationPainter extends CustomPainter {
       Paint()..color = const Color(0xFF8AA996),
     );
     // Legs
-    canvas.drawRect(Rect.fromLTWH(charX - 6, charY, 4, 12), Paint()..color = const Color(0xFF1C1C1C));
-    canvas.drawRect(Rect.fromLTWH(charX + 2, charY, 4, 12), Paint()..color = const Color(0xFF1C1C1C));
+    canvas.drawRect(
+      Rect.fromLTWH(charX - 6, charY, 4, 12),
+      Paint()..color = const Color(0xFF1C1C1C),
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(charX + 2, charY, 4, 12),
+      Paint()..color = const Color(0xFF1C1C1C),
+    );
   }
 
   @override
@@ -3041,16 +3545,39 @@ class DetectedLocationIllustrationPainter extends CustomPainter {
 
     // Draw green parks
     canvas.drawRect(Rect.fromLTWH(16, 24, size.width * 0.25, 48), parkPaint);
-    canvas.drawRect(Rect.fromLTWH(size.width * 0.68, 60, size.width * 0.2, 70), parkPaint);
+    canvas.drawRect(
+      Rect.fromLTWH(size.width * 0.68, 60, size.width * 0.2, 70),
+      parkPaint,
+    );
 
     // Vertical streets
-    canvas.drawLine(Offset(size.width * 0.2, 0), Offset(size.width * 0.2, size.height), streetPaint);
-    canvas.drawLine(Offset(size.width * 0.5, 0), Offset(size.width * 0.5, size.height), streetPaint);
-    canvas.drawLine(Offset(size.width * 0.8, 0), Offset(size.width * 0.8, size.height), streetPaint);
+    canvas.drawLine(
+      Offset(size.width * 0.2, 0),
+      Offset(size.width * 0.2, size.height),
+      streetPaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.5, 0),
+      Offset(size.width * 0.5, size.height),
+      streetPaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.8, 0),
+      Offset(size.width * 0.8, size.height),
+      streetPaint,
+    );
 
     // Horizontal streets
-    canvas.drawLine(Offset(0, size.height * 0.3), Offset(size.width, size.height * 0.3), streetPaint);
-    canvas.drawLine(Offset(0, size.height * 0.6), Offset(size.width, size.height * 0.6), streetPaint);
+    canvas.drawLine(
+      Offset(0, size.height * 0.3),
+      Offset(size.width, size.height * 0.3),
+      streetPaint,
+    );
+    canvas.drawLine(
+      Offset(0, size.height * 0.6),
+      Offset(size.width, size.height * 0.6),
+      streetPaint,
+    );
 
     // Diagonal streets
     canvas.drawLine(Offset(0, 0), Offset(size.width, size.height), streetPaint);
@@ -3059,11 +3586,19 @@ class DetectedLocationIllustrationPainter extends CustomPainter {
     final pulsePaint = Paint()
       ..color = const Color(0xFF90B49C).withOpacity(0.12)
       ..style = PaintingStyle.fill;
-    
+
     final centerOffset = Offset(size.width * 0.5, size.height * 0.45);
     canvas.drawCircle(centerOffset, 48, pulsePaint);
-    canvas.drawCircle(centerOffset, 24, Paint()..color = const Color(0xFF90B49C).withOpacity(0.25));
-    canvas.drawCircle(centerOffset, 6, Paint()..color = const Color(0xFF90B49C));
+    canvas.drawCircle(
+      centerOffset,
+      24,
+      Paint()..color = const Color(0xFF90B49C).withOpacity(0.25),
+    );
+    canvas.drawCircle(
+      centerOffset,
+      6,
+      Paint()..color = const Color(0xFF90B49C),
+    );
   }
 
   @override
@@ -3084,7 +3619,10 @@ class CalculationMethodIllustrationPainter extends CustomPainter {
     final random = math.Random(123);
     for (int i = 0; i < 20; i++) {
       canvas.drawCircle(
-        Offset(random.nextDouble() * size.width, random.nextDouble() * size.height * 0.8),
+        Offset(
+          random.nextDouble() * size.width,
+          random.nextDouble() * size.height * 0.8,
+        ),
         random.nextDouble() * 1.2 + 0.5,
         starPaint,
       );
@@ -3119,7 +3657,10 @@ class CalculationMethodIllustrationPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
     canvas.drawLine(
       center,
-      Offset(center.dx + 48 * math.cos(-math.pi / 3), center.dy + 48 * math.sin(-math.pi / 3)),
+      Offset(
+        center.dx + 48 * math.cos(-math.pi / 3),
+        center.dy + 48 * math.sin(-math.pi / 3),
+      ),
       needlePaint,
     );
 
@@ -3166,28 +3707,78 @@ class JoinUsIllustrationPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final path = Path();
-    
+
     // Americas outline shape
     path.moveTo(size.width * 0.15, size.height * 0.2);
-    path.quadraticBezierTo(size.width * 0.1, size.height * 0.35, size.width * 0.18, size.height * 0.45);
-    path.quadraticBezierTo(size.width * 0.15, size.height * 0.65, size.width * 0.22, size.height * 0.8);
+    path.quadraticBezierTo(
+      size.width * 0.1,
+      size.height * 0.35,
+      size.width * 0.18,
+      size.height * 0.45,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.15,
+      size.height * 0.65,
+      size.width * 0.22,
+      size.height * 0.8,
+    );
     path.lineTo(size.width * 0.24, size.height * 0.8);
-    path.quadraticBezierTo(size.width * 0.26, size.height * 0.5, size.width * 0.28, size.height * 0.4);
-    path.quadraticBezierTo(size.width * 0.2, size.height * 0.18, size.width * 0.15, size.height * 0.2);
+    path.quadraticBezierTo(
+      size.width * 0.26,
+      size.height * 0.5,
+      size.width * 0.28,
+      size.height * 0.4,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.2,
+      size.height * 0.18,
+      size.width * 0.15,
+      size.height * 0.2,
+    );
 
     // Europe & Africa outline shape
     path.moveTo(size.width * 0.45, size.height * 0.25);
-    path.quadraticBezierTo(size.width * 0.5, size.height * 0.2, size.width * 0.56, size.height * 0.28);
-    path.quadraticBezierTo(size.width * 0.46, size.height * 0.38, size.width * 0.48, size.height * 0.5);
-    path.quadraticBezierTo(size.width * 0.54, size.height * 0.72, size.width * 0.58, size.height * 0.78);
+    path.quadraticBezierTo(
+      size.width * 0.5,
+      size.height * 0.2,
+      size.width * 0.56,
+      size.height * 0.28,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.46,
+      size.height * 0.38,
+      size.width * 0.48,
+      size.height * 0.5,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.54,
+      size.height * 0.72,
+      size.width * 0.58,
+      size.height * 0.78,
+    );
     path.lineTo(size.width * 0.56, size.height * 0.78);
-    path.quadraticBezierTo(size.width * 0.42, size.height * 0.55, size.width * 0.45, size.height * 0.25);
+    path.quadraticBezierTo(
+      size.width * 0.42,
+      size.height * 0.55,
+      size.width * 0.45,
+      size.height * 0.25,
+    );
 
     // Asia outline shape
     path.moveTo(size.width * 0.6, size.height * 0.25);
     path.lineTo(size.width * 0.85, size.height * 0.25);
-    path.quadraticBezierTo(size.width * 0.88, size.height * 0.4, size.width * 0.82, size.height * 0.52);
-    path.quadraticBezierTo(size.width * 0.68, size.height * 0.6, size.width * 0.6, size.height * 0.25);
+    path.quadraticBezierTo(
+      size.width * 0.88,
+      size.height * 0.4,
+      size.width * 0.82,
+      size.height * 0.52,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.68,
+      size.height * 0.6,
+      size.width * 0.6,
+      size.height * 0.25,
+    );
 
     canvas.drawPath(path, mapPaint);
 
@@ -3215,8 +3806,14 @@ class JoinUsIllustrationPainter extends CustomPainter {
       Paint()..color = const Color(0xFF8AA996),
     );
     // Legs
-    canvas.drawRect(Rect.fromLTWH(charX - 6, charY, 4, 14), Paint()..color = const Color(0xFF1C1C1C));
-    canvas.drawRect(Rect.fromLTWH(charX + 2, charY, 4, 14), Paint()..color = const Color(0xFF1C1C1C));
+    canvas.drawRect(
+      Rect.fromLTWH(charX - 6, charY, 4, 14),
+      Paint()..color = const Color(0xFF1C1C1C),
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(charX + 2, charY, 4, 14),
+      Paint()..color = const Color(0xFF1C1C1C),
+    );
   }
 
   @override
@@ -3236,14 +3833,19 @@ class ReminderIllustrationPainter extends CustomPainter {
     final panelPaint = Paint()
       ..color = const Color(0xFF1C2E4F).withOpacity(0.6)
       ..style = PaintingStyle.fill;
-    
+
     final panelBorder = Paint()
       ..color = Colors.white.withOpacity(0.08)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
     final panelRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(size.width * 0.62, size.height * 0.12, size.width * 0.3, size.height * 0.35),
+      Rect.fromLTWH(
+        size.width * 0.62,
+        size.height * 0.12,
+        size.width * 0.3,
+        size.height * 0.35,
+      ),
       const Radius.circular(12),
     );
     canvas.drawRRect(panelRect, panelPaint);
@@ -3255,23 +3857,37 @@ class ReminderIllustrationPainter extends CustomPainter {
 
     // Switch 1 (On)
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(size.width * 0.66, size.height * 0.18, 32, 16), const Radius.circular(8)),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.66, size.height * 0.18, 32, 16),
+        const Radius.circular(8),
+      ),
       switchOnPaint,
     );
-    canvas.drawCircle(Offset(size.width * 0.66 + 24, size.height * 0.18 + 8), 6, Paint()..color = Colors.white);
+    canvas.drawCircle(
+      Offset(size.width * 0.66 + 24, size.height * 0.18 + 8),
+      6,
+      Paint()..color = Colors.white,
+    );
 
     // Switch 2 (Off)
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(size.width * 0.66, size.height * 0.28, 32, 16), const Radius.circular(8)),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.66, size.height * 0.28, 32, 16),
+        const Radius.circular(8),
+      ),
       switchOffPaint,
     );
-    canvas.drawCircle(Offset(size.width * 0.66 + 8, size.height * 0.28 + 8), 6, Paint()..color = Colors.white54);
+    canvas.drawCircle(
+      Offset(size.width * 0.66 + 8, size.height * 0.28 + 8),
+      6,
+      Paint()..color = Colors.white54,
+    );
 
     // 2. Large Circular Alarm Clock in the Center
     final clockPaint = Paint()
       ..color = const Color(0xFF1E352B)
       ..style = PaintingStyle.fill;
-    
+
     final clockBorder = Paint()
       ..color = Colors.black.withOpacity(0.8)
       ..strokeWidth = 10
@@ -3298,7 +3914,10 @@ class ReminderIllustrationPainter extends CustomPainter {
     canvas.drawCircle(Offset(center.dx + 36, center.dy - 56), 20, bellPaint);
 
     // Hammer
-    canvas.drawRect(Rect.fromLTWH(center.dx - 4, center.dy - 74, 8, 16), bellPaint);
+    canvas.drawRect(
+      Rect.fromLTWH(center.dx - 4, center.dy - 74, 8, 16),
+      bellPaint,
+    );
 
     // Main clock body
     canvas.drawCircle(center, 58, clockPaint);
@@ -3310,7 +3929,7 @@ class ReminderIllustrationPainter extends CustomPainter {
       ..color = Colors.black.withOpacity(0.9)
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
-    
+
     // Hour hand (pointing to ~2)
     canvas.drawLine(center, Offset(center.dx + 28, center.dy - 8), handPaint);
     // Minute hand (pointing to ~10)
@@ -3323,13 +3942,18 @@ class ReminderIllustrationPainter extends CustomPainter {
     final notePaint = Paint()
       ..color = const Color(0xFF2E5E43).withOpacity(0.7)
       ..style = PaintingStyle.fill;
-    
+
     // Draw a small 8th note
     final notePath = Path()
       ..moveTo(size.width * 0.18, size.height * 0.18)
       ..lineTo(size.width * 0.26, size.height * 0.14)
       ..lineTo(size.width * 0.26, size.height * 0.26)
-      ..quadraticBezierTo(size.width * 0.22, size.height * 0.28, size.width * 0.2, size.height * 0.25)
+      ..quadraticBezierTo(
+        size.width * 0.22,
+        size.height * 0.28,
+        size.width * 0.2,
+        size.height * 0.25,
+      )
       ..lineTo(size.width * 0.18, size.height * 0.18)
       ..close();
     canvas.drawPath(notePath, notePaint);
@@ -3358,8 +3982,14 @@ class ReminderIllustrationPainter extends CustomPainter {
       Paint()..color = const Color(0xFF8AA996),
     );
     // Legs
-    canvas.drawRect(Rect.fromLTWH(charX - 7, charY, 4, 16), Paint()..color = const Color(0xFF1C1C1C));
-    canvas.drawRect(Rect.fromLTWH(charX + 3, charY, 4, 16), Paint()..color = const Color(0xFF1C1C1C));
+    canvas.drawRect(
+      Rect.fromLTWH(charX - 7, charY, 4, 16),
+      Paint()..color = const Color(0xFF1C1C1C),
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(charX + 3, charY, 4, 16),
+      Paint()..color = const Color(0xFF1C1C1C),
+    );
   }
 
   @override
@@ -3507,9 +4137,10 @@ class SetupIllustrationPainter extends CustomPainter {
       final double angle = i * angleStep + offsetAngle;
       final double x = loadingCenter.dx + radius * math.cos(angle);
       final double y = loadingCenter.dy + radius * math.sin(angle);
-      
+
       final double opacity = (i / dotCount).clamp(0.1, 1.0);
-      final dotPaint = Paint()..color = const Color(0xFFE5A93B).withOpacity(opacity);
+      final dotPaint = Paint()
+        ..color = const Color(0xFFE5A93B).withOpacity(opacity);
       canvas.drawCircle(Offset(x, y), 3.5, dotPaint);
     }
 
@@ -3530,24 +4161,42 @@ class SetupIllustrationPainter extends CustomPainter {
     final leafPaint = Paint()
       ..color = const Color(0xFF8AA996).withOpacity(0.85)
       ..style = PaintingStyle.fill;
-    
+
     // Draw 3 beautiful leaves curving out
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(plantX - 18, plantY - 12), width: 22, height: 12),
+      Rect.fromCenter(
+        center: Offset(plantX - 18, plantY - 12),
+        width: 22,
+        height: 12,
+      ),
       leafPaint,
     );
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(plantX + 18, plantY - 12), width: 22, height: 12),
+      Rect.fromCenter(
+        center: Offset(plantX + 18, plantY - 12),
+        width: 22,
+        height: 12,
+      ),
       leafPaint,
     );
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(plantX, plantY - 24), width: 14, height: 20),
+      Rect.fromCenter(
+        center: Offset(plantX, plantY - 24),
+        width: 14,
+        height: 20,
+      ),
       leafPaint,
     );
   }
 
   // General helper to draw gears
-  void _drawGear(Canvas canvas, Offset center, double outerRadius, int teethCount, Color color) {
+  void _drawGear(
+    Canvas canvas,
+    Offset center,
+    double outerRadius,
+    int teethCount,
+    Color color,
+  ) {
     final gearPaint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
@@ -3556,7 +4205,11 @@ class SetupIllustrationPainter extends CustomPainter {
     canvas.drawCircle(center, outerRadius * 0.75, gearPaint);
 
     // Inner hole cutout
-    canvas.drawCircle(center, outerRadius * 0.25, Paint()..color = const Color(0xFF142442));
+    canvas.drawCircle(
+      center,
+      outerRadius * 0.25,
+      Paint()..color = const Color(0xFF142442),
+    );
 
     // Draw gear teeth spokes
     for (int i = 0; i < teethCount; i++) {
@@ -3570,7 +4223,10 @@ class SetupIllustrationPainter extends CustomPainter {
         width: outerRadius * 0.35,
         height: outerRadius * 0.4,
       );
-      canvas.drawRRect(RRect.fromRectAndRadius(toothRect, const Radius.circular(2)), gearPaint);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(toothRect, const Radius.circular(2)),
+        gearPaint,
+      );
       canvas.restore();
     }
   }
@@ -3598,7 +4254,8 @@ class TopNotificationBanner extends StatefulWidget {
   _TopNotificationBannerState createState() => _TopNotificationBannerState();
 }
 
-class _TopNotificationBannerState extends State<TopNotificationBanner> with SingleTickerProviderStateMixin {
+class _TopNotificationBannerState extends State<TopNotificationBanner>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _slideAnimation;
   late Animation<double> _opacityAnimation;
@@ -3612,13 +4269,15 @@ class _TopNotificationBannerState extends State<TopNotificationBanner> with Sing
       duration: const Duration(milliseconds: 350),
     );
 
-    _slideAnimation = Tween<double>(begin: -40.0, end: 0.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _slideAnimation = Tween<double>(
+      begin: -40.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
-    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
     _controller.forward();
 
@@ -3650,14 +4309,21 @@ class _TopNotificationBannerState extends State<TopNotificationBanner> with Sing
             child: Material(
               color: Colors.transparent,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
-                  color: widget.success 
-                      ? const Color(0xFF1E3A34).withOpacity(0.95) // Premium deep forest green
-                      : const Color(0xFF3D1E22).withOpacity(0.95), // Premium deep red
+                  color: widget.success
+                      ? const Color(0xFF1E3A34).withOpacity(
+                          0.95,
+                        ) // Premium deep forest green
+                      : const Color(
+                          0xFF3D1E22,
+                        ).withOpacity(0.95), // Premium deep red
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: widget.success 
+                    color: widget.success
                         ? const Color(0xFF2E7D6B).withOpacity(0.4)
                         : const Color(0xFFC62828).withOpacity(0.4),
                     width: 1.5,
@@ -3673,8 +4339,12 @@ class _TopNotificationBannerState extends State<TopNotificationBanner> with Sing
                 child: Row(
                   children: [
                     Icon(
-                      widget.success ? Icons.check_circle_outline : Icons.error_outline,
-                      color: widget.success ? const Color(0xFF5CD1B4) : const Color(0xFFEF5350),
+                      widget.success
+                          ? Icons.check_circle_outline
+                          : Icons.error_outline,
+                      color: widget.success
+                          ? const Color(0xFF5CD1B4)
+                          : const Color(0xFFEF5350),
                       size: 24,
                     ),
                     const SizedBox(width: 12),
@@ -3698,5 +4368,3 @@ class _TopNotificationBannerState extends State<TopNotificationBanner> with Sing
     );
   }
 }
-
-
