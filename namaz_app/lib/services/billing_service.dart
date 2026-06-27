@@ -8,7 +8,7 @@ class BillingService {
   // TODO: Replace with your actual RevenueCat API keys
   static const String _androidApiKey = 'goog_cPOiFOCxSoLwLFVxIGhlFlIcUCg';
   static const String _iosApiKey = 'appl_wnROoObgCRUkrjUuVKcJaMxEIVC';
-  static const String _entitlementId = 'pro';
+  static const String _entitlementId = 'Vakit Dua: Namaz & Kıble Pro';
 
   static bool _isInitialized = false;
 
