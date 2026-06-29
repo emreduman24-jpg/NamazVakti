@@ -48,6 +48,37 @@ class _PremiumScreenState extends State<PremiumScreen> {
     return null;
   }
 
+  /// Checks if a package has a free trial introductory offer configured
+  bool _hasFreeTrial(Package? pkg) {
+    if (pkg == null) return false;
+    final intro = pkg.storeProduct.introductoryPrice;
+    if (intro == null) return false;
+    // price == 0 means it's a free trial (not a discounted intro)
+    return intro.price == 0;
+  }
+
+  /// Returns a human-readable trial period string (e.g. "7 Gün")
+  String _trialPeriodText(Package? pkg) {
+    if (pkg == null) return "";
+    final intro = pkg.storeProduct.introductoryPrice;
+    if (intro == null) return "";
+    final unit = intro.periodUnit;
+    final value = intro.periodNumberOfUnits;
+    // Map RevenueCat period units to Turkish
+    switch (unit) {
+      case PeriodUnit.day:
+        return "$value Gün";
+      case PeriodUnit.week:
+        return "${value * 7} Gün";
+      case PeriodUnit.month:
+        return "$value Ay";
+      case PeriodUnit.year:
+        return "$value Yıl";
+      default:
+        return "$value Gün";
+    }
+  }
+
 
   final List<Map<String, String>> _testimonials = [
     {
@@ -248,25 +279,37 @@ class _PremiumScreenState extends State<PremiumScreen> {
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          "7 Gün Ücretsiz Deneyin",
-                          style: TextStyle(
-                            color: Color(0xFFD4AF37),
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          "İstediğiniz zaman iptal edin. Şimdi ödeme yok.",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+                        // Dynamic trial header — only show trial text if store actually has a free trial
+                        Builder(builder: (_) {
+                          final selectedPkg = _getPackage(_selectedPackage);
+                          final hasTrial = _hasFreeTrial(selectedPkg);
+                          final trialText = _trialPeriodText(selectedPkg);
+                          return Column(
+                            children: [
+                              Text(
+                                hasTrial ? "$trialText Ücretsiz Deneyin" : "Deneyin",
+                                style: const TextStyle(
+                                  color: Color(0xFFD4AF37),
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -0.5,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                hasTrial
+                                    ? "İstediğiniz zaman iptal edin. Şimdi ödeme yok."
+                                    : "İstediğiniz zaman iptal edin.",
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12.5,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          );
+                        }),
                         
                         const SizedBox(height: 28),
 
@@ -285,24 +328,36 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             yearlyMonthlyPrice = symbol.isNotEmpty ? "$symbol$monthlyVal /ay" : "${yearlyPkg.storeProduct.currencyCode} $monthlyVal /ay";
                           }
 
+                          // Dynamically determine trial badge text from store data
+                          final yearlyHasTrial = _hasFreeTrial(yearlyPkg);
+                          final monthlyHasTrial = _hasFreeTrial(monthlyPkg);
+                          final yearlyTrialBadge = yearlyHasTrial
+                              ? "${_trialPeriodText(yearlyPkg)} Ücretsiz Deneme Dahil"
+                              : "En Uygun Plan";
+                          final monthlyTrialBadge = monthlyHasTrial
+                              ? "${_trialPeriodText(monthlyPkg)} Ücretsiz Deneme Dahil"
+                              : "Aylık Ödeme";
+
                           return Column(
                             children: [
                               _buildPackageOption(
                                 id: 'yearly',
                                 title: "Yıllık Plan",
-                                badge: "7 Gün Ücretsiz Deneme Dahil",
+                                badge: yearlyTrialBadge,
                                 priceMonthly: yearlyMonthlyPrice,
                                 priceTotal: "$yearlyPrice/yıl faturalandırılır",
                                 discountTag: "%50 İNDİRİM",
                                 isPopular: true,
+                                hasFreeTrial: yearlyHasTrial,
                               ),
                               const SizedBox(height: 12),
                               _buildPackageOption(
                                 id: 'monthly',
                                 title: "Aylık Plan",
-                                badge: "7 Gün Ücretsiz Deneme Dahil",
+                                badge: monthlyTrialBadge,
                                 priceMonthly: monthlyPrice,
                                 priceTotal: "₺1.788,00 /yıl değerinde",
+                                hasFreeTrial: monthlyHasTrial,
                               ),
                             ],
                           );
@@ -521,14 +576,21 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             elevation: 0,
                           ),
                           onPressed: _handlePurchase,
-                          child: Text(
-                            "7 Gün Ücretsiz Deneme Başlat",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: Builder(builder: (_) {
+                            final selectedPkg = _getPackage(_selectedPackage);
+                            final hasTrial = _hasFreeTrial(selectedPkg);
+                            final trialText = _trialPeriodText(selectedPkg);
+                            return Text(
+                              hasTrial
+                                  ? "$trialText Ücretsiz Deneme Başlat"
+                                  : "Premium'a Abone Ol",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -705,6 +767,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
     required String priceTotal,
     String? discountTag,
     bool isPopular = false,
+    bool hasFreeTrial = false,
   }) {
     final bool isSelected = _selectedPackage == id;
 
@@ -766,7 +829,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                               fontSize: 15,
                             ),
                           ),
-                          if (id == 'yearly') ...[
+                          if (hasFreeTrial) ...[
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -774,9 +837,9 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                 color: const Color(0xFF27A770).withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Text(
-                                "7 Gün Bedava",
-                                style: TextStyle(color: Color(0xFF27A770), fontSize: 9, fontWeight: FontWeight.bold),
+                              child: Text(
+                                "${_trialPeriodText(_getPackage(id))} Bedava",
+                                style: const TextStyle(color: Color(0xFF27A770), fontSize: 9, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
