@@ -287,7 +287,8 @@ class NotificationService {
             }
           }
 
-          await flutterLocalNotificationsPlugin.zonedSchedule(
+          try {
+            await flutterLocalNotificationsPlugin.zonedSchedule(
               id: notificationId++,
               title: displayTitle,
               body: displayBody,
@@ -296,6 +297,9 @@ class NotificationService {
               androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
               payload: prayerName,
             );
+          } catch (e) {
+            print("Failed to schedule alarm for $prayerName on $tzScheduledDate: $e");
+          }
 
           scheduledCount++;
           // Cap it at 50 notifications to prevent OS limits

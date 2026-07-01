@@ -787,9 +787,13 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
       print("DEBUG: loadData() - fetched ${times.length} times for districtId: $districtId");
       
       // Auto-schedule alarms on startup so alarms are always fresh
-      print("DEBUG: loadData() - calling schedulePrayerAlarms");
-      await _notificationService.schedulePrayerAlarms(times);
-      print("DEBUG: loadData() - schedulePrayerAlarms completed");
+      try {
+        print("DEBUG: loadData() - calling schedulePrayerAlarms");
+        await _notificationService.schedulePrayerAlarms(times);
+        print("DEBUG: loadData() - schedulePrayerAlarms completed");
+      } catch (e) {
+        print("Error scheduling alarms on startup: $e");
+      }
 
       setState(() {
         _isPremium = isPremium;
