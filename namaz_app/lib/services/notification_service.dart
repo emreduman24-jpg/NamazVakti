@@ -287,8 +287,7 @@ class NotificationService {
             }
           }
 
-          try {
-            await flutterLocalNotificationsPlugin.zonedSchedule(
+          await flutterLocalNotificationsPlugin.zonedSchedule(
               id: notificationId++,
               title: displayTitle,
               body: displayBody,
@@ -297,22 +296,6 @@ class NotificationService {
               androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
               payload: prayerName,
             );
-          } catch (e) {
-            print("Failed to schedule exact alarm, falling back to inexact: $e");
-            try {
-              await flutterLocalNotificationsPlugin.zonedSchedule(
-                id: notificationId - 1,
-                title: displayTitle,
-                body: displayBody,
-                scheduledDate: tzScheduledDate,
-                notificationDetails: platformDetails,
-                androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-                payload: prayerName,
-              );
-            } catch (innerEx) {
-              print("Failed to schedule inexact alarm: $innerEx");
-            }
-          }
 
           scheduledCount++;
           // Cap it at 50 notifications to prevent OS limits
