@@ -783,6 +783,10 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
     final districtId = loc['districtId'];
     if (districtId != null) {
       final times = await _repository.getPrayerTimes(districtId);
+      
+      // Auto-schedule alarms on startup so alarms are always fresh
+      await _notificationService.schedulePrayerAlarms(times);
+
       setState(() {
         _isPremium = isPremium;
         _location = loc;
