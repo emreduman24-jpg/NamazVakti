@@ -934,8 +934,6 @@ out center body;
   int _abdestTab = 0;
   int _gusulTab = 0;
 
-  // Live Quran Radio State
-  bool _isRadioLoading = false;
 
   // Expanded Sahabe ID
   String? _expandedSahabeAd;
@@ -1021,9 +1019,6 @@ out center body;
       if (mounted) {
         setState(() {
           _playerState = state;
-          if (state == PlayerState.playing || state == PlayerState.stopped || state == PlayerState.paused) {
-            _isRadioLoading = false;
-          }
         });
       }
     });
@@ -1227,44 +1222,7 @@ out center body;
     }
   }
 
-  // Radio stream toggle helper
-  Future<void> _toggleRadio(String url) async {
-    try {
-      if (_currentAudioUrl == url && _playerState == PlayerState.playing) {
-        await _audioPlayer!.stop();
-        setState(() {
-          _playerState = PlayerState.stopped;
-        });
-      } else {
-        setState(() {
-          _isRadioLoading = true;
-          _currentAudioUrl = url;
-          _currentTrackName = "Canlı Kur'an Radyosu";
-        });
-        await _audioPlayer!.stop();
-        await _audioPlayer!.play(UrlSource(url));
-      }
-    } catch (e) {
-      setState(() {
-        _isRadioLoading = false;
-      });
-      final String errMsg = e.toString().toLowerCase();
-      final String displayMsg = (errMsg.contains('socket') || 
-                                 errMsg.contains('connection') || 
-                                 errMsg.contains('failed') || 
-                                 errMsg.contains('http') ||
-                                 errMsg.contains('network') ||
-                                 errMsg.contains('host')) 
-          ? "İnternet bağlantısı çevrimdışı gözüküyor." 
-          : "Radyo yayını başlatılamadı. Lütfen internet bağlantınızı kontrol edin.";
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(displayMsg),
-          backgroundColor: const Color(0xFFC94A4A),
-        ),
-      );
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1335,8 +1293,7 @@ out center body;
         return _buildDuaIste();
       case 'soru-cevap':
         return _buildSoruCevap();
-      case 'canli-sohbet':
-        return _buildCanliSohbet();
+
       case 'peygamber-hayati':
         return _buildPeygamberHayati();
       case 'kuran-kerim':
@@ -2832,183 +2789,6 @@ out center body;
     );
   }
 
-  // 4. Canlı Sohbet (Canlı Kur'an Radyosu)
-  Widget _buildCanliSohbet() {
-    final bool dark = _isDark;
-    const String streamUrl = "https://eustr73.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c14192aa92.smil/playlist.m3u8";
-    final bool isCurrentPlaying = _currentAudioUrl == streamUrl && _playerState == PlayerState.playing;
-
-    return Center(
-      child: SingleChildScrollView(
-        child: Card(
-          elevation: dark ? 4 : 8,
-          shadowColor: Colors.black26,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-            side: dark
-                ? BorderSide(color: Colors.white.withOpacity(0.08), width: 1.5)
-                : BorderSide.none,
-          ),
-          color: dark ? const Color(0xFF131D31) : Colors.white,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(28.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              gradient: LinearGradient(
-                colors: dark
-                    ? [const Color(0xFF131D31), const Color(0xFF0D1625)]
-                    : [Colors.white, const Color(0xFFF2FAF6)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Live Status Badge
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: isCurrentPlaying ? Colors.redAccent : Colors.grey,
-                        shape: BoxShape.circle,
-                        boxShadow: isCurrentPlaying
-                            ? [
-                                BoxShadow(
-                                  color: Colors.redAccent.withOpacity(0.5),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                )
-                              ]
-                            : [],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      isCurrentPlaying ? "CANLI YAYIN" : "YAYIN DURDURULDU",
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.2,
-                        color: isCurrentPlaying ? Colors.redAccent : Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                // Radio Symbol
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: dark ? const Color(0xFF1B2A47) : const Color(0xFFE8F5E9),
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF27A770).withOpacity(dark ? 0.2 : 0.1),
-                        blurRadius: 20,
-                        spreadRadius: 5,
-                      )
-                    ],
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.radio_rounded,
-                      size: 56,
-                      color: dark ? const Color(0xFF27A770) : const Color(0xFF1E5E43),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  "Diyanet Kur'an Radyo",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    letterSpacing: 0.5,
-                    color: _textColor,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  "Kesintisiz Kur'an-ı Kerim Meali ve Tilaveti",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: _subtitleColor,
-                    fontSize: 13,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // Wave Equalizer
-                QuranEqualizer(isPlaying: isCurrentPlaying),
-                const SizedBox(height: 24),
-                // Play / Stop Controls
-                if (_isRadioLoading)
-                  const SizedBox(
-                    width: 70,
-                    height: 70,
-                    child: Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: CircularProgressIndicator(
-                        color: Color(0xFFD4AF37),
-                        strokeWidth: 4,
-                      ),
-                    ),
-                  )
-                else
-                  GestureDetector(
-                    onTap: () => _toggleRadio(streamUrl),
-                    child: Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: isCurrentPlaying ? const Color(0xFFD9534F) : const Color(0xFF27A770),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: (isCurrentPlaying ? const Color(0xFFD9534F) : const Color(0xFF27A770)).withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
-                      ),
-                      child: Icon(
-                        isCurrentPlaying ? Icons.stop_rounded : Icons.play_arrow_rounded,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 28),
-                // Open Web Link button
-                TextButton.icon(
-                  onPressed: () async {
-                    final Uri url = Uri.parse("https://diyanetkuranradyo.com/canli-dinle");
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
-                    }
-                  },
-                  icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                  label: const Text(
-                    "Diyanet Web Sayfasını Aç",
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                  ),
-                  style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFFD4AF37),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   // 5. Peygamberin Hayatı
   Widget _buildPeygamberHayati() {
