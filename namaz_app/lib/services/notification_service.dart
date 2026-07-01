@@ -60,8 +60,29 @@ class NotificationService {
           importance: Importance.max,
           playSound: true,
         );
+
+        const AndroidNotificationChannel ezanAdhanChannel = AndroidNotificationChannel(
+          'ezan_alarm_channel_adhan',
+          'Ezan Vakti Bildirimleri (Ezan Sesli)',
+          description: 'Namaz vakitlerinde ezan sesi ile bildirim gönderir.',
+          importance: Importance.max,
+          sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
+          playSound: true,
+        );
+
+        const AndroidNotificationChannel ezanSparkleChannel = AndroidNotificationChannel(
+          'ezan_alarm_channel_sparkle',
+          'Ezan Vakti Bildirimleri (Pırıltı Sesli)',
+          description: 'Namaz vakitlerinde pırıltı sesi ile bildirim gönderir.',
+          importance: Importance.max,
+          sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
+          playSound: true,
+        );
+
         await androidPlugin.createNotificationChannel(announcementsChannel);
-        print("Created Android notification channel: announcements_channel");
+        await androidPlugin.createNotificationChannel(ezanAdhanChannel);
+        await androidPlugin.createNotificationChannel(ezanSparkleChannel);
+        print("Created Android notification channels: announcements_channel, ezan_alarm_channel_adhan, ezan_alarm_channel_sparkle");
       }
     }
   }
@@ -101,6 +122,7 @@ class NotificationService {
   Future<void> schedulePrayerAlarms(
     List<Map<String, dynamic>> prayerTimes,
   ) async {
+    print("DEBUG: schedulePrayerAlarms() - entered with ${prayerTimes.length} times");
     // First cancel existing to prevent duplicates
     await cancelAllAlarms();
 
@@ -120,7 +142,10 @@ class NotificationService {
     final bool yatsiSound = prefs.getBool('notification_sound_yatsi') ?? true;
     final int offset = prefs.getInt('notification_timing_offset') ?? 0;
 
+    print("DEBUG: schedulePrayerAlarms() - config: imsak=$imsakEnabled, sabah=$sabahEnabled, ogle=$ogleEnabled, ikindi=$ikindiEnabled, aksam=$aksamEnabled, yatsi=$yatsiEnabled, sound=$soundEnabled, offset=$offset");
+
     final now = DateTime.now();
+    print("DEBUG: schedulePrayerAlarms() - current time (local): $now");
     int notificationId = 100;
 
     // Define prayer names for display
@@ -137,6 +162,7 @@ class NotificationService {
     int scheduledCount = 0;
     for (var dayTime in prayerTimes) {
       final String? dateStr = dayTime['MiladiTarihKisa']; // e.g. "21.05.2026"
+      print("DEBUG: schedulePrayerAlarms() - processing date: $dateStr");
       if (dateStr == null) continue;
 
       // Parse date parts
@@ -190,40 +216,30 @@ class NotificationService {
             .subtract(Duration(minutes: offset));
 
         // Only schedule future notifications
-        if (scheduledDate.isAfter(now)) {
+        final bool isFuture = scheduledDate.isAfter(now);
+        print("DEBUG: schedulePrayerAlarms() - checking $prayerName on $day.$month.$year at $hour:$minute (scheduledDate: $scheduledDate, now: $now, isFuture: $isFuture)");
+        if (isFuture) {
           final tzScheduledDate = tz.TZDateTime.from(scheduledDate, tz.local);
 
-          bool isSoundForThisPrayerEnabled = soundEnabled;
-
-          // Configure sound - use separate channels for adhan vs default
-          // Android notification channels are immutable after creation,
-          // so we need different channel IDs for different sound configs
-          final AndroidNotificationDetails androidDetails = isSoundForThisPrayerEnabled
-              ? const AndroidNotificationDetails(
-                  'ezan_sound_channel_new',
-                  'Ezan Alarmları (Ezan Sesli)',
-                  channelDescription:
-                      'Ezan vakitlerinde ezan sesi ile bildirim gönderir.',
-                  importance: Importance.max,
-                  priority: Priority.high,
-                  sound: RawResourceAndroidNotificationSound('ezan_bildirim'),
-                  playSound: true,
-                )
-              : const AndroidNotificationDetails(
-                  'ezan_sparkle_channel_new',
-                  'Ezan Alarmları (Pırıltı Sesli)',
-                  channelDescription:
-                      'Ezan vakitlerinde pırıltı sesi ile bildirim gönderir.',
-                  importance: Importance.max,
-                  priority: Priority.high,
-                  sound: RawResourceAndroidNotificationSound('parilti_bildirim'),
-                  playSound: true,
-                );
+          // Android: Select channel and custom sound based on soundEnabled setting.
+          final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+            soundEnabled ? 'ezan_alarm_channel_adhan' : 'ezan_alarm_channel_sparkle',
+            soundEnabled ? 'Ezan Vakti Bildirimleri (Ezan Sesli)' : 'Ezan Vakti Bildirimleri (Pırıltı Sesli)',
+            channelDescription: soundEnabled
+                ? 'Namaz vakitlerinde ezan sesi ile bildirim gönderir.'
+                : 'Namaz vakitlerinde pırıltı sesi ile bildirim gönderir.',
+            importance: Importance.max,
+            priority: Priority.high,
+            sound: RawResourceAndroidNotificationSound(
+              soundEnabled ? 'ezan_bildirim' : 'parilti_bildirim',
+            ),
+            playSound: true,
+          );
 
           // iOS custom sound config (expects ezan_bildirim.mp3 / parilti_bildirim.mp3 in App Bundle resources)
           final DarwinNotificationDetails iosDetails =
               DarwinNotificationDetails(
-                sound: isSoundForThisPrayerEnabled ? 'ezan_bildirim.mp3' : 'parilti_bildirim.mp3',
+                sound: soundEnabled ? 'ezan_bildirim.mp3' : 'parilti_bildirim.mp3',
                 presentSound: true,
                 presentAlert: true,
                 presentBadge: true,

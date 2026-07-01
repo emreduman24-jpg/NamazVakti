@@ -781,11 +781,15 @@ class MainScreenState extends State<MainScreen> with AutomaticKeepAliveClientMix
 
     final loc = await _repository.getSavedLocation();
     final districtId = loc['districtId'];
+    print("DEBUG: loadData() - saved location: $loc, districtId: $districtId");
     if (districtId != null) {
       final times = await _repository.getPrayerTimes(districtId);
+      print("DEBUG: loadData() - fetched ${times.length} times for districtId: $districtId");
       
       // Auto-schedule alarms on startup so alarms are always fresh
+      print("DEBUG: loadData() - calling schedulePrayerAlarms");
       await _notificationService.schedulePrayerAlarms(times);
+      print("DEBUG: loadData() - schedulePrayerAlarms completed");
 
       setState(() {
         _isPremium = isPremium;

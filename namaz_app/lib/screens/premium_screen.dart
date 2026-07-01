@@ -318,10 +318,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
                           final yearlyPkg = _getPackage('yearly');
                           final monthlyPkg = _getPackage('monthly');
 
-                          final yearlyPrice = yearlyPkg?.storeProduct.priceString ?? "₺894,00";
-                          final monthlyPrice = monthlyPkg?.storeProduct.priceString ?? "₺149,00";
+                          final yearlyPrice = yearlyPkg?.storeProduct.priceString ?? "₺894,99";
+                          final monthlyPrice = monthlyPkg?.storeProduct.priceString ?? "₺149,99";
                           
-                          String yearlyMonthlyPrice = "₺74,50 /ay";
+                          String yearlyMonthlyPrice = "₺74,58 /ay";
                           if (yearlyPkg != null) {
                             final monthlyVal = (yearlyPkg.storeProduct.price / 12).toStringAsFixed(2);
                             final symbol = yearlyPkg.storeProduct.priceString.replaceAll(RegExp(r'[0-9.,\s]'), '');
@@ -356,7 +356,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                 title: "Aylık Plan",
                                 badge: monthlyTrialBadge,
                                 priceMonthly: monthlyPrice,
-                                priceTotal: "₺1.788,00 /yıl değerinde",
+                                priceTotal: "₺1.799,88 /yıl değerinde",
                                 hasFreeTrial: monthlyHasTrial,
                               ),
                             ],
